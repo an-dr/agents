@@ -100,6 +100,7 @@ ADRs are immutable. Never edit one. Write a new ADR to supersede.
 
 ### Before writing any code
 
+* Confirm you are **not on `main`**. If you are, create a feature branch now before touching any file.
 * Confirm interfaces and contracts are defined (headers, abstract classes, API signatures)
 * Confirm the scope of this increment is agreed
 * If the output will exceed 300 lines, stop and ask where to cut. Propose a division.
