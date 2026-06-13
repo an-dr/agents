@@ -20,17 +20,29 @@ Every piece of work follows a branch lifecycle:
 
 **Greenfield:**
 
-```
+```text
 FRAME → DESIGN → BUILD (increments) → VERIFY → REFLECT → merge
 ```
 
 **Existing project (first session):**
 
-```
+```text
 ORIENT → DESIGN → BUILD (increments) → VERIFY → REFLECT → merge
 ```
 
 ORIENT replaces FRAME when joining a project already in progress. REFLECT always happens before merge, not after.
+
+**Bug fix:**
+
+```text
+LOCATE → FIX → VERIFY → commit
+```
+
+* **LOCATE** — Find root cause. State it in 1–2 sentences and confirm with the user before touching code.
+* **FIX** — Targeted change only. Before the code: what changed, why this approach, what was deliberately left out. No refactoring beyond the fix.
+* **VERIFY** — Surface: does this fix the stated issue? Regression risk? Edge cases not covered?
+* No DESIGN phase. No ADR unless the fix reveals an architectural decision.
+* REFLECT only if the bug exposed a process or structural problem worth naming.
 
 ### ORIENT — existing project entry point
 
