@@ -53,7 +53,7 @@ Before anything else:
 3. Do not propose changes until you have mapped what exists
 4. Treat the first session as Phase 2 (DESIGN) — understand before building
 
-Once oriented, proceed from DESIGN.
+Once oriented, create a feature branch, then proceed from DESIGN.
 
 ---
 
@@ -102,7 +102,7 @@ ADRs are immutable. Never edit one. Write a new ADR to supersede.
 
 * Confirm interfaces and contracts are defined (headers, abstract classes, API signatures)
 * Confirm the scope of this increment is agreed
-* If the output will exceed 300 lines, stop and ask where to cut
+* If the output will exceed 300 lines, stop and ask where to cut. Propose a division.
 
 ### Every code output must
 
@@ -144,6 +144,26 @@ You do not run static analysis or own correctness. Flag concerns. The user verif
 
 *Triggered before merge. Do not merge without completing this.*
 
+### MR Description (required artifact)
+
+Write a structured summary the user can use as the merge request body:
+
+```text
+## What changed
+<1–3 bullet points>
+
+## Why
+<motivation — what problem this solves>
+
+## What was left out
+<explicit exclusions and why>
+
+## How to verify
+<numbered test steps>
+```
+
+### Retrospective
+
 When the user signals the feature is ready, surface the following before the branch is merged:
 
 * What worked well
@@ -151,7 +171,7 @@ When the user signals the feature is ready, surface the following before the bra
 * Technical debt introduced — name it explicitly, do not bury it in "future improvements"
 * Anything the user had to correct more than once — flag it as a process or prompt issue
 
-The user logs this and decides whether to merge.
+The user approves the MR description, logs the retrospective, and decides whether to merge.
 
 ---
 
@@ -177,17 +197,18 @@ project/
 
 ## Hard Rules
 
-| Rule           | Detail                                                         |
-| -------------- | -------------------------------------------------------------- |
-| Increment size | ~200-300 lines max. If larger, stop and split before writing.  |
-| Scope          | Exceeding agreed scope is a mistake. Not a bonus.              |
-| Explanation    | Always before the code. Non-negotiable.                        |
-| Inline docs    | Written at implementation time. Never retroactively.           |
-| ADRs           | Immutable. Supersede with a new one, never edit.               |
-| Rejection      | If output is sent back, redo it correctly. Do not patch.       |
-| Assumptions    | Never. Ask instead.                                            |
-| File placement | One correct location per file. Flag ambiguity before creating. |
-| Merge gate     | REFLECT must complete before merge. No exceptions.             |
+| Rule           | Detail                                                                          |
+| -------------- | ------------------------------------------------------------------------------- |
+| Increment size | ~200-300 lines max. If larger, stop and split before writing.                   |
+| Scope          | Exceeding agreed scope is a mistake. Not a bonus.                               |
+| Explanation    | Always before the code. Non-negotiable.                                         |
+| Inline docs    | Written at implementation time. Never retroactively.                            |
+| ADRs           | Immutable. Supersede with a new one, never edit.                                |
+| Rejection      | If output is sent back, redo it correctly. Do not patch.                        |
+| Assumptions    | Never. Ask instead.                                                             |
+| File placement | One correct location per file. Flag ambiguity before creating.                  |
+| Branch         | No code on `main`. Create a feature branch after FRAME/ORIENT, before any code. |
+| Merge gate     | REFLECT (MR description + retrospective) must complete before merge.            |
 
 ---
 
