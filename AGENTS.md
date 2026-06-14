@@ -13,31 +13,42 @@ Run `git branch --show-current`.
 If output is `main` — STOP. Create a feature branch now. Do not read further until done.
 
 **2. Phase gate**
-Identify which phase you are in using the decision tree below.
-Do not skip a phase because context implies the work is already done.
+
+- Determine what workflow is suitable. If None - state it clearly.
+- On a workflow, do not skip a phase. Verify if the user ask you do deviate from the workflow.
+- Show always all stages of the selected workflow and where you are currently.
 
 **3. Merge gate**
-`- [ ] Approved` in a plan means the increment is ready for VERIFY — not ready to merge.
-Merge only after REFLECT produces an MR description the user has accepted.
+
+- VERIFY — not ready to merge.
+- Feature flow: merge only after REFLECT produces an MR description the user has accepted.
+- Quick fix flow: merge allowed after VERIFY is approved; REFLECT is not required.
 
 ---
 
-## Which phase am I in?
+## Flows
 
-| Situation                          | Entry phase           |
-| ---------------------------------- | --------------------- |
-| New project, no code yet           | FRAME                 |
-| Existing project, first session    | ORIENT                |
-| Plan exists, increment not started | BUILD                 |
-| Increment coded, not yet reviewed  | VERIFY                |
-| Feature complete, not yet merged   | REFLECT               |
-| Something is broken                | LOCATE → FIX → VERIFY |
+Feature flow:
 
----
+- FRAME / ORIENT
+- DESIGN - always on user, unless delegated explicitly
+- BUILD
+- VERIFY
+- REFLECT
+
+Quick fix flow:
+
+- ORIENT
+- BUILD — targeted change only; explain what, why, what was left out
+- VERIFY - does this fix the issue? regression risk? uncovered edges?
+
+- No DESIGN phase; no ADR unless the fix reveals an architectural decision
 
 ## Phases
 
 ### FRAME — new project only
+
+*User shapes, you track the gaps.*
 
 Gather before designing anything. Ask for each missing item; do not proceed without all four:
 
@@ -50,18 +61,22 @@ Once all four answered: confirm with user, create feature branch, move to DESIGN
 
 ---
 
-### ORIENT — existing project, first session
+### ORIENT — existing project
+
+*You gathers the info.*
 
 1. Read `README.md` — purpose, setup, structure
-2. Read `docs/index.md` — what is documented
+2. Read `docs/index.md` or alternative — what is documented
 3. Do not propose changes until the map is complete
-4. Create feature branch, then move to DESIGN
+4. Create feature branch, then proceed to the next phase per your flow
 
 ---
 
 ### DESIGN
 
-You are a sparring partner, not the decision maker.
+*User designs, you help.*
+
+By default, you are a sparring partner, not the decision maker. The phase can be delegated only by the explicit user request.
 
 - The user presents their approach. You challenge it: find holes, surface tradeoffs, name what's missing.
 - Never present a single correct solution. Present options with tradeoffs. The user picks.
@@ -81,7 +96,7 @@ ADRs are immutable. Write a new one to supersede; never edit.
 
 ### BUILD
 
-*You implement. The user reviews. Every increment, every time.*
+*You implement in small increments. The user reviews. Every increment, every time.*
 
 Before writing any code, confirm all three:
 
@@ -96,7 +111,7 @@ Every code output must:
 3. **Include inline docs** — Doxygen (C/C++), JSDoc (TS/JS), docstrings (Python); every public interface and non-obvious decision
 4. **Update `docs/`** when a public interface, architecture, or observable behavior changes; skip otherwise
 
-After delivering an increment: move immediately to VERIFY. Do not mark `- [x] Approved` and stop.
+After delivering an increment: move immediately to VERIFY.
 
 ---
 
@@ -111,6 +126,8 @@ Surface all of the following before the increment is marked approved:
 - **Doc gaps** — what is undocumented or unclear?
 - **Scope check** — does this solve what was defined in FRAME/ORIENT?
 - **Docs consistency** — does `docs/` still accurately describe the system?
+
+If issues are found: return to BUILD to fix, then re-enter VERIFY. Do not mark approved until clean.
 
 Only after the user confirms VERIFY is complete: mark `- [x] Approved` in the plan.
 
@@ -136,29 +153,6 @@ Produce both artifacts. Do not merge without them.
 <numbered test steps>
 ```
 
-**Retrospective:**
-
-- What worked well
-- What had to be corrected and why
-- Technical debt introduced — name it explicitly
-- Anything corrected more than once — flag as a process issue
-
-The user approves the MR description and decides whether to merge.
-
----
-
-### Bug fix track
-
-```text
-LOCATE → FIX → VERIFY → commit
-```
-
-- **LOCATE** — state root cause in 1–2 sentences; confirm with user before touching code
-- **FIX** — targeted change only; explain what, why, what was left out
-- **VERIFY** — does this fix the issue? regression risk? uncovered edges?
-- No DESIGN phase; no ADR unless the fix reveals an architectural decision
-- REFLECT only if the bug exposes a structural problem worth naming
-
 ---
 
 ## File structure
@@ -179,18 +173,18 @@ Every file has one correct location. Flag ambiguity before creating.
 
 ## Hard rules
 
-| Rule              | Detail                                                                    |
-| ----------------- | ------------------------------------------------------------------------- |
-| Branch            | No code on `main`. Create feature branch before any file edit.            |
-| Increment size    | ~200–300 lines max. If larger, stop and split before writing.             |
-| Scope             | Exceeding agreed scope is a mistake, not a bonus.                         |
-| Explanation       | Always before the code. Non-negotiable.                                   |
-| Inline docs       | Written at implementation time. Never retroactively.                      |
-| ADRs              | Immutable. Supersede with a new one, never edit.                          |
-| Rejection         | If output is sent back, redo correctly. Do not patch.                     |
-| Assumptions       | Never. Ask instead.                                                       |
-| Approved ≠ merge  | `- [x] Approved` means VERIFY passed. Merge requires REFLECT.            |
-| Merge gate        | REFLECT (MR description + retrospective) must complete before merge.      |
+| Rule             | Detail                                                               |
+| ---------------- | -------------------------------------------------------------------- |
+| Branch           | No code on `main`. Create feature branch before any file edit.       |
+| Increment size   | ~200–300 lines max. If larger, stop and split before writing.        |
+| Scope            | Exceeding agreed scope is a mistake, not a bonus.                    |
+| Explanation      | Always before the code. Non-negotiable.                              |
+| Inline docs      | Written at implementation time. Never retroactively.                 |
+| ADRs             | Immutable. Supersede with a new one, never edit.                     |
+| Rejection        | If output is sent back, redo correctly. Do not patch.                |
+| Assumptions      | Never. Ask instead.                                                  |
+| Approved ≠ merge | `- [x] Approved` means VERIFY passed. Merge requires REFLECT.        |
+| Merge gate       | REFLECT (MR description) must complete before merge. |
 
 ---
 
