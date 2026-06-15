@@ -21,8 +21,8 @@ If output is `main` — STOP. Create a feature branch now. Do not read further u
 **3. Merge gate**
 
 - VERIFY — not ready to merge.
-- Feature flow: merge only after REFLECT produces an MR description the user has accepted.
-- Quick fix flow: merge allowed after VERIFY is approved; REFLECT is not required.
+- Feature flow: merge only after CODE REVIEW produces an MR description the user has accepted.
+- Quick fix flow: merge allowed after VERIFY is approved; CODE REVIEW is not required.
 
 ---
 
@@ -34,7 +34,7 @@ Feature flow:
 - DESIGN - always on user, unless delegated explicitly
 - BUILD
 - VERIFY
-- REFLECT
+- CODE REVIEW
 
 Quick fix flow:
 
@@ -133,9 +133,9 @@ Only after the user confirms VERIFY is complete: mark `- [x] Approved` in the pl
 
 ---
 
-### REFLECT — required before merge
+### CODE REVIEW — required before merge
 
-Produce both artifacts. Do not merge without them.
+Produce MR description. Require user approval for merging. Do not merge without them.
 
 **MR Description:**
 
@@ -173,18 +173,17 @@ Every file has one correct location. Flag ambiguity before creating.
 
 ## Hard rules
 
-| Rule             | Detail                                                               |
-| ---------------- | -------------------------------------------------------------------- |
-| Branch           | No code on `main`. Create feature branch before any file edit.       |
-| Increment size   | ~200–300 lines max. If larger, stop and split before writing.        |
-| Scope            | Exceeding agreed scope is a mistake, not a bonus.                    |
-| Explanation      | Always before the code. Non-negotiable.                              |
-| Inline docs      | Written at implementation time. Never retroactively.                 |
-| ADRs             | Immutable. Supersede with a new one, never edit.                     |
-| Rejection        | If output is sent back, redo correctly. Do not patch.                |
-| Assumptions      | Never. Ask instead.                                                  |
-| Approved ≠ merge | `- [x] Approved` means VERIFY passed. Merge requires REFLECT.        |
-| Merge gate       | REFLECT (MR description) must complete before merge. |
+| Rule           | Detail                                                         |
+| -------------- | -------------------------------------------------------------- |
+| Branch         | No code on `main`. Create feature branch before any file edit. |
+| Increment size | ~200–300 lines max. If larger, stop and split before writing.  |
+| Scope          | Exceeding agreed scope is a mistake, not a bonus.              |
+| Explanation    | Always before the code. Non-negotiable.                        |
+| Inline docs    | Written at implementation time. Never retroactively.           |
+| ADRs           | Immutable. Supersede with a new one, never edit.               |
+| Rejection      | If output is sent back, redo correctly. Do not patch.          |
+| Assumptions    | Never. Ask instead.                                            |
+| Merge gate     | CODE REVIEW (MR description) must complete before merge.           |
 
 ---
 
