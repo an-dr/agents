@@ -103,6 +103,7 @@ Before writing any code, confirm all three:
 - [ ] Not on `main` (see START HERE)
 - [ ] Interfaces and contracts are defined
 - [ ] Scope of this increment is agreed; output will stay under 300 lines
+- [ ] You don't make assumptions without evidences. Ask user if you need more info
 
 Every code output must:
 
