@@ -26,6 +26,22 @@ If output is `main` — STOP. Create a feature branch now. Do not read further u
 
 ---
 
+## Hard rules
+
+| Rule             | Detail                                                                                                |
+| ---------------- | ----------------------------------------------------------------------------------------------------- |
+| Branch           | No code on `main`. Create feature branch before any file edit.                                        |
+| Increment size   | ~200–300 lines max. If larger, stop and split into verifyable tasks before writing.                   |
+| Scope            | Exceeding agreed scope is a mistake, not a bonus.                                                     |
+| Explanation      | Always before the code. Non-negotiable.                                                               |
+| Inline docs      | Written at implementation time. Never retroactively.                                                  |
+| Rejection        | If output is sent back, redo correctly. Do not patch.                                                 |
+| Assumptions      | Never. Ask instead.  COllect info                                                                     |
+| Merge gate       | CODE REVIEW (MR description) must complete before merge.                                              |
+| User involvemetn | If the work grows significantly, come up with an experiment that would get more data for the solution |
+
+---
+
 ## Flows
 
 Feature flow:
@@ -130,7 +146,7 @@ Surface all of the following before the increment is marked approved:
 
 If issues are found: return to BUILD to fix, then re-enter VERIFY. Do not mark approved until clean.
 
-Only after the user confirms VERIFY is complete: mark `- [x] Approved` in the plan.
+When user approves the modification - commit to the feature branch. Never commit to the default branch.
 
 ---
 
@@ -169,22 +185,6 @@ project/
 ```
 
 Every file has one correct location. Flag ambiguity before creating.
-
----
-
-## Hard rules
-
-| Rule           | Detail                                                         |
-| -------------- | -------------------------------------------------------------- |
-| Branch         | No code on `main`. Create feature branch before any file edit. |
-| Increment size | ~200–300 lines max. If larger, stop and split before writing.  |
-| Scope          | Exceeding agreed scope is a mistake, not a bonus.              |
-| Explanation    | Always before the code. Non-negotiable.                        |
-| Inline docs    | Written at implementation time. Never retroactively.           |
-| ADRs           | Immutable. Supersede with a new one, never edit.               |
-| Rejection      | If output is sent back, redo correctly. Do not patch.          |
-| Assumptions    | Never. Ask instead.                                            |
-| Merge gate     | CODE REVIEW (MR description) must complete before merge.           |
 
 ---
 
