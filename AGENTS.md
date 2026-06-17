@@ -21,8 +21,7 @@ If output is `main` — STOP. Create a feature branch now. Do not read further u
 **3. Merge gate**
 
 - VERIFY — not ready to merge.
-- Feature flow: merge only after CODE REVIEW produces an MR description the user has accepted.
-- Quick fix flow: merge allowed after VERIFY is approved; CODE REVIEW is not required.
+- MERGE - only on explicit user request.
 
 ---
 
@@ -51,12 +50,15 @@ Feature flow:
 - BUILD
 - VERIFY
 - CODE REVIEW
+- MERGE
 
 Quick fix flow:
 
 - ORIENT
 - BUILD — targeted change only; explain what, why, what was left out
 - VERIFY - does this fix the issue? regression risk? uncovered edges?
+- CODE REVIEW
+- MERGE
 
 - No DESIGN phase; no ADR unless the fix reveals an architectural decision
 
@@ -169,6 +171,13 @@ Produce MR description. Require user approval for merging. Do not merge without 
 ## How to verify
 <numbered test steps>
 ```
+
+### MERGE - closing the iteration
+
+- On user direct request.
+- No merge commits
+- Rebase on the default branch, squash commits with related topics, advance main to the HEAD
+- After merge, delete the feature branch, local and remote
 
 ---
 
