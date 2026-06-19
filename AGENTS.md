@@ -23,6 +23,10 @@ If output is `main` — STOP. Create a feature branch now. Do not read further u
 - VERIFY — not ready to merge.
 - MERGE - only on explicit user request.
 
+**4. Start gate**
+
+- If not sspecified, ask user what flow they want to use.
+
 ---
 
 ## Hard rules
