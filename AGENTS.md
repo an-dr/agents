@@ -17,6 +17,7 @@ If output is `main` — STOP. Create a feature branch now. Do not read further u
 - Determine what workflow is suitable. If None - state it clearly.
 - On a workflow, do not skip a phase. Verify if the user ask you do deviate from the workflow.
 - Show always all stages of the selected workflow and where you are currently.
+- In the BUILD→VERIFY loop: label every BUILD and VERIFY header with **"increment N of M"**. If you do not know M yet, derive it from the announced plan or write "increment N" and update M when the plan is known.
 
 **3. Merge gate**
 
@@ -118,6 +119,8 @@ ADRs are immutable. Write a new one to supersede; never edit.
 ### BUILD
 
 *You implement in small increments. The user reviews. Every increment, every time.*
+
+**Before the first increment on a branch**, publish the full increment plan as a numbered list (scope + one-line description each). Reference this plan in every subsequent BUILD/VERIFY header so the user and any future agent can orient without reading the full conversation.
 
 Before writing any code, confirm all three:
 
