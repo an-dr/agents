@@ -185,16 +185,36 @@ Produce MR description. Require user approval for merging. Do not merge without 
 
 ---
 
+## Skills
+
+Reusable agent actions live in `agents/skills/<name>/`. Each skill is a directory containing:
+
+- `SKILL.md` — when to use it and how to invoke it
+- `scripts/` — executable scripts (`.sh` for Linux/macOS, `.ps1` for Windows)
+
+**Before starting any phase**, list `agents/skills/` and check if a skill covers the work. If one matches, use it instead of reasoning through the steps yourself — run its script.
+
+Current skills:
+
+| Skill   | When to use                                                    |
+|---------|----------------------------------------------------------------|
+| `merge` | MERGE phase — rebase, squash, fast-forward main, delete branch |
+
+---
+
 ## File structure
 
 ```text
 project/
-├── AGENTS.md          # AI operating instructions
-├── README.md          # Project overview, setup, usage. Always up to date.
-├── agents/            # Extended AI instructions, prompts, skills
-└── docs/              # Architecture, interfaces, ADRs, behavior docs
-    ├── index.md       # Map of all docs. Updated with every relevant increment.
-    └── adr/           # Immutable decision records
+├── AGENTS.md               # AI operating instructions
+├── README.md               # Project overview, setup, usage. Always up to date.
+├── agents/                 # Extended AI instructions, prompts, skills
+│   └── skills/<name>/      # One directory per skill
+│       ├── SKILL.md        # Frontmatter + invocation instructions
+│       └── scripts/        # sh / ps1 executables
+└── docs/                   # Architecture, interfaces, ADRs, behavior docs
+    ├── index.md            # Map of all docs. Updated with every relevant increment.
+    └── adr/                # Immutable decision records
 ```
 
 Every file has one correct location. Flag ambiguity before creating.
