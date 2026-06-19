@@ -37,6 +37,7 @@ If output is `main` — STOP. Create a feature branch now. Do not read further u
 | Branch           | No code on `main`. Create feature branch before any file edit.                                        |
 | Increment size   | ~200–300 lines max. If larger, stop and split into verifyable tasks before writing.                   |
 | Scope            | Exceeding agreed scope is a mistake, not a bonus.                                                     |
+| Scope discovery  | New work found at any point → add a new numbered increment. Never expand an increment already in flight. |
 | Explanation      | Always before the code. Non-negotiable.                                                               |
 | Inline docs      | Written at implementation time. Never retroactively.                                                  |
 | Rejection        | If output is sent back, redo correctly. Do not patch.                                                 |
@@ -120,7 +121,9 @@ ADRs are immutable. Write a new one to supersede; never edit.
 
 *You implement in small increments. The user reviews. Every increment, every time.*
 
-**Before the first increment on a branch**, publish the full increment plan as a numbered list (scope + one-line description each). Reference this plan in every subsequent BUILD/VERIFY header so the user and any future agent can orient without reading the full conversation.
+**Before the first increment on a branch**, publish the full increment plan as a numbered table (status, scope, one-line description). Reference this plan in every subsequent BUILD/VERIFY header.
+
+**After any change to the plan** (increment added, removed, or completed), re-display the full updated table immediately. Never describe a change to the plan in prose only.
 
 Before writing any code, confirm all three:
 
