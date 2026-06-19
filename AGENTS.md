@@ -51,9 +51,8 @@ Feature flow:
 
 - FRAME / ORIENT
 - DESIGN - always on user, unless delegated explicitly
-- BUILD
-- VERIFY
-- CODE REVIEW
+- BUILD → VERIFY  (loop — repeat for each increment; commit after each approved VERIFY)
+- CODE REVIEW     (once per branch, covering all increments)
 - MERGE
 
 Quick fix flow:
@@ -152,7 +151,7 @@ Surface all of the following before the increment is marked approved:
 
 If issues are found: return to BUILD to fix, then re-enter VERIFY. Do not mark approved until clean.
 
-When user approves the modification - commit to the feature branch. Never commit to the default branch.
+When user approves the increment — commit to the feature branch, then loop back to BUILD for the next increment if more work remains. Never commit to the default branch. CODE REVIEW happens once after all increments on the branch are approved.
 
 ---
 
