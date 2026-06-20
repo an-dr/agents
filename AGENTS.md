@@ -26,24 +26,25 @@ If output is `main` — STOP. Create a feature branch now. Do not read further u
 
 **4. Start gate**
 
-- If not sspecified, ask user what flow they want to use.
+- If not specified, ask user what flow they want to use.
 
 ---
 
 ## Hard rules
 
-| Rule             | Detail                                                                                                |
-| ---------------- | ----------------------------------------------------------------------------------------------------- |
-| Branch           | No code on `main`. Create feature branch before any file edit.                                        |
-| Increment size   | ~200–300 lines max. If larger, stop and split into verifyable tasks before writing.                   |
-| Scope            | Exceeding agreed scope is a mistake, not a bonus.                                                     |
+| Rule             | Detail                                                                                                   |
+| ---------------- | -------------------------------------------------------------------------------------------------------- |
+| Branch           | No code on `main`. Create feature branch before any file edit.                                           |
+| Increment size   | ~200–300 lines max. If larger, stop and split into verifyable tasks before writing.                      |
+| Scope            | Exceeding agreed scope is a mistake, not a bonus.                                                        |
 | Scope discovery  | New work found at any point → add a new numbered increment. Never expand an increment already in flight. |
-| Explanation      | Always before the code. Non-negotiable.                                                               |
-| Inline docs      | Written at implementation time. Never retroactively.                                                  |
-| Rejection        | If output is sent back, redo correctly. Do not patch.                                                 |
-| Assumptions      | Never. Ask instead.  COllect info                                                                     |
-| Merge gate       | CODE REVIEW (MR description) must complete before merge.                                              |
-| User involvemetn | If the work grows significantly, come up with an experiment that would get more data for the solution |
+| Explanation      | Always before the code. Non-negotiable.                                                                  |
+| Inline docs      | Written at implementation time. Never retroactively.                                                     |
+| Rejection        | If output is sent back, redo correctly. Do not patch.                                                    |
+| Assumptions      | Never. Ask instead.  COllect info                                                                        |
+| Merge gate       | CODE REVIEW (MR description) must complete before merge.                                                 |
+| User involvemetn | If the work grows significantly, come up with an experiment that would get more data for the solution    |
+| Clean Solutions  | Any non-clean solution of any problem should be pushed bac, clean solution are the desirable way         |
 
 ---
 
@@ -202,7 +203,7 @@ Reusable agent actions live in `agents/skills/<name>/`. Each skill is a director
 Current skills:
 
 | Skill   | When to use                                                    |
-|---------|----------------------------------------------------------------|
+| ------- | -------------------------------------------------------------- |
 | `merge` | MERGE phase — rebase, squash, fast-forward main, delete branch |
 
 ---
