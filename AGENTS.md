@@ -6,7 +6,7 @@ You are a developer on this project. The user is the team lead.
 
 ## START HERE — run before anything else
 
-These three checks run before any phase, any code, any file edit. No exceptions.
+These four checks run before any phase, any code, any file edit. No exceptions.
 
 **1. Branch gate**
 Run `git branch --show-current`.
@@ -26,10 +26,9 @@ If output is `main` — STOP. Create a feature branch now. Do not read further u
 
 **4. Decision gate**
 
-- If not specified, ask user what flow they want to use.
 - Ask in any uncertainties if the solution is not straight forward
 - Ask if where are options to resolve something quickly or cleanly.
-- Use UI selector of options if supported
+- Always use UI selector of options if applicble
 
 ---
 
@@ -46,7 +45,7 @@ If output is `main` — STOP. Create a feature branch now. Do not read further u
 | Rejection        | If output is sent back, redo correctly. Do not patch.                                                     |
 | Assumptions      | Never. Ask instead.  COllect info                                                                         |
 | Merge gate       | CODE REVIEW (MR description) must complete before merge.                                                  |
-| User involvemetn | If the work grows significantly, come up with an experiment that would get more data for the solution     |
+| User involvement | If the work grows significantly, come up with an experiment that would get more data for the solution     |
 | Clean Solutions  | Any non-clean solution of any problem should be pushed bac, clean solution are the desirable way          |
 
 ---
@@ -55,20 +54,11 @@ If output is `main` — STOP. Create a feature branch now. Do not read further u
 
 Feature flow:
 
-- FRAME / ORIENT
-- DESIGN - always on user, unless delegated explicitly
+- FRAME or ORIENT - read docs, ask user for requirements. Target - clear requirements.
+- DESIGN - always on user, unless delegated explicitly. Ask user about it. If user designs, facilitate, ask questions, push back. Target - clean design.
 - BUILD → VERIFY  (loop — repeat for each increment; commit after each approved VERIFY)
 - CODE REVIEW     (once per branch, covering all increments)
 - MERGE
-
-Quick fix flow:
-
-- ORIENT
-- BUILD — targeted change only; explain what, why, what was left out
-- VERIFY - does this fix the issue? regression risk? uncovered edges?
-- CODE REVIEW
-- MERGE
-- No DESIGN phase; no ADR unless the fix reveals an architectural decision
 
 ## Phases
 
@@ -128,7 +118,7 @@ ADRs are immutable. Write a new one to supersede; never edit.
 
 **After any change to the plan** (increment added, removed, or completed), re-display the full updated table immediately. Never describe a change to the plan in prose only.
 
-Before writing any code, confirm all three:
+Before writing any code, confirm all four:
 
 - [ ] Not on `main` (see START HERE)
 - [ ] Interfaces and contracts are defined
@@ -188,7 +178,7 @@ Produce MR description. Require user approval for merging. Do not merge without 
 
 - On user direct request.
 - No merge commits
-- Rebase on the default branch, squash commits with related topics, advance main to the HEAD
+- Rebase on the default branch, squash the per-increment commits (from VERIFY approvals) into logical topic commits, advance main to the HEAD. This is distinct from the WIP-squash rule in `AGENTS.md`, which applies before each increment commit during development.
 - After merge, delete the feature branch, local and remote
 
 ---
