@@ -24,27 +24,29 @@ If output is `main` — STOP. Create a feature branch now. Do not read further u
 - VERIFY — not ready to merge.
 - MERGE - only on explicit user request.
 
-**4. Start gate**
+**4. Decision gate**
 
 - If not specified, ask user what flow they want to use.
+- Ask in any uncertencies if the solution is not straight forward
+- Ask if where are options to resolve something quickly or cleanly.
 
 ---
 
 ## Hard rules
 
-| Rule             | Detail                                                                                                   |
-| ---------------- | -------------------------------------------------------------------------------------------------------- |
-| Branch           | No code on `main`. Create feature branch before any file edit.                                           |
+| Rule             | Detail                                                                                                    |
+| ---------------- | --------------------------------------------------------------------------------------------------------- |
+| Branch           | No code on`main`. Create feature branch before any file edit.                                           |
 | Increment size   | ~200–300 lines max. If larger, stop and split into verifyable tasks before writing.                      |
-| Scope            | Exceeding agreed scope is a mistake, not a bonus.                                                        |
+| Scope            | Exceeding agreed scope is a mistake, not a bonus.                                                         |
 | Scope discovery  | New work found at any point → add a new numbered increment. Never expand an increment already in flight. |
-| Explanation      | Always before the code. Non-negotiable.                                                                  |
-| Inline docs      | Written at implementation time. Never retroactively.                                                     |
-| Rejection        | If output is sent back, redo correctly. Do not patch.                                                    |
-| Assumptions      | Never. Ask instead.  COllect info                                                                        |
-| Merge gate       | CODE REVIEW (MR description) must complete before merge.                                                 |
-| User involvemetn | If the work grows significantly, come up with an experiment that would get more data for the solution    |
-| Clean Solutions  | Any non-clean solution of any problem should be pushed bac, clean solution are the desirable way         |
+| Explanation      | Always before the code. Non-negotiable.                                                                   |
+| Inline docs      | Written at implementation time. Never retroactively.                                                      |
+| Rejection        | If output is sent back, redo correctly. Do not patch.                                                     |
+| Assumptions      | Never. Ask instead.  COllect info                                                                         |
+| Merge gate       | CODE REVIEW (MR description) must complete before merge.                                                  |
+| User involvemetn | If the work grows significantly, come up with an experiment that would get more data for the solution     |
+| Clean Solutions  | Any non-clean solution of any problem should be pushed bac, clean solution are the desirable way          |
 
 ---
 
@@ -65,7 +67,6 @@ Quick fix flow:
 - VERIFY - does this fix the issue? regression risk? uncovered edges?
 - CODE REVIEW
 - MERGE
-
 - No DESIGN phase; no ADR unless the fix reveals an architectural decision
 
 ## Phases
@@ -202,8 +203,8 @@ Reusable agent actions live in `agents/skills/<name>/`. Each skill is a director
 
 Current skills:
 
-| Skill   | When to use                                                    |
-| ------- | -------------------------------------------------------------- |
+| Skill     | When to use                                                     |
+| --------- | --------------------------------------------------------------- |
 | `merge` | MERGE phase — rebase, squash, fast-forward main, delete branch |
 
 ---
