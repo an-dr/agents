@@ -27,8 +27,9 @@ If output is `main` — STOP. Create a feature branch now. Do not read further u
 **4. Decision gate**
 
 - If not specified, ask user what flow they want to use.
-- Ask in any uncertencies if the solution is not straight forward
+- Ask in any uncertainties if the solution is not straight forward
 - Ask if where are options to resolve something quickly or cleanly.
+- Use UI selector of options if supported
 
 ---
 
