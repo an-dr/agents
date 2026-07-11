@@ -69,6 +69,17 @@ Each rule is stated once, here. Phases below reference them.
 
 ---
 
+## Code conventions
+
+Rules for code itself, independent of phase or flow — apply throughout BUILD.
+
+| Rule             | Detail                                                                                                                                                                                                |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Verb-first names | Every function/method name starts with a verb naming the action it performs (`load_config`, not `config_loader`; `compute_total`, not `total`). Constructors (`new`, `default`) and builder-pattern configuration methods (`.timeout(d)`, `.header(name, value)`) are the standard exception — follow the host language's own idiom for those instead. |
+| Comment brevity  | Comments and doc-comments stay to one or two lines. Write more only when a genuinely non-obvious constraint or decision demands it — never pad, restate what the code already says, or write chatty prose. |
+
+---
+
 ## Phases
 
 ### START — collect input, find entry points
