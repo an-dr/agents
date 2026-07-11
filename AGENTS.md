@@ -65,6 +65,7 @@ Each rule is stated once, here. Phases below reference them.
 | Rejection       | If the user sends output back, redo it correctly from the explanation down. Do not patch the rejected version.                                                                                             |
 | Clean solutions | Push back on any workaround or hack — including your own. If only a non-clean solution is available, say so and let the user decide.                                                                      |
 | Merge gate      | Passing VERIFY never means ready to merge. Merging happens only in the MERGE phase, only on explicit user request.                                                                                         |
+| Commit messages | One-line summary; a body is allowed only when genuinely needed, max 2–3 sentences. Never add yourself as author or co-author (no `Co-Authored-By` trailer, no AI attribution of any kind).                |
 
 ---
 
