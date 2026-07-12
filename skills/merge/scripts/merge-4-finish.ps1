@@ -17,12 +17,15 @@ if ($status) {
 Write-Host "==> Fast-forwarding main..."
 git checkout main
 git merge --ff-only $branch
+if ($LASTEXITCODE -ne 0) { Write-Error "Fast-forward failed."; exit 1 }
 
 Write-Host "==> Pushing main..."
 git push origin main
+if ($LASTEXITCODE -ne 0) { Write-Error "Push failed — main is fast-forwarded locally but not on origin. Resolve and push manually, then rerun from the delete step."; exit 1 }
 
 Write-Host "==> Deleting feature branch '$branch'..."
 git branch -d $branch
+if ($LASTEXITCODE -ne 0) { Write-Error "Local branch delete failed."; exit 1 }
 try { git push origin --delete $branch } catch { Write-Host "(remote branch not found, skipping)" }
 
 Write-Host ""
