@@ -66,4 +66,4 @@ The increment size cap and MR/MERGE ceremony apply to the Detailed flow only.
 
 - `AGENTS.md` — base operating instructions for agents
 - `agents/` — role definitions adopted per phase (`architect`, `developer`, `tester`, `reviewer`)
-- `skills/` — reusable agent actions (`adr`, `adversarial-ut`, `code-review`, `merge`)
+- `skills/` — reusable agent actions (`adr`, `adversarial-ut`, `code-review`, `debug`, `design`, `merge`, `retro`)

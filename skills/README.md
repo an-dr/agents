@@ -18,7 +18,10 @@ exists only where the steps are mechanical; judgment-only skills are
 | [`adr`](adr/SKILL.md) | DESIGN — record a settled architectural decision as the next-numbered ADR |
 | [`adversarial-ut`](adversarial-ut/SKILL.md) | Start of a debug/cleanup iteration — build a bug-finding test suite before fixing anything |
 | [`code-review`](code-review/SKILL.md) | VERIFY (increment diff) and MR (full branch diff) — review for defects and rule violations |
+| [`debug`](debug/SKILL.md) | A failure resists quick code evaluation — reproduce, instrument, bisect to the root cause |
+| [`design`](design/SKILL.md) | DESIGN — a decision deeper than a quick pick: options table, steelman, pre-mortem |
 | [`merge`](merge/SKILL.md) | MERGE phase — rebase, squash, fast-forward the default branch, delete the feature branch |
+| [`retro`](retro/SKILL.md) | After MERGE or on request — process retrospective proposing instruction amendments |
 
 ## Adding a skill
 

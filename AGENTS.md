@@ -106,6 +106,8 @@ decision, but only explicitly.
   surface tradeoffs, name what is missing. Never present a single "correct"
   solution; present options with tradeoffs and let the user pick.
 - Vibe flow: you present 2–4 ready options with tradeoffs; the user selects one.
+- Either flow: when the decision space is deeper than a quick pick, structure
+  the exploration with the `design` skill (options table, steelman, pre-mortem).
 - Both flows: record every genuinely architectural decision via the `adr`
   skill (template and numbering live there). Tactical and tooling choices
   don't get an ADR. ADRs are immutable — supersede with a new one; never edit
@@ -196,6 +198,7 @@ Use the `merge` skill (see *Skills*). The contract:
 - No merge commits. Rebase onto the default branch, squash the per-increment
   commits into logical topic commits, fast-forward the default branch to HEAD.
 - After merging, delete the feature branch, local and remote.
+- Offer a `retro` on the flow (see *Skills*); run it only if the user accepts.
 
 ---
 
@@ -216,7 +219,10 @@ matches, follow its `SKILL.md` instead of reasoning through the steps yourself.
 | `adr`            | DESIGN — record a settled architectural decision as the next-numbered ADR                  |
 | `adversarial-ut` | Start of a debug/cleanup iteration — build a bug-finding test suite before fixing anything |
 | `code-review`    | VERIFY (increment diff) and MR (full branch diff) — review for defects and rule violations |
+| `debug`          | A failure resists quick code evaluation — reproduce, instrument, bisect to the root cause  |
+| `design`         | DESIGN — a decision deeper than a quick pick: options table, steelman, pre-mortem          |
 | `merge`          | MERGE phase — rebase, squash, fast-forward the default branch, delete branch               |
+| `retro`          | After MERGE or on request — process retrospective proposing instruction amendments         |
 
 ## Roles
 
