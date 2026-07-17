@@ -106,18 +106,10 @@ decision, but only explicitly.
   surface tradeoffs, name what is missing. Never present a single "correct"
   solution; present options with tradeoffs and let the user pick.
 - Vibe flow: you present 2–4 ready options with tradeoffs; the user selects one.
-- Both flows: record every decision as an ADR in `docs/adr/` (create the directory
-  on first use):
-
-```markdown
-# ADR-NNN: <title>
-## Problem
-## Decision
-## Rationale
-## Rejected alternatives
-```
-
-ADRs are immutable. Supersede with a new one; never edit an existing one.
+- Both flows: record every genuinely architectural decision via the `adr`
+  skill (template and numbering live there). Tactical and tooling choices
+  don't get an ADR. ADRs are immutable — supersede with a new one; never edit
+  an existing one.
 
 ### SPLIT — Detailed flow only
 
@@ -149,6 +141,7 @@ After delivering: move immediately to VERIFY.
 
 *You help break it. The user owns the verdict.*
 
+Run the `code-review` skill on the increment diff and fold its findings in.
 Surface all five before asking for approval:
 
 - **Failure cases** — what inputs or states make this fail?
@@ -179,7 +172,8 @@ Runs only after the user approves VERIFY.
 
 ### MR — Detailed flow only, required before merge
 
-Produce the MR description and wait for the user's approval. Do not merge without it.
+Run the `code-review` skill on the full branch diff, then produce the MR
+description and wait for the user's approval. Do not merge without it.
 
 ```text
 ## What changed
@@ -211,24 +205,34 @@ Reusable agent actions live in `skills/<name>/` **next to this file**. All paths
 in this document are relative to this AGENTS.md — the repo may be embedded in a
 host project under any directory name (`agents/`, `.agents/`, `ai/`, …), so never
 assume a fixed prefix; resolve from wherever you found this file. Each skill
-contains `SKILL.md` (when and how to use it) and `scripts/` (`.sh` for
-Linux/macOS, `.ps1` for Windows).
+contains `SKILL.md` (when and how to use it) and, where the steps are
+mechanical, `scripts/` (`.sh` for Linux/macOS, `.ps1` for Windows).
 
 **Before starting any phase**, check whether a skill covers the work. If one
-matches, run its scripts instead of reasoning through the steps yourself.
+matches, follow its `SKILL.md` instead of reasoning through the steps yourself.
 
-| Skill     | When to use                                                                   |
-| --------- | ----------------------------------------------------------------------------- |
-| `merge` | MERGE phase — rebase, squash, fast-forward the default branch, delete branch |
-
-## Prompts
-
-Reusable task prompts live in `agents/<name>.md` next to this file (same
-relative-path rule as skills). Apply one when its "When to use" matches the task.
-
-| Prompt             | When to use                                                                                 |
+| Skill              | When to use                                                                                 |
 | ------------------ | ------------------------------------------------------------------------------------------- |
+| `adr`            | DESIGN — record a settled architectural decision as the next-numbered ADR                  |
 | `adversarial-ut` | Start of a debug/cleanup iteration — build a bug-finding test suite before fixing anything |
+| `code-review`    | VERIFY (increment diff) and MR (full branch diff) — review for defects and rule violations |
+| `merge`          | MERGE phase — rebase, squash, fast-forward the default branch, delete branch               |
+
+## Roles
+
+Role definitions live in `agents/<name>.md` next to this file (same
+relative-path rule as skills). Each file carries YAML frontmatter (`name`,
+`description`, optionally `tools`) so clients with subagent support (e.g.
+Claude Code) can load it directly; the body is the role's operating prompt.
+Adopt the role matching the current phase — or, in clients with subagent
+support, delegate the phase to it.
+
+| Role          | Phases              |
+| ------------- | ------------------- |
+| `architect` | DESIGN, SPLIT       |
+| `developer` | BUILD               |
+| `tester`    | VERIFY (tests)      |
+| `reviewer`  | VERIFY (review), MR |
 
 ---
 
@@ -244,7 +248,7 @@ project/
 ├── README.md               # Project overview, setup, usage. Always up to date.
 ├── <this repo>/            # Base instructions, prompts, skills (any dir name)
 │   ├── AGENTS.md           # This file — the base operating instructions
-│   ├── agents/<name>.md    # Reusable task prompts
+│   ├── agents/<name>.md    # Role definitions, one per flow phase
 │   └── skills/<name>/      # SKILL.md + scripts/ per skill
 └── docs/                   # Architecture, interfaces, ADRs. Create on first need.
     ├── index.md            # Map of all docs; update with every relevant increment

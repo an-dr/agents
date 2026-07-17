@@ -59,11 +59,11 @@ VERIFY --> COMMIT
 ```
 
 Both flows keep the same quality bar: explanation before code, inline docs written
-at implementation time, and an ADR for every design decision. The increment size
-cap and MR/MERGE ceremony apply to the Detailed flow only.
+at implementation time, and an ADR for every genuinely architectural decision.
+The increment size cap and MR/MERGE ceremony apply to the Detailed flow only.
 
 ## Repo layout
 
 - `AGENTS.md` — base operating instructions for agents
-- `agents/` — reusable task prompts (e.g. `adversarial-ut`)
-- `skills/` — scripted agent actions (e.g. `merge`)
+- `agents/` — role definitions adopted per phase (`architect`, `developer`, `tester`, `reviewer`)
+- `skills/` — reusable agent actions (`adr`, `adversarial-ut`, `code-review`, `merge`)
