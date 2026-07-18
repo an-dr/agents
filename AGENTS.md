@@ -176,6 +176,9 @@ Runs only after the user approves VERIFY.
 
 Run the `code-review` skill on the full branch diff, then produce the MR
 description and wait for the user's approval. Do not merge without it.
+MR means an in-chat merge-review description and approval gate. Do not create
+a remote pull request unless the user explicitly asks for a PR, publication,
+or GitHub review.
 
 ```text
 ## What changed
