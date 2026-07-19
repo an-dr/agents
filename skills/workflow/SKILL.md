@@ -66,6 +66,11 @@ the new work passes through the complete branch cycle before another review.
 and increment commits, then push normally when work must continue on another
 machine. Never add `.progress/` to an ignore file.
 
+Every command that changes state also regenerates `.progress/PROGRESS.md`, a
+human-readable snapshot (flow, phase, goal, and the iteration list with
+statuses) with no IDs. Read it for a quick human-facing status check instead
+of parsing `workflow.json`. `finish` deletes it along with `workflow.json`.
+
 Run `finish` at Quick/COMMIT before the final Quick commit, or at Detailed/MERGE
 before the final squash and merge. Commit the deletion so `.progress/` is absent
 from the completed repository tree.

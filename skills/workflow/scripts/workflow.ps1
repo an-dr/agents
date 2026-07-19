@@ -238,6 +238,66 @@ function Add-HistoryEntry {
     $State.history = @($State.history) + $entry
 }
 
+function Get-ProgressMarkdownPath {
+    param([Parameter(Mandatory)][string]$WorkflowPath)
+
+    return Join-Path (Split-Path -Parent $WorkflowPath) 'PROGRESS.md'
+}
+
+function Write-ProgressMarkdown {
+    param(
+        [Parameter(Mandatory)]$State,
+        [Parameter(Mandatory)][string]$Path
+    )
+
+    $flowLabel = if ($State.flow -eq 'DetailedAuto') { 'Detailed Auto' } else { $State.flow }
+    $lines = [Collections.Generic.List[string]]::new()
+    $lines.Add('# Progress')
+    $lines.Add('')
+    $lines.Add("**Flow:** $flowLabel")
+    $lines.Add("**Phase:** $($State.phase)")
+    $lines.Add("**Goal:** $($State.requirements.goal)")
+    $lines.Add("**Done when:** $($State.requirements.done)")
+    if ($State.requirements.constraints) {
+        $lines.Add("**Constraints:** $($State.requirements.constraints)")
+    }
+    if ($State.requirements.outOfScope) {
+        $lines.Add("**Out of scope:** $($State.requirements.outOfScope)")
+    }
+    $lines.Add('')
+
+    $increments = @($State.increments)
+    if ($increments.Count -gt 0) {
+        $lines.Add('## Iterations')
+        $lines.Add('')
+        foreach ($increment in $increments) {
+            $marker = switch ($increment.status) {
+                'completed' { 'x' }
+                default { ' ' }
+            }
+            $statusLabel = switch ($increment.status) {
+                'in_progress' { 'in progress' }
+                default { $increment.status }
+            }
+            $lines.Add("- [$marker] **$($increment.scope)** ($statusLabel) — $($increment.description)")
+        }
+        $lines.Add('')
+    }
+
+    $lines.Add("_Last updated: $($State.updatedAt)_")
+
+    $directory = Split-Path -Parent $Path
+    New-Item -ItemType Directory -Force -Path $directory | Out-Null
+    $temporaryPath = Join-Path $directory ('.progress-md-{0}.tmp' -f [guid]::NewGuid())
+    try {
+        [IO.File]::WriteAllText($temporaryPath, ($lines -join "`n"), [Text.UTF8Encoding]::new($false))
+        [IO.File]::Move($temporaryPath, $Path, $true)
+    }
+    finally {
+        Remove-Item -Force -LiteralPath $temporaryPath -ErrorAction SilentlyContinue
+    }
+}
+
 function Save-WorkflowState {
     param(
         [Parameter(Mandatory)]$State,
@@ -257,6 +317,7 @@ function Save-WorkflowState {
     finally {
         Remove-Item -Force -LiteralPath $temporaryPath -ErrorAction SilentlyContinue
     }
+    Write-ProgressMarkdown -State $State -Path (Get-ProgressMarkdownPath -WorkflowPath $Path)
 }
 
 function Test-Approval {
@@ -617,6 +678,10 @@ switch ($Command) {
             throw "Workflow state can only be removed at Quick/COMMIT or Detailed/MERGE; current state is $($state.flow)/$($state.phase)."
         }
         Remove-Item -LiteralPath $workflowPath
+        $progressMarkdownPath = Get-ProgressMarkdownPath -WorkflowPath $workflowPath
+        if (Test-Path -LiteralPath $progressMarkdownPath) {
+            Remove-Item -LiteralPath $progressMarkdownPath
+        }
         $directory = Split-Path -Parent $workflowPath
         if ((Get-ChildItem -Force -LiteralPath $directory | Measure-Object).Count -eq 0) {
             Remove-Item -LiteralPath $directory
