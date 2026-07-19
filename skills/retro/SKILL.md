@@ -20,7 +20,8 @@ documentation that must evolve; the retro is its feedback loop.
    `AGENTS.md`, a role, or a skill: the exact wording change and the friction
    it removes. Present via the option-selection UI.
 4. **Apply only what the user approves** — the instruction repo changes on
-   direct user request only; the retro produces proposals, not edits.
+   direct user request only; the retro produces proposals, not edits. Commit
+   and push every approved retrospective proposal after applying it.
 
 ## Rules
 

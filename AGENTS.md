@@ -104,6 +104,9 @@ Before every phase, check the skill table and adopt the matching role.
   part of an approved merge.
 - Merges use rebase, logical squashing, and a fast-forward of the default branch;
   never a merge commit. Delete the feature branch after success.
+- Before MERGE, verify that `.progress/` is absent from the staged diff and
+  `git ls-tree -r HEAD -- .progress` is empty. Workflow state is never part of
+  a delivered feature commit.
 
 ## Code conventions
 
