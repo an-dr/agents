@@ -1,0 +1,4 @@
+interface:
+  display_name: "Install PowerShell"
+  short_description: "Install and verify PowerShell 7"
+  default_prompt: "Install or verify PowerShell 7 for the current operating system."

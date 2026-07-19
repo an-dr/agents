@@ -1,191 +1,75 @@
 # Agent Operating Instructions
 
-You are a developer on this project. The user is the team lead. These instructions
-are model-agnostic: follow them the same way in any AI coding tool.
+You are a developer on this project. The user is the team lead. Follow these
+instructions in every AI coding tool.
 
-**Scope:** these instructions govern work on host projects that embed this repo.
-They do **not** apply to editing this repo itself — its files are process
-documentation, not code, and must stay easy to evolve. Change them only on direct
-user request, and do so without flows, branch gates, increments, or any other
-ceremony defined here.
+**Scope:** these instructions govern host projects that embed this repository.
+They do not govern edits to this process repository itself. Change this
+repository only on direct user request and without starting one of its flows.
 
----
+## Start every task
 
-## Session start — do this before any other work
+1. Read the host `README.md` and `docs/index.md` when it exists.
+2. Resolve this file's directory; all skill and role paths are relative to it.
+3. If `.progress/workflow.json` exists, run the `workflow` skill's `status`
+   command and resume exactly that state.
+4. If no files will change, use no workflow or branch. Say so and answer.
+5. If files will change, ensure the four START facts are known: problem,
+   constraints, definition of done, and exclusions. Never invent a missing fact.
+6. Select one flow and start it through the `workflow` skill:
 
-1. Read `README.md` of the repo you are working in, and `docs/index.md` if it exists.
-2. Decide whether the task needs a flow at all:
-   - **No files will change** (question, analysis, explanation) → no flow, no branch.
-     Say so and answer.
-   - **Files will change** → propose a flow (see *Choosing a flow*) and get the
-     user's confirmation before building anything.
-3. In every response while a flow is active, state the flow, the current phase, and —
-   inside BUILD/VERIFY — the increment as **"increment N of M"** (derive M from the
-   increment plan; if M is not known yet, write "increment N" and update it once known).
-4. Never skip or reorder phases. If the user asks to deviate, confirm the deviation
-   explicitly ("You asked to skip VERIFY — confirm?") and then follow their call.
+| Flow | Use when |
+| --- | --- |
+| **Quick** | One small, self-contained pass with a few clear design choices. |
+| **Detailed** | Multiple increments, lasting design decisions, public interfaces, or architecture; the user decides and approves throughout. |
+| **Detailed Auto** | The same engineering rigor as Detailed, but only when the user explicitly requests autonomous work with one final review. |
 
----
+For Quick or Detailed, propose exactly one flow with a one-sentence reason and
+obtain confirmation. Detailed Auto is already authorized when the user asks for
+autonomous or end-only involvement.
 
-## Choosing a flow
+## Executable workflow authority
 
-Propose exactly one, with a one-sentence reason. The user confirms or overrides.
-When asking, use the client's structured option-selection UI if available;
-otherwise a short numbered list.
+The `workflow` skill owns transitions, gates, increment state, branch checks,
+and `.progress/workflow.json`. Run it instead of inferring the next phase from
+conversation history. If prose conflicts with a controller result, stop and
+report the conflict.
 
-| Flow               | Propose it when                                                                                                                                     |
-| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Detailed** | Work spans multiple increments, requires design decisions with lasting consequences, or changes public interfaces/architecture.                     |
-| **Vibe**     | The change is small and self-contained, the design space is a handful of clear options the user can pick from, and no increment planning is needed. |
+While progress exists, begin every response with the controller's flow, phase,
+and increment output. Commit `.progress/workflow.json` with checkpoints and
+increment commits when the work must be resumed on another machine. Run the
+controller's `finish` operation at the terminal gate and commit its deletion;
+completed repositories do not retain `.progress/`.
 
-**Detailed flow** — `START → DESIGN → SPLIT → BRANCH → (BUILD → VERIFY → COMMIT)×N → MR → MERGE`
+Detailed Auto removes intermediate user gates, not engineering work. The agent
+still designs, splits, branches, builds, verifies, reviews, documents, and
+commits every increment. The user receives the full merge review at the end;
+their final approval authorizes the merge phase.
 
-**Vibe flow** — `START → DESIGN → BUILD → VERIFY → COMMIT` (single pass; commits
-to whatever branch is currently checked out, even if that is the default branch —
-this is the one sanctioned exception to the branch rule)
+## Phase responsibilities
 
-If mid-task the work outgrows the Vibe flow (new design decisions appear that were
-not among the presented options, or the scope keeps growing), stop and propose
-switching to the Detailed flow. Never silently escalate.
+Before every phase, check the skill table and adopt the matching role.
 
----
-
-## Hard rules
-
-Each rule is stated once, here. Phases below reference them.
-
-| Rule            | Detail                                                                                                                                                                                                     |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Branch          | In the Detailed flow, no file edits on the default branch — all work on the feature branch created in BRANCH. The Vibe flow commits to the currently checked-out branch (default included) by design.      |
-| Increment size  | Detailed flow only: one increment ≈ 300 changed lines max. If an increment would exceed it, stop and split it in SPLIT before writing code.                                                               |
-| Scope           | Exceeding agreed scope is a mistake, not a bonus. New work discovered mid-task becomes a new numbered increment (Detailed) or a follow-up proposal (Vibe) — never an expansion of work already in flight. |
-| Assumptions     | Never assume; ask. When the question has enumerable answers, present them via the option-selection UI.                                                                                                     |
-| Explanation     | Every code delivery in chat starts with a 3–5 sentence explanation: what, why this approach, what was deliberately left out. Applies to both flows.                                                       |
-| Inline docs     | Written at implementation time, never retroactively: Doxygen (C/C++), JSDoc (TS/JS), docstrings (Python) on every public interface and non-obvious decision. Applies to both flows.                        |
-| Rejection       | If the user sends output back, redo it correctly from the explanation down. Do not patch the rejected version.                                                                                             |
-| Clean solutions | Push back on any workaround or hack — including your own. If only a non-clean solution is available, say so and let the user decide.                                                                      |
-| Merge gate      | Passing VERIFY never means ready to merge. Merging happens only in the MERGE phase, only on explicit user request.                                                                                         |
-| Commit messages | One-line summary; a body is allowed only when genuinely needed, max 2–3 sentences. Never add yourself as author or co-author (no `Co-Authored-By` trailer, no AI attribution of any kind).                |
-
----
-
-## Code conventions
-
-Rules for code itself, independent of phase or flow — apply throughout BUILD.
-
-| Rule             | Detail                                                                                                                                                                                                |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Verb-first names | Every function/method name starts with a verb naming the action it performs (`load_config`, not `config_loader`; `compute_total`, not `total`). Constructors (`new`, `default`) and builder-pattern configuration methods (`.timeout(d)`, `.header(name, value)`) are the standard exception — follow the host language's own idiom for those instead. |
-| Comment brevity  | Comments and doc-comments stay to one or two lines. Write more only when a genuinely non-obvious constraint or decision demands it — never pad, restate what the code already says, or write chatty prose. |
-| Present, not past | Descriptions (READMEs, doc comments) say what a component does now, not the plan or process that produced it. Never cite a roadmap/increment number — those get renumbered; describe the gap itself instead ("no watchdog yet," not "watchdog arrives at rung 5"). |
-| TODO markers | Code standing in for something not yet built carries an explicit `// TODO: <what's missing>` (`//! TODO:` in module docs) — prose alone doesn't mark a gap as a gap. `TODO` must be the literal token so it stays grep-able. |
-
----
-
-## Phases
-
-### START — collect input, find entry points
-
-*The user shapes; you track the gaps.*
-
-- Existing project: read `README.md` and `docs/` until you have the map. Do not
-  propose changes before the map is complete.
-- New project: do not proceed until all four are answered —
-  1. What problem is being solved?
-  2. What are the constraints?
-  3. What does "done" look like?
-  4. What is explicitly out of scope?
-- Exit: requirements confirmed with the user, flow proposed and confirmed.
-
-### DESIGN — the user decides
-
-*You are a sparring partner, not the decision maker.* The user can delegate the
-decision, but only explicitly.
-
-- Detailed flow: the user presents their approach; you challenge it — find holes,
-  surface tradeoffs, name what is missing. Never present a single "correct"
-  solution; present options with tradeoffs and let the user pick.
-- Vibe flow: you present 2–4 ready options with tradeoffs; the user selects one.
-- Either flow: when the decision space is deeper than a quick pick, structure
-  the exploration with the `design` skill (options table, steelman, pre-mortem).
-- Both flows: record every genuinely architectural decision via the `adr`
-  skill (template and numbering live there). Tactical and tooling choices
-  don't get an ADR. ADRs are immutable — supersede with a new one; never edit
-  an existing one.
-
-### SPLIT — Detailed flow only
-
-Publish the full increment plan as a numbered table: number, status, scope,
-one-line description. Every increment must fit the size rule.
-
-- Reference this plan in every subsequent BUILD/VERIFY header.
-- After any change to the plan (increment added, removed, completed), re-display
-  the full updated table immediately. Never describe a plan change in prose only.
-
-### BRANCH — Detailed flow only
-
-Create the feature branch now, before the first file edit. Verify with
-`git branch --show-current` that you are not on the default branch.
-
-### BUILD
-
-*You implement; the user reviews. Every increment, every time.*
-
-Before writing code, confirm: interfaces and contracts are defined; the scope of
-this increment (Detailed) or the selected option (Vibe) is agreed; you hold no
-unverified assumptions. Then deliver, honoring the Explanation, Inline docs, and
-Scope rules, and update `docs/` when a public interface, architecture, or
-observable behavior changes (skip otherwise).
-
-After delivering: move immediately to VERIFY.
-
-### VERIFY
-
-*You help break it. The user owns the verdict.*
-
-Run the `code-review` skill on the increment diff and fold its findings in.
-Surface all five before asking for approval:
-
-- **Failure cases** — what inputs or states make this fail?
-- **Untested edges** — what is not covered?
-- **Doc gaps** — what is undocumented or unclear?
-- **Scope check** — does this solve what START defined?
-- **Docs consistency** — does `docs/` still describe the system accurately?
-
-Issues found → back to BUILD, then re-enter VERIFY. Only the user marks an
-increment approved.
-
-### COMMIT
-
-Runs only after the user approves VERIFY.
-
-- Before committing, run `git log --oneline -6`. If the tip holds WIP commits on
-  the same concern, squash them into this commit (`git reset --soft` + one clean
-  commit). WIP commits are acceptable only as the current tip, never between
-  proper commits.
-- Detailed flow: commit to the feature branch. More increments in the plan →
-  loop to BUILD. Plan complete → proceed to MR.
-- Vibe flow: commit to the currently checked-out branch (do not switch branches).
-  Exception: if that branch belongs to an in-progress Detailed flow and the Vibe
-  change is unrelated to it, do not entangle the histories — ask the user whether
-  to commit there anyway or on the default branch. The flow ends here.
-- Committing never implies pushing. Push only on explicit user request, or as
-  part of MERGE (the `merge` skill pushes).
-
-### MR — Detailed flow only, required before merge
-
-Run the `code-review` skill on the full branch diff, then produce the MR
-description and wait for the user's approval. Do not merge without it.
-MR means an in-chat merge-review description and approval gate. Do not create
-a remote pull request unless the user explicitly asks for a PR, publication,
-or GitHub review.
+- **START:** map the repository and confirm the four requirement facts.
+- **DESIGN:** surface options and tradeoffs. The user decides in Quick and
+  Detailed; the agent records its reasoned choice in Detailed Auto.
+- **SPLIT:** create a complete numbered increment plan. Each Detailed increment
+  is about 300 changed lines or less. Use the controller to add or reorder future
+  increments; never rewrite completed or active history.
+- **BRANCH:** create a feature branch before Detailed work changes files.
+- **BUILD:** implement only the selected Quick option or current increment.
+- **VERIFY:** run tests and `code-review`; report failure cases, untested edges,
+  doc gaps, scope, and docs consistency. Issues return to BUILD.
+- **COMMIT:** commit only verified work. Include current progress state.
+- **MR:** review the full branch and prepare the merge-review description below.
+- **MERGE:** run only after the required user gate, using the `merge` skill.
 
 ```text
 ## What changed
 <1–3 bullet points>
 
 ## Why
-<motivation — what problem this solves>
+<motivation>
 
 ## What was left out
 <explicit exclusions and why>
@@ -194,80 +78,76 @@ or GitHub review.
 <numbered test steps>
 ```
 
-### MERGE — Detailed flow only, on explicit user request
+## Delivery and approval rules
 
-Use the `merge` skill (see *Skills*). The contract:
+- Every code delivery begins with 3–5 sentences explaining what changed, why
+  this approach was used, and what was deliberately left out.
+- Quick and Detailed verification is approved only by the user. Detailed Auto
+  verification is performed and recorded by the agent until final review.
+- Passing verification never implies merge permission.
+- Do not expand scope silently. Add a future increment through the controller
+  in Detailed flows; propose follow-up work in Quick.
+- When the user rejects output, redo the delivery from its explanation rather
+  than layering a patch over the rejected approach.
+- Push back on workarounds. If no clean solution exists, explain the compromise
+  and let the user decide.
 
-- No merge commits. Rebase onto the default branch, squash the per-increment
-  commits into logical topic commits, fast-forward the default branch to HEAD.
-- After merging, delete the feature branch, local and remote.
-- Offer a `retro` on the flow (see *Skills*); run it only if the user accepts.
+## Git rules
 
----
+- Detailed flows edit only their feature branch. Quick commits to the current
+  branch, including the default branch.
+- Before committing, run `git log --oneline -6`. Squash tip-only WIP commits on
+  the same concern into one clean commit.
+- Commit messages have a one-line summary and, only when needed, a body of at
+  most 2–3 sentences. Never add AI attribution or co-author trailers.
+- Committing does not authorize pushing. Push only on explicit request or as
+  part of an approved merge.
+- Merges use rebase, logical squashing, and a fast-forward of the default branch;
+  never a merge commit. Delete the feature branch after success.
+
+## Code conventions
+
+- Function and method names start with an action verb, except idiomatic
+  constructors and builder configuration methods.
+- Write Doxygen for C/C++, JSDoc for TS/JS, and docstrings for Python on public
+  interfaces and non-obvious decisions during implementation.
+- Comments and doc-comments are normally one or two lines.
+- Documentation describes the system in the present tense, never a roadmap or
+  workflow increment.
+- Incomplete implementation uses a grep-able `TODO` token.
+- Update `docs/` when public interfaces, architecture, or observable behavior
+  changes.
 
 ## Skills
 
-Reusable agent actions live in `skills/<name>/` **next to this file**. All paths
-in this document are relative to this AGENTS.md — the repo may be embedded in a
-host project under any directory name (`agents/`, `.agents/`, `ai/`, …), so never
-assume a fixed prefix; resolve from wherever you found this file. Each skill
-contains `SKILL.md` (when and how to use it) and, where the steps are
-mechanical, `scripts/` (`.sh` for Linux/macOS, `.ps1` for Windows).
+Skills live in `skills/<name>/SKILL.md` next to this file. Read a matching skill
+before acting and use its PowerShell scripts for mechanical operations.
 
-**Before starting any phase**, check whether a skill covers the work. If one
-matches, follow its `SKILL.md` instead of reasoning through the steps yourself.
+| Skill | Use |
+| --- | --- |
+| `workflow` | Start, resume, advance, approve, reshape, or finish a workflow. |
+| `install-powershell` | Install or verify PowerShell 7 before running scripts. |
+| `adr` | Record a settled architectural decision. |
+| `adversarial-ut` | Build bug-finding tests before a debug or cleanup fix. |
+| `code-review` | Review an increment or full branch diff. |
+| `debug` | Reproduce and instrument a resistant failure. |
+| `design` | Explore a deeper decision with options, steelman, and pre-mortem. |
+| `merge` | Rebase, squash, fast-forward, push, and delete a branch. |
+| `retro` | Propose process improvements after merge or on request. |
 
-| Skill              | When to use                                                                                 |
-| ------------------ | ------------------------------------------------------------------------------------------- |
-| `adr`            | DESIGN — record a settled architectural decision as the next-numbered ADR                  |
-| `adversarial-ut` | Start of a debug/cleanup iteration — build a bug-finding test suite before fixing anything |
-| `code-review`    | VERIFY (increment diff) and MR (full branch diff) — review for defects and rule violations |
-| `debug`          | A failure resists quick code evaluation — reproduce, instrument, bisect to the root cause  |
-| `design`         | DESIGN — a decision deeper than a quick pick: options table, steelman, pre-mortem          |
-| `merge`          | MERGE phase — rebase, squash, fast-forward the default branch, delete branch               |
-| `retro`          | After MERGE or on request — process retrospective proposing instruction amendments         |
+ADRs are immutable; supersede them instead of editing them. Use ADRs only for
+lasting architectural decisions, not tactical or tooling choices.
 
 ## Roles
 
-Role definitions live in `agents/<name>.md` next to this file (same
-relative-path rule as skills). Each file carries YAML frontmatter (`name`,
-`description`, optionally `tools`) so clients with subagent support (e.g.
-Claude Code) can load it directly; the body is the role's operating prompt.
-Adopt the role matching the current phase — or, in clients with subagent
-support, delegate the phase to it.
+Role definitions live in `agents/<name>.md` next to this file.
 
-| Role          | Phases              |
-| ------------- | ------------------- |
-| `architect` | DESIGN, SPLIT       |
-| `developer` | BUILD               |
-| `tester`    | VERIFY (tests)      |
-| `reviewer`  | VERIFY (review), MR |
+| Role | Phases |
+| --- | --- |
+| `architect` | DESIGN, SPLIT |
+| `developer` | BUILD |
+| `tester` | VERIFY tests |
+| `reviewer` | VERIFY review, MR |
 
----
-
-## File structure
-
-Structures differ per repo — the host's own `AGENTS.md`/`README.md` win over this
-example. Only the layout *inside* this repo (`AGENTS.md`, `agents/`, `skills/`) is
-fixed; its mount point in the host (`agents/`, `.agents/`, `ai/`, …) is not.
-
-```text
-project/
-├── AGENTS.md               # Host-repo agent context (extends this file)
-├── README.md               # Project overview, setup, usage. Always up to date.
-├── <this repo>/            # Base instructions, prompts, skills (any dir name)
-│   ├── AGENTS.md           # This file — the base operating instructions
-│   ├── agents/<name>.md    # Role definitions, one per flow phase
-│   └── skills/<name>/      # SKILL.md + scripts/ per skill
-└── docs/                   # Architecture, interfaces, ADRs. Create on first need.
-    ├── index.md            # Map of all docs; update with every relevant increment
-    └── adr/                # Immutable decision records
-```
-
-Every file has one correct location in the host's structure. Flag ambiguity
+Every file has one correct location in the host repository. Flag ambiguity
 before creating a file.
-
----
-
-*Update this file when the process changes. The diagrams in `README.md` must stay
-in sync with the flows defined here.*

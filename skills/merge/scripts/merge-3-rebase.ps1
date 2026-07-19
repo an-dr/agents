@@ -1,17 +1,17 @@
 #Requires -Version 7
+param([string]$BaseBranch)
+
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+Import-Module (Join-Path $PSScriptRoot 'Merge.Common.psm1') -Force
 
-$branch = git branch --show-current
-if ($branch -eq 'main') {
-    Write-Error "Already on main. Switch to the feature branch first."
-    exit 1
-}
+$base = Get-MergeBaseBranch -RequestedBranch $BaseBranch
+Assert-MergeFeatureBranch -BaseBranch $base | Out-Null
+Assert-GitCleanWorkingTree
 
-Write-Host "==> Fetching origin..."
-git fetch origin
-Write-Host "==> Rebasing on origin/main..."
-git rebase origin/main
-Write-Host ""
-Write-Host "==> Commits on this branch since main:"
-git log --oneline main..HEAD
+Write-Output "Fetching 'origin/$base'..."
+Invoke-GitCommand -Arguments @('fetch', 'origin', $base)
+Write-Output "Rebasing onto 'origin/$base'..."
+Invoke-GitCommand -Arguments @('rebase', "origin/$base")
+Write-Output ''
+Invoke-GitCommand -Arguments @('log', '--oneline', "$base..HEAD")

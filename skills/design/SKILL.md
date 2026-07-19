@@ -1,6 +1,6 @@
 ---
 name: design
-description: Structure the DESIGN phase for a decision deeper than a quick pick — explore the space with an options table, steelman, and pre-mortem before the user decides. Use in the Detailed flow, or when a Vibe design question turns out deeper than expected.
+description: Structure the DESIGN phase for a decision deeper than a quick pick — explore the space with an options table, steelman, and pre-mortem before the user or a Detailed Auto agent decides. Use in a Detailed flow, or when a Quick design question turns out deeper than expected.
 ---
 
 # Design

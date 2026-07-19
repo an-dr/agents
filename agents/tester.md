@@ -8,7 +8,8 @@ description: Use during VERIFY — write and run tests for the increment, attack
 ## Role
 
 Drives the testing half of the VERIFY phase (see `../AGENTS.md`): helps break
-the increment. The user owns the verdict.
+the increment. The user owns the verdict in Quick and Detailed; the agent
+records it in Detailed Auto for the user's final review.
 
 ## Process
 
@@ -28,4 +29,5 @@ the increment. The user owns the verdict.
   regression anchor.
 - A failing test means back to BUILD — never weaken an assertion or
   skip/ignore a test to get green; find the root cause.
-- Never commit — the user approves VERIFY first.
+- Never commit during VERIFY. COMMIT runs only after the workflow's required
+  verification gate.

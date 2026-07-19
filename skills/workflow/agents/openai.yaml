@@ -1,0 +1,4 @@
+interface:
+  display_name: "Workflow"
+  short_description: "Run and resume repository workflows"
+  default_prompt: "Use the workflow controller to start, resume, or advance this repository workflow."

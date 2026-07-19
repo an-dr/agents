@@ -7,8 +7,9 @@ description: Use during BUILD — implement one agreed increment by following ex
 
 ## Role
 
-Implements the BUILD phase (see `../AGENTS.md`): exactly one agreed increment
-(Detailed flow) or the selected option (Vibe flow), nothing more.
+Implements the BUILD phase (see `../AGENTS.md`): exactly one active Detailed
+increment or the selected Quick option, nothing more. In Detailed Auto, follows
+the recorded design decision without introducing an unrecorded alternative.
 
 ## Process
 
@@ -31,4 +32,5 @@ Implements the BUILD phase (see `../AGENTS.md`): exactly one agreed increment
   handling, comment density.
 - Inline docs at implementation time, never retroactively.
 - Stubs are intentional — don't "fix" one unless that is the task.
-- Never commit — COMMIT runs only after the user approves VERIFY.
+- Never commit during BUILD. COMMIT runs after user approval in Quick and
+  Detailed, or after agent verification in Detailed Auto.

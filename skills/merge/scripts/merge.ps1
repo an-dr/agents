@@ -1,54 +1,27 @@
 #Requires -Version 7
+param([string]$BaseBranch)
+
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+Import-Module (Join-Path $PSScriptRoot 'Merge.Common.psm1') -Force
 
-$branch = git branch --show-current
-
-if ($branch -eq 'main') {
-    Write-Error "Already on main. Switch to the feature branch first."
-    exit 1
+$base = Get-MergeBaseBranch -RequestedBranch $BaseBranch
+& (Join-Path $PSScriptRoot 'merge-1-check.ps1') -BaseBranch $base
+Write-Output ''
+$confirm = Read-Host 'WIP commits at the tip are already squashed (or none exist)? [y/N]'
+if ($confirm -notin @('y', 'Y')) {
+    throw 'Merge cancelled before rebase.'
 }
 
-$status = git status --porcelain
-if ($status) {
-    Write-Error "Working tree is not clean. Commit or stash changes first."
-    exit 1
-}
-
-Write-Host "==> Checking for WIP commits..."
-git log --oneline -6
-
-Write-Host ""
-Write-Host "If WIP commits exist at the tip that touch the same concern, squash them now:"
-Write-Host "  git reset --soft <hash-before-wips>; git commit -m '<clean message>'"
-Write-Host "Then re-run this script."
-$confirm = Read-Host "WIPs squashed (or none exist)? [y/N]"
-if ($confirm -notin @('y', 'Y')) { Write-Host "Aborted."; exit 1 }
-
-Write-Host "==> Fetching and rebasing on origin/main..."
-git fetch origin
-git rebase origin/main
-
-Write-Host "==> Reviewing commits to squash..."
-git log --oneline main..HEAD
-Write-Host ""
-$squash = Read-Host "Run interactive rebase to squash related-topic commits? [y/N]"
+& (Join-Path $PSScriptRoot 'merge-3-rebase.ps1') -BaseBranch $base
+& (Join-Path $PSScriptRoot 'merge-1-check.ps1') -BaseBranch $base
+$squash = Read-Host 'Squash all branch commits into one logical topic commit? [y/N]'
 if ($squash -in @('y', 'Y')) {
-    git rebase -i main
+    $message = Read-Host 'Commit message'
+    if ([string]::IsNullOrWhiteSpace($message)) {
+        throw 'A non-empty commit message is required.'
+    }
+    & (Join-Path $PSScriptRoot 'merge-2-squash.ps1') -Hash $base -Message $message -BaseBranch $base
 }
 
-Write-Host "==> Fast-forwarding main..."
-git checkout main
-git merge --ff-only $branch
-
-Write-Host "==> Pushing main..."
-git push origin main
-
-Write-Host "==> Deleting feature branch..."
-git branch -d $branch
-try { git push origin --delete $branch } catch { Write-Host "(remote branch not found, skipping)" }
-
-Write-Host ""
-git log --oneline -5
-Write-Host ""
-Write-Host "Merge complete. Branch '$branch' deleted."
+& (Join-Path $PSScriptRoot 'merge-4-finish.ps1') -BaseBranch $base

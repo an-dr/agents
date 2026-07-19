@@ -1,34 +1,21 @@
 # Skills
 
-Reusable agent actions. Each skill is a directory:
-
-```text
-skills/<name>/
-├── SKILL.md    # frontmatter (name, description, allowed-tools) + how to invoke
-└── scripts/    # .sh for Linux/macOS, .ps1 for Windows — only for mechanical steps
-```
-
-Agents check this directory before starting any phase (see `../AGENTS.md`) and
-follow a skill's `SKILL.md` instead of improvising the steps. `scripts/`
-exists only where the steps are mechanical; judgment-only skills are
-`SKILL.md` alone.
+Reusable agent actions. Each skill contains a concise `SKILL.md`; deterministic
+mechanical work may also use PowerShell 7 scripts under `scripts/`.
 
 | Skill | When to use |
-| ----- | ----------- |
-| [`adr`](adr/SKILL.md) | DESIGN — record a settled architectural decision as the next-numbered ADR |
-| [`adversarial-ut`](adversarial-ut/SKILL.md) | Start of a debug/cleanup iteration — build a bug-finding test suite before fixing anything |
-| [`code-review`](code-review/SKILL.md) | VERIFY (increment diff) and MR (full branch diff) — review for defects and rule violations |
-| [`debug`](debug/SKILL.md) | A failure resists quick code evaluation — reproduce, instrument, bisect to the root cause |
-| [`design`](design/SKILL.md) | DESIGN — a decision deeper than a quick pick: options table, steelman, pre-mortem |
-| [`merge`](merge/SKILL.md) | MERGE phase — rebase, squash, fast-forward the default branch, delete the feature branch |
-| [`retro`](retro/SKILL.md) | After MERGE or on request — process retrospective proposing instruction amendments |
+| --- | --- |
+| [`workflow`](workflow/SKILL.md) | Enforce and persist Quick, Detailed, or Detailed Auto work. |
+| [`install-powershell`](install-powershell/SKILL.md) | Bootstrap or verify PowerShell 7. |
+| [`adr`](adr/SKILL.md) | Record an architectural decision. |
+| [`adversarial-ut`](adversarial-ut/SKILL.md) | Build adversarial tests before fixing. |
+| [`code-review`](code-review/SKILL.md) | Record structured JSON findings and render review Markdown. |
+| [`debug`](debug/SKILL.md) | Diagnose a resistant failure. |
+| [`design`](design/SKILL.md) | Structure a deeper design decision. |
+| [`merge`](merge/SKILL.md) | Complete an approved Detailed merge. |
+| [`retro`](retro/SKILL.md) | Review and improve the process. |
 
-## Adding a skill
-
-1. Create `skills/<name>/SKILL.md` with frontmatter — `name` matching the
-   directory, `description` stating what it does *and* when to use it,
-   `allowed-tools` if restricted — and a usage section.
-2. Scripts are optional: add them when the steps are mechanical enough to
-   script, always in both `.sh` and `.ps1` variants; scripts exit non-zero
-   on failure.
-3. Register the skill in the tables here and in `../AGENTS.md`.
+To add a skill, create `skills/<verb-led-name>/SKILL.md` with `name` and a
+trigger-focused `description`. Add a PowerShell script only for repeated,
+mechanical operations and ensure it exits non-zero on failure. Register the
+skill in this table and in `../AGENTS.md`.

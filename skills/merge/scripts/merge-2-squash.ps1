@@ -1,20 +1,22 @@
 #Requires -Version 7
 param(
-    [Parameter(Mandatory)][string]$Hash,
-    [Parameter(Mandatory)][string]$Message
+    [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$Hash,
+    [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$Message,
+    [string]$BaseBranch
 )
+
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+Import-Module (Join-Path $PSScriptRoot 'Merge.Common.psm1') -Force
 
-$branch = git branch --show-current
-if ($branch -eq 'main') {
-    Write-Error "Already on main. Switch to the feature branch first."
-    exit 1
-}
+$base = Get-MergeBaseBranch -RequestedBranch $BaseBranch
+Assert-MergeFeatureBranch -BaseBranch $base | Out-Null
+Assert-GitCleanWorkingTree
+Invoke-GitCommand -Arguments @('rev-parse', '--verify', "$Hash^{commit}") | Out-Null
+Assert-GitAncestor -Ancestor $Hash -Descendant 'HEAD'
 
-Write-Host "==> Squashing commits since '$Hash' into one commit..."
-git reset --soft $Hash
-git commit -m $Message
-Write-Host ""
-Write-Host "==> Current log:"
-git log --oneline -6
+Write-Output "Squashing commits after '$Hash' into one commit..."
+Invoke-GitCommand -Arguments @('reset', '--soft', $Hash) | Out-Null
+Invoke-GitCommand -Arguments @('commit', '-m', $Message)
+Write-Output ''
+Invoke-GitCommand -Arguments @('log', '--oneline', '-6')

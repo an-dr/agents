@@ -1,7 +1,7 @@
 ---
 name: adr
 description: Record an architecture decision as the next-numbered ADR in docs/adr/. Use in DESIGN when the user settles a genuinely architectural question — not for tactical or tooling choices.
-allowed-tools: Bash, PowerShell
+allowed-tools: PowerShell
 ---
 
 # ADR
@@ -14,10 +14,9 @@ ADRs are immutable: supersede with a new one, never edit an existing one.
 
 ## Usage
 
-| Platform      | Command                                                    |
-| ------------- | ---------------------------------------------------------- |
-| Linux / macOS | `bash agents/skills/adr/scripts/adr-new.sh "<title>"`      |
-| Windows       | `pwsh agents/skills/adr/scripts/adr-new.ps1 "<title>"`     |
+```powershell
+pwsh agents/skills/adr/scripts/adr-new.ps1 -Title '<title>'
+```
 
 The script creates `docs/adr/ADR-NNN-<slug>.md` with the next free number and
 the section skeleton. Fill in the sections afterwards; every section stays

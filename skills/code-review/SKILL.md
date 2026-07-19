@@ -1,69 +1,66 @@
 ---
 name: code-review
-description: Review a diff for defects, security issues, structural problems, and outdated patterns. Use during VERIFY on the increment diff and before MR on the full branch diff.
-allowed-tools: Read, Grep, Glob, Bash
+description: Review a diff for defects, security issues, structural problems, convention violations, and outdated patterns. Use during VERIFY on an increment diff, before MR on the full branch diff, or when the user requests a code review; record structured findings in REPO/code-review JSON and render Markdown through the bundled PowerShell scripts.
 ---
 
 # Code review
 
-## Scope
+Use JSON as the canonical review record. Never hand-edit the JSON or generated
+Markdown; use the scripts so sections, stable IDs, and numbering remain valid.
 
-| Situation              | Diff to review                                                    |
-| ---------------------- | ----------------------------------------------------------------- |
-| VERIFY phase (default) | The current increment: uncommitted changes, or the last commit if the tree is clean |
-| MR phase               | The full branch: `git diff main...HEAD`                           |
-| On request             | A user-specified range or the full codebase                       |
+## Select the diff
 
-## Focus
+| Situation | Diff |
+| --- | --- |
+| VERIFY | Uncommitted increment changes, or the last commit when clean |
+| MR | Full feature branch against its base |
+| Requested | Range or codebase named by the user |
 
-Ordered by severity; report in this order.
+Review defects, security, structure, conventions, and modernization, in that
+order. Every finding needs a tight file location and concrete recommendation.
 
-1. **Defects** — broken logic, unhandled errors, missed edge cases, resource
-   leaks, race conditions.
-2. **Security** — unvalidated input, injection, secrets in code, crypto misuse.
-3. **Structure** — hidden coupling, wrong module boundaries, unnecessary
-   complexity or over-engineering, reinvented standard library.
-4. **Conventions** — violations of the *Code conventions* in `../../AGENTS.md`
-   (verb-first names, comment brevity, present-tense descriptions, `TODO`
-   markers) and of the host project's own style.
-5. **Modernization** — deprecated APIs and legacy patterns with better modern
-   equivalents in the language actually used.
+## Create the review
 
-## Output
+From the repository being reviewed, run:
 
-Write the report to `docs/reviews/YYYY-MM-DD-<branch-or-ref>.md` in the host
-repo (create `docs/reviews/` on first use) and summarize the critical
-findings in chat. Every finding gets a stable ID so follow-up increments can
-reference it.
-
-```markdown
-# Code review — <date>, <ref>
-
-## Summary
-<2–3 sentences: what changed, overall quality, count of critical findings>
-
-## Findings
-
-### Critical — must fix before merge
-- **CR.1** `file:line` — <problem>. Fix: <concrete change>.
-
-### High
-- **CR.2** `file:line` — <problem>. Fix: <concrete change>.
-
-### Improvements
-- **CR.3** `file:line` — <observation>. Better: <alternative and why>.
-
-## Positives
-<specific good decisions worth keeping — no generic praise>
-
-## Verdict
-<approve | approve with comments | changes required — and why>
+```powershell
+pwsh <skill>/scripts/review-start.ps1 -Reference '<branch-or-ref>' -Scope verify
 ```
 
-## Rules
+This creates `REPO/code-review/`, its `.gitignore`, and a schema-versioned JSON
+record from `assets/review-template.json`. Commit only the `.gitignore`; review
+state and rendered reports remain local unless the user explicitly requests
+otherwise.
 
-- Be specific: `file:line` and a concrete fix for every finding — no generic
-  advice, no fluff.
-- State problems directly ("this breaks when…"), no hedging.
-- Acknowledge honest tradeoffs; "good enough" can be the right call — say so.
-- Review only: fixes are new BUILD work. Never commit.
+## Record sections
+
+Use `review-note.ps1` for every change:
+
+```powershell
+pwsh <skill>/scripts/review-note.ps1 -ReviewPath <json> `
+  -Section critical -File src/app.ps1 -Line 42 `
+  -Text '<problem>' -Recommendation '<concrete fix>'
+
+pwsh <skill>/scripts/review-note.ps1 -ReviewPath <json> `
+  -Section summary -Text '<summary>'
+
+pwsh <skill>/scripts/review-note.ps1 -ReviewPath <json> `
+  -Section verdict -Decision changes-required -Text '<rationale>'
+```
+
+Finding sections are `critical`, `high`, and `improvement`; their IDs are
+assigned as `CR.N`, `HI.N`, and `IM.N`. Positive notes use `PO.N`. Summary and
+verdict are singleton sections and are updated rather than appended.
+
+## Render and report
+
+```powershell
+pwsh <skill>/scripts/review-render.ps1 -ReviewPath <json>
+```
+
+The renderer always emits the fixed Markdown section order. Summarize critical
+findings and the verdict in chat; keep the generated file as a local inspection
+artifact.
+
+Review only. Return fixes to BUILD, and never weaken tests or expand scope to
+make the review pass.

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "reviewId": "",
+  "reference": "",
+  "scope": "",
+  "createdAt": "",
+  "updatedAt": "",
+  "summary": "",
+  "sections": {
+    "critical": [],
+    "high": [],
+    "improvements": [],
+    "positives": []
+  },
+  "verdict": {
+    "decision": "pending",
+    "rationale": ""
+  }
+}
