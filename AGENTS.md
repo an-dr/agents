@@ -54,8 +54,10 @@ Before every phase, check the skill table and adopt the matching role.
 - **DESIGN:** surface options and tradeoffs. The user decides in Quick and
   Detailed; the agent records its reasoned choice in Detailed Auto.
 - **SPLIT:** create a complete numbered increment plan. Each Detailed increment
-  is about 300 changed lines or less. Use the controller to add or reorder future
-  increments; never rewrite completed or active history.
+  is about 300 changed lines or less. Present the plan with a per-increment
+  estimated-line-count table and obtain the `split` approval before advancing
+  to BRANCH. Use the controller to add or reorder future increments; never
+  rewrite completed or active history.
 - **BRANCH:** create a feature branch before Detailed work changes files.
 - **BUILD:** implement only the selected Quick option or current increment.
 - **VERIFY:** run tests and `code-review`; report failure cases, untested edges,

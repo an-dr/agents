@@ -11,7 +11,7 @@ param(
     [string]$Constraints,
     [string]$Done,
     [string]$OutOfScope,
-    [ValidateSet('requirements', 'design', 'verify', 'mr', 'merge', 'final')]
+    [ValidateSet('requirements', 'design', 'split', 'verify', 'mr', 'merge', 'final')]
     [string]$Gate,
     [string]$Note,
     [string]$Scope,
@@ -196,7 +196,7 @@ function Assert-WorkflowState {
     }
 
     foreach ($approval in @($State.approvals)) {
-        if ($approval.gate -notin @('requirements', 'design', 'verify', 'mr', 'merge', 'final') -or
+        if ($approval.gate -notin @('requirements', 'design', 'split', 'verify', 'mr', 'merge', 'final') -or
             [string]::IsNullOrWhiteSpace([string]$approval.note)) {
             throw 'Workflow contains a malformed approval record.'
         }
@@ -487,6 +487,7 @@ switch ($Command) {
         $expected = switch ($state.phase) {
             'START' { 'requirements' }
             'DESIGN' { 'design' }
+            'SPLIT' { 'split' }
             'VERIFY' { 'verify' }
             'MR' { 'mr' }
             'MERGE_READY' { 'merge' }
@@ -545,7 +546,7 @@ switch ($Command) {
         Set-IncrementNumbers -State $state
         if ($state.phase -in @('MR', 'MERGE_READY', 'FINAL_REVIEW')) {
             $state.phase = 'SPLIT'
-            $state.approvals = @($state.approvals).Where({ $_.gate -notin @('mr', 'merge', 'final') })
+            $state.approvals = @($state.approvals).Where({ $_.gate -notin @('split', 'mr', 'merge', 'final') })
         }
         Add-HistoryEntry -State $state -Action 'add-increment' -Detail "Inserted increment ${position}: $Scope"
         Save-WorkflowState -State $state -Path $workflowPath
@@ -599,6 +600,9 @@ switch ($Command) {
             'SPLIT' {
                 if (@($state.increments).Count -eq 0) {
                     throw 'Add at least one increment before leaving SPLIT.'
+                }
+                if ($state.flow -ne 'DetailedAuto') {
+                    Assert-Approval -State $state -GateName 'split'
                 }
                 $state.phase = 'BRANCH'
             }
