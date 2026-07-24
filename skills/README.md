@@ -7,6 +7,7 @@ mechanical work may also use PowerShell 7 scripts under `scripts/`.
 | --- | --- |
 | [`workflow`](workflow/SKILL.md) | Enforce and persist Quick, Detailed, or Detailed Auto work. |
 | [`install-powershell`](install-powershell/SKILL.md) | Bootstrap or verify PowerShell 7. |
+| [`agents-integration`](agents-integration/SKILL.md) | Onboard a host project onto this repo (submodule + `AGENTS.md`/`CLAUDE.md`). |
 | [`adr`](adr/SKILL.md) | Record an architectural decision. |
 | [`adversarial-ut`](adversarial-ut/SKILL.md) | Build adversarial tests before fixing. |
 | [`code-review`](code-review/SKILL.md) | Record structured JSON findings and render review Markdown. |
