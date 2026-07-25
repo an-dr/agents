@@ -33,4 +33,4 @@ plan a developer can execute without further design decisions. Writes no code.
 - [ ] All touch-points listed — including docs and tests, not just code.
 - [ ] Every increment fits the size rule (~300 changed lines).
 - [ ] Scope matches what START defined — nothing extra.
-- [ ] No step commits or merges; those belong to COMMIT/MERGE after user approval.
+- [ ] No step commits or integrations; those belong to COMMIT/MERGE after user approval.

@@ -11,7 +11,7 @@ param(
     [string]$Constraints,
     [string]$Done,
     [string]$OutOfScope,
-    [ValidateSet('requirements', 'design', 'split', 'verify', 'mr', 'merge', 'final')]
+    [ValidateSet('requirements', 'design', 'split', 'verify', 'summary', 'merge', 'final')]
     [string]$Gate,
     [string]$Note,
     [string]$Scope,
@@ -67,6 +67,15 @@ function Get-WorkflowState {
         throw "No active workflow exists at '$Path'."
     }
     $state = Get-Content -Raw -LiteralPath $Path | ConvertFrom-Json
+    if ($state.phase -eq 'MR') {
+        $state.phase = 'SUMMARY'
+    }
+    foreach ($approval in @($state.approvals)) {
+        if ($approval.gate -eq 'mr') {
+            $approval.gate = 'summary'
+            $approval.phase = 'SUMMARY'
+        }
+    }
     Assert-WorkflowState -State $state
     return $state
 }
@@ -89,6 +98,24 @@ function Assert-WorkflowTimestamp {
     }
 }
 
+function Get-WorkflowPhases {
+    param([Parameter(Mandatory)][string]$Flow)
+
+    if ($Flow -eq 'Quick') {
+        return @('START', 'DESIGN', 'BUILD', 'VERIFY', 'COMMIT')
+    }
+    if ($Flow -eq 'Detailed') {
+        return @(
+            'START', 'DESIGN', 'SPLIT', 'BRANCH', 'BUILD', 'VERIFY', 'COMMIT',
+            'SUMMARY', 'MERGE_READY', 'MERGE'
+        )
+    }
+    return @(
+        'START', 'DESIGN', 'SPLIT', 'BRANCH', 'BUILD', 'VERIFY', 'COMMIT',
+        'SUMMARY', 'FINAL_REVIEW', 'MERGE'
+    )
+}
+
 function Assert-WorkflowState {
     param([Parameter(Mandatory)]$State)
 
@@ -98,15 +125,7 @@ function Assert-WorkflowState {
     if ($State.flow -notin @('Quick', 'Detailed', 'DetailedAuto')) {
         throw "Unsupported workflow flow '$($State.flow)'."
     }
-    $validPhases = if ($State.flow -eq 'Quick') {
-        @('START', 'DESIGN', 'BUILD', 'VERIFY', 'COMMIT')
-    }
-    elseif ($State.flow -eq 'Detailed') {
-        @('START', 'DESIGN', 'SPLIT', 'BRANCH', 'BUILD', 'VERIFY', 'COMMIT', 'MR', 'MERGE_READY', 'MERGE')
-    }
-    else {
-        @('START', 'DESIGN', 'SPLIT', 'BRANCH', 'BUILD', 'VERIFY', 'COMMIT', 'MR', 'FINAL_REVIEW', 'MERGE')
-    }
+    $validPhases = @(Get-WorkflowPhases -Flow $State.flow)
     if ($State.phase -notin $validPhases) {
         throw "Phase '$($State.phase)' is invalid for flow '$($State.flow)'."
     }
@@ -186,7 +205,7 @@ function Assert-WorkflowState {
     if ($State.phase -ne 'COMMIT' -and $State.commitBaseline) {
         throw "commitBaseline is only valid during COMMIT, not '$($State.phase)'."
     }
-    if ($State.flow -ne 'Quick' -and $State.phase -in @('MR', 'MERGE_READY', 'FINAL_REVIEW', 'MERGE') -and
+    if ($State.flow -ne 'Quick' -and $State.phase -in @('SUMMARY', 'MERGE_READY', 'FINAL_REVIEW', 'MERGE') -and
         @($increments | Where-Object { $_.status -ne 'completed' }).Count -gt 0) {
         throw "Phase '$($State.phase)' requires every increment to be completed."
     }
@@ -196,7 +215,7 @@ function Assert-WorkflowState {
     }
 
     foreach ($approval in @($State.approvals)) {
-        if ($approval.gate -notin @('requirements', 'design', 'split', 'verify', 'mr', 'merge', 'final') -or
+        if ($approval.gate -notin @('requirements', 'design', 'split', 'verify', 'summary', 'merge', 'final') -or
             [string]::IsNullOrWhiteSpace([string]$approval.note)) {
             throw 'Workflow contains a malformed approval record.'
         }
@@ -397,21 +416,54 @@ function Assert-IncrementCommitted {
 }
 
 function Show-WorkflowStatus {
-    param([Parameter(Mandatory)]$State)
+    param(
+        [Parameter(Mandatory)]$State,
+        [ValidateSet('active', 'finished')]
+        [string]$Status = 'active'
+    )
 
     $flowLabel = if ($State.flow -eq 'DetailedAuto') { 'Detailed Auto' } else { $State.flow }
     $increment = Get-CurrentIncrement -State $State
-    Write-Output "Flow: $flowLabel"
-    Write-Output "Phase: $($State.phase)"
+    $incrementLabel = '—'
     if ($increment) {
-        Write-Output "Increment: $($increment.number) of $(@($State.increments).Count) — $($increment.scope)"
+        $incrementLabel = "$($increment.number)/$(@($State.increments).Count) — $($increment.scope)"
     }
     elseif (@($State.increments).Count -gt 0) {
-        Write-Output "Increments: $(@($State.increments).Count)"
+        $incrementLabel = "$(@($State.increments).Count) total"
+    }
+
+    Write-Output '<!-- AGENT INSTRUCTION: Present these workflow status tables to the user after every controller change. -->'
+    Write-Output '| Flow | Status | Increment |'
+    Write-Output '| --- | --- | --- |'
+    Write-Output "| $flowLabel | $Status | $incrementLabel |"
+    Write-Output ''
+    Write-Output '| Phase | Status |'
+    Write-Output '| --- | --- |'
+    $phases = @(Get-WorkflowPhases -Flow $State.flow)
+    $currentPhaseIndex = [Array]::IndexOf($phases, [string]$State.phase)
+    for ($index = 0; $index -lt $phases.Count; $index++) {
+        $phaseStatus = if ($Status -eq 'finished' -or $index -lt $currentPhaseIndex) {
+            'completed'
+        }
+        elseif ($index -eq $currentPhaseIndex) {
+            'current'
+        }
+        else {
+            'pending'
+        }
+        Write-Output "| $($phases[$index]) | $phaseStatus |"
+    }
+
+    if (@($State.increments).Count -gt 0) {
+        Write-Output ''
+        Write-Output '| # | Increment | Status |'
+        Write-Output '| ---: | --- | --- |'
     }
     foreach ($item in @($State.increments)) {
-        Write-Output "  $($item.number) [$($item.status)] $($item.scope) — $($item.description)"
+        $incrementText = "$($item.scope) — $($item.description)".Replace('|', '\|')
+        Write-Output "| $($item.number) | $incrementText | $($item.status) |"
     }
+    Write-Output ''
     Write-Output "Goal: $($State.requirements.goal)"
     Write-Output "Updated: $($State.updatedAt)"
 }
@@ -489,7 +541,7 @@ switch ($Command) {
             'DESIGN' { 'design' }
             'SPLIT' { 'split' }
             'VERIFY' { 'verify' }
-            'MR' { 'mr' }
+            'SUMMARY' { 'summary' }
             'MERGE_READY' { 'merge' }
             'FINAL_REVIEW' { 'final' }
             default { $null }
@@ -522,7 +574,7 @@ switch ($Command) {
             throw '-Scope and -Description are required for add-increment.'
         }
         if ($state.phase -eq 'MERGE') {
-            throw 'The approved workflow is ready to merge. Start a follow-up workflow for new scope.'
+            throw 'The approved workflow is ready to integrate. Start a follow-up workflow for new scope.'
         }
 
         $increments = [Collections.ArrayList]@(@($state.increments))
@@ -544,9 +596,9 @@ switch ($Command) {
         $increments.Insert($position - 1, $increment)
         $state.increments = @($increments)
         Set-IncrementNumbers -State $state
-        if ($state.phase -in @('MR', 'MERGE_READY', 'FINAL_REVIEW')) {
+        if ($state.phase -in @('SUMMARY', 'MERGE_READY', 'FINAL_REVIEW')) {
             $state.phase = 'SPLIT'
-            $state.approvals = @($state.approvals).Where({ $_.gate -notin @('split', 'mr', 'merge', 'final') })
+            $state.approvals = @($state.approvals).Where({ $_.gate -notin @('split', 'summary', 'merge', 'final') })
         }
         Add-HistoryEntry -State $state -Action 'add-increment' -Detail "Inserted increment ${position}: $Scope"
         Save-WorkflowState -State $state -Path $workflowPath
@@ -644,15 +696,15 @@ switch ($Command) {
                 }
                 else {
                     $state.currentIncrementId = $null
-                    $state.phase = 'MR'
+                    $state.phase = 'SUMMARY'
                 }
             }
-            'MR' {
+            'SUMMARY' {
                 if ($state.flow -eq 'DetailedAuto') {
                     $state.phase = 'FINAL_REVIEW'
                 }
                 else {
-                    Assert-Approval -State $state -GateName 'mr'
+                    Assert-Approval -State $state -GateName 'summary'
                     $state.phase = 'MERGE_READY'
                 }
             }
@@ -690,7 +742,8 @@ switch ($Command) {
         if ((Get-ChildItem -Force -LiteralPath $directory | Measure-Object).Count -eq 0) {
             Remove-Item -LiteralPath $directory
         }
-        Write-Output 'Workflow state removed. Commit this deletion with the final result before merging or sharing it.'
+        Write-Output 'Workflow state removed. Commit the deletion, then run remove-progress before integration.'
+        Show-WorkflowStatus -State $state -Status finished
     }
 }
 }

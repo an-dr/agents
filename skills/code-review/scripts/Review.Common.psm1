@@ -181,7 +181,7 @@ function Assert-ReviewJson {
             throw "Review JSON is missing '$property'."
         }
     }
-    if ($Review.scope -notin @('verify', 'mr', 'requested')) {
+    if ($Review.scope -notin @('verify', 'summary', 'requested')) {
         throw "Unsupported review scope '$($Review.scope)'."
     }
     foreach ($timestamp in @('createdAt', 'updatedAt')) {
@@ -222,6 +222,9 @@ function Read-ReviewJson {
         throw "Review JSON does not exist: $Path"
     }
     $review = Get-Content -Raw -LiteralPath $Path | ConvertFrom-Json
+    if ($review.scope -eq 'mr') {
+        $review.scope = 'summary'
+    }
     Assert-ReviewJson -Review $review
     $expectedName = "$($review.reviewId).review.json"
     if ((Split-Path -Leaf $Path) -ne $expectedName) {

@@ -67,7 +67,7 @@ $lines.Add($(if ($review.summary) { ConvertTo-MarkdownLine -Value $review.summar
 $lines.Add('')
 $lines.Add('## Findings')
 $lines.Add('')
-foreach ($line in Get-FindingSectionLines -Title 'Critical — must fix before merge' -Notes @($review.sections.critical)) { $lines.Add($line) }
+foreach ($line in Get-FindingSectionLines -Title 'Critical — must fix before integration' -Notes @($review.sections.critical)) { $lines.Add($line) }
 foreach ($line in Get-FindingSectionLines -Title 'High' -Notes @($review.sections.high)) { $lines.Add($line) }
 foreach ($line in Get-FindingSectionLines -Title 'Improvements' -Notes @($review.sections.improvements)) { $lines.Add($line) }
 $lines.Add('## Positives')

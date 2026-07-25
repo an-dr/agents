@@ -7,10 +7,10 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
-Import-Module (Join-Path $PSScriptRoot 'Merge.Common.psm1') -Force
+Import-Module (Join-Path $PSScriptRoot 'Integrate.Common.psm1') -Force
 
-$base = Get-MergeBaseBranch -RequestedBranch $BaseBranch
-Assert-MergeFeatureBranch -BaseBranch $base | Out-Null
+$base = Get-IntegrateBaseBranch -RequestedBranch $BaseBranch
+Assert-IntegrateFeatureBranch -BaseBranch $base | Out-Null
 Assert-GitCleanWorkingTree
 Invoke-GitCommand -Arguments @('rev-parse', '--verify', "$Hash^{commit}") | Out-Null
 Assert-GitAncestor -Ancestor $Hash -Descendant 'HEAD'

@@ -1,6 +1,6 @@
 ---
 name: retro
-description: Process retrospective at the end of a Detailed flow (after MERGE) or on request — find where the process itself caused friction and propose AGENTS.md or skill amendments for the user's approval.
+description: Process retrospective at the end of a Detailed flow (after integration) or on request — find where the process itself caused friction and propose AGENTS.md or skill amendments for the user's approval.
 ---
 
 # Retro

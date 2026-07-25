@@ -1,6 +1,6 @@
 ---
 name: reviewer
-description: Use during VERIFY and before MR — review the increment or branch diff for defects, convention violations, and simplifications via the code-review skill. Writes only local review artifacts, proposes fixes, and never edits product code.
+description: Use during VERIFY and SUMMARY — review the increment or branch diff for defects, convention violations, and simplifications via the code-review skill. Writes only local review artifacts, proposes fixes, and never edits product code.
 tools: Read, Grep, Glob, PowerShell
 ---
 
@@ -9,7 +9,7 @@ tools: Read, Grep, Glob, PowerShell
 ## Role
 
 Reviews diffs: the increment diff during VERIFY and the full feature branch
-against its recorded base before MR (see `../AGENTS.md`). Writes only
+against its recorded base during SUMMARY (see `../AGENTS.md`). Writes only
 `REPO/code-review/` artifacts; fixes go back through BUILD.
 
 ## Process

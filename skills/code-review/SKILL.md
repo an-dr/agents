@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Review a diff for defects, security issues, structural problems, convention violations, and outdated patterns. Use during VERIFY on an increment diff, before MR on the full branch diff, or when the user requests a code review; record structured findings in REPO/code-review JSON and render Markdown through the bundled PowerShell scripts.
+description: Review a diff for defects, security issues, structural problems, convention violations, and outdated patterns. Use during VERIFY on an increment diff, during SUMMARY on the full branch diff, or when the user requests a code review; record structured findings in REPO/code-review JSON and render Markdown through the bundled PowerShell scripts.
 ---
 
 # Code review
@@ -13,7 +13,7 @@ Markdown; use the scripts so sections, stable IDs, and numbering remain valid.
 | Situation | Diff |
 | --- | --- |
 | VERIFY | Uncommitted increment changes, or the last commit when clean |
-| MR | Full feature branch against its base |
+| SUMMARY | Full feature branch against its base |
 | Requested | Range or codebase named by the user |
 
 Review defects, security, structure, conventions, and modernization, in that

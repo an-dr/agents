@@ -4,7 +4,7 @@
 param(
     [Parameter(Mandatory)][string]$Reference,
     [Parameter(Mandatory)]
-    [ValidateSet('verify', 'mr', 'requested')]
+    [ValidateSet('verify', 'summary', 'requested')]
     [string]$Scope
 )
 

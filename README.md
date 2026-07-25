@@ -5,32 +5,34 @@ than conversational memory.
 
 `AGENTS.md` defines policy. `skills/workflow/scripts/workflow.ps1` enforces phase
 transitions and stores committable state in `.progress/workflow.json`, allowing a
-workflow to resume on another machine. Finished workflows remove that state.
+workflow to resume on another machine. Before integration, `remove-progress`
+removes that state from every feature-branch commit.
 
 ## Detailed
 
 For multi-increment, architectural, or public-interface work. The user shapes
 the design, approves each increment, reviews the branch, and explicitly approves
-the merge.
+integration.
 
 ```mermaid
 flowchart TD
 START --> DESIGN --> SPLIT --> BRANCH --> BUILD --> VERIFY --> COMMIT
 COMMIT -->|more increments| BUILD
-COMMIT -->|plan complete| MR --> MERGE_READY --> MERGE
+COMMIT -->|plan complete| SUMMARY --> MERGE_READY --> MERGE
 ```
 
 ## Detailed Auto
 
-Runs the same phases, reviews, tests, commits, and merge preparation as Detailed.
+Runs the same phases, reviews, tests, commits, and integration preparation as
+Detailed.
 The agent handles intermediate decisions; the user is involved once at the final
-review, whose approval authorizes merge.
+summary, whose approval authorizes integration.
 
 ```mermaid
 flowchart TD
 START --> DESIGN --> SPLIT --> BRANCH --> BUILD --> VERIFY --> COMMIT
 COMMIT -->|more increments| BUILD
-COMMIT -->|plan complete| MR --> FINAL_REVIEW --> MERGE
+COMMIT -->|plan complete| SUMMARY --> FINAL_REVIEW --> MERGE
 ```
 
 ## Quick
@@ -45,7 +47,9 @@ START --> DESIGN --> BUILD --> VERIFY --> COMMIT
 
 Future Detailed increments can be inserted or reordered without changing active
 or completed increment identity. The controller validates approvals, branches,
-commits, and legal transitions before saving state atomically.
+commits, and legal transitions before saving state atomically. Every controller
+change prints user-presentable Markdown tables for the workflow phases and
+increment statuses.
 
 ## Repository layout
 
@@ -54,4 +58,5 @@ commits, and legal transitions before saving state atomically.
 - `code-review/` — ignored local review JSON and generated Markdown
 - `skills/workflow/` — executable workflow state machine
 - `skills/install-powershell/` — PowerShell 7 bootstrap instructions
-- `skills/` — review, design, ADR, debug, merge, and retrospective actions
+- `skills/` — review, design, ADR, debug, summary, progress cleanup,
+  integration, and retrospective actions

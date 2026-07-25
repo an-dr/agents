@@ -31,7 +31,7 @@ Supported flows:
 
 - `Quick`: one build/verify/commit pass with user decisions and verification.
 - `Detailed`: increments, a feature branch, per-increment user verification,
-  merge review, and explicit merge approval.
+  integration summary, and explicit integration approval.
 - `DetailedAuto`: the same engineering phases as Detailed, but the agent makes
   intermediate decisions and the user approves once at `FINAL_REVIEW`.
 
@@ -48,15 +48,16 @@ pwsh <script> move-increment -Number 4 -To 2
 pwsh <script> finish
 ```
 
-Run `status` before every response while state exists. Report its flow, phase,
-and increment line verbatim. `advance` rejects missing approvals, missing
-increments, wrong branches, uncommitted increments, and illegal transitions.
+Run `status` before every response while state exists. Present the controller's
+Markdown status table to the user verbatim, as its emitted agent instruction
+requires. `advance` rejects missing approvals, missing increments, wrong
+branches, uncommitted increments, and illegal transitions.
 
 Only planned increments can be inserted or reordered. Completed and active
 increments retain immutable IDs and fixed positions; renumbering never changes
 which increment is active.
 
-New work discovered in `MR`, `MERGE_READY`, or `FINAL_REVIEW` can be added as an
+New work discovered in `SUMMARY`, `MERGE_READY`, or `FINAL_REVIEW` can be added as an
 increment. The controller invalidates final approvals and returns to `SPLIT` so
 the new work passes through the complete branch cycle before another review.
 
@@ -72,8 +73,8 @@ statuses) with no IDs. Read it for a quick human-facing status check instead
 of parsing `workflow.json`. `finish` deletes it along with `workflow.json`.
 
 Run `finish` at Quick/COMMIT before the final Quick commit, or at Detailed/MERGE
-before the final squash and merge. Commit the deletion so `.progress/` is absent
-from the completed repository tree.
+before integration. Commit the deletion, then run `remove-progress` so
+`.progress/` is absent from every delivered feature-branch commit.
 
 The controller records approval evidence; it never supplies user approval. In
 Detailed Auto, code review, tests, documentation checks, and clean commits still

@@ -25,12 +25,12 @@ function Get-GitCurrentBranch {
     <# Returns the checked-out branch and rejects detached HEAD. #>
     $branch = (@(Invoke-GitCommand -Arguments @('branch', '--show-current')) -join '').Trim()
     if ([string]::IsNullOrWhiteSpace($branch)) {
-        throw 'Merge operations require a checked-out branch, not detached HEAD.'
+        throw 'Integration operations require a checked-out branch, not detached HEAD.'
     }
     return $branch
 }
 
-function Get-MergeBaseBranch {
+function Get-IntegrateBaseBranch {
     <# Resolves an explicit base or detects the repository default branch. #>
     param([string]$RequestedBranch)
 
@@ -56,7 +56,7 @@ function Get-MergeBaseBranch {
     throw 'Cannot detect the base branch. Pass -BaseBranch explicitly.'
 }
 
-function Assert-MergeFeatureBranch {
+function Assert-IntegrateFeatureBranch {
     <# Verifies that HEAD is a feature branch and returns its name. #>
     param([Parameter(Mandatory)][string]$BaseBranch)
 
@@ -100,5 +100,5 @@ function Test-GitRemoteBranch {
 }
 
 Export-ModuleMember -Function Assert-GitAncestor, Assert-GitCleanWorkingTree,
-    Assert-MergeFeatureBranch, Get-GitCurrentBranch, Get-MergeBaseBranch,
+    Assert-IntegrateFeatureBranch, Get-GitCurrentBranch, Get-IntegrateBaseBranch,
     Invoke-GitCommand, Test-GitLocalBranch, Test-GitRemoteBranch

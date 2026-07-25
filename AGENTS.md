@@ -35,16 +35,18 @@ and `.progress/workflow.json`. Run it instead of inferring the next phase from
 conversation history. If prose conflicts with a controller result, stop and
 report the conflict.
 
-While progress exists, begin every response with the controller's flow, phase,
-and increment output. Commit `.progress/workflow.json` with checkpoints and
-increment commits when the work must be resumed on another machine. Run the
-controller's `finish` operation at the terminal gate and commit its deletion;
-completed repositories do not retain `.progress/`.
+While progress exists, begin every response with the controller's emitted
+workflow status tables, exactly as their output comment instructs. Commit
+`.progress/workflow.json` with checkpoints and increment commits when the work
+must be resumed on another machine. Run the controller's `finish` operation at
+the terminal gate and commit its deletion. Before integration,
+`remove-progress` removes `.progress/` from every feature-branch commit;
+completed repositories retain no workflow state.
 
 Detailed Auto removes intermediate user gates, not engineering work. The agent
 still designs, splits, branches, builds, verifies, reviews, documents, and
-commits every increment. The user receives the full merge review at the end;
-their final approval authorizes the merge phase.
+commits every increment. The user receives the full integration summary at the
+end; their final approval authorizes the merge phase.
 
 ## Phase responsibilities
 
@@ -63,8 +65,10 @@ Before every phase, check the skill table and adopt the matching role.
 - **VERIFY:** run tests and `code-review`; report failure cases, untested edges,
   doc gaps, scope, and docs consistency. Issues return to BUILD.
 - **COMMIT:** commit only verified work. Include current progress state.
-- **MR:** review the full branch and prepare the merge-review description below.
-- **MERGE:** run only after the required user gate, using the `merge` skill.
+- **SUMMARY:** review the full branch and prepare the handoff using the
+  `summary` skill.
+- **MERGE:** run only after the required user gate. Run `workflow finish`,
+  commit its deletion, use `remove-progress`, then use `integrate`.
 
 ```text
 ## What changed
@@ -86,7 +90,7 @@ Before every phase, check the skill table and adopt the matching role.
   this approach was used, and what was deliberately left out.
 - Quick and Detailed verification is approved only by the user. Detailed Auto
   verification is performed and recorded by the agent until final review.
-- Passing verification never implies merge permission.
+- Passing verification never implies integration permission.
 - Do not expand scope silently. Add a future increment through the controller
   in Detailed flows; propose follow-up work in Quick.
 - When the user rejects output, redo the delivery from its explanation rather
@@ -103,12 +107,13 @@ Before every phase, check the skill table and adopt the matching role.
 - Commit messages have a one-line summary and, only when needed, a body of at
   most 2–3 sentences. Never add AI attribution or co-author trailers.
 - Committing does not authorize pushing. Push only on explicit request or as
-  part of an approved merge.
-- Merges use rebase, logical squashing, and a fast-forward of the default branch;
-  never a merge commit. Delete the feature branch after success.
-- Before MERGE, verify that `.progress/` is absent from the staged diff and
-  `git ls-tree -r HEAD -- .progress` is empty. Workflow state is never part of
-  a delivered feature commit.
+  part of an approved integration.
+- Integrations use rebase, logical squashing, and a fast-forward of the default
+  branch; never a merge commit. Delete the feature branch after success.
+- Before integration, run `remove-progress` and verify both
+  `git log <base>..HEAD -- .progress` and
+  `git ls-tree -r HEAD -- .progress` are empty. Workflow state is never part of
+  delivered history.
 
 ## Code conventions
 
@@ -138,8 +143,10 @@ before acting and use its PowerShell scripts for mechanical operations.
 | `code-review` | Review an increment or full branch diff. |
 | `debug` | Reproduce and instrument a resistant failure. |
 | `design` | Explore a deeper decision with options, steelman, and pre-mortem. |
-| `merge` | Rebase, squash, fast-forward, push, and delete a branch. |
-| `retro` | Propose process improvements after merge or on request. |
+| `summary` | Review the full branch and prepare the integration handoff. |
+| `remove-progress` | Remove `.progress/` from every feature-branch commit. |
+| `integrate` | Rebase, squash, fast-forward, push, and delete a branch. |
+| `retro` | Propose process improvements after integration or on request. |
 
 ADRs are immutable; supersede them instead of editing them. Use ADRs only for
 lasting architectural decisions, not tactical or tooling choices.
@@ -153,7 +160,7 @@ Role definitions live in `agents/<name>.md` next to this file.
 | `architect` | DESIGN, SPLIT |
 | `developer` | BUILD |
 | `tester` | VERIFY tests |
-| `reviewer` | VERIFY review, MR |
+| `reviewer` | VERIFY review, SUMMARY |
 
 Every file has one correct location in the host repository. Flag ambiguity
 before creating a file.

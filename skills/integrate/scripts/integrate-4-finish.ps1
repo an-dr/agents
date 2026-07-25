@@ -3,10 +3,10 @@ param([string]$BaseBranch)
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
-Import-Module (Join-Path $PSScriptRoot 'Merge.Common.psm1') -Force
+Import-Module (Join-Path $PSScriptRoot 'Integrate.Common.psm1') -Force
 
-$base = Get-MergeBaseBranch -RequestedBranch $BaseBranch
-$branch = Assert-MergeFeatureBranch -BaseBranch $base
+$base = Get-IntegrateBaseBranch -RequestedBranch $BaseBranch
+$branch = Assert-IntegrateFeatureBranch -BaseBranch $base
 Assert-GitCleanWorkingTree
 
 Write-Output "Refreshing 'origin/$base'..."
@@ -29,4 +29,4 @@ else {
 }
 Write-Output ''
 Invoke-GitCommand -Arguments @('log', '--oneline', '-5')
-Write-Output "Merge complete. Feature branch '$branch' was removed."
+Write-Output "Integration complete. Feature branch '$branch' was removed."

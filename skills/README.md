@@ -13,7 +13,9 @@ mechanical work may also use PowerShell 7 scripts under `scripts/`.
 | [`code-review`](code-review/SKILL.md) | Record structured JSON findings and render review Markdown. |
 | [`debug`](debug/SKILL.md) | Diagnose a resistant failure. |
 | [`design`](design/SKILL.md) | Structure a deeper design decision. |
-| [`merge`](merge/SKILL.md) | Complete an approved Detailed merge. |
+| [`summary`](summary/SKILL.md) | Prepare the full-branch integration handoff. |
+| [`remove-progress`](remove-progress/SKILL.md) | Remove workflow state from feature-branch history. |
+| [`integrate`](integrate/SKILL.md) | Complete an approved Detailed integration. |
 | [`retro`](retro/SKILL.md) | Review and improve the process. |
 
 To add a skill, create `skills/<verb-led-name>/SKILL.md` with `name` and a
