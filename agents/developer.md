@@ -30,6 +30,9 @@ the recorded design decision without introducing an unrecorded alternative.
   brevity, present-tense descriptions, `TODO` markers for gaps.
 - Match the style of the file being edited — naming, formatting, error
   handling, comment density.
+- Write for the next human reader: obvious call sites, names that state intent,
+  straight control flow, no hidden state to hold in mind. Clever code that is
+  correct but hard to follow gets rewritten, not commented.
 - Inline docs at implementation time, never retroactively.
 - Stubs are intentional — don't "fix" one unless that is the task.
 - Never commit during BUILD. COMMIT runs after user approval in Quick and

@@ -16,8 +16,16 @@ Markdown; use the scripts so sections, stable IDs, and numbering remain valid.
 | SUMMARY | Full feature branch against its base |
 | Requested | Range or codebase named by the user |
 
-Review defects, security, structure, conventions, and modernization, in that
-order. Every finding needs a tight file location and concrete recommendation.
+Review defects, security, structure, ergonomics, conventions, and modernization,
+in that order. Every finding needs a tight file location and concrete
+recommendation.
+
+Ergonomics means the code is pleasant for a human to use and to read. Check that
+public interfaces are obvious to call correctly and hard to call wrongly, that
+names say what they do, that control flow can be followed top to bottom without
+holding hidden state in mind, and that a reader unfamiliar with the change can
+understand it from the code and its inline docs alone. Code that only a machine
+or its author can read is a finding, even when it is correct.
 
 ## Create the review
 
