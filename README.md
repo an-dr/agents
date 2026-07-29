@@ -17,6 +17,7 @@ integration.
 ```mermaid
 flowchart TD
 START --> DESIGN --> SPLIT --> BRANCH --> BUILD --> VERIFY --> COMMIT
+VERIFY -->|issues| BUILD
 COMMIT -->|more increments| BUILD
 COMMIT -->|plan complete| SUMMARY --> MERGE_READY --> MERGE
 ```
@@ -31,6 +32,7 @@ summary, whose approval authorizes integration.
 ```mermaid
 flowchart TD
 START --> DESIGN --> SPLIT --> BRANCH --> BUILD --> VERIFY --> COMMIT
+VERIFY -->|issues| BUILD
 COMMIT -->|more increments| BUILD
 COMMIT -->|plan complete| SUMMARY --> FINAL_REVIEW --> MERGE
 ```
@@ -43,6 +45,7 @@ uses one build/verify/commit pass on the current branch.
 ```mermaid
 flowchart TD
 START --> DESIGN --> BUILD --> VERIFY --> COMMIT
+VERIFY -->|issues| BUILD
 ```
 
 Future Detailed increments can be inserted or reordered without changing active

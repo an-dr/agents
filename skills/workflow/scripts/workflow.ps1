@@ -2,7 +2,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Position = 0, Mandatory)]
-    [ValidateSet('start', 'status', 'advance', 'approve', 'add-increment', 'move-increment', 'finish')]
+    [ValidateSet('start', 'status', 'advance', 'return-to-build', 'approve', 'add-increment', 'move-increment', 'finish')]
     [string]$Command,
 
     [ValidateSet('Detailed', 'DetailedAuto', 'Quick')]
@@ -721,6 +721,21 @@ switch ($Command) {
             }
         }
         Add-HistoryEntry -State $state -Action 'advance' -Detail "Advanced from $previousPhase to $($state.phase)."
+        Save-WorkflowState -State $state -Path $workflowPath
+        Show-WorkflowStatus -State $state
+    }
+
+    'return-to-build' {
+        $state = Get-WorkflowState -Path $workflowPath
+        Assert-WorkflowBranch -State $state
+        if ($state.phase -ne 'VERIFY') {
+            throw "Workflow can only return to BUILD from VERIFY; current phase is $($state.phase)."
+        }
+        $state.phase = 'BUILD'
+        $state.approvals = @($state.approvals).Where({
+            $_.gate -ne 'verify' -or $_.incrementId -ne $state.currentIncrementId
+        })
+        Add-HistoryEntry -State $state -Action 'return-to-build' -Detail 'Returned from VERIFY to BUILD.'
         Save-WorkflowState -State $state -Path $workflowPath
         Show-WorkflowStatus -State $state
     }

@@ -43,6 +43,7 @@ end-only involvement.
 ```powershell
 pwsh <script> approve -Gate requirements -Note '<user confirmation>'
 pwsh <script> advance
+pwsh <script> return-to-build
 pwsh <script> add-increment -At 2 -Scope '<scope>' -Description '<result>'
 pwsh <script> move-increment -Number 4 -To 2
 pwsh <script> finish
@@ -52,6 +53,8 @@ Run `status` before every response while state exists. Present the controller's
 Markdown status table to the user verbatim, as its emitted agent instruction
 requires. `advance` rejects missing approvals, missing increments, wrong
 branches, uncommitted increments, and illegal transitions.
+`return-to-build` records a failed verification, invalidates the increment's
+verification approval, and resumes BUILD without changing increment identity.
 
 Only planned increments can be inserted or reordered. Completed and active
 increments retain immutable IDs and fixed positions; renumbering never changes
