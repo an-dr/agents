@@ -2,7 +2,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Position = 0, Mandatory)]
-    [ValidateSet('start', 'status', 'advance', 'return-to-build', 'approve', 'add-increment', 'move-increment', 'defer-increment', 'finish')]
+    [ValidateSet('start', 'status', 'advance', 'return-to-build', 'approve', 'add-increment', 'move-increment', 'defer-increment', 'remove-increment', 'finish')]
     [string]$Command,
 
     [ValidateSet('Detailed', 'DetailedAuto', 'Quick')]
@@ -682,6 +682,58 @@ switch ($Command) {
         $taking = Get-CurrentIncrement -State $state
         Add-HistoryEntry -State $state -Action 'defer-increment' `
             -Detail "Deferred '$($current.scope)' to position $To; started '$($taking.scope)'."
+        Save-WorkflowState -State $state -Path $workflowPath
+        Show-WorkflowStatus -State $state
+    }
+
+    # Drops work the user has decided against. Completed increments are history
+    # and stay; only planned work, or an active increment nothing was built for,
+    # can leave the plan.
+    'remove-increment' {
+        $state = Get-WorkflowState -Path $workflowPath
+        Assert-WorkflowBranch -State $state
+        if (-not $PSBoundParameters.ContainsKey('Number')) {
+            throw '-Number is required for remove-increment.'
+        }
+        $increments = [Collections.ArrayList]@(@($state.increments))
+        if ($Number -lt 1 -or $Number -gt $increments.Count) {
+            throw "Increment positions must be between 1 and $($increments.Count)."
+        }
+        $increment = $increments[$Number - 1]
+        if ($increment.status -eq 'completed') {
+            throw 'A completed increment is delivered history and cannot be removed.'
+        }
+        $isActive = $increment.id -eq $state.currentIncrementId
+        if ($increment.status -ne 'planned' -and -not $isActive) {
+            throw "Increment $Number is not planned and not the active increment."
+        }
+        if ($isActive) {
+            if ($state.phase -ne 'BUILD') {
+                throw "Removing the active increment is only available in BUILD, not '$($state.phase)'."
+            }
+            # Same evidence rule as defer-increment: a clean tree shows nothing
+            # was built. Work already committed under it is invisible here.
+            $changes = @(git status --porcelain -- . ':(exclude).progress')
+            if ($changes.Count -gt 0) {
+                throw 'The working tree must be clean, apart from .progress, to remove the active increment.'
+            }
+        }
+
+        $increments.RemoveAt($Number - 1)
+        $state.increments = @($increments)
+        if ($isActive) {
+            $state.currentIncrementId = $null
+            if (@($state.increments).Where({ $_.status -eq 'planned' }).Count -gt 0) {
+                Start-NextIncrement -State $state
+            }
+            else {
+                # Nothing left to build: the branch is ready for its review.
+                $state.phase = 'SUMMARY'
+            }
+        }
+        Set-IncrementNumbers -State $state
+        Add-HistoryEntry -State $state -Action 'remove-increment' `
+            -Detail "Removed increment ${Number}: $($increment.scope)."
         Save-WorkflowState -State $state -Path $workflowPath
         Show-WorkflowStatus -State $state
     }

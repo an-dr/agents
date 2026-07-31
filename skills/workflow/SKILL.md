@@ -47,6 +47,7 @@ pwsh <script> return-to-build
 pwsh <script> add-increment -At 2 -Scope '<scope>' -Description '<result>'
 pwsh <script> move-increment -Number 4 -To 2
 pwsh <script> defer-increment -To 6
+pwsh <script> remove-increment -Number 7
 pwsh <script> finish
 ```
 
@@ -70,6 +71,13 @@ The clean tree is the only evidence the controller has that nothing was built
 yet; work already committed under the increment is invisible to it, so never
 defer an increment whose commits are on the branch. Increment IDs survive a
 deferral, so its history and approvals stay attached to it.
+
+`remove-increment` drops work the user has decided against. A completed
+increment is delivered history and cannot be removed. The active increment can
+be, under the same BUILD-and-clean-tree rule as `defer-increment`; the next
+planned increment then starts, or the flow moves to `SUMMARY` when none remains.
+Removing an increment is a scope change, so record why in the response — the
+plan no longer explains its own shape.
 
 New work discovered in `SUMMARY`, `MERGE_READY`, or `FINAL_REVIEW` can be added as an
 increment. The controller invalidates final approvals and returns to `SPLIT` so
