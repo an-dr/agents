@@ -46,6 +46,7 @@ pwsh <script> advance
 pwsh <script> return-to-build
 pwsh <script> add-increment -At 2 -Scope '<scope>' -Description '<result>'
 pwsh <script> move-increment -Number 4 -To 2
+pwsh <script> defer-increment -To 6
 pwsh <script> finish
 ```
 
@@ -56,9 +57,19 @@ branches, uncommitted increments, and illegal transitions.
 `return-to-build` records a failed verification, invalidates the increment's
 verification approval, and resumes BUILD without changing increment identity.
 
-Only planned increments can be inserted or reordered. Completed and active
-increments retain immutable IDs and fixed positions; renumbering never changes
-which increment is active.
+Only planned increments can be inserted or reordered with `move-increment`.
+Completed increments retain immutable IDs and fixed positions; renumbering never
+changes which increment is active.
+
+`defer-increment` is the one way the *active* increment changes position. Use it
+when priorities move an untouched increment later — not to escape an increment
+already under way. It returns the active increment to `planned` at `-To`, starts
+the increment that now sits first among the planned ones, and stays in `BUILD`.
+It requires a clean working tree and refuses when no planned increment remains.
+The clean tree is the only evidence the controller has that nothing was built
+yet; work already committed under the increment is invisible to it, so never
+defer an increment whose commits are on the branch. Increment IDs survive a
+deferral, so its history and approvals stay attached to it.
 
 New work discovered in `SUMMARY`, `MERGE_READY`, or `FINAL_REVIEW` can be added as an
 increment. The controller invalidates final approvals and returns to `SPLIT` so

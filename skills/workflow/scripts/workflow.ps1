@@ -2,7 +2,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Position = 0, Mandatory)]
-    [ValidateSet('start', 'status', 'advance', 'return-to-build', 'approve', 'add-increment', 'move-increment', 'finish')]
+    [ValidateSet('start', 'status', 'advance', 'return-to-build', 'approve', 'add-increment', 'move-increment', 'defer-increment', 'finish')]
     [string]$Command,
 
     [ValidateSet('Detailed', 'DetailedAuto', 'Quick')]
@@ -628,6 +628,60 @@ switch ($Command) {
         $state.increments = @($increments)
         Set-IncrementNumbers -State $state
         Add-HistoryEntry -State $state -Action 'move-increment' -Detail "Moved increment $Number to $To."
+        Save-WorkflowState -State $state -Path $workflowPath
+        Show-WorkflowStatus -State $state
+    }
+
+    # Reorders the active increment itself, which move-increment cannot: the
+    # state invariant keeps the active increment ahead of every planned one, so
+    # it can only change position by returning to 'planned' while the increment
+    # that replaces it becomes active in the same operation.
+    'defer-increment' {
+        $state = Get-WorkflowState -Path $workflowPath
+        Assert-WorkflowBranch -State $state
+        if (-not $PSBoundParameters.ContainsKey('To')) {
+            throw '-To is required for defer-increment.'
+        }
+        if ($state.phase -ne 'BUILD') {
+            throw "defer-increment is only available in BUILD, not '$($state.phase)'."
+        }
+        $current = Get-CurrentIncrement -State $state
+        if (-not $current) {
+            throw 'There is no active increment to defer.'
+        }
+        # A clean tree is the evidence that nothing was built for this increment
+        # yet. Work already committed under it cannot be detected here, so the
+        # caller must not defer an increment whose commits are on the branch.
+        # `.progress/` is excluded because the controller rewrites it on every
+        # command, which would otherwise make this guard block itself.
+        $changes = @(git status --porcelain -- . ':(exclude).progress')
+        if ($changes.Count -gt 0) {
+            throw 'The working tree must be clean, apart from .progress, to defer the active increment.'
+        }
+
+        $increments = [Collections.ArrayList]@(@($state.increments))
+        $position = $increments.IndexOf($current)
+        $completedCount = @($state.increments).Where({ $_.status -eq 'completed' }).Count
+        if (@($state.increments).Where({ $_.status -eq 'planned' }).Count -lt 1) {
+            throw 'No planned increment remains to take over from the deferred one.'
+        }
+        # The increment taking over occupies the first post-completed slot, so a
+        # deferral has to land at least one place behind it.
+        $earliest = $completedCount + 2
+        if ($To -lt $earliest -or $To -gt $increments.Count) {
+            throw "The deferred increment must move to a position between $earliest and $($increments.Count)."
+        }
+
+        $current.status = 'planned'
+        $state.currentIncrementId = $null
+        $increments.RemoveAt($position)
+        $increments.Insert($To - 1, $current)
+        $state.increments = @($increments)
+        Start-NextIncrement -State $state
+        Set-IncrementNumbers -State $state
+        $taking = Get-CurrentIncrement -State $state
+        Add-HistoryEntry -State $state -Action 'defer-increment' `
+            -Detail "Deferred '$($current.scope)' to position $To; started '$($taking.scope)'."
         Save-WorkflowState -State $state -Path $workflowPath
         Show-WorkflowStatus -State $state
     }
