@@ -61,5 +61,6 @@ increment statuses.
 - `code-review/` — ignored local review JSON and generated Markdown
 - `skills/workflow/` — executable workflow state machine
 - `skills/install-powershell/` — PowerShell 7 bootstrap instructions
+- `skills/install-agents/` — global installation for local AI tools
 - `skills/` — review, design, ADR, debug, summary, progress cleanup,
   integration, and retrospective actions

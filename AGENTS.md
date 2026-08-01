@@ -138,6 +138,7 @@ before acting and use its PowerShell scripts for mechanical operations.
 | `workflow` | Start, resume, advance, approve, reshape, or finish a workflow. |
 | `install-powershell` | Install or verify PowerShell 7 before running scripts. |
 | `agents-integration` | Onboard a host project: add the `agents` submodule and root `AGENTS.md`/`CLAUDE.md`. |
+| `install-agents` | Install this clone globally for local AI tools instead of per repository. |
 | `adr` | Record a settled architectural decision. |
 | `adversarial-ut` | Build bug-finding tests before a debug or cleanup fix. |
 | `code-review` | Review an increment or full branch diff. |
