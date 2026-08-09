@@ -2,7 +2,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Position = 0, Mandatory)]
-    [ValidateSet('start', 'status', 'advance', 'return-to-build', 'approve', 'add-increment', 'move-increment', 'defer-increment', 'remove-increment', 'finish')]
+    [ValidateSet('start', 'status', 'advance', 'return-to-build', 'approve', 'add-increment', 'move-increment', 'defer-increment', 'remove-increment', 'add-question', 'answer-question', 'dismiss-question', 'finish')]
     [string]$Command,
 
     [ValidateSet('Detailed', 'DetailedAuto', 'Quick')]
@@ -11,9 +11,11 @@ param(
     [string]$Constraints,
     [string]$Done,
     [string]$OutOfScope,
-    [ValidateSet('requirements', 'design', 'split', 'verify', 'summary', 'integrate', 'final')]
+    [ValidateSet('implement', 'verify', 'integrate')]
     [string]$Gate,
     [string]$Note,
+    [string]$Text,
+    [string]$Answer,
     [string]$Scope,
     [string]$Description,
     [int]$At,
@@ -67,26 +69,20 @@ function Get-WorkflowState {
         throw "No active workflow exists at '$Path'."
     }
     $state = Get-Content -Raw -LiteralPath $Path | ConvertFrom-Json
-    if ($state.phase -eq 'MR') {
+    # Phases that no longer exist collapse into the one that replaced them.
+    if ($state.phase -in @('MR', 'MERGE_READY', 'INTEGRATE_READY')) {
         $state.phase = 'SUMMARY'
-    }
-    # State written before the phase was renamed still says MERGE.
-    if ($state.phase -eq 'MERGE_READY') {
-        $state.phase = 'INTEGRATE_READY'
     }
     if ($state.phase -eq 'MERGE') {
         $state.phase = 'INTEGRATE'
     }
-    foreach ($approval in @($state.approvals)) {
-        if ($approval.gate -eq 'mr') {
-            $approval.gate = 'summary'
-            $approval.phase = 'SUMMARY'
-        }
-        if ($approval.gate -eq 'merge') {
-            $approval.gate = 'integrate'
-            $approval.phase = 'INTEGRATE_READY'
-        }
+    if (-not $state.PSObject.Properties['questions']) {
+        $state | Add-Member -NotePropertyName questions -NotePropertyValue @()
     }
+    # Approvals under retired gate names are dropped rather than remapped: the
+    # gates they authorized no longer exist, so the user re-authorizes under the
+    # current ones. The history entries keep the record of what was approved.
+    $state.approvals = @(@($state.approvals).Where({ $_.gate -in @('implement', 'verify', 'integrate') }))
     Assert-WorkflowState -State $state
     return $state
 }
@@ -109,6 +105,39 @@ function Assert-WorkflowTimestamp {
     }
 }
 
+function Get-WorkflowQuestion {
+    <# Returns the question list, tolerating state written before it existed. #>
+    param([Parameter(Mandatory)]$State)
+
+    if (-not $State.PSObject.Properties['questions']) { return @() }
+    return @($State.questions)
+}
+
+function Get-OpenQuestion {
+    <# Returns the questions still waiting on the user. #>
+    param([Parameter(Mandatory)]$State)
+
+    return @((Get-WorkflowQuestion -State $State).Where({ $_.status -eq 'open' }))
+}
+
+function Resolve-Question {
+    <# Returns the question at -Number, or explains why it cannot be used. #>
+    param(
+        [Parameter(Mandatory)]$State,
+        [Parameter(Mandatory)][AllowNull()][object]$Number,
+        [Parameter(Mandatory)]$Bound
+    )
+
+    if (-not $Bound.ContainsKey('Number')) {
+        throw '-Number is required; it is the number shown in the question table.'
+    }
+    $questions = @(Get-WorkflowQuestion -State $State)
+    if ($Number -lt 1 -or $Number -gt $questions.Count) {
+        throw "Question numbers run from 1 to $($questions.Count)."
+    }
+    return $questions[$Number - 1]
+}
+
 function Get-WorkflowPhases {
     param([Parameter(Mandatory)][string]$Flow)
 
@@ -118,7 +147,7 @@ function Get-WorkflowPhases {
     if ($Flow -eq 'Detailed') {
         return @(
             'START', 'DESIGN', 'SPLIT', 'BRANCH', 'BUILD', 'VERIFY', 'COMMIT',
-            'SUMMARY', 'INTEGRATE_READY', 'INTEGRATE'
+            'SUMMARY', 'INTEGRATE'
         )
     }
     return @(
@@ -216,7 +245,7 @@ function Assert-WorkflowState {
     if ($State.phase -ne 'COMMIT' -and $State.commitBaseline) {
         throw "commitBaseline is only valid during COMMIT, not '$($State.phase)'."
     }
-    if ($State.flow -ne 'Quick' -and $State.phase -in @('SUMMARY', 'INTEGRATE_READY', 'FINAL_REVIEW', 'INTEGRATE') -and
+    if ($State.flow -ne 'Quick' -and $State.phase -in @('SUMMARY', 'FINAL_REVIEW', 'INTEGRATE') -and
         @($increments | Where-Object { $_.status -ne 'completed' }).Count -gt 0) {
         throw "Phase '$($State.phase)' requires every increment to be completed."
     }
@@ -225,8 +254,30 @@ function Assert-WorkflowState {
         throw "Phase '$($State.phase)' requires featureBranch."
     }
 
+    $expectedNumber = 1
+    $seenQuestionIds = @{}
+    foreach ($question in @(Get-WorkflowQuestion -State $State)) {
+        if ([string]::IsNullOrWhiteSpace([string]$question.id) -or $seenQuestionIds.ContainsKey($question.id)) {
+            throw "Workflow contains a missing or duplicate question ID '$($question.id)'."
+        }
+        $seenQuestionIds[$question.id] = $true
+        if ([int]$question.number -ne $expectedNumber) {
+            throw "Expected question number $expectedNumber, found '$($question.number)'."
+        }
+        if ($question.status -notin @('open', 'answered', 'dismissed')) {
+            throw "Question $expectedNumber has invalid status '$($question.status)'."
+        }
+        if ([string]::IsNullOrWhiteSpace([string]$question.text)) {
+            throw "Question $expectedNumber is missing its text."
+        }
+        if ($question.status -ne 'open' -and [string]::IsNullOrWhiteSpace([string]$question.answer)) {
+            throw "Question $expectedNumber is $($question.status) but records no answer."
+        }
+        $expectedNumber++
+    }
+
     foreach ($approval in @($State.approvals)) {
-        if ($approval.gate -notin @('requirements', 'design', 'split', 'verify', 'summary', 'integrate', 'final') -or
+        if ($approval.gate -notin @('implement', 'verify', 'integrate') -or
             [string]::IsNullOrWhiteSpace([string]$approval.note)) {
             throw 'Workflow contains a malformed approval record.'
         }
@@ -310,6 +361,22 @@ function Write-ProgressMarkdown {
                 default { $increment.status }
             }
             $lines.Add("- [$marker] **$($increment.scope)** ($statusLabel) — $($increment.description)")
+        }
+        $lines.Add('')
+    }
+
+    $questions = @(Get-WorkflowQuestion -State $State)
+    if ($questions.Count -gt 0) {
+        $lines.Add('## Questions')
+        $lines.Add('')
+        foreach ($question in $questions) {
+            $marker = if ($question.status -eq 'open') { ' ' } else { 'x' }
+            $suffix = switch ($question.status) {
+                'answered' { " — $($question.answer)" }
+                'dismissed' { " — dismissed: $($question.answer)" }
+                default { '' }
+            }
+            $lines.Add("- [$marker] $($question.text)$suffix")
         }
         $lines.Add('')
     }
@@ -474,7 +541,23 @@ function Show-WorkflowStatus {
         $incrementText = "$($item.scope) — $($item.description)".Replace('|', '\|')
         Write-Output "| $($item.number) | $incrementText | $($item.status) |"
     }
+
+    $questions = @(Get-WorkflowQuestion -State $State)
+    if ($questions.Count -gt 0) {
+        Write-Output ''
+        Write-Output '| # | Question | Status | Answer |'
+        Write-Output '| ---: | --- | --- | --- |'
+        foreach ($item in $questions) {
+            $questionText = ([string]$item.text).Replace('|', '\|')
+            $answerText = if ($item.answer) { ([string]$item.answer).Replace('|', '\|') } else { '—' }
+            Write-Output "| $($item.number) | $questionText | $($item.status) | $answerText |"
+        }
+    }
     Write-Output ''
+    $openCount = @(Get-OpenQuestion -State $State).Count
+    if ($openCount -gt 0) {
+        Write-Output "Open questions: $openCount — the implement gate stays closed until each is answered or dismissed."
+    }
     Write-Output "Goal: $($State.requirements.goal)"
     Write-Output "Updated: $($State.updatedAt)"
 }
@@ -523,6 +606,7 @@ switch ($Command) {
             currentIncrementId = $null
             commitBaseline     = $null
             increments         = @()
+            questions          = @()
             approvals          = @()
             history            = @()
             createdAt          = $now
@@ -547,21 +631,32 @@ switch ($Command) {
         if ([string]::IsNullOrWhiteSpace($Note)) {
             throw '-Note is required to record the approval evidence.'
         }
+        # The user says implement once, at the last phase before code is written,
+        # and integrate once, at the review of the finished branch.
         $expected = switch ($state.phase) {
-            'START' { 'requirements' }
-            'DESIGN' { 'design' }
-            'SPLIT' { 'split' }
+            'DESIGN' { if ($state.flow -eq 'Quick') { 'implement' } else { $null } }
+            'SPLIT' { 'implement' }
             'VERIFY' { 'verify' }
-            'SUMMARY' { 'summary' }
-            'INTEGRATE_READY' { 'integrate' }
-            'FINAL_REVIEW' { 'final' }
+            'SUMMARY' { if ($state.flow -eq 'Quick') { $null } else { 'integrate' } }
+            'FINAL_REVIEW' { 'integrate' }
             default { $null }
         }
         if ($state.flow -eq 'DetailedAuto' -and $state.phase -ne 'FINAL_REVIEW') {
             throw 'Detailed Auto accepts user approval only at FINAL_REVIEW.'
         }
+        if (-not $expected) {
+            throw "$($state.phase) has no approval gate. Advance instead."
+        }
         if ($Gate -ne $expected) {
             throw "Gate '$Gate' is not valid during $($state.phase). Expected '$expected'."
+        }
+        if ($Gate -eq 'implement') {
+            $open = @(Get-OpenQuestion -State $state)
+            if ($open.Count -gt 0) {
+                $detail = ($open | ForEach-Object { "  $($_.number)  $($_.text)" }) -join [Environment]::NewLine
+                throw ("$($open.Count) question(s) are still open. Answer or dismiss each one " +
+                    "before authorizing implementation:$([Environment]::NewLine)$detail")
+            }
         }
         $state.approvals = @($state.approvals) + [pscustomobject]@{
             gate        = $Gate
@@ -571,6 +666,57 @@ switch ($Command) {
             approvedAt  = (Get-Date).ToUniversalTime().ToString('o')
         }
         Add-HistoryEntry -State $state -Action 'approve' -Detail "Approved $Gate during $($state.phase)."
+        Save-WorkflowState -State $state -Path $workflowPath
+        Show-WorkflowStatus -State $state
+    }
+
+    # START and DESIGN collect what the agent cannot decide alone instead of
+    # interrupting for each one; the implement gate is closed until none is open.
+    'add-question' {
+        $state = Get-WorkflowState -Path $workflowPath
+        Assert-WorkflowBranch -State $state
+        if ([string]::IsNullOrWhiteSpace($Text)) {
+            throw '-Text is required for add-question.'
+        }
+        $questions = [Collections.ArrayList]@(Get-WorkflowQuestion -State $state)
+        $question = [pscustomobject]@{
+            id     = [guid]::NewGuid().ToString('N')
+            number = $questions.Count + 1
+            status = 'open'
+            text   = $Text
+            answer = $null
+        }
+        $questions.Add($question) | Out-Null
+        $state.questions = @($questions)
+        Add-HistoryEntry -State $state -Action 'add-question' -Detail "Recorded question $($question.number): $Text"
+        Save-WorkflowState -State $state -Path $workflowPath
+        Show-WorkflowStatus -State $state
+    }
+
+    'answer-question' {
+        $state = Get-WorkflowState -Path $workflowPath
+        Assert-WorkflowBranch -State $state
+        $question = Resolve-Question -State $state -Number $Number -Bound $PSBoundParameters
+        if ([string]::IsNullOrWhiteSpace($Answer)) {
+            throw '-Answer is required for answer-question.'
+        }
+        $question.status = 'answered'
+        $question.answer = $Answer
+        Add-HistoryEntry -State $state -Action 'answer-question' -Detail "Answered question $($question.number)."
+        Save-WorkflowState -State $state -Path $workflowPath
+        Show-WorkflowStatus -State $state
+    }
+
+    'dismiss-question' {
+        $state = Get-WorkflowState -Path $workflowPath
+        Assert-WorkflowBranch -State $state
+        $question = Resolve-Question -State $state -Number $Number -Bound $PSBoundParameters
+        if ([string]::IsNullOrWhiteSpace($Answer)) {
+            throw '-Answer is required for dismiss-question; record why it stopped mattering.'
+        }
+        $question.status = 'dismissed'
+        $question.answer = $Answer
+        Add-HistoryEntry -State $state -Action 'dismiss-question' -Detail "Dismissed question $($question.number)."
         Save-WorkflowState -State $state -Path $workflowPath
         Show-WorkflowStatus -State $state
     }
@@ -607,9 +753,9 @@ switch ($Command) {
         $increments.Insert($position - 1, $increment)
         $state.increments = @($increments)
         Set-IncrementNumbers -State $state
-        if ($state.phase -in @('SUMMARY', 'INTEGRATE_READY', 'FINAL_REVIEW')) {
+        if ($state.phase -in @('SUMMARY', 'FINAL_REVIEW')) {
             $state.phase = 'SPLIT'
-            $state.approvals = @($state.approvals).Where({ $_.gate -notin @('split', 'summary', 'integrate', 'final') })
+            $state.approvals = @($state.approvals).Where({ $_.gate -notin @('implement', 'integrate') })
         }
         Add-HistoryEntry -State $state -Action 'add-increment' -Detail "Inserted increment ${position}: $Scope"
         Save-WorkflowState -State $state -Path $workflowPath
@@ -755,23 +901,23 @@ switch ($Command) {
         $previousPhase = $state.phase
         switch ($state.phase) {
             'START' {
-                if ($state.flow -ne 'DetailedAuto') {
-                    Assert-Approval -State $state -GateName 'requirements'
-                }
                 $state.phase = 'DESIGN'
             }
             'DESIGN' {
-                if ($state.flow -ne 'DetailedAuto') {
-                    Assert-Approval -State $state -GateName 'design'
+                if ($state.flow -eq 'Quick') {
+                    Assert-Approval -State $state -GateName 'implement'
+                    $state.phase = 'BUILD'
                 }
-                $state.phase = if ($state.flow -eq 'Quick') { 'BUILD' } else { 'SPLIT' }
+                else {
+                    $state.phase = 'SPLIT'
+                }
             }
             'SPLIT' {
                 if (@($state.increments).Count -eq 0) {
                     throw 'Add at least one increment before leaving SPLIT.'
                 }
                 if ($state.flow -ne 'DetailedAuto') {
-                    Assert-Approval -State $state -GateName 'split'
+                    Assert-Approval -State $state -GateName 'implement'
                 }
                 $state.phase = 'BRANCH'
             }
@@ -821,16 +967,12 @@ switch ($Command) {
                     $state.phase = 'FINAL_REVIEW'
                 }
                 else {
-                    Assert-Approval -State $state -GateName 'summary'
-                    $state.phase = 'INTEGRATE_READY'
+                    Assert-Approval -State $state -GateName 'integrate'
+                    $state.phase = 'INTEGRATE'
                 }
             }
-            'INTEGRATE_READY' {
-                Assert-Approval -State $state -GateName 'integrate'
-                $state.phase = 'INTEGRATE'
-            }
             'FINAL_REVIEW' {
-                Assert-Approval -State $state -GateName 'final'
+                Assert-Approval -State $state -GateName 'integrate'
                 $state.phase = 'INTEGRATE'
             }
             default {

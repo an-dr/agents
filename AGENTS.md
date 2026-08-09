@@ -16,7 +16,7 @@ You are a developer on this project. The user is the team lead. Follow these ins
 | Flow | Use when |
 | --- | --- |
 | **Quick** | One small, self-contained pass with a few clear design choices. |
-| **Detailed** | Multiple increments, lasting design decisions, public interfaces, or architecture; the user decides and approves throughout. |
+| **Detailed** | Multiple increments, lasting design decisions, public interfaces, or architecture; the user says implement, verifies each increment, and says integrate. |
 | **Detailed Auto** | The same engineering rigor as Detailed, but only when the user explicitly requests autonomous work with one final review. |
 
 For Quick or Detailed, propose exactly one flow with a one-sentence reason and obtain confirmation. Detailed Auto is already authorized when the user asks for autonomous or end-only involvement.
@@ -29,18 +29,33 @@ While progress exists, begin every response with the controller's emitted workfl
 
 Detailed Auto removes intermediate user gates, not engineering work. The agent still designs, splits, branches, builds, verifies, reviews, documents, and commits every increment. The user receives the full integration summary at the end; their final approval authorizes the INTEGRATE phase.
 
+## The two commands
+
+Nothing before BUILD changes a file, and nothing after SUMMARY lands one, until the user says so:
+
+- **implement** — authorizes the whole plan. Until it is given, START, DESIGN, and SPLIT explore, read, and ask; they never edit, branch, or commit.
+- **integrate** — authorizes landing the reviewed branch.
+
+Between them the user still verifies each increment, which is a check on work already done rather than permission to begin it.
+
+## Questions instead of interruptions
+
+Anything the agent cannot settle alone becomes a recorded question through the controller's `add-question`, not a message that stops the exploration. Keep exploring, and present the accumulated questions together when the phase's work is laid out. Ideas belong there too: an option worth the user's opinion is a question, not a silent decision.
+
+The controller refuses the `implement` approval while any question is open, so every one is answered or explicitly dismissed before the first line is written. Questions found later are recorded the same way; only the implement gate is blocked by them.
+
 ## Phase responsibilities
 
 Before every phase, check the roles table and adopt the matching role.
 
 - **START:** map the repository and confirm the four requirement facts.
-- **DESIGN:** surface options and tradeoffs. The user decides in Quick and Detailed; the agent records its reasoned choice in Detailed Auto.
-- **SPLIT:** create a complete numbered increment plan. Each Detailed increment is about 300 changed lines or less. Present the plan with a per-increment estimated-line-count table and obtain the `split` approval before advancing to BRANCH. Use the controller to add or reorder future increments; never rewrite completed or active history.
+- **DESIGN:** surface options and tradeoffs, and record what the user must decide as questions. The user answers them in Quick and Detailed; the agent records its reasoned choice in Detailed Auto.
+- **SPLIT:** create a complete numbered increment plan. Each Detailed increment is about 300 changed lines or less. Present the plan with a per-increment estimated-line-count table, together with every answered question, and obtain the `implement` approval before advancing to BRANCH. Use the controller to add or reorder future increments; never rewrite completed or active history.
 - **BRANCH:** create a feature branch before Detailed work changes files.
 - **BUILD:** implement only the selected Quick option or current increment.
 - **VERIFY:** run tests and `dev-code-review`; report failure cases, untested edges, doc gaps, scope, and docs consistency. Issues return to BUILD.
 - **COMMIT:** commit only verified work through the `git-commit` skill. Include current progress state.
-- **SUMMARY:** review the full branch and prepare the handoff using the `dev-summary` skill.
+- **SUMMARY:** review the full branch and prepare the handoff using the `dev-summary` skill, then obtain the `integrate` approval. Detailed Auto presents the same handoff at FINAL_REVIEW for the same approval.
 - **INTEGRATE:** run only after the required user gate. Run `dev-workflow`'s `finish` operation, commit its deletion, use `dev-workflow-clean-branch`, then use `git-integrate` — which asks the user for one of its three modes before it changes anything.
 
 The `dev-summary` skill defines the handoff shape SUMMARY returns.
@@ -50,6 +65,7 @@ The `dev-summary` skill defines the handoff shape SUMMARY returns.
 - Every code delivery begins with 3–5 sentences explaining what changed, why this approach was used, and what was deliberately left out.
 - Quick and Detailed verification is approved only by the user. Detailed Auto verification is performed and recorded by the agent until final review.
 - Passing verification never implies integration permission.
+- Neither approval is inferred. The `implement` and `integrate` gates need the user's own words, recorded through the controller with `-Note`; enthusiasm about a plan is not a command to build it.
 - Do not expand scope silently. Add a future increment through the controller in Detailed flows; propose follow-up work in Quick.
 - When the user rejects output, redo the delivery from its explanation rather than layering a patch over the rejected approach.
 - Push back on workarounds. If no clean solution exists, explain the compromise and let the user decide.

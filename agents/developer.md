@@ -9,6 +9,8 @@ description: Use during BUILD — implement one agreed increment by following ex
 
 Implements the BUILD phase (see `../AGENTS.md`): exactly one active Detailed increment or the selected Quick option, nothing more. In Detailed Auto, follows the recorded design decision without introducing an unrecorded alternative.
 
+BUILD begins only after the user's `implement` approval, which the controller enforces. A question that surfaces mid-build is recorded with `add-question` and raised in the delivery; it does not become an assumption in the code.
+
 ## Process
 
 1. **Read the host context** — `README.md`, `docs/index.md`, and the host `AGENTS.md` for project-specific build and test commands.

@@ -13,8 +13,8 @@ Helps the user decide; never decides. Produces the material the DESIGN phase nee
 2. **Build the options table** — 2–4 real options (no strawmen), scored over explicit axes (see below).
 3. **Steelman the loser** — before recommending, argue the strongest case for the option you would reject. If the steelman wins, change the recommendation.
 4. **Pre-mortem the favourite** — "this shipped and failed six months later — why?" List the top 2–3 failure stories and what would detect each early.
-5. **Present** — options with tradeoffs via the option-selection UI; the user picks (or explicitly delegates). Never a single "correct" solution.
-6. **Record** — the decision goes through the `docs-adr` skill; the resulting design goes into the topic's design doc.
+5. **Present** — options with tradeoffs via the option-selection UI; the user picks (or explicitly delegates). Never a single "correct" solution. Record each unresolved choice as a controller question first, so exploring the next one does not lose it.
+6. **Record** — the decision goes through the `docs-adr` skill and closes its question with `answer-question`; the resulting design goes into the topic's design doc.
 
 ## Options table
 

@@ -6,15 +6,19 @@ An executable AI development workflow focused on reliable engineering rather tha
 
 ## Detailed
 
-For multi-increment, architectural, or public-interface work. The user shapes the design, approves each increment, reviews the branch, and explicitly approves integration.
+For multi-increment, architectural, or public-interface work. START, DESIGN, and SPLIT only read and ask; they accumulate what the user must decide as questions and change nothing. Two commands drive the flow — **implement** releases the plan into code, **integrate** lands the reviewed branch — and between them the user still verifies each increment.
 
 ```mermaid
 flowchart TD
-START --> DESIGN --> SPLIT --> BRANCH --> BUILD --> VERIFY --> COMMIT
+START --> DESIGN --> SPLIT
+SPLIT -->|user says implement| BRANCH --> BUILD --> VERIFY --> COMMIT
 VERIFY -->|issues| BUILD
 COMMIT -->|more increments| BUILD
-COMMIT -->|plan complete| SUMMARY --> INTEGRATE_READY --> INTEGRATE
+COMMIT -->|plan complete| SUMMARY
+SUMMARY -->|user says integrate| INTEGRATE
 ```
+
+The controller refuses the implement approval while any question is still open, so nothing is built on an unanswered assumption.
 
 ## Detailed Auto
 
@@ -25,16 +29,18 @@ flowchart TD
 START --> DESIGN --> SPLIT --> BRANCH --> BUILD --> VERIFY --> COMMIT
 VERIFY -->|issues| BUILD
 COMMIT -->|more increments| BUILD
-COMMIT -->|plan complete| SUMMARY --> FINAL_REVIEW --> INTEGRATE
+COMMIT -->|plan complete| SUMMARY --> FINAL_REVIEW
+FINAL_REVIEW -->|user says integrate| INTEGRATE
 ```
 
 ## Quick
 
-For one small, self-contained change with a handful of clear design choices. It uses one build/verify/commit pass on the current branch.
+For one small, self-contained change with a handful of clear design choices. It uses one build/verify/commit pass on the current branch, behind the same implement command.
 
 ```mermaid
 flowchart TD
-START --> DESIGN --> BUILD --> VERIFY --> COMMIT
+START --> DESIGN
+DESIGN -->|user says implement| BUILD --> VERIFY --> COMMIT
 VERIFY -->|issues| BUILD
 ```
 
