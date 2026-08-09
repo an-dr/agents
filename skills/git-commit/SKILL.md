@@ -47,7 +47,18 @@ None. `git log` and GitHub's commit view render messages as preformatted text, s
 
 - Separated from the body by the message's only blank line.
 - `BREAKING CHANGE: <consequence>` whenever the subject carries `!`.
-- Never add AI attribution or co-author trailers.
+
+## Attribution
+
+The commit is authored by the person who ran it. An AI tool that helped write the change is never named as an author, co-author, assistant, or generator — not in a trailer, not in the body, not in the subject.
+
+- No `Co-Authored-By:`, `Co-Developed-By:`, `Assisted-By:`, `Authored-By:`, `Generated-By:`, or `Created-By:` trailer, whoever it credits.
+- No "generated with", "written by", or "created by" line naming a model, agent, or assistant, and no robot emoji marker.
+- No tool address such as `noreply@anthropic.com`.
+
+The checker rejects all of it, on every line of the message and whether it arrives through `-Footer`, a body entry, or `-Amend`. Naming a tool as the *subject of the work* stays allowed, because that is what the change is about: `feat(install): link the skills into the Claude Code directory` is fine.
+
+The reason is that a trailer is a record of who is accountable for the change. That is the author, who reviewed the diff and chose to record it; the tooling used to produce it is no more a co-author than the editor or the compiler, and crediting it dilutes the one signal `git log`, `git blame`, and release notes read.
 
 ## Procedure
 

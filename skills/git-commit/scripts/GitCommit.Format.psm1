@@ -10,7 +10,15 @@ $script:EntryTargetLength = 72
 $script:EntryMaxCount = 5
 $script:FooterPattern = '^(BREAKING CHANGE|[A-Za-z][A-Za-z-]*): \S|^[A-Za-z][A-Za-z-]* #\S'
 $script:MarkdownPattern = '`|\*\*|\]\(|^#{1,6} '
-$script:AttributionPattern = 'co-authored-by|generated with|noreply@anthropic\.com'
+# Trailer keys that credit a second party, and prose that names a tool as the
+# author. A tool named as the subject of the work is not attribution and passes.
+$script:AttributionTrailerPattern =
+'^\s*(co-authored-by|co-developed-by|assisted-by|authored-by|generated-by|created-by)\s*:'
+$script:AttributionTextPattern =
+'noreply@anthropic\.com|🤖|' + # the robot emoji marks generated footers
+'(generated|written|authored|created|produced|assisted)\s+(with|by)\s+(an?\s+|the\s+)?' +
+'(ai\b|a\.i\.|llm\b|agent\b|assistant\b|model\b|bot\b|' +
+'claude|anthropic|copilot|chatgpt|gpt-|openai|gemini|cursor|codex|aider)'
 
 function Get-CommitType {
     <# Returns the closed set of allowed commit types. #>
@@ -207,9 +215,10 @@ function Get-CommitMessageViolation {
     Test-CommitSubject -Found $found -Subject $lines[0] -AllowedScope $AllowedScope
 
     foreach ($index in 0..($lines.Count - 1)) {
-        if ($lines[$index] -imatch $script:AttributionPattern) {
-            $found.Add((New-CommitViolation -Severity error -Rule 'footer.attribution' -Line ($index + 1) -Detail (
-                        'Attribution and co-author trailers are never added.'
+        if ($lines[$index] -imatch $script:AttributionTrailerPattern -or
+            $lines[$index] -imatch $script:AttributionTextPattern) {
+            $found.Add((New-CommitViolation -Severity error -Rule 'message.attribution' -Line ($index + 1) -Detail (
+                        'The author is the person who ran the commit; drop the co-author or AI attribution line.'
                     )))
         }
     }
