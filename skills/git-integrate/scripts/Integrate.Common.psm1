@@ -99,6 +99,37 @@ function Test-GitRemoteBranch {
     throw "Unable to inspect origin branch '$Branch'.$([Environment]::NewLine)$detail"
 }
 
+function Get-IntegrateSquashPoint {
+    <# Returns the commit the branch's own work starts from. #>
+    param([Parameter(Mandatory)][string]$BaseBranch)
+
+    $point = (@(Invoke-GitCommand -Arguments @('merge-base', "origin/$BaseBranch", 'HEAD')) -join '').Trim()
+    if ([string]::IsNullOrWhiteSpace($point)) {
+        throw "Cannot locate the merge base of 'origin/$BaseBranch' and HEAD."
+    }
+    return $point
+}
+
+function Get-IntegrateRemoteWebUrl {
+    <# Converts the origin URL to a browsable https URL, or returns an empty string. #>
+    $url = (@(& git remote get-url origin 2>$null) -join '').Trim()
+    if ($LASTEXITCODE -ne 0 -or -not $url) { return '' }
+    $url = $url -replace '\.git$', ''
+    if ($url -match '^[^@/]+@(?<host>[^:]+):(?<path>.+)$') {
+        return "https://$($Matches['host'])/$($Matches['path'])"
+    }
+    if ($url -match '^ssh://[^@/]+@(?<rest>.+)$') {
+        return "https://$($Matches['rest'])"
+    }
+    return $url
+}
+
+function Test-IntegrateGhCli {
+    <# Reports whether the GitHub CLI is available for opening a request. #>
+    return [bool](Get-Command gh -ErrorAction SilentlyContinue)
+}
+
 Export-ModuleMember -Function Assert-GitAncestor, Assert-GitCleanWorkingTree,
     Assert-IntegrateFeatureBranch, Get-GitCurrentBranch, Get-IntegrateBaseBranch,
-    Invoke-GitCommand, Test-GitLocalBranch, Test-GitRemoteBranch
+    Get-IntegrateRemoteWebUrl, Get-IntegrateSquashPoint, Invoke-GitCommand,
+    Test-GitLocalBranch, Test-GitRemoteBranch, Test-IntegrateGhCli

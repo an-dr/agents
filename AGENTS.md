@@ -27,7 +27,7 @@ The `dev-workflow` skill owns transitions, gates, increment state, branch checks
 
 While progress exists, begin every response with the controller's emitted workflow status tables, exactly as their output comment instructs. Commit `.progress/workflow.json` with checkpoints and increment commits when the work must be resumed on another machine. Run the controller's `finish` operation at the terminal gate and commit its deletion. Before integration, `dev-workflow-clean-branch` removes `.progress/` from every feature-branch commit; completed repositories retain no workflow state.
 
-Detailed Auto removes intermediate user gates, not engineering work. The agent still designs, splits, branches, builds, verifies, reviews, documents, and commits every increment. The user receives the full integration summary at the end; their final approval authorizes the merge phase.
+Detailed Auto removes intermediate user gates, not engineering work. The agent still designs, splits, branches, builds, verifies, reviews, documents, and commits every increment. The user receives the full integration summary at the end; their final approval authorizes the INTEGRATE phase.
 
 ## Phase responsibilities
 
@@ -41,7 +41,7 @@ Before every phase, check the roles table and adopt the matching role.
 - **VERIFY:** run tests and `dev-code-review`; report failure cases, untested edges, doc gaps, scope, and docs consistency. Issues return to BUILD.
 - **COMMIT:** commit only verified work through the `git-commit` skill. Include current progress state.
 - **SUMMARY:** review the full branch and prepare the handoff using the `dev-summary` skill.
-- **MERGE:** run only after the required user gate. Run `dev-workflow`'s `finish` operation, commit its deletion, use `dev-workflow-clean-branch`, then use `git-integrate`.
+- **INTEGRATE:** run only after the required user gate. Run `dev-workflow`'s `finish` operation, commit its deletion, use `dev-workflow-clean-branch`, then use `git-integrate` — which asks the user for one of its three modes before it changes anything.
 
 The `dev-summary` skill defines the handoff shape SUMMARY returns.
 
@@ -60,7 +60,8 @@ The `dev-summary` skill defines the handoff shape SUMMARY returns.
 - Before committing, run `git log --oneline -6`. Squash tip-only WIP commits on the same concern into one clean commit.
 - Every commit goes through the `git-commit` skill, which owns the message format. Never write a message from memory. Rewrite non-conforming history with `git-commit-fix` while the branch is still unpushed.
 - Committing does not authorize pushing. Push only on explicit request or as part of an approved integration.
-- Integrations use rebase, logical squashing, and a fast-forward of the default branch; never a merge commit. Delete the feature branch after success.
+- Integrations rebase first; the default branch never gains a merge commit from an integration. Delete the feature branch after success, except in the request mode, where the platform does it.
+- Ask the user which `git-integrate` mode to use — keep the commits, squash into one commit, or open a request — every time, before the integration touches anything. Approval to integrate is not a choice of mode, and there is no default.
 - Before integration, run `dev-workflow-clean-branch` and verify both `git log <base>..HEAD -- .progress` and `git ls-tree -r HEAD -- .progress` are empty. Workflow state is never part of delivered history.
 
 ## Code conventions
@@ -88,7 +89,7 @@ Skills live in `skills/<name>/SKILL.md` next to this file. Read a matching skill
 | `dev-workflow-clean-branch` | Remove `.progress/` from every feature-branch commit. |
 | `git-commit` | Compose and record a commit in the unified message format. |
 | `git-commit-fix` | Rewrite existing commit messages to that format. |
-| `git-integrate` | Rebase, squash, fast-forward, push, and delete a branch. |
+| `git-integrate` | Integrate an approved branch in the mode the user chooses. |
 | `agents-retro` | Propose process improvements after integration or on request. |
 
 ADRs are immutable; supersede them instead of editing them. Use ADRs only for lasting architectural decisions, not tactical or tooling choices.

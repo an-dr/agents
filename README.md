@@ -13,7 +13,7 @@ flowchart TD
 START --> DESIGN --> SPLIT --> BRANCH --> BUILD --> VERIFY --> COMMIT
 VERIFY -->|issues| BUILD
 COMMIT -->|more increments| BUILD
-COMMIT -->|plan complete| SUMMARY --> MERGE_READY --> MERGE
+COMMIT -->|plan complete| SUMMARY --> INTEGRATE_READY --> INTEGRATE
 ```
 
 ## Detailed Auto
@@ -25,7 +25,7 @@ flowchart TD
 START --> DESIGN --> SPLIT --> BRANCH --> BUILD --> VERIFY --> COMMIT
 VERIFY -->|issues| BUILD
 COMMIT -->|more increments| BUILD
-COMMIT -->|plan complete| SUMMARY --> FINAL_REVIEW --> MERGE
+COMMIT -->|plan complete| SUMMARY --> FINAL_REVIEW --> INTEGRATE
 ```
 
 ## Quick
@@ -37,6 +37,16 @@ flowchart TD
 START --> DESIGN --> BUILD --> VERIFY --> COMMIT
 VERIFY -->|issues| BUILD
 ```
+
+## Integration
+
+`INTEGRATE` always rebases, so the default branch never gains a merge commit. The user then chooses how the branch lands, and the skill asks every time:
+
+| Mode | Result |
+| --- | --- |
+| Commits | every commit is kept and the base fast-forwards |
+| Squash | the branch becomes one commit and the base fast-forwards |
+| Request | the branch becomes one commit, is pushed, and a pull request is opened |
 
 Future Detailed increments can be inserted or reordered without changing active or completed increment identity. The controller validates approvals, branches, commits, and legal transitions before saving state atomically. Every controller change prints user-presentable Markdown tables for the workflow phases and increment statuses.
 

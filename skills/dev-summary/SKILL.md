@@ -25,4 +25,4 @@ Use during `SUMMARY`, after every increment is committed and before the final us
 <numbered test steps>
 ```
 
-An approving summary never grants integration permission. Detailed requires its merge-ready approval; Detailed Auto requires its final-review approval.
+An approving summary never grants integration permission. Detailed requires its `integrate` approval at `INTEGRATE_READY`; Detailed Auto requires its final-review approval. Both are followed by the `git-integrate` mode question, which is a separate decision the summary does not make.
