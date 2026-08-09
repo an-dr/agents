@@ -8,6 +8,7 @@ Reusable agent actions. Each skill contains a concise `SKILL.md`; deterministic 
 | [`install-powershell`](install-powershell/SKILL.md) | Bootstrap or verify PowerShell 7. |
 | [`agents-integration`](agents-integration/SKILL.md) | Onboard a host project onto this repo (submodule + `AGENTS.md`/`CLAUDE.md`). |
 | [`agents-install`](agents-install/SKILL.md) | Install this clone globally for local AI tools, so no submodule is needed. |
+| [`agents-modify`](agents-modify/SKILL.md) | Amend this repository's own instructions from wherever the need appeared. |
 | [`ai-prompt-review`](ai-prompt-review/SKILL.md) | Review agent instructions for contradictions, weak rules, and wasted context. |
 | [`docs-adr`](docs-adr/SKILL.md) | Record an architectural decision. |
 | [`docs-md-writing`](docs-md-writing/SKILL.md) | Format any Markdown file and check it. |

@@ -12,7 +12,7 @@ Reviews the process, not the code. The instruction set is process documentation 
 1. **Collect evidence from this flow** — where phases stalled or looped, which rules were violated or needed clarification mid-flow, questions the user had to answer twice, increments that broke the size rule, VERIFY findings that a better DESIGN or an earlier review would have caught.
 2. **Find the pattern** — a one-off mistake is not process feedback; a friction point that will recur is.
 3. **Propose amendments** — at most 3 per retro, each a concrete edit to `AGENTS.md`, a role, or a skill: the exact wording change and the friction it removes. Present via the option-selection UI.
-4. **Apply only what the user approves** — the instruction repo changes on direct user request only; the retro produces proposals, not edits. Commit and push every approved retrospective proposal after applying it.
+4. **Apply only what the user approves** — the instruction repo changes on direct user request only; the retro produces proposals, not edits. Apply each approved proposal through the `agents-modify` skill, which locates the clone and holds the commit and the push behind the user's word.
 
 ## Rules
 

@@ -2,7 +2,7 @@
 
 You are a developer on this project. The user is the team lead. Follow these instructions in every AI coding tool.
 
-**Scope:** these instructions govern host projects that embed this repository. They do not govern edits to this process repository itself. Change this repository only on direct user request and without starting one of its flows. Leave the change uncommitted and say so: the user reads process changes before they enter history, and asks for the commit separately.
+**Scope:** these instructions govern host projects that embed this repository. They do not govern edits to this process repository itself. Change this repository only on direct user request and without starting one of its flows. Leave the change uncommitted and say so: the user reads process changes before they enter history, and asks for the commit separately. When the request arises while working in another repository, use the `agents-modify` skill — it finds the clone, changes it, and holds the commit and the push behind that same approval.
 
 ## Start every task
 
@@ -94,6 +94,7 @@ Skills live in `skills/<name>/SKILL.md` next to this file. Read a matching skill
 | `install-powershell` | Install or verify PowerShell 7 before running scripts. |
 | `agents-integration` | Onboard a host project: add the `agents` submodule and root `AGENTS.md`/`CLAUDE.md`. |
 | `agents-install` | Install this clone globally for local AI tools instead of per repository. |
+| `agents-modify` | Change this repository's own instructions and land them after approval. |
 | `ai-prompt-review` | Review agent instructions for contradictions, weak rules, and wasted context. |
 | `docs-adr` | Record a settled architectural decision. |
 | `docs-md-writing` | Format conventions and a checker for any Markdown file. |

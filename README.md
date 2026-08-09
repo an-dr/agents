@@ -65,4 +65,5 @@ Future Detailed increments can be inserted or reordered without changing active 
 - `skills/install-powershell/` — PowerShell 7 bootstrap instructions
 - `skills/agents-install/` — global installation for local AI tools
 - `skills/git-commit/` — the commit message format and its checker. Commits are attributed to the person who records them; the checker rejects AI co-author and generator trailers
+- `skills/agents-modify/` — changing this repository's own instructions from a host project
 - `skills/` — review, design, ADR, debug, summary, progress cleanup, commit, integration, and retrospective actions
