@@ -117,6 +117,7 @@ Role definitions live in `agents/<name>.md` next to this file.
 | `developer` | BUILD |
 | `tester` | VERIFY tests |
 | `reviewer` | VERIFY review, SUMMARY |
-| `tech-writer` | Any phase, whenever the change touches documentation, role, or skill files |
+| `tech-writer` | Any phase, whenever the change touches documentation |
+| `agent-developer` | Any phase, whenever the change touches agent instructions — policy, role, or skill files |
 
 Every file has one correct location in the host repository. Flag ambiguity before creating a file.

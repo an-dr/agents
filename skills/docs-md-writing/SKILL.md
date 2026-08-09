@@ -6,7 +6,7 @@ allowed-tools: PowerShell
 
 # Markdown writing
 
-Mechanics only. What to document and how to structure it belongs to the `tech-writer` role.
+Mechanics only. What to document and how to structure it belongs to the `tech-writer` role, or to `agent-developer` when the file is one an agent loads as instruction.
 
 ## Line breaks
 
