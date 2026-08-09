@@ -93,6 +93,20 @@ Skills live in `skills/<name>/SKILL.md` next to this file. Read a matching skill
 
 ADRs are immutable; supersede them instead of editing them. Use ADRs only for lasting architectural decisions, not tactical or tooling choices.
 
+## Commit scopes
+
+Scopes the `git-commit` skill accepts here, by area rather than by skill directory. Add a scope before using it, and leave it out of a commit that is genuinely cross-cutting.
+
+- policy
+- roles
+- workflow
+- commit
+- integrate
+- review
+- docs
+- install
+- tests
+
 ## Roles
 
 Role definitions live in `agents/<name>.md` next to this file.
