@@ -69,6 +69,13 @@ foreach ($tool in $targets) {
         }
         $counts[$state] = 1 + ($counts[$state] ?? 0)
     }
+    if (-not $Uninstall) {
+        $stale = @(Remove-StaleAgentsLink -SkillsDirectory $tool.SkillsDir -AgentsRoot $root -CurrentSkill $skills.Name)
+        if ($stale.Count -gt 0) {
+            $counts['stale-removed'] = $stale.Count
+            Write-Output "  pruned        $($stale -join ', ')"
+        }
+    }
     $summary = ($counts.GetEnumerator() | Sort-Object Key | ForEach-Object { "$($_.Key)=$($_.Value)" }) -join ' '
     Write-Output "  skills        $summary  ->  $($tool.SkillsDir)"
     Write-Output ''

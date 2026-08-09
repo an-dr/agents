@@ -247,6 +247,32 @@ function Remove-DirectoryLink {
     return 'removed'
 }
 
+function Remove-StaleAgentsLink {
+    <#
+      Deletes links into the agents clone whose skill no longer exists, which is
+      what a rename leaves behind. Links pointing anywhere else are never touched.
+    #>
+    param(
+        [Parameter(Mandatory)][string]$SkillsDirectory,
+        [Parameter(Mandatory)][string]$AgentsRoot,
+        [Parameter(Mandatory)][AllowEmptyCollection()][string[]]$CurrentSkill
+    )
+
+    if (-not (Test-Path -LiteralPath $SkillsDirectory)) { return @() }
+
+    $skillsRoot = ([System.IO.Path]::GetFullPath((Join-Path $AgentsRoot 'skills'))).TrimEnd('\', '/')
+    $removed = [System.Collections.Generic.List[string]]::new()
+    foreach ($entry in Get-ChildItem -LiteralPath $SkillsDirectory -Directory -Force) {
+        if ($CurrentSkill -contains $entry.Name) { continue }
+        $target = Get-DirectoryLinkTarget -Path $entry.FullName
+        if (-not $target) { continue }
+        if (-not $target.StartsWith($skillsRoot, [StringComparison]::OrdinalIgnoreCase)) { continue }
+        [System.IO.Directory]::Delete($entry.FullName)
+        $removed.Add($entry.Name)
+    }
+    return $removed.ToArray()
+}
+
 Export-ModuleMember -Function @(
     'Get-AgentsBlockMarker',
     'Resolve-AgentsRoot',
@@ -258,5 +284,6 @@ Export-ModuleMember -Function @(
     'Get-DirectoryLinkTarget',
     'Test-SamePath',
     'Set-DirectoryLink',
-    'Remove-DirectoryLink'
+    'Remove-DirectoryLink',
+    'Remove-StaleAgentsLink'
 )
