@@ -6,7 +6,7 @@ $ErrorActionPreference = 'Stop'
 Import-Module (Join-Path $PSScriptRoot 'Integrate.Common.psm1') -Force
 
 $base = Get-IntegrateBaseBranch -RequestedBranch $BaseBranch
-& (Join-Path $PSScriptRoot '../../remove-progress/scripts/remove-progress.ps1') -BaseBranch $base
+& (Join-Path $PSScriptRoot '../../dev-workflow-clean-branch/scripts/remove-progress.ps1') -BaseBranch $base
 & (Join-Path $PSScriptRoot 'integrate-1-check.ps1') -BaseBranch $base
 Write-Output ''
 $confirm = Read-Host 'WIP commits at the tip are already squashed (or none exist)? [y/N]'

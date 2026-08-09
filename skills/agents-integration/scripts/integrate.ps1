@@ -15,6 +15,16 @@ $agentsPath = Join-Path $root 'agents'
 $agentsMdPath = Join-Path $root 'AGENTS.md'
 $claudeMdPath = Join-Path $root 'CLAUDE.md'
 $sectionMarker = '## Primary instructions'
+$scopeMarker = '## Commit scopes'
+
+$commitScopes = @'
+## Commit scopes
+
+Scopes the `git-commit` skill accepts. One per component; add a scope before
+using it, and leave it out of a commit that is genuinely cross-cutting.
+
+<!-- - launcher -->
+'@
 
 $primaryInstructions = @'
 ## Primary instructions
@@ -44,6 +54,13 @@ Notes for AI agents working on this repo that cannot be deduced from the code al
 ## Project
 
 <!-- Describe what this repo is, for an agent with no other context. -->
+
+## Commit scopes
+
+Scopes the `git-commit` skill accepts. One per component; add a scope before
+using it, and leave it out of a commit that is genuinely cross-cutting.
+
+<!-- - launcher -->
 '@
 
 $claudeMdTemplate = @'
@@ -81,13 +98,20 @@ if (-not (Test-Path -LiteralPath $agentsMdPath)) {
 else {
     $existing = Get-Content -LiteralPath $agentsMdPath -Raw
     if ($existing -notlike "*$sectionMarker*") {
-        $updated = $primaryInstructions + "`n`n" + $existing.TrimStart()
-        Set-Content -LiteralPath $agentsMdPath -Value $updated -NoNewline -Encoding utf8
+        $existing = $primaryInstructions + "`n`n" + $existing.TrimStart()
         Write-Output "Inserted the Primary instructions section into $agentsMdPath."
     }
     else {
         Write-Output "$agentsMdPath already has a Primary instructions section -- left as-is."
     }
+    if ($existing -notlike "*$scopeMarker*") {
+        $existing = $existing.TrimEnd() + "`n`n" + $commitScopes + "`n"
+        Write-Output "Appended the Commit scopes section to $agentsMdPath."
+    }
+    else {
+        Write-Output "$agentsMdPath already has a Commit scopes section -- left as-is."
+    }
+    Set-Content -LiteralPath $agentsMdPath -Value $existing -NoNewline -Encoding utf8
 }
 
 # 3. Root CLAUDE.md

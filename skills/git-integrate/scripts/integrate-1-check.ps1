@@ -13,7 +13,7 @@ $progressPaths = @(Invoke-GitCommand -Arguments @(
         'log', '--format=', '--name-only', "$base..HEAD", '--', '.progress'
     ) | Where-Object { -not [string]::IsNullOrWhiteSpace([string]$_) })
 if ($progressPaths.Count -gt 0) {
-    throw 'Feature-branch history contains .progress. Run the remove-progress skill before integration.'
+    throw 'Feature-branch history contains .progress. Run the dev-workflow-clean-branch skill before integration.'
 }
 
 Write-Output "Feature branch: $branch"

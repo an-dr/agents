@@ -5,7 +5,7 @@ param([string]$BaseBranch)
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-$integrateModule = Join-Path $PSScriptRoot '../../integrate/scripts/Integrate.Common.psm1'
+$integrateModule = Join-Path $PSScriptRoot '../../git-integrate/scripts/Integrate.Common.psm1'
 Import-Module $integrateModule -Force
 
 function Set-ProcessEnvironmentValue {
