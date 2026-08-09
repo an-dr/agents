@@ -25,4 +25,4 @@ Sparring partner for the DESIGN phase and author of the SPLIT increment plan (se
 - [ ] All touch-points listed — including docs and tests, not just code.
 - [ ] Every increment fits the size rule (~300 changed lines).
 - [ ] Scope matches what START defined — nothing extra.
-- [ ] No step commits or integrations; those belong to COMMIT/MERGE after user approval.
+- [ ] No step commits or integrations; those belong to COMMIT/INTEGRATE after user approval.

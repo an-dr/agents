@@ -11,7 +11,7 @@ param(
     [string]$Constraints,
     [string]$Done,
     [string]$OutOfScope,
-    [ValidateSet('requirements', 'design', 'split', 'verify', 'summary', 'merge', 'final')]
+    [ValidateSet('requirements', 'design', 'split', 'verify', 'summary', 'integrate', 'final')]
     [string]$Gate,
     [string]$Note,
     [string]$Scope,
@@ -70,10 +70,21 @@ function Get-WorkflowState {
     if ($state.phase -eq 'MR') {
         $state.phase = 'SUMMARY'
     }
+    # State written before the phase was renamed still says MERGE.
+    if ($state.phase -eq 'MERGE_READY') {
+        $state.phase = 'INTEGRATE_READY'
+    }
+    if ($state.phase -eq 'MERGE') {
+        $state.phase = 'INTEGRATE'
+    }
     foreach ($approval in @($state.approvals)) {
         if ($approval.gate -eq 'mr') {
             $approval.gate = 'summary'
             $approval.phase = 'SUMMARY'
+        }
+        if ($approval.gate -eq 'merge') {
+            $approval.gate = 'integrate'
+            $approval.phase = 'INTEGRATE_READY'
         }
     }
     Assert-WorkflowState -State $state
@@ -107,12 +118,12 @@ function Get-WorkflowPhases {
     if ($Flow -eq 'Detailed') {
         return @(
             'START', 'DESIGN', 'SPLIT', 'BRANCH', 'BUILD', 'VERIFY', 'COMMIT',
-            'SUMMARY', 'MERGE_READY', 'MERGE'
+            'SUMMARY', 'INTEGRATE_READY', 'INTEGRATE'
         )
     }
     return @(
         'START', 'DESIGN', 'SPLIT', 'BRANCH', 'BUILD', 'VERIFY', 'COMMIT',
-        'SUMMARY', 'FINAL_REVIEW', 'MERGE'
+        'SUMMARY', 'FINAL_REVIEW', 'INTEGRATE'
     )
 }
 
@@ -205,7 +216,7 @@ function Assert-WorkflowState {
     if ($State.phase -ne 'COMMIT' -and $State.commitBaseline) {
         throw "commitBaseline is only valid during COMMIT, not '$($State.phase)'."
     }
-    if ($State.flow -ne 'Quick' -and $State.phase -in @('SUMMARY', 'MERGE_READY', 'FINAL_REVIEW', 'MERGE') -and
+    if ($State.flow -ne 'Quick' -and $State.phase -in @('SUMMARY', 'INTEGRATE_READY', 'FINAL_REVIEW', 'INTEGRATE') -and
         @($increments | Where-Object { $_.status -ne 'completed' }).Count -gt 0) {
         throw "Phase '$($State.phase)' requires every increment to be completed."
     }
@@ -215,7 +226,7 @@ function Assert-WorkflowState {
     }
 
     foreach ($approval in @($State.approvals)) {
-        if ($approval.gate -notin @('requirements', 'design', 'split', 'verify', 'summary', 'merge', 'final') -or
+        if ($approval.gate -notin @('requirements', 'design', 'split', 'verify', 'summary', 'integrate', 'final') -or
             [string]::IsNullOrWhiteSpace([string]$approval.note)) {
             throw 'Workflow contains a malformed approval record.'
         }
@@ -542,7 +553,7 @@ switch ($Command) {
             'SPLIT' { 'split' }
             'VERIFY' { 'verify' }
             'SUMMARY' { 'summary' }
-            'MERGE_READY' { 'merge' }
+            'INTEGRATE_READY' { 'integrate' }
             'FINAL_REVIEW' { 'final' }
             default { $null }
         }
@@ -573,7 +584,7 @@ switch ($Command) {
         if ([string]::IsNullOrWhiteSpace($Scope) -or [string]::IsNullOrWhiteSpace($Description)) {
             throw '-Scope and -Description are required for add-increment.'
         }
-        if ($state.phase -eq 'MERGE') {
+        if ($state.phase -eq 'INTEGRATE') {
             throw 'The approved workflow is ready to integrate. Start a follow-up workflow for new scope.'
         }
 
@@ -596,9 +607,9 @@ switch ($Command) {
         $increments.Insert($position - 1, $increment)
         $state.increments = @($increments)
         Set-IncrementNumbers -State $state
-        if ($state.phase -in @('SUMMARY', 'MERGE_READY', 'FINAL_REVIEW')) {
+        if ($state.phase -in @('SUMMARY', 'INTEGRATE_READY', 'FINAL_REVIEW')) {
             $state.phase = 'SPLIT'
-            $state.approvals = @($state.approvals).Where({ $_.gate -notin @('split', 'summary', 'merge', 'final') })
+            $state.approvals = @($state.approvals).Where({ $_.gate -notin @('split', 'summary', 'integrate', 'final') })
         }
         Add-HistoryEntry -State $state -Action 'add-increment' -Detail "Inserted increment ${position}: $Scope"
         Save-WorkflowState -State $state -Path $workflowPath
@@ -811,16 +822,16 @@ switch ($Command) {
                 }
                 else {
                     Assert-Approval -State $state -GateName 'summary'
-                    $state.phase = 'MERGE_READY'
+                    $state.phase = 'INTEGRATE_READY'
                 }
             }
-            'MERGE_READY' {
-                Assert-Approval -State $state -GateName 'merge'
-                $state.phase = 'MERGE'
+            'INTEGRATE_READY' {
+                Assert-Approval -State $state -GateName 'integrate'
+                $state.phase = 'INTEGRATE'
             }
             'FINAL_REVIEW' {
                 Assert-Approval -State $state -GateName 'final'
-                $state.phase = 'MERGE'
+                $state.phase = 'INTEGRATE'
             }
             default {
                 throw "Phase $($state.phase) cannot advance."
@@ -850,9 +861,9 @@ switch ($Command) {
         $state = Get-WorkflowState -Path $workflowPath
         Assert-WorkflowBranch -State $state
         $allowed = ($state.flow -eq 'Quick' -and $state.phase -eq 'COMMIT') -or
-            ($state.flow -ne 'Quick' -and $state.phase -eq 'MERGE')
+            ($state.flow -ne 'Quick' -and $state.phase -eq 'INTEGRATE')
         if (-not $allowed) {
-            throw "Workflow state can only be removed at Quick/COMMIT or Detailed/MERGE; current state is $($state.flow)/$($state.phase)."
+            throw "Workflow state can only be removed at Quick/COMMIT or Detailed/INTEGRATE; current state is $($state.flow)/$($state.phase)."
         }
         Remove-Item -LiteralPath $workflowPath
         $progressMarkdownPath = Get-ProgressMarkdownPath -WorkflowPath $workflowPath

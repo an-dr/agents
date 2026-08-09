@@ -52,7 +52,7 @@ Only planned increments can be inserted or reordered with `move-increment`. Comp
 
 `remove-increment` drops work the user has decided against. A completed increment is delivered history and cannot be removed. The active increment can be, under the same BUILD-and-clean-tree rule as `defer-increment`; the next planned increment then starts, or the flow moves to `SUMMARY` when none remains. Removing an increment is a scope change, so record why in the response — the plan no longer explains its own shape.
 
-New work discovered in `SUMMARY`, `MERGE_READY`, or `FINAL_REVIEW` can be added as an increment. The controller invalidates final approvals and returns to `SPLIT` so the new work passes through the complete branch cycle before another review.
+New work discovered in `SUMMARY`, `INTEGRATE_READY`, or `FINAL_REVIEW` can be added as an increment. The controller invalidates final approvals and returns to `SPLIT` so the new work passes through the complete branch cycle before another review.
 
 ## Share and finish
 
@@ -60,6 +60,6 @@ New work discovered in `SUMMARY`, `MERGE_READY`, or `FINAL_REVIEW` can be added 
 
 Every command that changes state also regenerates `.progress/PROGRESS.md`, a human-readable snapshot (flow, phase, goal, and the iteration list with statuses) with no IDs. Read it for a quick human-facing status check instead of parsing `workflow.json`. `finish` deletes it along with `workflow.json`.
 
-Run `finish` at Quick/COMMIT before the final Quick commit, or at Detailed/MERGE before integration. Commit the deletion, then run `dev-workflow-clean-branch` so `.progress/` is absent from every delivered feature-branch commit.
+Run `finish` at Quick/COMMIT before the final Quick commit, or at Detailed/INTEGRATE before integration. Commit the deletion, then run `dev-workflow-clean-branch` so `.progress/` is absent from every delivered feature-branch commit.
 
 The controller records approval evidence; it never supplies user approval. In Detailed Auto, code review, tests, documentation checks, and clean commits still run automatically before the final user review.
