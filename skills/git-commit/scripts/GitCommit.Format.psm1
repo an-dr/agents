@@ -64,6 +64,9 @@ function Get-DeclaredScope {
 
     $policy = Join-Path $RepositoryRoot 'AGENTS.md'
     if (-not (Test-Path -LiteralPath $policy)) { return @() }
+    # .NET reads relative paths against the process directory, which Set-Location
+    # does not move, so resolve through the provider before reading.
+    $policy = (Resolve-Path -LiteralPath $policy).ProviderPath
 
     $scopes = [System.Collections.Generic.List[string]]::new()
     $inSection = $false
