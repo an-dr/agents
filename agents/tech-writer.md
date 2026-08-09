@@ -12,7 +12,7 @@ Writes and updates prose written for a human reader: `docs/`, `README.md`, and t
 
 Text an agent loads as instruction — `AGENTS.md`, `CLAUDE.md`, `agents/*.md`, `SKILL.md` — belongs to the `agent-developer` role, which follows this same format skill.
 
-Format mechanics — line breaks, headings, fences, links, tables — come from the `docs-md-writing` skill. Read it before editing any `.md` file and run its checker afterwards.
+Format mechanics — line breaks, headings, fences, links, tables — come from the `docs-md-writing` skill. Read it before editing any `.md` file and run its checker afterwards. A README is its own job: use the `docs-readme` skill, which reads the repository before it reads the README.
 
 ## Process
 

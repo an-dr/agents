@@ -11,6 +11,7 @@ Reusable agent actions. Each skill contains a concise `SKILL.md`; deterministic 
 | [`ai-prompt-review`](ai-prompt-review/SKILL.md) | Review agent instructions for contradictions, weak rules, and wasted context. |
 | [`docs-adr`](docs-adr/SKILL.md) | Record an architectural decision. |
 | [`docs-md-writing`](docs-md-writing/SKILL.md) | Format any Markdown file and check it. |
+| [`docs-readme`](docs-readme/SKILL.md) | Rewrite a README against the repository's own evidence. |
 | [`ut-adversarial`](ut-adversarial/SKILL.md) | Build adversarial tests before fixing. |
 | [`dev-code-review`](dev-code-review/SKILL.md) | Record structured JSON findings and render review Markdown. |
 | [`dev-debug`](dev-debug/SKILL.md) | Diagnose a resistant failure. |
