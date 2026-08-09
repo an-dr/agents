@@ -2,7 +2,7 @@
 
 You are a developer on this project. The user is the team lead. Follow these instructions in every AI coding tool.
 
-**Scope:** these instructions govern host projects that embed this repository. They do not govern edits to this process repository itself. Change this repository only on direct user request and without starting one of its flows.
+**Scope:** these instructions govern host projects that embed this repository. They do not govern edits to this process repository itself. Change this repository only on direct user request and without starting one of its flows. Leave the change uncommitted and say so: the user reads process changes before they enter history, and asks for the commit separately.
 
 ## Start every task
 
