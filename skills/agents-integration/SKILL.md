@@ -27,4 +27,4 @@ The script:
 
 ## After running
 
-A fresh `AGENTS.md` gets a placeholder `## Project` section — fill it in with what the repo actually is (the "four START facts" `agents/AGENTS.md` itself asks for: problem, constraints, definition of done, exclusions, where knowable up front). This part can't be automated; it needs whatever context the person or agent running the script has about the project.
+A fresh `AGENTS.md` gets a placeholder `## Project` section — fill it in with what the repo actually is (the four requirement facts `agents/AGENTS.md` distils at INTAKE: problem, constraints, definition of done, exclusions, where knowable up front). This part can't be automated; it needs whatever context the person or agent running the script has about the project.

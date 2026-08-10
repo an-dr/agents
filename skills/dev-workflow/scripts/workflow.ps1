@@ -2,7 +2,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Position = 0, Mandatory)]
-    [ValidateSet('start', 'status', 'advance', 'return-to-build', 'approve', 'add-increment', 'move-increment', 'defer-increment', 'remove-increment', 'add-question', 'answer-question', 'dismiss-question', 'finish')]
+    [ValidateSet('start', 'status', 'advance', 'return-to-build', 'approve', 'add-increment', 'move-increment', 'defer-increment', 'remove-increment', 'add-request', 'remove-request', 'set-requirement', 'add-question', 'answer-question', 'dismiss-question', 'finish')]
     [string]$Command,
 
     [ValidateSet('Detailed', 'DetailedAuto', 'Quick')]
@@ -11,7 +11,10 @@ param(
     [string]$Constraints,
     [string]$Done,
     [string]$OutOfScope,
-    [ValidateSet('implement', 'verify', 'integrate')]
+    [ValidateSet('goal', 'constraints', 'done', 'outOfScope')]
+    [string]$Field,
+    [string]$Value,
+    [ValidateSet('intake', 'implement', 'verify', 'integrate')]
     [string]$Gate,
     [string]$Note,
     [string]$Text,
@@ -76,13 +79,34 @@ function Get-WorkflowState {
     if ($state.phase -eq 'MERGE') {
         $state.phase = 'INTEGRATE'
     }
+    # START collected nothing; INTAKE collects the request list. A workflow
+    # written before the rename resumes at the phase that replaced it, and its
+    # requirements — mandatory back then — already satisfy the INTAKE exit.
+    $wasStart = $state.phase -eq 'START'
+    if ($wasStart) {
+        $state.phase = 'INTAKE'
+    }
     if (-not $state.PSObject.Properties['questions']) {
         $state | Add-Member -NotePropertyName questions -NotePropertyValue @()
+    }
+    if (-not $state.PSObject.Properties['requests']) {
+        $state | Add-Member -NotePropertyName requests -NotePropertyValue @()
+    }
+    # A workflow that stopped in START has no request list and INTAKE will not
+    # release an empty one, so its goal becomes the first request. Later phases
+    # are left alone: they never return to INTAKE, and an invented request would
+    # only mislead the reconciliation at SUMMARY.
+    if ($wasStart -and @($state.requests).Count -eq 0 -and $state.requirements.goal) {
+        $state.requests = @([pscustomobject]@{
+                id     = [guid]::NewGuid().ToString('N')
+                number = 1
+                text   = [string]$state.requirements.goal
+            })
     }
     # Approvals under retired gate names are dropped rather than remapped: the
     # gates they authorized no longer exist, so the user re-authorizes under the
     # current ones. The history entries keep the record of what was approved.
-    $state.approvals = @(@($state.approvals).Where({ $_.gate -in @('implement', 'verify', 'integrate') }))
+    $state.approvals = @(@($state.approvals).Where({ $_.gate -in @('intake', 'implement', 'verify', 'integrate') }))
     Assert-WorkflowState -State $state
     return $state
 }
@@ -138,20 +162,40 @@ function Resolve-Question {
     return $questions[$Number - 1]
 }
 
+function Get-WorkflowRequest {
+    <# Returns the request list, tolerating state written before it existed. #>
+    param([Parameter(Mandatory)]$State)
+
+    if (-not $State.PSObject.Properties['requests']) { return @() }
+    return @($State.requests)
+}
+
+function Test-RequirementsComplete {
+    <# True when INTAKE has distilled all four facts the later phases read. #>
+    param([Parameter(Mandatory)]$State)
+
+    foreach ($property in @('goal', 'constraints', 'done', 'outOfScope')) {
+        if ([string]::IsNullOrWhiteSpace([string]$State.requirements.$property)) {
+            return $false
+        }
+    }
+    return $true
+}
+
 function Get-WorkflowPhases {
     param([Parameter(Mandatory)][string]$Flow)
 
     if ($Flow -eq 'Quick') {
-        return @('START', 'DESIGN', 'BUILD', 'VERIFY', 'COMMIT')
+        return @('INTAKE', 'DESIGN', 'BUILD', 'VERIFY', 'COMMIT')
     }
     if ($Flow -eq 'Detailed') {
         return @(
-            'START', 'DESIGN', 'SPLIT', 'BRANCH', 'BUILD', 'VERIFY', 'COMMIT',
+            'INTAKE', 'DESIGN', 'SPLIT', 'BRANCH', 'BUILD', 'VERIFY', 'COMMIT',
             'SUMMARY', 'INTEGRATE'
         )
     }
     return @(
-        'START', 'DESIGN', 'SPLIT', 'BRANCH', 'BUILD', 'VERIFY', 'COMMIT',
+        'INTAKE', 'DESIGN', 'SPLIT', 'BRANCH', 'BUILD', 'VERIFY', 'COMMIT',
         'SUMMARY', 'FINAL_REVIEW', 'INTEGRATE'
     )
 }
@@ -174,9 +218,13 @@ function Assert-WorkflowState {
             throw "Workflow state is missing '$property'."
         }
     }
-    foreach ($property in @('goal', 'constraints', 'done', 'outOfScope')) {
-        if ([string]::IsNullOrWhiteSpace([string]$State.requirements.$property)) {
-            throw "Workflow requirements are missing '$property'."
+    # INTAKE is where the four facts are written, so it is the one phase allowed
+    # to hold an incomplete set; every later phase reads them as settled.
+    if ($State.phase -ne 'INTAKE') {
+        foreach ($property in @('goal', 'constraints', 'done', 'outOfScope')) {
+            if ([string]::IsNullOrWhiteSpace([string]$State.requirements.$property)) {
+                throw "Workflow requirements are missing '$property'."
+            }
         }
     }
     Assert-WorkflowTimestamp -Value $State.createdAt -Name 'createdAt'
@@ -249,9 +297,25 @@ function Assert-WorkflowState {
         @($increments | Where-Object { $_.status -ne 'completed' }).Count -gt 0) {
         throw "Phase '$($State.phase)' requires every increment to be completed."
     }
-    if ($State.flow -ne 'Quick' -and $State.phase -notin @('START', 'DESIGN', 'SPLIT', 'BRANCH') -and
+    if ($State.flow -ne 'Quick' -and $State.phase -notin @('INTAKE', 'DESIGN', 'SPLIT', 'BRANCH') -and
         [string]::IsNullOrWhiteSpace([string]$State.featureBranch)) {
         throw "Phase '$($State.phase)' requires featureBranch."
+    }
+
+    $expectedNumber = 1
+    $seenRequestIds = @{}
+    foreach ($request in @(Get-WorkflowRequest -State $State)) {
+        if ([string]::IsNullOrWhiteSpace([string]$request.id) -or $seenRequestIds.ContainsKey($request.id)) {
+            throw "Workflow contains a missing or duplicate request ID '$($request.id)'."
+        }
+        $seenRequestIds[$request.id] = $true
+        if ([int]$request.number -ne $expectedNumber) {
+            throw "Expected request number $expectedNumber, found '$($request.number)'."
+        }
+        if ([string]::IsNullOrWhiteSpace([string]$request.text)) {
+            throw "Request $expectedNumber is missing its text."
+        }
+        $expectedNumber++
     }
 
     $expectedNumber = 1
@@ -277,7 +341,7 @@ function Assert-WorkflowState {
     }
 
     foreach ($approval in @($State.approvals)) {
-        if ($approval.gate -notin @('implement', 'verify', 'integrate') -or
+        if ($approval.gate -notin @('intake', 'implement', 'verify', 'integrate') -or
             [string]::IsNullOrWhiteSpace([string]$approval.note)) {
             throw 'Workflow contains a malformed approval record.'
         }
@@ -337,8 +401,10 @@ function Write-ProgressMarkdown {
     $lines.Add('')
     $lines.Add("**Flow:** $flowLabel")
     $lines.Add("**Phase:** $($State.phase)")
-    $lines.Add("**Goal:** $($State.requirements.goal)")
-    $lines.Add("**Done when:** $($State.requirements.done)")
+    # During INTAKE any of the four can still be unwritten, so each says so
+    # rather than rendering a blank the reader has to interpret.
+    $lines.Add("**Goal:** $(if ($State.requirements.goal) { $State.requirements.goal } else { '_not yet defined_' })")
+    $lines.Add("**Done when:** $(if ($State.requirements.done) { $State.requirements.done } else { '_not yet defined_' })")
     if ($State.requirements.constraints) {
         $lines.Add("**Constraints:** $($State.requirements.constraints)")
     }
@@ -346,6 +412,16 @@ function Write-ProgressMarkdown {
         $lines.Add("**Out of scope:** $($State.requirements.outOfScope)")
     }
     $lines.Add('')
+
+    $requests = @(Get-WorkflowRequest -State $State)
+    if ($requests.Count -gt 0) {
+        $lines.Add('## Requests')
+        $lines.Add('')
+        foreach ($request in $requests) {
+            $lines.Add("- $($request.text)")
+        }
+        $lines.Add('')
+    }
 
     $increments = @($State.increments)
     if ($increments.Count -gt 0) {
@@ -542,6 +618,16 @@ function Show-WorkflowStatus {
         Write-Output "| $($item.number) | $incrementText | $($item.status) |"
     }
 
+    $requests = @(Get-WorkflowRequest -State $State)
+    if ($requests.Count -gt 0) {
+        Write-Output ''
+        Write-Output '| # | Request |'
+        Write-Output '| ---: | --- |'
+        foreach ($item in $requests) {
+            Write-Output "| $($item.number) | $(([string]$item.text).Replace('|', '\|')) |"
+        }
+    }
+
     $questions = @(Get-WorkflowQuestion -State $State)
     if ($questions.Count -gt 0) {
         Write-Output ''
@@ -558,7 +644,18 @@ function Show-WorkflowStatus {
     if ($openCount -gt 0) {
         Write-Output "Open questions: $openCount — the implement gate stays closed until each is answered or dismissed."
     }
-    Write-Output "Goal: $($State.requirements.goal)"
+    if ($Status -eq 'active' -and $State.phase -eq 'INTAKE') {
+        $missing = @('goal', 'constraints', 'done', 'outOfScope').Where({
+            [string]::IsNullOrWhiteSpace([string]$State.requirements.$_)
+        })
+        if ($missing.Count -gt 0) {
+            Write-Output "Intake is open — keep recording requests. Still to distil: $($missing -join ', ')."
+        }
+        else {
+            Write-Output 'Intake is open — keep recording requests until the user says the list is complete.'
+        }
+    }
+    Write-Output "Goal: $(if ($State.requirements.goal) { $State.requirements.goal } else { '(not yet defined)' })"
     Write-Output "Updated: $($State.updatedAt)"
 }
 
@@ -575,13 +672,11 @@ switch ($Command) {
         if (Test-Path -LiteralPath $workflowPath) {
             throw 'An active workflow already exists. Resume it or finish it first.'
         }
-        foreach ($requiredValue in @{
-                Flow = $Flow; Goal = $Goal; Constraints = $Constraints;
-                Done = $Done; OutOfScope = $OutOfScope
-            }.GetEnumerator()) {
-            if ([string]::IsNullOrWhiteSpace([string]$requiredValue.Value)) {
-                throw "-$($requiredValue.Key) is required when starting a workflow."
-            }
+        # Only the flow is required: the four facts are what INTAKE produces, so
+        # demanding them here would put requirement-gathering before the phase
+        # that gathers it. Any that are known up front seed the state.
+        if ([string]::IsNullOrWhiteSpace([string]$Flow)) {
+            throw '-Flow is required when starting a workflow.'
         }
 
         $baseBranch = (git branch --show-current).Trim()
@@ -593,7 +688,7 @@ switch ($Command) {
         $state = [pscustomobject]@{
             schemaVersion      = 1
             flow               = $Flow
-            phase              = 'START'
+            phase              = 'INTAKE'
             baseBranch         = $baseBranch
             baseCommit         = $baseCommit
             featureBranch      = $null
@@ -606,6 +701,7 @@ switch ($Command) {
             currentIncrementId = $null
             commitBaseline     = $null
             increments         = @()
+            requests           = @()
             questions          = @()
             approvals          = @()
             history            = @()
@@ -631,18 +727,21 @@ switch ($Command) {
         if ([string]::IsNullOrWhiteSpace($Note)) {
             throw '-Note is required to record the approval evidence.'
         }
-        # The user says implement once, at the last phase before code is written,
-        # and integrate once, at the review of the finished branch.
+        # The user says intake once, when the request list is complete; implement
+        # once, at the last phase before code is written; and integrate once, at
+        # the review of the finished branch. Detailed Auto keeps all three: what
+        # it automates is the per-increment verification in between.
         $expected = switch ($state.phase) {
+            'INTAKE' { if ($state.flow -eq 'Quick') { $null } else { 'intake' } }
             'DESIGN' { if ($state.flow -eq 'Quick') { 'implement' } else { $null } }
             'SPLIT' { 'implement' }
-            'VERIFY' { 'verify' }
-            'SUMMARY' { if ($state.flow -eq 'Quick') { $null } else { 'integrate' } }
+            'VERIFY' { if ($state.flow -eq 'DetailedAuto') { $null } else { 'verify' } }
+            'SUMMARY' { if ($state.flow -eq 'Detailed') { 'integrate' } else { $null } }
             'FINAL_REVIEW' { 'integrate' }
             default { $null }
         }
-        if ($state.flow -eq 'DetailedAuto' -and $state.phase -ne 'FINAL_REVIEW') {
-            throw 'Detailed Auto accepts user approval only at FINAL_REVIEW.'
+        if ($state.flow -eq 'DetailedAuto' -and $state.phase -in @('VERIFY', 'SUMMARY')) {
+            throw 'Detailed Auto records its own verification; the user approves at INTAKE, SPLIT, and FINAL_REVIEW.'
         }
         if (-not $expected) {
             throw "$($state.phase) has no approval gate. Advance instead."
@@ -670,7 +769,80 @@ switch ($Command) {
         Show-WorkflowStatus -State $state
     }
 
-    # START and DESIGN collect what the agent cannot decide alone instead of
+    # INTAKE accumulates what the user wants from this branch, one request at a
+    # time, across as many messages as it takes. The list stays in state for the
+    # whole workflow so SUMMARY can check the branch against what was asked for.
+    'add-request' {
+        $state = Get-WorkflowState -Path $workflowPath
+        Assert-WorkflowBranch -State $state
+        if ($state.phase -ne 'INTAKE') {
+            throw ("Requests are collected during INTAKE, not '$($state.phase)'. " +
+                'New scope after intake closes becomes an increment.')
+        }
+        if ([string]::IsNullOrWhiteSpace($Text)) {
+            throw '-Text is required for add-request.'
+        }
+        $requests = [Collections.ArrayList]@(Get-WorkflowRequest -State $state)
+        $request = [pscustomobject]@{
+            id     = [guid]::NewGuid().ToString('N')
+            number = $requests.Count + 1
+            text   = $Text
+        }
+        $requests.Add($request) | Out-Null
+        $state.requests = @($requests)
+        # The intake approval means "this list is complete"; a later request
+        # makes it untrue, so the user closes the longer list again.
+        $state.approvals = @($state.approvals).Where({ $_.gate -ne 'intake' })
+        Add-HistoryEntry -State $state -Action 'add-request' -Detail "Recorded request $($request.number): $Text"
+        Save-WorkflowState -State $state -Path $workflowPath
+        Show-WorkflowStatus -State $state
+    }
+
+    'remove-request' {
+        $state = Get-WorkflowState -Path $workflowPath
+        Assert-WorkflowBranch -State $state
+        if ($state.phase -ne 'INTAKE') {
+            throw "Requests can only be removed during INTAKE, not '$($state.phase)'."
+        }
+        if (-not $PSBoundParameters.ContainsKey('Number')) {
+            throw '-Number is required; it is the number shown in the request table.'
+        }
+        $requests = [Collections.ArrayList]@(Get-WorkflowRequest -State $state)
+        if ($Number -lt 1 -or $Number -gt $requests.Count) {
+            throw "Request numbers run from 1 to $($requests.Count)."
+        }
+        $request = $requests[$Number - 1]
+        $requests.RemoveAt($Number - 1)
+        $number = 1
+        foreach ($item in $requests) {
+            $item.number = $number
+            $number++
+        }
+        $state.requests = @($requests)
+        $state.approvals = @($state.approvals).Where({ $_.gate -ne 'intake' })
+        Add-HistoryEntry -State $state -Action 'remove-request' -Detail "Removed request ${Number}: $($request.text)"
+        Save-WorkflowState -State $state -Path $workflowPath
+        Show-WorkflowStatus -State $state
+    }
+
+    # Distils the accumulated requests into the four facts every later phase
+    # reads. INTAKE cannot be left until all four are written.
+    'set-requirement' {
+        $state = Get-WorkflowState -Path $workflowPath
+        Assert-WorkflowBranch -State $state
+        if ([string]::IsNullOrWhiteSpace($Field)) {
+            throw '-Field is required for set-requirement.'
+        }
+        if ([string]::IsNullOrWhiteSpace($Value)) {
+            throw '-Value is required for set-requirement; never record an invented fact.'
+        }
+        $state.requirements.$Field = $Value
+        Add-HistoryEntry -State $state -Action 'set-requirement' -Detail "Set $Field."
+        Save-WorkflowState -State $state -Path $workflowPath
+        Show-WorkflowStatus -State $state
+    }
+
+    # INTAKE and DESIGN collect what the agent cannot decide alone instead of
     # interrupting for each one; the implement gate is closed until none is open.
     'add-question' {
         $state = Get-WorkflowState -Path $workflowPath
@@ -900,7 +1072,21 @@ switch ($Command) {
         Assert-WorkflowBranch -State $state
         $previousPhase = $state.phase
         switch ($state.phase) {
-            'START' {
+            'INTAKE' {
+                if (@(Get-WorkflowRequest -State $state).Count -eq 0) {
+                    throw 'Record at least one request before leaving INTAKE.'
+                }
+                if (-not (Test-RequirementsComplete -State $state)) {
+                    throw ('Distil the requests into goal, constraints, done, and outOfScope ' +
+                        'with set-requirement before leaving INTAKE.')
+                }
+                # Quick advances freely, as its predecessor START did: a small
+                # self-contained pass does not earn a gate of its own. Detailed
+                # Auto does not skip this one — autonomy is worth nothing if it
+                # runs on a half-stated ask.
+                if ($state.flow -ne 'Quick') {
+                    Assert-Approval -State $state -GateName 'intake'
+                }
                 $state.phase = 'DESIGN'
             }
             'DESIGN' {
@@ -916,9 +1102,10 @@ switch ($Command) {
                 if (@($state.increments).Count -eq 0) {
                     throw 'Add at least one increment before leaving SPLIT.'
                 }
-                if ($state.flow -ne 'DetailedAuto') {
-                    Assert-Approval -State $state -GateName 'implement'
-                }
+                # Every flow buys its first written line with this approval,
+                # Detailed Auto included: the plan it will execute unattended is
+                # exactly the plan the user should have seen.
+                Assert-Approval -State $state -GateName 'implement'
                 $state.phase = 'BRANCH'
             }
             'BRANCH' {

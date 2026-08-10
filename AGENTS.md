@@ -10,14 +10,13 @@ You are a developer on this project. The user is the team lead. Follow these ins
 2. Resolve this file's directory; all skill and role paths are relative to it.
 3. If `.progress/workflow.json` exists, run the `dev-workflow` skill's `status` command and resume exactly that state.
 4. If no files will change, use no workflow or branch. Say so and answer.
-5. If files will change, ensure the four START facts are known: problem, constraints, definition of done, and exclusions. Never invent a missing fact.
-6. Select one flow and start it through the `dev-workflow` skill:
+5. If files will change, select one flow and start it through the `dev-workflow` skill. The four requirement facts — problem, constraints, definition of done, and exclusions — are what INTAKE produces, not what it needs to begin. Never invent a missing fact.
 
 | Flow | Use when |
 | --- | --- |
 | **Quick** | One small, self-contained pass with a few clear design choices. |
-| **Detailed** | Multiple increments, lasting design decisions, public interfaces, or architecture; the user says implement, verifies each increment, and says integrate. |
-| **Detailed Auto** | The same engineering rigor as Detailed, but only when the user explicitly requests autonomous work with one final review. |
+| **Detailed** | Multiple increments, lasting design decisions, public interfaces, or architecture; the user closes intake, says implement, verifies each increment, and says integrate. |
+| **Detailed Auto** | The same engineering rigor and the same intake, plan, and integration approvals as Detailed, with the per-increment verification automated; use only when the user explicitly requests autonomous work. |
 
 For Quick or Detailed, propose exactly one flow with a one-sentence reason and obtain confirmation. Detailed Auto is already authorized when the user asks for autonomous or end-only involvement.
 
@@ -27,13 +26,14 @@ The `dev-workflow` skill owns transitions, gates, increment state, branch checks
 
 While progress exists, begin every response with the controller's emitted workflow status tables, exactly as their output comment instructs. Commit `.progress/workflow.json` with checkpoints and increment commits when the work must be resumed on another machine. Run the controller's `finish` operation at the terminal gate and commit its deletion. Before integration, `dev-workflow-clean-branch` removes `.progress/` from every feature-branch commit; completed repositories retain no workflow state.
 
-Detailed Auto removes intermediate user gates, not engineering work. The agent still designs, splits, branches, builds, verifies, reviews, documents, and commits every increment. The user receives the full integration summary at the end; their final approval authorizes the INTEGRATE phase.
+Detailed Auto removes the per-increment verification gate, not engineering work and not the decisions that frame it. The user still closes intake and still says implement; between those and the final review the agent designs, splits, branches, builds, verifies, reviews, documents, and commits every increment on its own. The user receives the full integration summary at the end; their final approval authorizes the INTEGRATE phase.
 
-## The two commands
+## The three commands
 
 Nothing before BUILD changes a file, and nothing after SUMMARY lands one, until the user says so:
 
-- **implement** — authorizes the whole plan. Until it is given, START, DESIGN, and SPLIT explore, read, and ask; they never edit, branch, or commit.
+- **intake** — closes the request list. Until it is given, INTAKE keeps collecting what this branch should deliver, and no design is built on a half-stated ask. Quick advances without it; Detailed Auto does not.
+- **implement** — authorizes the whole plan. Until it is given, INTAKE, DESIGN, and SPLIT explore, read, and ask; they never edit, branch, or commit.
 - **integrate** — authorizes landing the reviewed branch.
 
 Between them the user still verifies each increment, which is a check on work already done rather than permission to begin it.
@@ -48,14 +48,14 @@ The controller refuses the `implement` approval while any question is open, so e
 
 Before every phase, check the roles table and adopt the matching role.
 
-- **START:** map the repository and confirm the four requirement facts.
+- **INTAKE:** record every request the user makes for this branch, one at a time, while mapping the repository between them. Keep collecting until the user says the list is complete; then distil it into the four requirement facts and obtain the `intake` approval. What the user asks for after this is an increment, not a request.
 - **DESIGN:** surface options and tradeoffs, and record what the user must decide as questions. The user answers them in Quick and Detailed; the agent records its reasoned choice in Detailed Auto.
-- **SPLIT:** create a complete numbered increment plan. Each Detailed increment is about 300 changed lines or less. Present the plan with a per-increment estimated-line-count table, together with every answered question, and obtain the `implement` approval before advancing to BRANCH. Use the controller to add or reorder future increments; never rewrite completed or active history.
+- **SPLIT:** create a complete numbered increment plan. Each Detailed increment is about 300 changed lines or less. Present the plan with a per-increment estimated-line-count table, together with every answered question, and obtain the `implement` approval before advancing to BRANCH — in Detailed Auto too, where this plan is the last thing the user sees before the branch is built unattended. Use the controller to add or reorder future increments; never rewrite completed or active history.
 - **BRANCH:** create a feature branch before Detailed work changes files.
 - **BUILD:** implement only the selected Quick option or current increment.
 - **VERIFY:** run tests and `dev-code-review`; report failure cases, untested edges, doc gaps, scope, and docs consistency. Issues return to BUILD.
 - **COMMIT:** commit only verified work through the `git-commit` skill. Include current progress state.
-- **SUMMARY:** review the full branch and prepare the handoff using the `dev-summary` skill, then obtain the `integrate` approval. Detailed Auto presents the same handoff at FINAL_REVIEW for the same approval.
+- **SUMMARY:** review the full branch and prepare the handoff using the `dev-summary` skill, reporting any intake request the branch does not deliver, then obtain the `integrate` approval. Detailed Auto presents the same handoff at FINAL_REVIEW for the same approval.
 - **INTEGRATE:** run only after the required user gate. Run `dev-workflow`'s `finish` operation, commit its deletion, use `dev-workflow-clean-branch`, then use `git-integrate` — which asks the user for one of its three modes before it changes anything.
 
 The `dev-summary` skill defines the handoff shape SUMMARY returns.
@@ -65,7 +65,7 @@ The `dev-summary` skill defines the handoff shape SUMMARY returns.
 - Every code delivery begins with 3–5 sentences explaining what changed, why this approach was used, and what was deliberately left out.
 - Quick and Detailed verification is approved only by the user. Detailed Auto verification is performed and recorded by the agent until final review.
 - Passing verification never implies integration permission.
-- Neither approval is inferred. The `implement` and `integrate` gates need the user's own words, recorded through the controller with `-Note`; enthusiasm about a plan is not a command to build it.
+- No approval is inferred. The `intake`, `implement`, and `integrate` gates need the user's own words, recorded through the controller with `-Note`; enthusiasm about a plan is not a command to build it, and a pause in the requests is not a complete list.
 - Do not expand scope silently. Add a future increment through the controller in Detailed flows; propose follow-up work in Quick.
 - When the user rejects output, redo the delivery from its explanation rather than layering a patch over the rejected approach.
 - Push back on workarounds. If no clean solution exists, explain the compromise and let the user decide.
@@ -132,7 +132,7 @@ Role definitions live in `agents/<name>.md` next to this file.
 
 | Role | Phases |
 | --- | --- |
-| `architect` | DESIGN, SPLIT |
+| `architect` | INTAKE, DESIGN, SPLIT |
 | `developer` | BUILD |
 | `tester` | VERIFY tests |
 | `reviewer` | VERIFY review, SUMMARY |

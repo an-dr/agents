@@ -4,33 +4,40 @@ An executable AI development workflow focused on reliable engineering rather tha
 
 `AGENTS.md` defines policy. `skills/dev-workflow/scripts/workflow.ps1` enforces phase transitions and stores committable state in `.progress/workflow.json`, allowing a workflow to resume on another machine. Before integration, `dev-workflow-clean-branch` removes that state from every feature-branch commit.
 
+In the diagrams below, 👤 marks a transition the user's own words drive. Every other edge is the agent's to take.
+
 ## Detailed
 
-For multi-increment, architectural, or public-interface work. START, DESIGN, and SPLIT only read and ask; they accumulate what the user must decide as questions and change nothing. Two commands drive the flow — **implement** releases the plan into code, **integrate** lands the reviewed branch — and between them the user still verifies each increment.
+For multi-increment, architectural, or public-interface work. INTAKE, DESIGN, and SPLIT only read and ask; they accumulate what the user wants as requests and what the user must decide as questions, and change nothing. Three commands drive the flow — **intake** closes the request list, **implement** releases the plan into code, **integrate** lands the reviewed branch — and between them the user still verifies each increment.
 
 ```mermaid
 flowchart TD
-START --> DESIGN --> SPLIT
-SPLIT -->|user says implement| BRANCH --> BUILD --> VERIFY --> COMMIT
+INTAKE -->|👤 adds a request| INTAKE
+INTAKE -->|👤 says the list is complete| DESIGN --> SPLIT
+SPLIT -->|👤 says implement| BRANCH --> BUILD --> VERIFY
+VERIFY -->|👤 verifies the increment| COMMIT
 VERIFY -->|issues| BUILD
 COMMIT -->|more increments| BUILD
 COMMIT -->|plan complete| SUMMARY
-SUMMARY -->|user says integrate| INTEGRATE
+SUMMARY -->|👤 says integrate| INTEGRATE
 ```
 
 The controller refuses the implement approval while any question is still open, so nothing is built on an unanswered assumption.
 
 ## Detailed Auto
 
-Runs the same phases, reviews, tests, commits, and integration preparation as Detailed. The agent handles intermediate decisions; the user is involved once at the final summary, whose approval authorizes integration.
+Runs the same phases, reviews, tests, commits, and integration preparation as Detailed, and keeps the same three commands. What it automates is the middle: the agent verifies and commits each increment itself, so the user closes intake, approves the plan, and is not asked again until the final review.
 
 ```mermaid
 flowchart TD
-START --> DESIGN --> SPLIT --> BRANCH --> BUILD --> VERIFY --> COMMIT
+INTAKE -->|👤 adds a request| INTAKE
+INTAKE -->|👤 says the list is complete| DESIGN --> SPLIT
+SPLIT -->|👤 says implement| BRANCH --> BUILD --> VERIFY
+VERIFY -->|agent verifies| COMMIT
 VERIFY -->|issues| BUILD
 COMMIT -->|more increments| BUILD
 COMMIT -->|plan complete| SUMMARY --> FINAL_REVIEW
-FINAL_REVIEW -->|user says integrate| INTEGRATE
+FINAL_REVIEW -->|👤 says integrate| INTEGRATE
 ```
 
 ## Quick
@@ -39,14 +46,15 @@ For one small, self-contained change with a handful of clear design choices. It 
 
 ```mermaid
 flowchart TD
-START --> DESIGN
-DESIGN -->|user says implement| BUILD --> VERIFY --> COMMIT
+INTAKE --> DESIGN
+DESIGN -->|👤 says implement| BUILD --> VERIFY
+VERIFY -->|👤 verifies the change| COMMIT
 VERIFY -->|issues| BUILD
 ```
 
 ## Integration
 
-`INTEGRATE` always rebases, so the default branch never gains a merge commit. The user then chooses how the branch lands, and the skill asks every time:
+`INTEGRATE` always rebases, so the default branch never gains a merge commit. 👤 The user then chooses how the branch lands, and the skill asks every time:
 
 | Mode | Result |
 | --- | --- |
