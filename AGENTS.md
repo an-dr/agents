@@ -110,7 +110,7 @@ Skills live in `skills/<name>/SKILL.md` next to this file. Read a matching skill
 | `git-integrate` | Integrate an approved branch in the mode the user chooses. |
 | `agents-retro` | Propose process improvements after integration or on request. |
 
-ADRs are immutable; supersede them instead of editing them. Use ADRs only for lasting architectural decisions, not tactical or tooling choices.
+ADRs are immutable once integrated; supersede them instead of editing them. Immutability protects a decision others have read, so it begins at integration: an ADR written on the current feature branch is still a draft, and a later decision on that same branch edits it — or collapses two into one — rather than adding an ADR that corrects one nobody has seen. Use ADRs only for lasting architectural decisions, not tactical or tooling choices.
 
 ## Commit scopes
 

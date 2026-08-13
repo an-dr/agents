@@ -9,7 +9,7 @@ Use during `SUMMARY`, after every increment is committed and before the final us
 
 1. Run the `dev-code-review` skill with `summary` scope against the workflow's base branch.
 2. Reconcile the branch against the intake request list in `.progress/workflow.json`. Every request the branch does not deliver is named in the handoff — as a deliberate exclusion, or as work that was missed. A request the user never withdrew and the branch never satisfied is a defect in the delivery, not a detail for the release notes.
-3. Confirm the full test matrix, documentation consistency, exclusions, and any remaining risk.
+3. Confirm the full test matrix, documentation consistency, exclusions, and any remaining risk. Documentation consistency includes the ADRs the branch added: none of them is integrated yet, so one correcting another from the same branch is a draft that should have been edited — collapse them before the handoff (`docs-adr`).
 4. Return this exact handoff shape:
 
 ```text
