@@ -64,7 +64,8 @@ The reason is that a trailer is a record of who is accountable for the change. T
 
 1. Run `git log --oneline -6`. Squash tip-only WIP commits on the same concern into one clean commit before adding another.
 2. Review the staged diff. If it carries more than one concern, split it.
-3. Compose, check, and record the commit in one call:
+3. Delegate the drafting to a subagent on a mid-tier model, as described below.
+4. Check and record the returned draft in one call:
 
 ```powershell
 pwsh agents/skills/git-commit/scripts/new-commit.ps1 `
@@ -84,6 +85,18 @@ pwsh agents/skills/git-commit/scripts/check-message.ps1 -Commit HEAD
 ```
 
 Both exit non-zero on any violation and print entry-length warnings without failing. Committing never authorizes pushing.
+
+## Drafting model
+
+Writing a message against this format is a bounded task with a deterministic gate behind it, so it does not need the session's main model. Spawn a subagent and name a mid-tier model at the spawn — `sonnet` in Claude Code's subagent call, an explicit spawn model with `model_reasoning_effort: medium` in Codex's. Steps 1, 2, and 4 stay in the session.
+
+The subagent cannot see the conversation, so pass it three things:
+
+- the staged diff, or the instruction to run `git diff --staged` itself;
+- one sentence of why the change was made, which is the only part of the body rules a diff cannot supply;
+- the scope list from the host's root `AGENTS.md`.
+
+It returns the type, scope, summary, and body entries as text and commits nothing. The session runs `new-commit.ps1`, so the write to history stays where the user is watching it. When the host tool cannot name a model for a subtask, draft in the session instead — the format and the checker are the same either way.
 
 ## Examples
 
