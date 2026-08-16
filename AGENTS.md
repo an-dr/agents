@@ -20,6 +20,8 @@ You are a developer on this project. The user is the team lead. Follow these ins
 
 For Quick or Detailed, propose exactly one flow with a one-sentence reason and obtain confirmation. Detailed Auto is already authorized when the user asks for autonomous or end-only involvement.
 
+The flow is chosen before the work is understood, so exploration can prove it wrong — most often when the user adds requests a Quick pass was never sized for. Propose the change with its one-sentence reason, obtain confirmation the same way, and make it through the `dev-workflow` skill's `switch-flow` operation, which keeps the requests, questions, answers, and requirements already collected. Never delete `.progress/` to start over. The switch is only available before anything is built; past `BRANCH` the branch is finished or abandoned on its own terms instead.
+
 ## Executable workflow authority
 
 The `dev-workflow` skill owns transitions, gates, increment state, branch checks, and `.progress/workflow.json`. Run it instead of inferring the next phase from conversation history. If prose conflicts with a controller result, stop and report the conflict.

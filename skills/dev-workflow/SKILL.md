@@ -54,6 +54,7 @@ pwsh <script> dismiss-question -Number 3 -Answer '<why it stopped mattering>'
 pwsh <script> approve -Gate intake -Note '<the user's own words>'
 pwsh <script> advance
 pwsh <script> return-to-build
+pwsh <script> switch-flow -Flow Detailed
 pwsh <script> add-increment -At 2 -Scope '<scope>' -Description '<result>'
 pwsh <script> move-increment -Number 4 -To 2
 pwsh <script> defer-increment -To 6
@@ -91,6 +92,18 @@ Only planned increments can be inserted or reordered with `move-increment`. Comp
 `remove-increment` drops work the user has decided against. A completed increment is delivered history and cannot be removed. The active increment can be, under the same BUILD-and-clean-tree rule as `defer-increment`; the next planned increment then starts, or the flow moves to `SUMMARY` when none remains. Removing an increment is a scope change, so record why in the response — the plan no longer explains its own shape.
 
 New work discovered in `SUMMARY` or `FINAL_REVIEW` can be added as an increment. The controller drops the `implement` and `integrate` approvals and returns to `SPLIT`, so the enlarged plan is authorized again before the new work passes through the branch cycle.
+
+## Switch the flow
+
+The flow is chosen before the work is understood, so exploration can prove it wrong: a Quick fix whose intake keeps growing needs Detailed, and a Detailed plan that collapses to one obvious change does not. `switch-flow` is that transition. Never delete `.progress/` to start over — the requests, the questions and their answers, and the four requirements describe the work rather than the process, and all of them survive the switch.
+
+```powershell
+pwsh <script> switch-flow -Flow Detailed
+```
+
+It returns the workflow to `INTAKE` and drops every approval and every planned increment. That is deliberate: the flows do not collect the same gates, so a phase carried across would credit the new flow with an approval nobody gave — Quick never asks for `intake`, and Detailed cannot leave `INTAKE` without it. Reopening the request list is usually the point, since the flow changed because the user asked for something the old one was not sized for.
+
+The switch is legal only before anything is built. It refuses once `BRANCH` has created a feature branch, once any increment has left `planned`, and while the working tree is dirty apart from `.progress/` — the same evidence `defer-increment` relies on. Past those points the branch is finished or abandoned on its own terms instead, because a flow switch must never orphan delivered work.
 
 ## Share and finish
 

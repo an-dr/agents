@@ -2,7 +2,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Position = 0, Mandatory)]
-    [ValidateSet('start', 'status', 'advance', 'return-to-build', 'approve', 'add-increment', 'move-increment', 'defer-increment', 'remove-increment', 'add-request', 'remove-request', 'set-requirement', 'add-question', 'answer-question', 'dismiss-question', 'finish')]
+    [ValidateSet('start', 'status', 'advance', 'return-to-build', 'switch-flow', 'approve', 'add-increment', 'move-increment', 'defer-increment', 'remove-increment', 'add-request', 'remove-request', 'set-requirement', 'add-question', 'answer-question', 'dismiss-question', 'finish')]
     [string]$Command,
 
     [ValidateSet('Detailed', 'DetailedAuto', 'Quick')]
@@ -1182,6 +1182,59 @@ switch ($Command) {
             $_.gate -ne 'verify' -or $_.incrementId -ne $state.currentIncrementId
         })
         Add-HistoryEntry -State $state -Action 'return-to-build' -Detail 'Returned from VERIFY to BUILD.'
+        Save-WorkflowState -State $state -Path $workflowPath
+        Show-WorkflowStatus -State $state
+    }
+
+    # A flow switch is a scope decision, not a phase transition: the work turned
+    # out larger or smaller than the flow started for it, which the request list
+    # usually reveals only once exploration is under way. Every flow-independent
+    # fact survives -- requests, questions with their answers, and the four
+    # requirements -- because those describe the work, not the process around
+    # it. It is legal only before anything is built, so no delivered work can be
+    # orphaned by it; after BRANCH, the branch is finished or abandoned instead.
+    'switch-flow' {
+        $state = Get-WorkflowState -Path $workflowPath
+        Assert-WorkflowBranch -State $state
+        if ([string]::IsNullOrWhiteSpace([string]$Flow)) {
+            throw '-Flow is required for switch-flow.'
+        }
+        if ($Flow -eq $state.flow) {
+            throw "The workflow is already running as $Flow."
+        }
+        if ($state.featureBranch) {
+            throw "Cannot switch flow once BRANCH created '$($state.featureBranch)'; finish or abandon that branch first."
+        }
+        $started = @(@($state.increments).Where({ $_.status -ne 'planned' }))
+        if ($started.Count -gt 0) {
+            throw "Cannot switch flow once an increment has started; '$($started[0].scope)' is $($started[0].status)."
+        }
+        # The same evidence defer-increment relies on, for the same reason: a
+        # clean tree is all the controller has to prove nothing was built under
+        # the flow being left behind. `.progress/` is excluded because the
+        # controller rewrites it on every command.
+        $changes = @(git status --porcelain -- . ':(exclude).progress')
+        if ($changes.Count -gt 0) {
+            throw 'The working tree must be clean, apart from .progress, to switch flow.'
+        }
+
+        $previousFlow = $state.flow
+        $previousPhase = $state.phase
+        $droppedIncrements = @($state.increments).Count
+        $state.flow = $Flow
+        # Back to INTAKE rather than to whichever phase the two flows share.
+        # The flows do not collect the same gates -- Quick never asks for
+        # `intake`, Detailed cannot leave INTAKE without it -- so carrying a
+        # phase across would credit the new flow with an approval nobody gave.
+        # Reopening the request list is usually the point: the flow changed
+        # because the user asked for something the old one was not sized for.
+        $state.phase = 'INTAKE'
+        $state.approvals = @()
+        $state.increments = @()
+        $state.currentIncrementId = $null
+        $state.commitBaseline = $null
+        Add-HistoryEntry -State $state -Action 'switch-flow' `
+            -Detail "Switched from $previousFlow/$previousPhase to $Flow/INTAKE; dropped every approval and $droppedIncrements planned increment(s)."
         Save-WorkflowState -State $state -Path $workflowPath
         Show-WorkflowStatus -State $state
     }
