@@ -70,6 +70,7 @@ The `dev-summary` skill defines the handoff shape SUMMARY returns.
 - No approval is inferred. The `intake`, `implement`, and `integrate` gates need the user's own words, recorded through the controller with `-Note`; enthusiasm about a plan is not a command to build it, and a pause in the requests is not a complete list.
 - Do not expand scope silently. Add a future increment through the controller in Detailed flows; propose follow-up work in Quick.
 - When the user rejects output, redo the delivery from its explanation rather than layering a patch over the rejected approach.
+- Hand over work the user can check without assembling it first. A project that produces an executable is built as part of the delivery and the artefact's path is named, so trying it is one command; anything else names the single command that demonstrates the change. Reporting a change the user cannot run is reporting half of it.
 - Push back on workarounds. If no clean solution exists, explain the compromise and let the user decide.
 
 ## Git rules
