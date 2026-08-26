@@ -9,7 +9,7 @@ allowed-tools: PowerShell
 Wires one clone of this repository into each tool's **user-level** configuration instead of embedding it per repository:
 
 1. a managed block in each tool's global instruction file, pointing at this clone's `AGENTS.md`;
-2. one directory junction per skill in each tool's global skills directory.
+2. one directory link per skill in each tool's global skills directory — a junction on Windows, a symbolic link on Linux/macOS.
 
 A repository that carries this clone as its own `agents/` submodule wins over the global install, because its `AGENTS.md` is nearer the work.
 
@@ -29,7 +29,7 @@ pwsh <clone>/skills/agents-install/scripts/install-agents.ps1
 | `-Force` | Replace a real directory occupying a skill link path. |
 | `-Uninstall` | Remove the managed blocks and the junctions. |
 
-The script is idempotent. It edits only between its `agents-install` markers, never other content in those files, and only ever replaces links it recognises. Junctions need no administrator rights or developer mode.
+The script is idempotent. It edits only between its `agents-install` markers, never other content in those files, and only ever replaces links it recognises. Junctions need no administrator rights or developer mode on Windows; symbolic links need no elevation on Linux/macOS either.
 
 Re-run it after adding a skill to the clone, or after moving the clone.
 

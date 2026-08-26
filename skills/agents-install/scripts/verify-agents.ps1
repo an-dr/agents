@@ -1,7 +1,7 @@
 #Requires -Version 7
 <#
   Verifies a global agents installation: clone health, the managed instruction
-  block in each tool, and skill junctions that actually resolve to SKILL.md.
+  block in each tool, and skill links that actually resolve to SKILL.md.
   Prints a Markdown result table and exits non-zero when any check fails.
 #>
 param(
@@ -96,7 +96,7 @@ foreach ($tool in $targets) {
             $broken += "$($skill.Name): points at $linkTarget"
             continue
         }
-        # Reading through the link proves the junction actually traverses.
+        # Reading through the link proves it actually traverses.
         if (-not (Test-Path -LiteralPath (Join-Path $linkPath 'SKILL.md'))) {
             $broken += "$($skill.Name): SKILL.md unreadable through the link"
             continue

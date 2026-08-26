@@ -1,8 +1,9 @@
 #Requires -Version 7
 <#
   Installs this agents clone globally: a managed instruction block in each
-  tool's user-level instruction file, plus one directory junction per skill in
-  each tool's user-level skills directory. Idempotent and re-runnable.
+  tool's user-level instruction file, plus one directory link (junction on
+  Windows, symbolic link on Linux/macOS) per skill in each tool's user-level
+  skills directory. Idempotent and re-runnable.
 #>
 param(
     [string]$AgentsRoot,

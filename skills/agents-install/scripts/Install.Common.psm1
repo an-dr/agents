@@ -4,6 +4,12 @@ $ErrorActionPreference = 'Stop'
 $script:BeginMarker = '<!-- BEGIN agents-install -->'
 $script:EndMarker = '<!-- END agents-install -->'
 
+function Get-DirectoryLinkItemType {
+    <# Junctions are NTFS-only; non-Windows platforms need a symbolic link instead. #>
+    if ($IsWindows) { return 'Junction' }
+    return 'SymbolicLink'
+}
+
 function Get-AgentsBlockMarker {
     <# Returns the managed-block delimiters shared by install and verify. #>
     return [pscustomobject]@{ Begin = $script:BeginMarker; End = $script:EndMarker }
@@ -208,8 +214,9 @@ function Test-SamePath {
 
 function Set-DirectoryLink {
     <#
-      Points a directory junction at a target. Returns current/created/replaced,
-      or conflict when a real directory occupies the path and -Force is absent.
+      Points a directory link (junction on Windows, symbolic link elsewhere) at
+      a target. Returns current/created/replaced, or conflict when a real
+      directory occupies the path and -Force is absent.
     #>
     param(
         [Parameter(Mandatory)][string]$Path,
@@ -222,7 +229,7 @@ function Set-DirectoryLink {
         if ($linkTarget) {
             if (Test-SamePath -Left $linkTarget -Right $Target) { return 'current' }
             [System.IO.Directory]::Delete($Path)
-            New-Item -ItemType Junction -Path $Path -Target $Target | Out-Null
+            New-Item -ItemType (Get-DirectoryLinkItemType) -Path $Path -Target $Target | Out-Null
             return 'replaced'
         }
         if (-not $Force) { return 'conflict' }
@@ -233,7 +240,7 @@ function Set-DirectoryLink {
     if ($parent -and -not (Test-Path -LiteralPath $parent)) {
         New-Item -ItemType Directory -Path $parent -Force | Out-Null
     }
-    New-Item -ItemType Junction -Path $Path -Target $Target | Out-Null
+    New-Item -ItemType (Get-DirectoryLinkItemType) -Path $Path -Target $Target | Out-Null
     return 'created'
 }
 
