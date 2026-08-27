@@ -34,9 +34,12 @@ A chaotic README usually suffers from redundancy, dead links, and bad order more
 | keep | true, useful, already in the right place — carry it across unchanged, including its wording |
 | rewrite | true but buried, bloated, or out of order |
 | cut | false, duplicated elsewhere in the file, or dead |
+| relocate | true and worth keeping, but at the wrong altitude — a specification belongs in the document that owns it, design detail in `design/`, implementation notes in the code's own doc comments. Move it and link, never both |
 | missing | the baseline or a conditional module the evidence supports |
 
 Cutting is work. A section removed for redundancy improves the README as much as one added.
+
+Relocating is the one that goes wrong quietly. A README that restates a specification kept elsewhere drifts from it, and the copy readers reach first is the one that is wrong: check such a section against its owning document before deciding, because the discrepancy is usually already there.
 
 ## Baseline structure
 

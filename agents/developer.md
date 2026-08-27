@@ -13,7 +13,7 @@ BUILD begins only after the user's `implement` approval, which the controller en
 
 ## Process
 
-1. **Read the host context** — `README.md`, `docs/index.md`, and the host `AGENTS.md` for project-specific build and test commands.
+1. **Read the host context** — `README.md`, `docs/index.md`, and the host `AGENTS.md` for project-specific build and test commands, plus whatever DOCS wrote for this increment: that is the specification being implemented.
 2. **Find the analogous code** — before writing, locate something similar already in the codebase and match its structure. Don't invent structure.
 3. **Implement within scope** — work discovered mid-build becomes a new increment proposal, never a silent expansion.
 4. **Verify as you go** — compile and run the relevant test subset after each touch-point; don't batch failures.
@@ -24,6 +24,9 @@ BUILD begins only after the user's `implement` approval, which the controller en
 - Match the style of the file being edited — naming, formatting, error handling, comment density.
 - Write for the next human reader: obvious call sites, names that state intent, straight control flow, no hidden state to hold in mind. Clever code that is correct but hard to follow gets rewritten, not commented.
 - Inline docs at implementation time, never retroactively.
+- The documentation is the authority. DOCS wrote what this increment implements; build to it rather than around it.
+- Never resolve a contradiction between the code and the documentation alone. Record it with `add-question` and let the user decide which one is wrong — a stale document and a wrong implementation look identical from inside BUILD, and guessing silently rewrites whichever the agent happened to trust.
+- Write no documentation outside the code itself. Doc comments beside the implementation are the developer's; `docs/`, READMEs, and design pages belong to `tech-writer`, and a gap found mid-build is raised rather than filled here.
 - Stubs are intentional — don't "fix" one unless that is the task.
 - Never commit during BUILD. COMMIT runs after user approval in Quick and Detailed, or after agent verification in Detailed Auto.
 
@@ -46,4 +49,4 @@ The developer's own defaults for writing code. Review judges the result on its o
 - Write Doxygen for C/C++, JSDoc for TS/JS, and docstrings for Python on public interfaces and non-obvious decisions.
 - Documentation describes the system in the present tense, never a roadmap or a workflow increment.
 - Incomplete implementation uses a grep-able `TODO` token.
-- Update `docs/` when public interfaces, architecture, or observable behavior changes.
+- A change to public interfaces, architecture, or observable behavior needs `docs/` updated with it — raise it for `tech-writer` rather than editing those files during BUILD.

@@ -28,14 +28,14 @@ The `dev-workflow` skill owns transitions, gates, increment state, branch checks
 
 While progress exists, begin every response with the controller's emitted workflow status tables, exactly as their output comment instructs. Commit `.progress/workflow.json` with checkpoints and increment commits when the work must be resumed on another machine. Run the controller's `finish` operation at the terminal gate and commit its deletion. Before integration, `dev-workflow-clean-branch` removes `.progress/` from every feature-branch commit; completed repositories retain no workflow state.
 
-Detailed Auto removes the per-increment verification gate, not engineering work and not the decisions that frame it. The user still closes intake and still says implement; between those and the final review the agent designs, splits, branches, builds, verifies, reviews, documents, and commits every increment on its own. The user receives the full integration summary at the end; their final approval authorizes the INTEGRATE phase.
+Detailed Auto removes the per-increment verification gate, not engineering work and not the decisions that frame it. The user still closes intake and still says implement; between those and the final review the agent designs, splits, branches, documents, builds, verifies, reviews, and commits every increment on its own. The user receives the full integration summary at the end; their final approval authorizes the INTEGRATE phase.
 
 ## The three commands
 
-Nothing before BUILD changes a file, and nothing after SUMMARY lands one, until the user says so:
+Nothing before DOCS changes a file, and nothing after SUMMARY lands one, until the user says so:
 
 - **intake** — closes the request list. Until it is given, INTAKE keeps collecting what this branch should deliver, and no design is built on a half-stated ask. Quick advances without it; Detailed Auto does not.
-- **implement** — authorizes the whole plan. Until it is given, INTAKE, DESIGN, and SPLIT explore, read, and ask; they never edit, branch, or commit.
+- **implement** — authorizes the whole plan, documentation included: DOCS is the first phase that writes anything. Until it is given, INTAKE, DESIGN, and SPLIT explore, read, and ask; they never edit, branch, or commit.
 - **integrate** — authorizes landing the reviewed branch.
 
 Between them the user still verifies each increment, which is a check on work already done rather than permission to begin it.
@@ -54,6 +54,7 @@ Before every phase, check the roles table and adopt the matching role.
 - **DESIGN:** surface options and tradeoffs, and record what the user must decide as questions. The user answers them in Quick and Detailed; the agent records its reasoned choice in Detailed Auto.
 - **SPLIT:** create a complete numbered increment plan. Each Detailed increment is about 300 changed lines or less. Present the plan with a per-increment estimated-line-count table, together with every answered question, and obtain the `implement` approval before advancing to BRANCH — in Detailed Auto too, where this plan is the last thing the user sees before the branch is built unattended. Use the controller to add or reorder future increments; never rewrite completed or active history.
 - **BRANCH:** create a feature branch before Detailed work changes files.
+- **DOCS:** write the documentation the increment needs before the code exists, under the `tech-writer` role. Documentation is the authority: what is written here is what BUILD implements. Cover what is missing rather than restating what is already correct, and leave the work uncommitted for the increment's own COMMIT. A documentation change is a repository change, which is why this phase sits after BRANCH.
 - **BUILD:** implement only the selected Quick option or current increment.
 - **VERIFY:** run tests and `dev-code-review`; report failure cases, untested edges, doc gaps, scope, and docs consistency. Issues return to BUILD.
 - **COMMIT:** commit only verified work through the `git-commit` skill. Include current progress state.
@@ -139,7 +140,7 @@ Role definitions live in `agents/<name>.md` next to this file.
 | `developer` | BUILD |
 | `tester` | VERIFY tests |
 | `reviewer` | VERIFY review, SUMMARY |
-| `tech-writer` | Any phase, whenever the change touches documentation |
+| `tech-writer` | DOCS, and any phase whenever the change touches documentation |
 | `agent-developer` | Any phase, whenever the change touches agent instructions — policy, role, or skill files |
 
 Every file has one correct location in the host repository. Flag ambiguity before creating a file.

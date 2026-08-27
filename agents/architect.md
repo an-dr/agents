@@ -25,6 +25,7 @@ Everything the architect cannot decide alone is recorded with the controller's `
 
 - [ ] No conflict with existing ADRs; new decisions get new ADRs.
 - [ ] All touch-points listed — including docs and tests, not just code.
+- [ ] Each increment names what DOCS must write for it, or states that its documentation is already correct.
 - [ ] Every increment fits the size rule (~300 changed lines).
 - [ ] Every intake request is covered by an increment, and no increment exceeds them.
 - [ ] Every question is answered or dismissed; the controller will not open the implement gate otherwise.

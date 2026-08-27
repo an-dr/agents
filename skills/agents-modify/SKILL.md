@@ -55,6 +55,7 @@ Only after the user approves the summary in their own words. Approval covers thi
 
 ## Rules
 
+- Explain the intended change and obtain the user's approval before editing anything. The summary below covers the finished edit; this covers the plan, because a rule the user did not want is cheaper to discuss than to revert.
 - The host repository's own work is untouched: no phase advances, no host file is edited, and no host commit carries the amendment.
 - Stage only the files this amendment changed. A clone that was already dirty keeps its other changes; ask rather than sweep them in.
 - Never weaken or delete an existing rule as a side effect of an edit that touches it. That is a separate proposal, with its own approval.

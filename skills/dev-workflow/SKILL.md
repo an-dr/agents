@@ -23,8 +23,8 @@ pwsh <skill-path>/scripts/workflow.ps1 start -Flow Detailed [-Goal '<problem>']
 
 Supported flows:
 
-- `Quick`: one build/verify/commit pass with user decisions and verification.
-- `Detailed`: increments, a feature branch, per-increment user verification, integration summary, and explicit integration approval.
+- `Quick`: one document/build/verify/commit pass with user decisions and verification.
+- `Detailed`: increments, a feature branch, documentation written before each increment's code, per-increment user verification, integration summary, and explicit integration approval.
 - `DetailedAuto`: the same engineering phases and the same intake, plan, and integration approvals as Detailed; what it automates is the per-increment verification in between, which the agent performs and records itself until `FINAL_REVIEW`.
 
 Use Detailed Auto only when the user explicitly requests autonomous or end-only involvement.

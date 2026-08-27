@@ -186,16 +186,16 @@ function Get-WorkflowPhases {
     param([Parameter(Mandatory)][string]$Flow)
 
     if ($Flow -eq 'Quick') {
-        return @('INTAKE', 'DESIGN', 'BUILD', 'VERIFY', 'COMMIT')
+        return @('INTAKE', 'DESIGN', 'DOCS', 'BUILD', 'VERIFY', 'COMMIT')
     }
     if ($Flow -eq 'Detailed') {
         return @(
-            'INTAKE', 'DESIGN', 'SPLIT', 'BRANCH', 'BUILD', 'VERIFY', 'COMMIT',
+            'INTAKE', 'DESIGN', 'SPLIT', 'BRANCH', 'DOCS', 'BUILD', 'VERIFY', 'COMMIT',
             'SUMMARY', 'INTEGRATE'
         )
     }
     return @(
-        'INTAKE', 'DESIGN', 'SPLIT', 'BRANCH', 'BUILD', 'VERIFY', 'COMMIT',
+        'INTAKE', 'DESIGN', 'SPLIT', 'BRANCH', 'DOCS', 'BUILD', 'VERIFY', 'COMMIT',
         'SUMMARY', 'FINAL_REVIEW', 'INTEGRATE'
     )
 }
@@ -276,14 +276,14 @@ function Assert-WorkflowState {
             throw 'currentIncrementId must identify the only active increment.'
         }
         $expectedStatus = if ($State.phase -eq 'COMMIT') { 'verified' } else { 'in_progress' }
-        if ($current[0].status -ne $expectedStatus -or $State.phase -notin @('BUILD', 'VERIFY', 'COMMIT')) {
+        if ($current[0].status -ne $expectedStatus -or $State.phase -notin @('DOCS', 'BUILD', 'VERIFY', 'COMMIT')) {
             throw "Active increment status is inconsistent with phase '$($State.phase)'."
         }
     }
     elseif ($active.Count -gt 0) {
         throw 'Workflow has an active increment without currentIncrementId.'
     }
-    if ($State.flow -ne 'Quick' -and $State.phase -in @('BUILD', 'VERIFY', 'COMMIT') -and
+    if ($State.flow -ne 'Quick' -and $State.phase -in @('DOCS', 'BUILD', 'VERIFY', 'COMMIT') -and
         -not $State.currentIncrementId) {
         throw "Detailed phase '$($State.phase)' requires an active increment."
     }
@@ -537,7 +537,13 @@ function Set-IncrementNumbers {
 }
 
 function Start-NextIncrement {
-    param([Parameter(Mandatory)]$State)
+    param(
+        [Parameter(Mandatory)]$State,
+        # Where the increment starts. A fresh increment off BRANCH documents
+        # before it builds; a deferral or removal resumes in BUILD, where the
+        # increment it replaces already was.
+        [string]$Phase = 'BUILD'
+    )
 
     $next = @($State.increments).Where({ $_.status -eq 'planned' }, 'First')[0]
     if (-not $next) {
@@ -545,7 +551,7 @@ function Start-NextIncrement {
     }
     $next.status = 'in_progress'
     $State.currentIncrementId = $next.id
-    $State.phase = 'BUILD'
+    $State.phase = $Phase
 }
 
 function Get-GitHead {
@@ -1092,7 +1098,7 @@ switch ($Command) {
             'DESIGN' {
                 if ($state.flow -eq 'Quick') {
                     Assert-Approval -State $state -GateName 'implement'
-                    $state.phase = 'BUILD'
+                    $state.phase = 'DOCS'
                 }
                 else {
                     $state.phase = 'SPLIT'
@@ -1117,7 +1123,10 @@ switch ($Command) {
                     throw "Create and switch to a feature branch before leaving BRANCH."
                 }
                 $state.featureBranch = $branch
-                Start-NextIncrement -State $state
+                Start-NextIncrement -State $state -Phase 'DOCS'
+            }
+            'DOCS' {
+                $state.phase = 'BUILD'
             }
             'BUILD' {
                 $state.phase = 'VERIFY'
