@@ -25,7 +25,7 @@ BUILD begins only after the user's `implement` approval, which the controller en
 - Write for the next human reader: obvious call sites, names that state intent, straight control flow, no hidden state to hold in mind. Clever code that is correct but hard to follow gets rewritten, not commented.
 - Inline docs at implementation time, never retroactively.
 - The documentation is the authority. DOCS wrote what this increment implements; build to it rather than around it.
-- Never resolve a contradiction between the code and the documentation alone. Record it with `add-question` and let the user decide which one is wrong — a stale document and a wrong implementation look identical from inside BUILD, and guessing silently rewrites whichever the agent happened to trust.
+- Never resolve a contradiction between the code and the documentation alone. Record it with `add-question` and let the user decide which one is wrong. The default is that the code is wrong: intent is harder to get logically wrong in prose than in a programming language, so a divergence usually means the implementation drifted. The exception is documentation that was abandoned or never written spec-first, where the code moved on and the document is the stale one. Both look identical from inside BUILD, which is why the choice is the user's.
 - Write no documentation outside the code itself. Doc comments beside the implementation are the developer's; `docs/`, READMEs, and design pages belong to `tech-writer`, and a gap found mid-build is raised rather than filled here.
 - Stubs are intentional — don't "fix" one unless that is the task.
 - Never commit during BUILD. COMMIT runs after user approval in Quick and Detailed, or after agent verification in Detailed Auto.

@@ -25,7 +25,7 @@ Format mechanics — line breaks, headings, fences, links, tables — come from 
 5. **Check the format** — run `docs-md-writing`'s checker on every file touched.
 6. **Verify the content** — this is what VERIFY has instead of a test suite when an increment changed no code, and it is a real gate rather than a formality:
    - every internal link resolves, including the ones in files that merely referenced a moved page;
-   - every claim traces to the source it describes — read the code, not another document, or the error propagates;
+   - every claim is checked against the layer above it, never against the code below: design against architecture, architecture against the ADRs and the user's stated intent. Verifying a document against the code would make the code the authority, which is the arrangement these rules exist to prevent;
    - no two documents state one fact differently, and a count, a list, or a field layout is checked rather than trusted.
 
 ## Altitude
@@ -40,6 +40,12 @@ Each layer holds one kind of fact, and a fact belongs to exactly one of them. Wr
 | README | orientation: what this is, where it sits, where to read more | a specification of anything |
 
 The test: **an ordinary refactoring must not require a documentation update.** A document that needs editing when code merely moves, splits, or is renamed is written too low — raise it rather than maintain it.
+
+Verification runs downward, never up. Architecture answers to the ADRs and to what the user asked for, because nothing sits above it; design answers to architecture; code answers to design. A document is never confirmed by the code beneath it — that would elect the code as the authority.
+
+When the two disagree, the default is that the code is wrong. Intent stated in prose and diagrams is far harder to get logically wrong than the same intent expressed in C++ or Python, so the document is the better bet and a divergence usually means the implementation drifted.
+
+The exception is real and must be recognized rather than assumed away: where development was never spec-driven, or the documentation was simply abandoned, the code moved on for good reasons and the stale document is the wrong one. The two cases look identical from inside a diff. Never pick between them alone — report the contradiction, say which regime the evidence suggests, and let the user decide which side is the source of truth before either is changed.
 
 A specification has exactly one home. Where a contract is already specified, every other document points at it rather than restating it, because a second copy is not a summary for long — it is the version that will be wrong.
 
