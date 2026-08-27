@@ -23,6 +23,10 @@ Format mechanics — line breaks, headings, fences, links, tables — come from 
 3. **Write for the reader who arrives cold** — what this is, what it does, how to use it, in that order.
 4. **Register the file** — a new document is added to its index, table, or navigation in the same change.
 5. **Check the format** — run `docs-md-writing`'s checker on every file touched.
+6. **Verify the content** — this is what VERIFY has instead of a test suite when an increment changed no code, and it is a real gate rather than a formality:
+   - every internal link resolves, including the ones in files that merely referenced a moved page;
+   - every claim traces to the source it describes — read the code, not another document, or the error propagates;
+   - no two documents state one fact differently, and a count, a list, or a field layout is checked rather than trusted.
 
 ## Altitude
 
