@@ -113,6 +113,7 @@ Skills live in `skills/<name>/SKILL.md` next to this file. Read a matching skill
 | `git-commit-fix` | Rewrite existing commit messages to that format. |
 | `git-integrate` | Integrate an approved branch in the mode the user chooses. |
 | `agents-retro` | Propose process improvements after integration or on request. |
+| `an-dr-tools-update` | Register the user's local tool repositories and refresh them. |
 
 ADRs are immutable once integrated; supersede them instead of editing them. Immutability protects a decision others have read, so it begins at integration: an ADR written on the current feature branch is still a draft, and a later decision on that same branch edits it — or collapses two into one — rather than adding an ADR that corrects one nobody has seen. Use ADRs only for lasting architectural decisions, not tactical or tooling choices.
 
@@ -129,6 +130,7 @@ Scopes the `git-commit` skill accepts here, by area rather than by skill directo
 - docs
 - install
 - tests
+- tools
 
 ## Roles
 

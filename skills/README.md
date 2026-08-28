@@ -23,7 +23,8 @@ Reusable agent actions. Each skill contains a concise `SKILL.md`; deterministic 
 | [`git-commit-fix`](git-commit-fix/SKILL.md) | Rewrite existing commit messages to that format. |
 | [`git-integrate`](git-integrate/SKILL.md) | Complete an approved integration in the mode the user chooses. |
 | [`agents-retro`](agents-retro/SKILL.md) | Review and improve the process. |
+| [`an-dr-tools-update`](an-dr-tools-update/SKILL.md) | Register the user's local tool repositories and pull, rebuild, and reinstall them. |
 
-Names carry a domain prefix — `agents-` for this repository's own installation and process, `ai-` for work on agent instructions in general, `dev-` for the development workflow, `git-` for repository history, `docs-` for documentation artifacts, `ut-` for tests. `install-powershell` is the one environment bootstrap and stays unprefixed.
+Names carry a domain prefix — `agents-` for this repository's own installation and process, `ai-` for work on agent instructions in general, `dev-` for the development workflow, `git-` for repository history, `docs-` for documentation artifacts, `ut-` for tests, `an-dr-` for the user's personal toolchain. `install-powershell` is the one environment bootstrap and stays unprefixed.
 
 To add a skill, create `skills/<prefix>-<action>/SKILL.md` with a matching `name` and a trigger-focused `description`. Add a PowerShell script only for repeated, mechanical operations and ensure it exits non-zero on failure. Register the skill in this table and in `../AGENTS.md`.
