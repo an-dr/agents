@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PROJECT — project overview</title>
+<style>
+  :root {
+    --bg: #fbfaf8; --panel: #ffffff; --ink: #1b1a18; --muted: #6b6862; --line: #e2ded7;
+    --accent: #8a5a2b; --ok: #2f6b46; --warn: #9a6b12; --bad: #a33227;
+    --chip: #f1ede6; --shadow: 0 1px 2px rgba(0,0,0,.05), 0 8px 24px rgba(0,0,0,.04);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14140f; --panel: #1c1c17; --ink: #ece8e0; --muted: #a09a90; --line: #302f28;
+      --accent: #d3a06a; --ok: #6fbf8e; --warn: #d8b458; --bad: #e2796c;
+      --chip: #262520; --shadow: none;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14140f; --panel: #1c1c17; --ink: #ece8e0; --muted: #a09a90; --line: #302f28;
+    --accent: #d3a06a; --ok: #6fbf8e; --warn: #d8b458; --bad: #e2796c;
+    --chip: #262520; --shadow: none;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .wrap { max-width: 62rem; margin: 0 auto; padding: 3rem 1.25rem 6rem; }
+  header.masthead { border-bottom: 1px solid var(--line); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+  h1 { font-size: 2.1rem; line-height: 1.15; margin: 0 0 .4rem; letter-spacing: -.02em; }
+  h2 { font-size: 1.3rem; margin: 3rem 0 .75rem; letter-spacing: -.01em; }
+  h3 { font-size: 1rem; margin: 1.5rem 0 .5rem; }
+  p, li { color: var(--ink); }
+  .lede { font-size: 1.1rem; color: var(--muted); margin: 0; }
+  .stamp { font-size: .8rem; color: var(--muted); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .remember { border-left: 3px solid var(--accent); background: var(--panel); box-shadow: var(--shadow);
+    padding: .9rem 1.1rem; margin: 1.5rem 0; border-radius: 0 8px 8px 0; }
+  .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: .6rem; margin: 1.5rem 0; }
+  .fact { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: .7rem .85rem; box-shadow: var(--shadow); }
+  .fact dt { font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0; }
+  .fact dd { margin: .2rem 0 0; font-size: 1.05rem; font-weight: 600; }
+  .badge { display: inline-block; font-size: .68rem; text-transform: uppercase; letter-spacing: .05em;
+    padding: .1rem .45rem; border-radius: 999px; border: 1px solid var(--line); background: var(--chip); color: var(--muted);
+    vertical-align: middle; white-space: nowrap; }
+  .badge.verified { color: var(--ok); border-color: currentColor; }
+  .badge.inferred { color: var(--warn); border-color: currentColor; }
+  .badge.claimed  { color: var(--bad); border-color: currentColor; }
+  .sev { font-weight: 700; white-space: nowrap; }
+  .sev.blocker { color: var(--bad); } .sev.major { color: var(--warn); } .sev.minor { color: var(--muted); }
+  table { border-collapse: collapse; width: 100%; font-size: .92rem; }
+  .scroll { overflow-x: auto; margin: 1rem 0; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+  .scroll > table { min-width: 34rem; }
+  th, td { text-align: left; padding: .55rem .8rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+  tr:last-child td { border-bottom: none; }
+  code, .path { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .86em;
+    background: var(--chip); padding: .05rem .3rem; border-radius: 4px; }
+  figure { margin: 1.25rem 0; }
+  figure .scroll { padding: 1rem; }
+  figcaption { font-size: .85rem; color: var(--muted); margin-top: .5rem; }
+  svg { max-width: 100%; height: auto; }
+  .c4 text { font-family: ui-sans-serif, system-ui, sans-serif; fill: var(--ink); }
+  .c4 .box { fill: var(--panel); stroke: var(--line); }
+  .c4 .box.system { stroke: var(--accent); stroke-width: 2; }
+  .c4 .box.external { fill: var(--chip); stroke-dasharray: 4 3; }
+  .c4 .label { font-size: 13px; font-weight: 600; }
+  .c4 .sub { font-size: 11px; fill: var(--muted); }
+  .c4 .edge { stroke: var(--muted); fill: none; marker-end: url(#arrow); }
+  .c4 .edge-label { font-size: 10px; fill: var(--muted); }
+  ol.path-list { padding-left: 1.2rem; }
+  ol.path-list li { margin-bottom: .5rem; }
+  .muted { color: var(--muted); }
+  footer { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--line); font-size: .85rem; color: var(--muted); }
+  @media print { body { background: #fff; } .scroll { break-inside: avoid; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <h1>PROJECT</h1>
+  <p class="lede">One sentence: what it is and who it is for.</p>
+  <p class="stamp">Generated from commit HASH on DATE · code is the authority, documentation is intent</p>
+</header>
+
+<!-- 1. What this is: three sentences, verified from the code. -->
+<h2>What this is</h2>
+<p>Three sentences. What problem it solves, how it goes about it, and what shape it takes when it runs.</p>
+<div class="remember"><strong>If you remember one thing:</strong> the single fact that makes the rest of the codebase make sense.</div>
+
+<!-- 2. Facts: every value taken from the scan, none estimated. -->
+<h2>Facts</h2>
+<div class="facts">
+  <dl class="fact"><dt>Language</dt><dd>—</dd></dl>
+  <dl class="fact"><dt>Size</dt><dd>— files / — lines</dd></dl>
+  <dl class="fact"><dt>Containers</dt><dd>—</dd></dl>
+  <dl class="fact"><dt>Tests</dt><dd>— files (ratio —)</dd></dl>
+  <dl class="fact"><dt>CI</dt><dd>—</dd></dl>
+  <dl class="fact"><dt>Licence</dt><dd>—</dd></dl>
+  <dl class="fact"><dt>Last activity</dt><dd>—</dd></dl>
+  <dl class="fact"><dt>Authors</dt><dd>—</dd></dl>
+</div>
+
+<!-- 3. Start here: five files, reading order, each earning its place. -->
+<h2>Start here</h2>
+<ol class="path-list">
+  <li><span class="path">path/to/file</span> — why this one first.</li>
+</ol>
+
+<!-- 4. C4. Draw only what the code confirms; label inferred boxes. -->
+<h2>Level 1 — context</h2>
+<p>What to notice in this diagram.</p>
+<figure>
+  <div class="scroll">
+    <svg class="c4" viewBox="0 0 720 320" role="img" aria-label="System context diagram">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/>
+        </marker>
+      </defs>
+      <rect class="box system" x="270" y="120" width="180" height="80" rx="10"/>
+      <text class="label" x="360" y="152" text-anchor="middle">The system</text>
+      <text class="sub" x="360" y="170" text-anchor="middle">what it is</text>
+      <rect class="box external" x="40" y="130" width="150" height="60" rx="10"/>
+      <text class="label" x="115" y="158" text-anchor="middle">Actor</text>
+      <text class="sub" x="115" y="175" text-anchor="middle">role</text>
+      <path class="edge" d="M190,160 L268,160"/>
+      <text class="edge-label" x="229" y="152" text-anchor="middle">uses</text>
+    </svg>
+  </div>
+  <figcaption>Sources: <span class="path">file</span> <span class="badge verified">verified</span></figcaption>
+</figure>
+
+<h2>Level 2 — containers</h2>
+<p>What separately runs, and how the parts talk.</p>
+<figure><div class="scroll"><svg class="c4" viewBox="0 0 720 360" role="img" aria-label="Container diagram"></svg></div>
+  <figcaption>Sources: <span class="path">file</span> <span class="badge verified">verified</span></figcaption></figure>
+
+<h2>Level 3 — components</h2>
+<p>Inside CONTAINER, chosen because REASON.</p>
+<figure><div class="scroll"><svg class="c4" viewBox="0 0 720 420" role="img" aria-label="Component diagram"></svg></div>
+  <figcaption>Sources: <span class="path">file</span> <span class="badge inferred">inferred</span></figcaption></figure>
+
+<!-- 5. One real use case traced through the real call path. -->
+<h2>The main flow</h2>
+<div class="scroll"><table>
+  <thead><tr><th>#</th><th>Step</th><th>Where</th><th></th></tr></thead>
+  <tbody><tr><td>1</td><td>what happens</td><td><span class="path">file:line</span></td><td><span class="badge verified">verified</span></td></tr></tbody>
+</table></div>
+
+<h2>Repository map</h2>
+<div class="scroll"><table>
+  <thead><tr><th>Directory</th><th>Holds</th><th>Note</th></tr></thead>
+  <tbody><tr><td><span class="path">src/</span></td><td>—</td><td>—</td></tr></tbody>
+</table></div>
+
+<h2>Glossary</h2>
+<div class="scroll"><table>
+  <thead><tr><th>Term</th><th>Means</th><th>Spelled in code as</th></tr></thead>
+  <tbody><tr><td>—</td><td>—</td><td><span class="path">—</span></td></tr></tbody>
+</table></div>
+
+<!-- 8. The point of the page: where intent and reality parted. -->
+<h2>Intent versus reality</h2>
+<p class="muted">The documentation states the intent; the code states what runs. Every row below is a place they disagree.</p>
+<div class="scroll"><table>
+  <thead><tr><th>Documentation says</th><th>Code does</th><th>Settled by</th><th>Verdict</th></tr></thead>
+  <tbody><tr><td>— <span class="path">README.md</span></td><td>—</td><td><span class="path">file:line</span></td><td><span class="sev major">doc stale</span></td></tr></tbody>
+</table></div>
+
+<h2>Problems and risks</h2>
+<div class="scroll"><table>
+  <thead><tr><th>#</th><th>Severity</th><th>Problem</th><th>Evidence</th><th>Costs you</th><th>Cheapest fix</th></tr></thead>
+  <tbody><tr><td>1</td><td><span class="sev blocker">blocker</span></td><td>—</td><td><span class="path">file:line</span></td><td>—</td><td>—</td></tr></tbody>
+</table></div>
+<h3>Came up clean</h3>
+<p class="muted">Categories checked and found healthy, named so their absence is information.</p>
+
+<h2>Running it</h2>
+<div class="scroll"><table>
+  <thead><tr><th>Do</th><th>Command</th><th>Defined in</th></tr></thead>
+  <tbody><tr><td>Build</td><td><code>—</code></td><td><span class="path">file</span></td></tr></tbody>
+</table></div>
+
+<h2>Open questions</h2>
+<ul><li>What could not be established, and what would settle it.</li></ul>
+
+<footer>Snapshot of commit HASH, DATE. Regenerate rather than edit — this page is derived from the code, not maintained alongside it.</footer>
+
+</div>
+</body>
+</html>

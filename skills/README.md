@@ -15,6 +15,7 @@ Reusable agent actions. Each skill contains a concise `SKILL.md`; deterministic 
 | [`docs-readme`](docs-readme/SKILL.md) | Rewrite a README against the repository's own evidence. |
 | [`ut-adversarial`](ut-adversarial/SKILL.md) | Build adversarial tests before fixing. |
 | [`dev-code-review`](dev-code-review/SKILL.md) | Record structured JSON findings and render review Markdown. |
+| [`dev-project-overview`](dev-project-overview/SKILL.md) | Explain an unfamiliar repository in one HTML page, with C4 diagrams, doc-versus-code drift, and its real problems. |
 | [`dev-debug`](dev-debug/SKILL.md) | Diagnose a resistant failure. |
 | [`dev-design`](dev-design/SKILL.md) | Structure a deeper design decision. |
 | [`dev-summary`](dev-summary/SKILL.md) | Prepare the full-branch integration handoff. |
