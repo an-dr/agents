@@ -7,6 +7,7 @@ Reusable agent actions. Each skill contains a concise `SKILL.md`; deterministic 
 | [`dev-workflow`](dev-workflow/SKILL.md) | Enforce and persist Quick, Detailed, or Detailed Auto work. |
 | [`install-powershell`](install-powershell/SKILL.md) | Bootstrap or verify PowerShell 7. |
 | [`agents-install`](agents-install/SKILL.md) | Install this clone globally for local AI tools, so no submodule is needed. |
+| [`agents-health-check`](agents-health-check/SKILL.md) | Diagnose why a tool is not picking up or following the workflow. |
 | [`agents-modify`](agents-modify/SKILL.md) | Amend this repository's own instructions from wherever the need appeared. |
 | [`ai-prompt-review`](ai-prompt-review/SKILL.md) | Review agent instructions for contradictions, weak rules, and wasted context. |
 | [`docs-adr`](docs-adr/SKILL.md) | Record an architectural decision. |
