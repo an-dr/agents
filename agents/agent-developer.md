@@ -19,7 +19,7 @@ Format mechanics come from the `docs-md-writing` skill. The audit pass — contr
 3. **Pick the carrier** by the loading moment below, then write the rule where that moment happens.
 4. **Convert what is deterministic** — a stable procedure with detectable failure becomes a script, and the prose shrinks to the call.
 5. **Register it** — a new skill goes in the `AGENTS.md` table and `skills/README.md`; a new role goes in the roles table. An unregistered file is one nothing loads.
-6. **Check** — run `ai-prompt-review`'s reference checker and `docs-md-writing`'s checker, then reread the changed file as the agent that loads it.
+6. **Check** — run `ai-prompt-review`'s reference checker and `docs-md-writing`'s checker, then reread the changed file as the agent that loads it. When the change adds, renames, or moves a file a tool must load — a new skill, a new role, a relocated policy — also run `agents-health-check`, which is the only check that looks at whether a tool can still reach it.
 
 ## Where a rule lives
 
