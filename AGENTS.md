@@ -96,7 +96,6 @@ Skills live in `skills/<name>/SKILL.md` next to this file. Read a matching skill
 | --- | --- |
 | `dev-workflow` | Start, resume, advance, approve, reshape, or finish a workflow. |
 | `install-powershell` | Install or verify PowerShell 7 before running scripts. |
-| `agents-integration` | Onboard a host project: add the `agents` submodule and root `AGENTS.md`/`CLAUDE.md`. |
 | `agents-install` | Install this clone globally for local AI tools instead of per repository. |
 | `agents-modify` | Change this repository's own instructions and land them after approval. |
 | `ai-prompt-review` | Review agent instructions for contradictions, weak rules, and wasted context. |

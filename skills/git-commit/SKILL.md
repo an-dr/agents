@@ -25,7 +25,7 @@ BREAKING CHANGE: what breaks
 
 - `type(scope)!: summary`, where `!` marks a breaking change.
 - Type is one of `feat`, `fix`, `docs`, `refactor`, `test`, `style`, `chore`, `build`, `ci`, `perf`, `revert`. Nothing else. Needing two types means the commit does two things and must be split.
-- Scope is required when the change is confined to one component, and omitted when the change is genuinely cross-cutting. Use only a scope listed under `## Commit scopes` in the host's root `AGENTS.md`, which `agents-integration` creates during onboarding; the checker rejects anything else. Add a scope to that list before using it, never per commit.
+- Scope is required when the change is confined to one component, and omitted when the change is genuinely cross-cutting. Use only a scope listed under `## Commit scopes` in the host's root `AGENTS.md`; the checker rejects anything else. Add a scope to that list before using it, never per commit.
 - Imperative mood, lowercase first word, no trailing period, 72 characters or fewer including the type and scope.
 - A `fix` subject may state the symptom instead of the action when the bug is the point: `fix(webview): dragging a row selects the text under it`.
 

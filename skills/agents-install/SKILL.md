@@ -11,7 +11,7 @@ Wires one clone of this repository into each tool's **user-level** configuration
 1. a managed block in each tool's global instruction file, pointing at this clone's `AGENTS.md`;
 2. one directory junction per skill in each tool's global skills directory.
 
-Use `agents-integration` instead when a specific repository should carry the workflow in its own history for other people. The two coexist: a repository submodule wins because its `AGENTS.md` is nearer the work.
+A repository that carries this clone as its own `agents/` submodule wins over the global install, because its `AGENTS.md` is nearer the work.
 
 ## Install
 
