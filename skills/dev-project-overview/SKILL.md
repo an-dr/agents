@@ -106,6 +106,6 @@ The failure mode of a generated overview is a confident, plausible, wrong archit
 
 ## Output
 
-Write to `docs/project-overview.html` when the repository has a `docs/` directory, and to the scratchpad otherwise — it is a generated artifact, so ask before adding it to a repository that does not already keep one. Offer to publish it as an Artifact when the user wants a link rather than a file.
+Write to `.artifacts/overview/project-overview.html` in the scanned repository. Offer to publish it as an Artifact when the user wants a link rather than a file.
 
 In the chat, report the count of drift rows and the top three problems with their severities, so the user learns the headline without opening the page.

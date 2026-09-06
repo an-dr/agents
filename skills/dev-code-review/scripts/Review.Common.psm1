@@ -11,17 +11,17 @@ function Get-ReviewRepositoryRoot {
 }
 
 function Initialize-ReviewDirectory {
-    <# Creates REPO/code-review and ensures its managed ignore rules. #>
+    <# Creates REPO/.artifacts/code-review and ensures its managed ignore rules. #>
     param([Parameter(Mandatory)][string]$RepositoryRoot)
 
-    $directory = Join-Path $RepositoryRoot 'code-review'
+    $directory = Join-Path $RepositoryRoot '.artifacts/code-review'
     New-Item -ItemType Directory -Force -Path $directory | Out-Null
     $ignorePath = Join-Path $directory '.gitignore'
+    # The directory ignores itself, so a new artifact kind never needs a rule here.
     $requiredLines = @(
         '# Managed code-review artifacts'
-        '*.review.json'
-        '*.review.md'
-        '.review-*.tmp'
+        '*'
+        '!.gitignore'
     )
     $existingLines = if (Test-Path -LiteralPath $ignorePath) {
         @(Get-Content -LiteralPath $ignorePath)
@@ -234,14 +234,14 @@ function Read-ReviewJson {
 }
 
 function Resolve-ReviewPath {
-    <# Validates that canonical JSON stays directly under REPO/code-review. #>
+    <# Validates that canonical JSON stays directly under REPO/.artifacts/code-review. #>
     param([Parameter(Mandatory)][string]$Path)
 
     $repositoryRoot = Get-ReviewRepositoryRoot
     $reviewDirectory = Initialize-ReviewDirectory -RepositoryRoot $repositoryRoot
     $resolvedPath = (Resolve-Path -LiteralPath $Path).Path
     if ((Split-Path -Parent $resolvedPath) -ne [IO.Path]::GetFullPath($reviewDirectory)) {
-        throw 'Review JSON must be directly inside REPO/code-review/.'
+        throw 'Review JSON must be directly inside REPO/.artifacts/code-review/.'
     }
     if (-not $resolvedPath.EndsWith('.review.json', [StringComparison]::OrdinalIgnoreCase)) {
         throw 'Canonical review files must end with .review.json.'

@@ -88,6 +88,12 @@ The `dev-summary` skill defines the handoff shape SUMMARY returns.
 
 Writing defaults live in `agents/developer.md`. The host repository's own instructions override them. Review judges the result on its own terms rather than auditing compliance with the list.
 
+## Temporary artifacts
+
+Generated artifacts that are not repository content go to `.artifacts/<kind>/` in the host repository: code reviews, project overviews, rendered reports, scratch analysis. The directory carries a `.gitignore` containing `*` and `!.gitignore`, so it is never committed and needs no per-file rules as skills are added.
+
+Deliverables are the exception and are committed as ordinary repository content: ADRs, READMEs, and documentation under `docs/`.
+
 ## Skills
 
 Skills live in `skills/<name>/SKILL.md` next to this file. Read a matching skill before acting and use its PowerShell scripts for mechanical operations.

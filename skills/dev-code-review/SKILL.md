@@ -1,6 +1,6 @@
 ---
 name: dev-code-review
-description: Review a diff for defects, security issues, structural problems, convention violations, and outdated patterns. Use during VERIFY on an increment diff, during SUMMARY on the full branch diff, or when the user requests a code review; record structured findings in REPO/code-review JSON and render Markdown through the bundled PowerShell scripts.
+description: Review a diff for defects, security issues, structural problems, convention violations, and outdated patterns. Use during VERIFY on an increment diff, during SUMMARY on the full branch diff, or when the user requests a code review; record structured findings in REPO/.artifacts/code-review JSON and render Markdown through the bundled PowerShell scripts.
 ---
 
 # Code review
@@ -27,7 +27,7 @@ From the repository being reviewed, run:
 pwsh <skill>/scripts/review-start.ps1 -Reference '<branch-or-ref>' -Scope verify
 ```
 
-This creates `REPO/code-review/`, its `.gitignore`, and a schema-versioned JSON record from `assets/review-template.json`. Commit only the `.gitignore`; review state and rendered reports remain local unless the user explicitly requests otherwise.
+This creates `REPO/.artifacts/code-review/`, its `.gitignore`, and a schema-versioned JSON record from `assets/review-template.json`. The directory ignores itself, so review state and rendered reports stay local unless the user explicitly requests otherwise.
 
 ## Record sections
 

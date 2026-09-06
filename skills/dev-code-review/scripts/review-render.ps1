@@ -52,7 +52,7 @@ elseif (-not [IO.Path]::IsPathRooted($OutputPath)) {
 }
 $OutputPath = [IO.Path]::GetFullPath($OutputPath)
 if ((Split-Path -Parent $OutputPath) -ne (Split-Path -Parent $resolvedPath)) {
-    throw 'Rendered Markdown must remain directly inside REPO/code-review/.'
+    throw 'Rendered Markdown must remain directly inside REPO/.artifacts/code-review/.'
 }
 
 $lines = [Collections.Generic.List[string]]::new()

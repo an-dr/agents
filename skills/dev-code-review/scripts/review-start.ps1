@@ -1,5 +1,5 @@
 #Requires -Version 7
-<# Creates a canonical JSON review in REPO/code-review/. #>
+<# Creates a canonical JSON review in REPO/.artifacts/code-review/. #>
 [CmdletBinding()]
 param(
     [Parameter(Mandatory)][string]$Reference,
