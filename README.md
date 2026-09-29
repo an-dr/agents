@@ -2,9 +2,19 @@
 
 An executable AI development workflow focused on reliable engineering rather than conversational memory.
 
-`AGENTS.md` defines policy. `skills/dev-workflow/scripts/workflow.ps1` enforces phase transitions and stores committable state in `.progress/workflow.json`, allowing a workflow to resume on another machine. Before integration, `dev-workflow-clean-branch` removes that state from every feature-branch commit.
+`AGENTS.md` defines policy. Before changing files, the agent asks the user to select Direct, Quick, Detailed, or Detailed Auto unless the user already selected a workflow or one is active. Direct completes and delivers the request without approval gates or workflow state. `skills/dev-workflow/scripts/workflow.ps1` enforces the gated flows' phase transitions and stores committable state in `.progress/workflow.json`. Before integration, `dev-workflow-clean-branch` removes that state from every feature-branch commit.
 
-In the diagrams below, 👤 marks a transition the user's own words drive. Every other edge is the agent's to take.
+In the gated-flow diagrams below, 👤 marks a transition the user's own words drive. Every other edge is the agent's to take.
+
+## Direct
+
+When the user selects Direct, the agent works on the current branch, chooses a sound approach, updates needed documentation, implements, reviews, runs relevant checks, fixes findings, and delivers the result in the same request. It creates no `.progress/` state and asks no further workflow approvals. Verified work is committed locally; pushing still requires the user's request. Changes to this process repository remain uncommitted for the user's review under its own scope rule.
+
+```mermaid
+flowchart LR
+REQUEST --> WORK --> REVIEW --> DELIVERY
+REVIEW -->|issues| WORK
+```
 
 ## Detailed
 
@@ -67,11 +77,10 @@ Future Detailed increments can be inserted or reordered without changing active 
 ## Repository layout
 
 - `AGENTS.md` — concise policy and entry point
-- `agents/` — phase role definitions
-- `code-review/` — ignored local review JSON and generated Markdown
+- `skills/` — task guidance and executable checks for planning, building, testing, reviewing, and writing
+- `.artifacts/code-review/` — ignored local review JSON and generated Markdown
 - `skills/dev-workflow/` — executable workflow state machine
 - `skills/install-powershell/` — PowerShell 7 bootstrap instructions
 - `skills/agents-install/` — global installation for local AI tools
 - `skills/git-commit/` — the commit message format and its checker. Commits are attributed to the person who records them; the checker rejects AI co-author and generator trailers
 - `skills/agents-modify/` — changing this repository's own instructions from a host project
-- `skills/` — review, design, ADR, debug, summary, progress cleanup, commit, integration, and retrospective actions

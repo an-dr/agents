@@ -4,7 +4,11 @@ Reusable agent actions. Each skill contains a concise `SKILL.md`; deterministic 
 
 | Skill | When to use |
 | --- | --- |
-| [`dev-workflow`](dev-workflow/SKILL.md) | Enforce and persist Quick, Detailed, or Detailed Auto work. |
+| [`dev-workflow`](dev-workflow/SKILL.md) | Enforce and persist gated Quick, Detailed, or Detailed Auto work; Direct needs no controller. |
+| [`dev-build`](dev-build/SKILL.md) | Implement code within the selected workflow and repository conventions. |
+| [`dev-testing`](dev-testing/SKILL.md) | Verify changed code and report meaningful test coverage. |
+| [`docs-writing`](docs-writing/SKILL.md) | Write human-facing documentation and check its claims. |
+| [`ai-prompt-writing`](ai-prompt-writing/SKILL.md) | Create or change agent-loaded instructions. |
 | [`install-powershell`](install-powershell/SKILL.md) | Bootstrap or verify PowerShell 7. |
 | [`agents-install`](agents-install/SKILL.md) | Install this clone globally for local AI tools, so no submodule is needed. |
 | [`agents-health-check`](agents-health-check/SKILL.md) | Diagnose why a tool is not picking up or following the workflow. |

@@ -8,7 +8,7 @@ allowed-tools: Read, Grep, Glob, Write, Edit, Bash, PowerShell
 
 One HTML page that takes a competent stranger from nothing to productive, and tells them the truth about the codebase they just inherited.
 
-The role is `architect`, with `tech-writer` for the prose. The page reports; it never fixes. Nothing in the scanned repository is edited.
+Use `docs-writing` for the prose. The page reports; it never fixes. Nothing in the scanned repository is edited.
 
 ## Code is the authority, documentation is intent
 

@@ -1,11 +1,11 @@
 ---
 name: dev-workflow
-description: Run, resume, and enforce the repository's Quick, Detailed, or Detailed Auto development workflow. Use whenever files will change, an existing .progress/workflow.json is present, workflow state must move to another machine, or increments must be inserted or reordered.
+description: Run, resume, and enforce the repository's gated Quick, Detailed, or Detailed Auto development workflow. Use when the user selects one of these flows, an existing .progress/workflow.json is present, workflow state must move to another machine, or increments must be inserted or reordered. Direct work does not use this controller.
 ---
 
 # Workflow controller
 
-Use `scripts/workflow.ps1` as the authority for phase transitions and approval gates. Do not reconstruct workflow state from chat when `.progress/workflow.json` exists.
+Use `scripts/workflow.ps1` as the authority for phase transitions and approval gates in Quick, Detailed, and Detailed Auto. Direct has no controller state. Do not reconstruct workflow state from chat when `.progress/workflow.json` exists.
 
 ## Start or resume
 
@@ -27,7 +27,22 @@ Supported flows:
 - `Detailed`: increments, a feature branch, documentation written before each increment's code, per-increment user verification, integration summary, and explicit integration approval.
 - `DetailedAuto`: the same engineering phases and the same intake, plan, and integration approvals as Detailed; what it automates is the per-increment verification in between, which the agent performs and records itself until `FINAL_REVIEW`.
 
-Use Detailed Auto only when the user explicitly requests autonomous or end-only involvement.
+Use Detailed Auto only when the user selects it; never infer it from a request for autonomy or end-only involvement.
+
+## Plan the gated work
+
+During INTAKE, DESIGN, and SPLIT, read the host `README.md`, `docs/index.md`, architecture docs, and existing ADRs. Record each request as it arrives, identify invariants and existing patterns, and map every touch-point, including docs, schemas, and tests. Keep these phases read-only. Record unresolved choices with `add-question`. In DESIGN, present 2–4 real options with their tradeoffs for Quick and Detailed; record the reasoned choice in Detailed Auto. Use `dev-design` when a decision needs deeper analysis, and `docs-adr` for a lasting architectural decision.
+
+Before leaving SPLIT, check that every request is covered, every question is answered or dismissed, and each increment names its documentation work. Detailed increments should be about 300 changed lines or less. Present the numbered plan with estimated lines and answered questions before the user's `implement` approval. In Detailed Auto, record the agent's reasoned design choice for final review.
+
+## Work by phase
+
+- **DOCS:** load `docs-writing` and write needed documentation before implementation. Leave it uncommitted for the increment's COMMIT.
+- **BUILD:** load `dev-build` and implement only the selected Quick option or active increment.
+- **VERIFY:** load `dev-testing` for changed code and `dev-code-review` for the diff. For documentation-only changes, verify sources, links, and consistency through `docs-writing`. Report failure cases, untested edges, doc gaps, scope, and consistency; issues return to BUILD.
+- **COMMIT:** commit verified work with `git-commit`, including current progress state.
+- **SUMMARY:** use `dev-summary` for the full branch and reconcile it with the intake requests.
+- **INTEGRATE:** after approval, run `finish`, commit its deletion, use `dev-workflow-clean-branch`, then use `git-integrate` and ask for its mode.
 
 ## Collect the intake
 

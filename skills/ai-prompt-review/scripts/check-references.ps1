@@ -33,9 +33,7 @@ function Get-FrontmatterName {
 }
 
 $skillsRoot = Join-Path $root 'skills'
-$agentsRoot = Join-Path $root 'agents'
 $skills = @(if (Test-Path $skillsRoot) { Get-ChildItem $skillsRoot -Directory })
-$roles = @(if (Test-Path $agentsRoot) { Get-ChildItem $agentsRoot -File -Filter '*.md' })
 
 $policyPath = Join-Path $root 'AGENTS.md'
 $policyText = if (Test-Path $policyPath) { [IO.File]::ReadAllText($policyPath) } else { '' }
@@ -61,19 +59,7 @@ foreach ($skill in $skills) {
     }
 }
 
-# Every role file needs a matching name and a row in the roles table.
-foreach ($role in $roles) {
-    $expected = [IO.Path]::GetFileNameWithoutExtension($role.Name)
-    $name = Get-FrontmatterName -File $role.FullName
-    if ($name -ne $expected) {
-        Add-Finding (Get-RelativePath $role.FullName) 2 'role.name' "The frontmatter name '$name' does not match file '$expected'."
-    }
-    if ($policyText -and $policyText -notmatch "\|\s*``$([regex]::Escape($expected))``\s*\|") {
-        Add-Finding 'AGENTS.md' 0 'role.unregistered' "Role '$expected' is missing from the roles table."
-    }
-}
-
-# Referenced skills, roles, and relative links must resolve.
+# Referenced skills and relative links must resolve.
 $sources = @(Get-ChildItem $root -Recurse -File -Include '*.md', '*.ps1', '*.psm1' |
         Where-Object { $_.FullName -notmatch '\\(\.git|node_modules)\\' })
 foreach ($source in $sources) {
@@ -89,11 +75,8 @@ foreach ($source in $sources) {
                 Add-Finding $relative $number 'reference.skill' "Skill '$name' does not exist."
             }
         }
-        foreach ($match in [regex]::Matches($line, '(?<![\w/])agents/(?<name>[a-z0-9][a-z0-9-]*)\.md')) {
-            $name = $match.Groups['name'].Value
-            if (-not (Test-Path (Join-Path $agentsRoot "$name.md"))) {
-                Add-Finding $relative $number 'reference.role' "Role file '$name.md' does not exist."
-            }
+        if ($line -cmatch '(?<![\w/])agents/[a-z0-9][a-z0-9-]*\.md') {
+            Add-Finding $relative $number 'reference.retired-role' 'Role files were removed; move this instruction to a skill.'
         }
         if ($source.Extension -ne '.md') { continue }
         foreach ($match in [regex]::Matches($line, '\]\((?<target>[^)]+)\)')) {
@@ -118,7 +101,7 @@ foreach ($finding in ($findings | Sort-Object File, Line)) {
 Write-Output ''
 Write-Output 'Context cost (approximate tokens):'
 $measured = @(
-    foreach ($file in @($policyPath, (Join-Path $root 'CLAUDE.md')) + $roles.FullName + ($skills | ForEach-Object { Join-Path $_.FullName 'SKILL.md' })) {
+    foreach ($file in @($policyPath, (Join-Path $root 'CLAUDE.md')) + ($skills | ForEach-Object { Join-Path $_.FullName 'SKILL.md' })) {
         if ($file -and (Test-Path -LiteralPath $file)) {
             $size = (Get-Item -LiteralPath $file).Length
             [pscustomobject]@{ File = (Get-RelativePath $file); Bytes = $size; Tokens = [math]::Round($size / 4) }

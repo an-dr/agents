@@ -122,7 +122,7 @@ Engage that policy only when the current repository opts in — any of:
 
 - a root ``AGENTS.md`` or ``CLAUDE.md`` that references it;
 - an existing ``.progress/workflow.json``;
-- the user naming a flow (Quick, Detailed, Detailed Auto) or one of its skills.
+- the user naming a flow (Direct, Quick, Detailed, Detailed Auto) or one of its skills.
 
 Otherwise its skills stay available on request, but do not propose a flow,
 create a branch, or write ``.progress/``.

@@ -1,12 +1,12 @@
 ---
 name: ai-prompt-review
-description: Review agentic instructions — AGENTS.md, CLAUDE.md, role files, and SKILL.md files — for contradictions, weakened rules, wasted context, and logic that belongs in a script. Use after editing instructions, before installing them globally, or when an agent keeps behaving in a way the instructions did not intend.
+description: Review agentic instructions — AGENTS.md, CLAUDE.md, and SKILL.md files — for contradictions, weakened rules, wasted context, and logic that belongs in a script. Use after editing instructions, before installing them globally, or when an agent keeps behaving in a way the instructions did not intend.
 allowed-tools: PowerShell
 ---
 
 # Agent instruction review
 
-Reviews the instructions themselves, not the code they produce. The subject is every file that reaches an agent's context: `AGENTS.md`, `CLAUDE.md`, `agents/*.md`, `skills/*/SKILL.md`, and any prompt or template they load.
+Reviews the instructions themselves, not the code they produce. The subject is every file that reaches an agent's context: `AGENTS.md`, `CLAUDE.md`, `skills/*/SKILL.md`, and any prompt or template they load.
 
 ## Method
 
@@ -19,7 +19,7 @@ Reviews the instructions themselves, not the code they produce. The subject is e
 pwsh agents/skills/ai-prompt-review/scripts/check-references.ps1 [-Path <repo>]
 ```
 
-The script resolves every `skills/<name>/` and `agents/<name>.md` reference, every relative Markdown link, every `name` against its directory, and every skill and role against the tables that register them. It reports per-file size and an approximate token cost, and exits non-zero on any broken reference.
+The script resolves every `skills/<name>/` reference, every relative Markdown link, and every skill `name` against its directory and registration tables. It reports per-file size and an approximate token cost, and exits non-zero on any broken reference.
 
 ## Contradictions
 
@@ -54,7 +54,6 @@ Propose a script when the steps are stable, the inputs are known, and failure is
 
 ## Not findings
 
-- The same judgment stated in two role files. Roles are separate readers and each needs its own copy in its own framing; only facts with one correct value need a single owner.
 - Wording, tone, or ordering that costs nothing.
 - A rule that is merely strict.
 

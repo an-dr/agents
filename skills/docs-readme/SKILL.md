@@ -8,7 +8,7 @@ allowed-tools: Read, Grep, Glob, Write, Edit, PowerShell
 
 The README is the only document most readers will open. This skill edits it against the repository's own evidence: the code is ground truth, and the existing README is a claim about the code that may already be false.
 
-Markdown mechanics come from `docs-md-writing`. The role is `tech-writer`. What belongs in `docs/`, an ADR, or a design doc stays there and is linked, never summarised twice.
+Markdown mechanics come from `docs-md-writing`; human-facing content principles come from `docs-writing`. What belongs in `docs/`, an ADR, or a design doc stays there and is linked, never summarised twice.
 
 ## Read the repository first
 

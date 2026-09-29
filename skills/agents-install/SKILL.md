@@ -35,7 +35,7 @@ Re-run it after adding a skill to the clone, or after moving the clone.
 
 ## Opt-in guard
 
-A global install has no submodule to signal intent, so the block it writes makes the policy conditional: a flow starts only when the repository has a root `AGENTS.md`/`CLAUDE.md` referencing it, has `.progress/workflow.json`, or the user names a flow or skill. Without that guard every scratch directory would get branch and increment proposals.
+A global install has no submodule to signal intent, so the block it writes makes the policy conditional: a flow starts only when the repository has a root `AGENTS.md`/`CLAUDE.md` referencing it, has `.progress/workflow.json`, or the user names a flow or skill. Without that guard every scratch directory would receive Direct work or gated-flow setup.
 
 ## Verify
 

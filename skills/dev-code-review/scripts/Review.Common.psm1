@@ -181,7 +181,7 @@ function Assert-ReviewJson {
             throw "Review JSON is missing '$property'."
         }
     }
-    if ($Review.scope -notin @('verify', 'summary', 'requested')) {
+    if ($Review.scope -notin @('direct', 'verify', 'summary', 'requested')) {
         throw "Unsupported review scope '$($Review.scope)'."
     }
     foreach ($timestamp in @('createdAt', 'updatedAt')) {

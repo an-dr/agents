@@ -6,7 +6,7 @@ allowed-tools: PowerShell, Read, Grep, Glob, Write, Edit
 
 # Modify the agents repository
 
-The instruction set is used from other repositories, so that is where its defects appear: a rule misfires in a host project, and the fix belongs in the clone rather than in a note that only this conversation remembers. This skill finds that clone from wherever the agent is working, changes it under the `agent-developer` role, and lands it behind one explicit approval.
+The instruction set is used from other repositories, so that is where its defects appear: a rule misfires in a host project, and the fix belongs in the clone rather than in a note that only this conversation remembers. This skill finds that clone from wherever the agent is working, changes it with `ai-prompt-writing`, and lands it behind one explicit approval.
 
 `agents-retro` decides *what* to amend after a Detailed flow. This skill is *how* an amendment reaches the clone, whatever proposed it.
 
@@ -29,8 +29,8 @@ Report every note the script prints — a detached HEAD, a dirty tree, a missing
 ## Change it
 
 1. **Name the observed behavior** — quote the evidence from the host repository: what the agent did, which instruction produced it, what it should do instead. An amendment with no such evidence is a preference, and the user decides on preferences.
-2. **Edit under `agent-developer`** — it owns which carrier holds the rule and how the rule is written. Format comes from `docs-md-writing`.
-3. **Register anything new** — a skill needs its row in `AGENTS.md` and in `skills/README.md`, a role needs its row in the roles table, a new commit scope needs the scope list.
+2. **Edit with `ai-prompt-writing`** — it owns which carrier holds the rule and how the rule is written. Format comes from `docs-md-writing`.
+3. **Register anything new** — a skill needs its row in `AGENTS.md` and in `skills/README.md`; a new commit scope needs the scope list.
 4. **Check** — run `ai-prompt-review`'s `check-references.ps1` and `docs-md-writing`'s `check-markdown.ps1` against the clone, and fix what they report.
 5. **Relink a global install** — adding, renaming, or removing a skill directory changes the set of junctions, so re-run `agents-install`'s `install-agents.ps1` and report its table.
 

@@ -5,7 +5,7 @@ description: Structure the DESIGN phase for a decision deeper than a quick pick 
 
 # Design
 
-Helps the user decide; never decides. Produces the material the DESIGN phase needs: a small, honest option space with named tradeoffs. The decision is recorded via the `docs-adr` skill; the resulting design lives in `docs/design/<topic>.md`.
+Produces the material the DESIGN phase needs: a small, honest option space with named tradeoffs. The user decides in Quick and Detailed; the agent records its reasoned choice in Detailed Auto. A lasting architectural decision is recorded via `docs-adr`; the resulting design lives in `docs/design/<topic>.md`.
 
 ## Process
 
@@ -13,7 +13,7 @@ Helps the user decide; never decides. Produces the material the DESIGN phase nee
 2. **Build the options table** — 2–4 real options (no strawmen), scored over explicit axes (see below).
 3. **Steelman the loser** — before recommending, argue the strongest case for the option you would reject. If the steelman wins, change the recommendation.
 4. **Pre-mortem the favourite** — "this shipped and failed six months later — why?" List the top 2–3 failure stories and what would detect each early.
-5. **Present** — options with tradeoffs via the option-selection UI; the user picks (or explicitly delegates). Never a single "correct" solution. Record each unresolved choice as a controller question first, so exploring the next one does not lose it.
+5. **Present** — options with tradeoffs via the option-selection UI in Quick and Detailed; the user picks. In Detailed Auto, record the agent's choice and rationale for final review. Never a single "correct" solution. Record each unresolved choice as a controller question first, so exploring the next one does not lose it.
 6. **Record** — the decision goes through the `docs-adr` skill and closes its question with `answer-question`; the resulting design goes into the topic's design doc.
 
 ## Options table
@@ -31,4 +31,4 @@ Reversibility and blast radius weigh most: a cheap, reversible choice needs litt
 
 - Score axes honestly — no option exists to make the favourite look good.
 - An expensive one-way door with a weak pre-mortem is not ready to present; keep digging.
-- The user owns the decision; delegation must be explicit.
+- The user owns the decision in Quick and Detailed; Detailed Auto delegates it through the selected flow.
