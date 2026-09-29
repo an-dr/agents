@@ -1,13 +1,10 @@
 #Requires -Version 7
 <#
     Checks Markdown files against the docs-md-writing format rules.
-    Exits non-zero on any error; hard wraps are warnings unless -FailOnWrap.
+    Exits non-zero on any error, including hard-wrapped paragraphs.
 #>
 [CmdletBinding()]
-param(
-    [Parameter(Mandatory, Position = 0)][string]$Path,
-    [switch]$FailOnWrap
-)
+param([Parameter(Mandatory, Position = 0)][string]$Path)
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -35,6 +32,7 @@ function Get-MarkdownViolation {
     }
 
     $inFence = $false
+    $inComment = $false
     $headingCount = 0
     $previousLevel = 0
     $paragraphStart = -1
@@ -53,8 +51,50 @@ function Get-MarkdownViolation {
 
     for ($index = $start; $index -lt $lines.Count; $index++) {
         $line = $lines[$index]
+        $sourceLine = $line
         $number = $index + 1
         $previous = if ($index -gt 0) { $lines[$index - 1] } else { '' }
+
+        # Comments may contain Markdown syntax, but it is not rendered prose.
+        if (-not $inFence) {
+            $remaining = $line
+            $visible = ''
+            $hasComment = $inComment
+            while ($remaining.Length -gt 0) {
+                if ($inComment) {
+                    $commentEnd = $remaining.IndexOf('-->')
+                    if ($commentEnd -lt 0) { break }
+                    $remaining = $remaining.Substring($commentEnd + 3)
+                    $inComment = $false
+                }
+                else {
+                    # A literal marker inside a code span or escaped in prose is visible text.
+                    $marker = [regex]::Match($remaining, '(?<ticks>`+)(?!`).*?(?<!`)\k<ticks>(?!`)|(?<!\\)<!--')
+                    if (-not $marker.Success) {
+                        $visible += $remaining
+                        break
+                    }
+                    if ($marker.Value -ne '<!--') {
+                        $visible += $remaining.Substring(0, $marker.Index + $marker.Length)
+                        $remaining = $remaining.Substring($marker.Index + $marker.Length)
+                        continue
+                    }
+                    $commentStart = $marker.Index
+                    $visible += $remaining.Substring(0, $commentStart)
+                    $remaining = $remaining.Substring($commentStart + 4)
+                    $inComment = $true
+                    $hasComment = $true
+                }
+            }
+            if ($hasComment -and [string]::IsNullOrWhiteSpace($visible)) {
+                if ($paragraphLines -gt 1) {
+                    Add-Violation error 'line.wrap' $paragraphStart "The paragraph is hard-wrapped across $paragraphLines lines."
+                }
+                $paragraphStart = -1; $paragraphLines = 0
+                continue
+            }
+            $line = $visible
+        }
 
         if ($line -match '^\s*```') {
             if (-not $inFence) {
@@ -71,7 +111,7 @@ function Get-MarkdownViolation {
         }
         if ($inFence) { continue }
 
-        if ($line -match '\s+$') {
+        if ($sourceLine -match '\s+$') {
             Add-Violation error 'line.trailing' $number 'The line carries trailing whitespace.'
         }
         if ($line -match '^__[^_]+__|(?<![A-Za-z0-9_])_[^_\s][^_]*_(?![A-Za-z0-9_])') {
@@ -117,7 +157,7 @@ function Get-MarkdownViolation {
         # Prose spanning several lines is a hard wrap: one paragraph is one line.
         if ($line -eq '') {
             if ($paragraphLines -gt 1) {
-                Add-Violation warning 'line.wrap' $paragraphStart "The paragraph is hard-wrapped across $paragraphLines lines."
+                Add-Violation error 'line.wrap' $paragraphStart "The paragraph is hard-wrapped across $paragraphLines lines."
             }
             $paragraphStart = -1; $paragraphLines = 0
         }
@@ -128,7 +168,7 @@ function Get-MarkdownViolation {
     }
 
     if ($paragraphLines -gt 1) {
-        Add-Violation warning 'line.wrap' $paragraphStart "The paragraph is hard-wrapped across $paragraphLines lines."
+        Add-Violation error 'line.wrap' $paragraphStart "The paragraph is hard-wrapped across $paragraphLines lines."
     }
     if ($inFence) {
         Add-Violation error 'fence.unclosed' $lines.Count 'A code fence is never closed.'
@@ -155,11 +195,6 @@ $errorTotal = 0
 $warningTotal = 0
 foreach ($file in $files) {
     $violations = @(Get-MarkdownViolation -File $file.FullName)
-    if ($FailOnWrap) {
-        foreach ($item in $violations) {
-            if ($item.Rule -eq 'line.wrap') { $item.Severity = 'error' }
-        }
-    }
     $errors = @($violations | Where-Object { $_.Severity -eq 'error' })
     $errorTotal += $errors.Count
     $warningTotal += $violations.Count - $errors.Count

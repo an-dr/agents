@@ -1,12 +1,12 @@
 ---
 name: docs-md-writing
-description: Format conventions for Markdown files — line breaks, headings, lists, fences, links, and tables — with a checker script. Use whenever writing or editing any .md file, including documentation, role files, and SKILL.md files.
+description: Format conventions for Markdown files — line breaks, headings, lists, fences, links, and tables — with a checker script. Use whenever writing or editing any .md file, including documentation and SKILL.md files.
 allowed-tools: PowerShell
 ---
 
 # Markdown writing
 
-Mechanics only. What to document and how to structure it belongs to the `tech-writer` role, or to `agent-developer` when the file is one an agent loads as instruction.
+Mechanics only. `docs-writing` owns human-facing content and structure; `ai-prompt-writing` owns agent-loaded instructions.
 
 ## Line breaks
 
@@ -14,7 +14,7 @@ One paragraph is one line. Never hard-wrap prose to a column.
 
 Wrapping is the renderer's job and the editor's. A hard wrap in the source leaks into previews that honour single newlines, breaks the reader's eye mid-sentence, and turns a one-word edit into a diff across every following line of the paragraph.
 
-Break a line only where the break carries meaning: between list items, between table rows, and between paragraphs. Reflowing a file that is already hard-wrapped is its own separate change, never mixed into an edit about content.
+Break a line only where the break carries meaning: between list items, between table rows, and between paragraphs. Reflow an existing hard-wrapped paragraph before editing it; never leave a touched paragraph split across source lines.
 
 ## Rules
 
@@ -36,4 +36,6 @@ Break a line only where the break carries meaning: between list items, between t
 pwsh agents/skills/docs-md-writing/scripts/check-markdown.ps1 -Path <file-or-directory>
 ```
 
-The script exits non-zero on a rule violation. Hard-wrapped paragraphs are reported as warnings, because converting an existing file is a deliberate separate change; `-FailOnWrap` promotes them to errors for files that have already been converted.
+The script exits non-zero on any rule violation, including a hard-wrapped paragraph. HTML comments are excluded from prose checks; visible text around them is still checked.
+
+Run the comment and paragraph regression cases with `pwsh agents/skills/docs-md-writing/scripts/test-markdown.ps1`.
