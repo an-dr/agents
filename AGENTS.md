@@ -64,6 +64,7 @@ Load `dev-workflow` for phase responsibilities and transitions. It names the oth
 - Do not expand scope silently. Add a future increment through the controller in Detailed flows; propose follow-up work in Quick. In Direct, complete the requested result and report any distinct follow-up work.
 - When the user rejects output, redo the delivery from its explanation rather than layering a patch over the rejected approach.
 - Hand over work the user can check without assembling it first. A project that produces an executable is built as part of the delivery and the artefact's path is named, so trying it is one command; anything else names the single command that demonstrates the change. Reporting a change the user cannot run is reporting half of it.
+- End a big change with the `dev-change-report` HTML report: a Detailed or Detailed Auto flow, or any delivery that adds a component, adds an ADR, or changes the architecture. End every other code delivery with a one-line offer to produce it.
 - Push back on workarounds. If no clean solution exists, explain the compromise and let the user decide.
 
 ## Git rules
@@ -111,6 +112,7 @@ Skills live in `skills/<name>/SKILL.md` next to this file. Read a matching skill
 | `dev-debug` | Reproduce and instrument a resistant failure. |
 | `dev-design` | Explore a deeper decision with options, steelman, and pre-mortem. |
 | `dev-summary` | Review the full branch and prepare the integration handoff. |
+| `dev-change-report` | Explain a finished change in one HTML page, with diagrams instead of code. |
 | `dev-workflow-clean-branch` | Remove `.progress/` from every feature-branch commit. |
 | `git-commit` | Compose and record a commit in the unified message format. |
 | `git-commit-fix` | Rewrite existing commit messages to that format. |

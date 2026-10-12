@@ -23,6 +23,7 @@ Reusable agent actions. Each skill contains a concise `SKILL.md`; deterministic 
 | [`dev-debug`](dev-debug/SKILL.md) | Diagnose a resistant failure. |
 | [`dev-design`](dev-design/SKILL.md) | Structure a deeper design decision. |
 | [`dev-summary`](dev-summary/SKILL.md) | Prepare the full-branch integration handoff. |
+| [`dev-change-report`](dev-change-report/SKILL.md) | Explain a finished change in one HTML page: new and upgraded blocks, rendered dependency graphs, decisions, and verification. |
 | [`dev-workflow-clean-branch`](dev-workflow-clean-branch/SKILL.md) | Remove workflow state from feature-branch history. |
 | [`git-commit`](git-commit/SKILL.md) | Compose and record a commit in the unified message format. |
 | [`git-commit-fix`](git-commit-fix/SKILL.md) | Rewrite existing commit messages to that format. |
