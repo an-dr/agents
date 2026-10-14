@@ -28,6 +28,10 @@ Use a diagram when structure or flow is the point: dependencies and layers, a re
 - Write each diagram as a `<pre class="mermaid">` block holding the Mermaid source. Escape `<`, `>`, and `&` in that source as HTML entities; quote node labels that contain punctuation.
 - Mark meaning with shape, line style, and `classDef` stroke settings rather than fixed fill colours, so diagrams stay readable in both themes. Explain any styling in a legend or caption.
 - Prefer `flowchart` over Mermaid's experimental `C4*` diagram types, which lay out unreliably.
+- Lay out a chain of more than four nodes top to bottom (`flowchart TB`); a long left-to-right chain shrinks to unreadable text at page width.
+- Do not style generic class names that Mermaid also uses inside its SVG — `label`, `node`, `edgeLabel`, `cluster`, `actor`, `note` — on the page; give page classes distinct names, or the page CSS leaks into the diagrams and clips their text.
+- Never use a Mermaid keyword as a node id — `graph`, `flowchart`, `subgraph`, `end`, `class`, `classDef`, `style`, `click`, `default`, `direction`. Such a diagram fails to parse; name the node after what it is instead.
+- Check every page after embedding by opening it, or by rendering it headless (`chrome --headless=new --virtual-time-budget=15000 --dump-dom <file-url>`) and searching the output for `aria-roledescription="error"`. A diagram that does not render is a defect in the page.
 
 ## Render
 

@@ -10,9 +10,13 @@
     end of the page.
 
     - Idempotent: a block between the begin and end markers is replaced, never duplicated.
+    - Only when needed: a page without diagrams gets no renderer, and loses one it no
+      longer needs, so it does not carry the 2.5 MB build for nothing.
     - Offline: no CDN, so a report opened from disk renders the same as a published one.
     - Theme-aware: diagrams follow data-theme on the root element, else the system setting,
       and re-render when it changes.
+    - Isolated: each diagram renders on its own, so one with a syntax error shows its own
+      error and leaves the rest of the page intact.
     - Renamed after claiming: rendered blocks lose the "mermaid" class, so a host that
       renders Mermaid itself does not render them a second time.
 
@@ -56,11 +60,14 @@ $startup = @'
   });
   function render() {
     window.mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', theme: theme() });
-    blocks.forEach(function (block) {
-      block.removeAttribute('data-processed');
-      block.textContent = block.getAttribute('data-mermaid-source');
-    });
-    window.mermaid.run({ nodes: blocks }).catch(function (error) { console.error(error); });
+    // One block at a time, so a diagram with a syntax error cannot take the others down with it.
+    blocks.reduce(function (previous, block) {
+      return previous.then(function () {
+        block.removeAttribute('data-processed');
+        block.textContent = block.getAttribute('data-mermaid-source');
+        return window.mermaid.run({ nodes: [block] }).catch(function (error) { console.error(error); });
+      });
+    }, Promise.resolve());
   }
   render();
   dark.addEventListener('change', render);
@@ -82,7 +89,13 @@ $end
 
 $html = [IO.File]::ReadAllText($report)
 $pattern = '<!-- (?:docs-html-report|' + [regex]::Escape($legacyOwner) + '):mermaid begin -->[\s\S]*?<!-- (?:docs-html-report|' + [regex]::Escape($legacyOwner) + '):mermaid end -->'
-if ($html -match $pattern) {
+# Count on the page without a previously embedded build, whose source is not the page's.
+$page = [regex]::Replace($html, '\s*' + $pattern, '')
+$diagrams = ([regex]::Matches($page, '<pre class="mermaid')).Count
+if ($diagrams -eq 0) {
+    $html = $page
+}
+elseif ($html -match $pattern) {
     $html = [regex]::Replace($html, $pattern, { param($m) $block })
 }
 elseif ($html -match '</body>') {
@@ -94,5 +107,9 @@ else {
 }
 [IO.File]::WriteAllText($report, $html, [Text.UTF8Encoding]::new($false))
 
-$diagrams = ([regex]::Matches($html, '<pre class="mermaid')).Count
-Write-Output "Embedded Mermaid $version into $report ($diagrams diagram(s))."
+if ($diagrams -eq 0) {
+    Write-Output "No diagrams in $report; Mermaid not embedded."
+}
+else {
+    Write-Output "Embedded Mermaid $version into $report ($diagrams diagram(s))."
+}
