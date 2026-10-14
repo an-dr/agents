@@ -105,6 +105,7 @@ Skills live in `skills/<name>/SKILL.md` next to this file. Read a matching skill
 | `ai-prompt-review` | Review agent instructions for contradictions, weak rules, and wasted context. |
 | `docs-adr` | Record a settled architectural decision. |
 | `docs-md-writing` | Format conventions and a checker for any Markdown file. |
+| `docs-html-report` | Build a self-contained HTML report page with rendered Mermaid diagrams. |
 | `docs-readme` | Rewrite a README from what the repository actually contains. |
 | `ut-adversarial` | Build bug-finding tests before a debug or cleanup fix. |
 | `dev-code-review` | Review an increment or full branch diff. |

@@ -1,12 +1,13 @@
 #Requires -Version 7
 <#
 .SYNOPSIS
-    Inlines the skill's pinned Mermaid build into a change report so its diagrams render anywhere.
+    Inlines the pinned Mermaid build into an HTML report so its diagrams render anywhere.
 
 .DESCRIPTION
-    A report's diagrams are <pre class="mermaid"> blocks. Nothing renders them in a local
-    browser or an editor preview, so this script appends the vendored build from
-    ../assets/mermaid.min.js and a small start-up script to the end of the page.
+    A report's diagrams are <pre class="mermaid"> blocks, whichever skill wrote the page.
+    Nothing renders them in a local browser or an editor preview, so this script appends
+    the vendored build from ../assets/mermaid.min.js and a small start-up script to the
+    end of the page.
 
     - Idempotent: a block between the begin and end markers is replaced, never duplicated.
     - Offline: no CDN, so a report opened from disk renders the same as a published one.
@@ -25,8 +26,10 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 $version = '11.4.1'
-$begin = '<!-- dev-change-report:mermaid begin -->'
-$end = '<!-- dev-change-report:mermaid end -->'
+$begin = '<!-- docs-html-report:mermaid begin -->'
+$end = '<!-- docs-html-report:mermaid end -->'
+# Pages embedded before this skill existed carry the old owner's markers.
+$legacyOwner = 'dev-change-report'
 
 $report = (Resolve-Path -LiteralPath $Path).Path
 $library = Join-Path $PSScriptRoot '../assets/mermaid.min.js'
@@ -67,7 +70,7 @@ $startup = @'
 
 $block = @"
 $begin
-<!-- Mermaid $version, embedded by the dev-change-report skill -->
+<!-- Mermaid $version, embedded by the docs-html-report skill -->
 <script>
 $code
 </script>
@@ -78,7 +81,7 @@ $end
 "@
 
 $html = [IO.File]::ReadAllText($report)
-$pattern = [regex]::Escape($begin) + '[\s\S]*?' + [regex]::Escape($end)
+$pattern = '<!-- (?:docs-html-report|' + [regex]::Escape($legacyOwner) + '):mermaid begin -->[\s\S]*?<!-- (?:docs-html-report|' + [regex]::Escape($legacyOwner) + '):mermaid end -->'
 if ($html -match $pattern) {
     $html = [regex]::Replace($html, $pattern, { param($m) $block })
 }

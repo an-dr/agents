@@ -35,15 +35,9 @@ Omit a section only when it would be empty, and say so in the summary.
 ## Explain with diagrams, not code
 
 - Draw structure and flow as Mermaid: `flowchart` for layers and dependencies, `sequenceDiagram` for handshakes and request flows, decision flowcharts for branching behaviour.
-- Write every diagram as a `<pre class="mermaid">` block. The skill ships a pinned Mermaid build that `scripts/embed-mermaid.ps1` inlines into the page, so the diagrams render offline, in an editor preview, and when published alike; never load Mermaid from a CDN.
+- Build the page and its diagrams through `docs-html-report`, which owns the page rules, the diagram format, and the offline Mermaid renderer.
 - Prose is plain and short. Code appears only as interface signatures or the few lines an adopter must write; never paste implementation.
 
 ## Write and deliver
 
-Write the page to `REPO/.artifacts/reports/<short-name>.html`. Make it self-contained, readable in light and dark themes, and usable at phone width. Then embed the renderer, and run it again after every later edit of the page:
-
-```powershell
-pwsh <skill>/scripts/embed-mermaid.ps1 -Path REPO/.artifacts/reports/<short-name>.html
-```
-
-The script is idempotent and reports how many diagrams the page holds. When the tool can publish pages, publish it and give the user the link; otherwise name the file path. Tell the user when the page is private to them.
+Write the page to `REPO/.artifacts/reports/<short-name>.html` and render its diagrams as `docs-html-report` describes, again after every later edit of the page. When the tool can publish pages, publish it and give the user the link; otherwise name the file path. Tell the user when the page is private to them.
