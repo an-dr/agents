@@ -58,15 +58,7 @@
   figure { margin: 1.25rem 0; }
   figure .scroll { padding: 1rem; }
   figcaption { font-size: .85rem; color: var(--muted); margin-top: .5rem; }
-  svg { max-width: 100%; height: auto; }
-  .c4 text { font-family: ui-sans-serif, system-ui, sans-serif; fill: var(--ink); }
-  .c4 .box { fill: var(--panel); stroke: var(--line); }
-  .c4 .box.system { stroke: var(--accent); stroke-width: 2; }
-  .c4 .box.external { fill: var(--chip); stroke-dasharray: 4 3; }
-  .c4 .label { font-size: 13px; font-weight: 600; }
-  .c4 .sub { font-size: 11px; fill: var(--muted); }
-  .c4 .edge { stroke: var(--muted); fill: none; marker-end: url(#arrow); }
-  .c4 .edge-label { font-size: 10px; fill: var(--muted); }
+  .diagram pre { margin: 0; }
   ol.path-list { padding-left: 1.2rem; }
   ol.path-list li { margin-bottom: .5rem; }
   .muted { color: var(--muted); }
@@ -111,34 +103,49 @@
 <h2>Level 1 — context</h2>
 <p>What to notice in this diagram.</p>
 <figure>
-  <div class="scroll">
-    <svg class="c4" viewBox="0 0 720 320" role="img" aria-label="System context diagram">
-      <defs>
-        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-          <path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/>
-        </marker>
-      </defs>
-      <rect class="box system" x="270" y="120" width="180" height="80" rx="10"/>
-      <text class="label" x="360" y="152" text-anchor="middle">The system</text>
-      <text class="sub" x="360" y="170" text-anchor="middle">what it is</text>
-      <rect class="box external" x="40" y="130" width="150" height="60" rx="10"/>
-      <text class="label" x="115" y="158" text-anchor="middle">Actor</text>
-      <text class="sub" x="115" y="175" text-anchor="middle">role</text>
-      <path class="edge" d="M190,160 L268,160"/>
-      <text class="edge-label" x="229" y="152" text-anchor="middle">uses</text>
-    </svg>
+  <div class="scroll diagram">
+<pre class="mermaid">
+flowchart LR
+  actor["Actor<br/>role"]
+  system["The system<br/>what it is"]
+  external["External system<br/>what it provides"]
+  actor -- uses --> system
+  system -- calls --> external
+  classDef focus stroke-width:3px
+  classDef outside stroke-dasharray:5 4
+  classDef inferred stroke-dasharray:2 3
+  class system focus
+  class external outside
+</pre>
   </div>
-  <figcaption>Sources: <span class="path">file</span> <span class="badge verified">verified</span></figcaption>
+  <figcaption>Thick border: this system. Dashed: owned by someone else. Dotted: inferred. Sources: <span class="path">file</span> <span class="badge verified">verified</span></figcaption>
 </figure>
 
 <h2>Level 2 — containers</h2>
 <p>What separately runs, and how the parts talk.</p>
-<figure><div class="scroll"><svg class="c4" viewBox="0 0 720 360" role="img" aria-label="Container diagram"></svg></div>
+<figure><div class="scroll diagram">
+<pre class="mermaid">
+flowchart LR
+  subgraph system["The system"]
+    app["Container<br/>language"]
+    store[("Data store")]
+  end
+  app -- reads and writes --> store
+</pre>
+  </div>
   <figcaption>Sources: <span class="path">file</span> <span class="badge verified">verified</span></figcaption></figure>
 
 <h2>Level 3 — components</h2>
 <p>Inside CONTAINER, chosen because REASON.</p>
-<figure><div class="scroll"><svg class="c4" viewBox="0 0 720 420" role="img" aria-label="Component diagram"></svg></div>
+<figure><div class="scroll diagram">
+<pre class="mermaid">
+flowchart TB
+  subgraph container["CONTAINER"]
+    entry["Entry point"] --> core["Component"]
+    core --> adapter["Adapter"]
+  end
+</pre>
+  </div>
   <figcaption>Sources: <span class="path">file</span> <span class="badge inferred">inferred</span></figcaption></figure>
 
 <!-- 5. One real use case traced through the real call path. -->

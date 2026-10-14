@@ -79,7 +79,7 @@ Say plainly when a category came up clean. "No import cycles found" is informati
 
 ## The page
 
-Self-contained HTML, one file, opening correctly from disk with no network access. Diagrams are inline SVG — theme-aware through the same CSS variables as the rest of the page, with wide ones inside their own scrolling container. When the page is published as an Artifact instead, mermaid blocks render natively and may be used there.
+Build the page through `docs-html-report`: one self-contained HTML file that opens correctly from disk with no network access. Draw the C4 levels and the main flow as Mermaid diagrams — a `flowchart` with `subgraph` boundaries for each C4 level, a `sequenceDiagram` when the main flow is easier to follow as messages — and render them with that skill's embed script. Mark the system in focus, systems the project does not own, and inferred boxes with `classDef` stroke styles, and keep the legend in the caption.
 
 Start from `assets/overview-template.html`, which carries the structure, the provenance badges, the severity chips, and a light and dark palette. Sections in this order:
 
@@ -106,6 +106,6 @@ The failure mode of a generated overview is a confident, plausible, wrong archit
 
 ## Output
 
-Write to `.artifacts/overview/project-overview.html` in the scanned repository. Offer to publish it as an Artifact when the user wants a link rather than a file.
+Write to `.artifacts/overview/project-overview.html` in the scanned repository, then run `docs-html-report`'s embed script on it. Offer to publish it as an Artifact when the user wants a link rather than a file.
 
 In the chat, report the count of drift rows and the top three problems with their severities, so the user learns the headline without opening the page.
