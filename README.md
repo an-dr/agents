@@ -78,7 +78,7 @@ Future Detailed increments can be inserted or reordered without changing active 
 
 - `AGENTS.md` — concise policy and entry point
 - `skills/` — task guidance and executable checks for planning, building, testing, reviewing, and writing
-- `.artifacts/code-review/` — ignored local review JSON and generated Markdown
+- `.artifacts/code-review/` — ignored local review JSON and generated HTML reports
 - `skills/dev-workflow/` — executable workflow state machine
 - `skills/install-powershell/` — PowerShell 7 bootstrap instructions
 - `skills/agents-install/` — global installation for local AI tools

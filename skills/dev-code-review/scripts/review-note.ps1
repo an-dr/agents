@@ -11,7 +11,9 @@ param(
     [ValidateRange(1, [int]::MaxValue)][int]$Line,
     [string]$Recommendation,
     [ValidateSet('approve', 'approve-with-comments', 'changes-required')]
-    [string]$Decision
+    [string]$Decision,
+    [string]$Diagram,
+    [string]$DiagramPath
 )
 
 Set-StrictMode -Version Latest
@@ -31,6 +33,16 @@ function Get-NextNoteId {
         }
     }
     return "$Prefix.$($maximum + 1)"
+}
+
+if ($Diagram -and $DiagramPath) {
+    throw 'Pass -Diagram or -DiagramPath, not both.'
+}
+if ($DiagramPath) {
+    $Diagram = [IO.File]::ReadAllText((Resolve-Path -LiteralPath $DiagramPath).Path)
+}
+if ($Diagram -and $Section -notin @('critical', 'high', 'improvement')) {
+    throw 'Only findings carry a diagram.'
 }
 
 $reviewLock = Enter-ReviewLock -Path $ReviewPath
@@ -71,7 +83,7 @@ try {
         $notes = @($review.sections.($definition.Collection))
         $noteId = Get-NextNoteId -Notes $notes -Prefix $definition.Prefix
         $normalizedFile = $File.Replace('\', '/')
-        $review.sections.($definition.Collection) = $notes + [pscustomobject]@{
+        $finding = [ordered]@{
             id             = $noteId
             file           = $normalizedFile
             line           = if ($PSBoundParameters.ContainsKey('Line')) { $Line } else { $null }
@@ -79,6 +91,10 @@ try {
             recommendation = $Recommendation
             addedAt        = (Get-Date).ToUniversalTime().ToString('o')
         }
+        if ($Diagram) {
+            $finding.diagram = $Diagram.Trim()
+        }
+        $review.sections.($definition.Collection) = $notes + [pscustomobject]$finding
     }
     }
 

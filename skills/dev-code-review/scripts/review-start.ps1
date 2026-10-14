@@ -36,4 +36,4 @@ $review.updatedAt = $now
 Write-ReviewJson -Review $review -Path $reviewPath
 
 Write-Output $reviewPath
-Write-Output "Commit '$reviewDirectory/.gitignore'; JSON and Markdown artifacts remain local."
+Write-Output "Commit '$reviewDirectory/.gitignore'; JSON and HTML artifacts remain local."

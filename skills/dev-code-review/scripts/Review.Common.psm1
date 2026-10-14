@@ -86,12 +86,13 @@ function Assert-ReviewProperties {
     param(
         [Parameter(Mandatory)]$Object,
         [Parameter(Mandatory)][string[]]$Expected,
-        [Parameter(Mandatory)][string]$Name
+        [Parameter(Mandatory)][string]$Name,
+        [string[]]$Optional = @()
     )
 
     $actual = @($Object.PSObject.Properties.Name)
     $missing = @($Expected | Where-Object { $_ -notin $actual })
-    $unknown = @($actual | Where-Object { $_ -notin $Expected })
+    $unknown = @($actual | Where-Object { $_ -notin $Expected -and $_ -notin $Optional })
     if ($missing.Count -gt 0) {
         throw "$Name is missing properties: $($missing -join ', ')."
     }
@@ -116,7 +117,9 @@ function Assert-ReviewNotes {
         else {
             @('id', 'file', 'line', 'text', 'recommendation', 'addedAt')
         }
-        Assert-ReviewProperties -Object $note -Expected $expectedProperties -Name "Review note $expectedNumber"
+        # A finding may carry Mermaid source that explains it; positives never do.
+        $optionalProperties = if ($Positive) { @() } else { @('diagram') }
+        Assert-ReviewProperties -Object $note -Expected $expectedProperties -Optional $optionalProperties -Name "Review note $expectedNumber"
         $expectedId = "$Prefix.$expectedNumber"
         if ($note.id -ne $expectedId) {
             throw "Expected review note ID '$expectedId', found '$($note.id)'."
@@ -138,6 +141,10 @@ function Assert-ReviewNotes {
             }
             if ($null -ne $note.line -and [int]$note.line -lt 1) {
                 throw "Review finding '$expectedId' has an invalid line number."
+            }
+            if ($note.PSObject.Properties.Name -contains 'diagram' -and
+                [string]::IsNullOrWhiteSpace([string]$note.diagram)) {
+                throw "Review finding '$expectedId' has an empty diagram."
             }
         }
         $expectedNumber++

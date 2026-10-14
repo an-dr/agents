@@ -1,11 +1,11 @@
 ---
 name: dev-code-review
-description: Review a diff for defects, security issues, structural problems, convention violations, and outdated patterns. Use during Direct review, VERIFY on an increment diff, SUMMARY on the full branch diff, or when the user requests a code review; record structured findings in REPO/.artifacts/code-review JSON and render Markdown through the bundled PowerShell scripts.
+description: Review a diff for defects, security issues, structural problems, convention violations, and outdated patterns. Use during Direct review, VERIFY on an increment diff, SUMMARY on the full branch diff, or when the user requests a code review; record structured findings in REPO/.artifacts/code-review JSON and render an HTML report through the bundled PowerShell scripts.
 ---
 
 # Code review
 
-Use JSON as the canonical review record. Never hand-edit the JSON or generated Markdown; use the scripts so sections, stable IDs, and numbering remain valid.
+Use JSON as the canonical review record. Never hand-edit the JSON or the generated HTML; use the scripts so sections, stable IDs, and numbering remain valid.
 
 ## Select the diff
 
@@ -52,12 +52,14 @@ pwsh <skill>/scripts/review-note.ps1 -ReviewPath <json> `
 
 Finding sections are `critical`, `high`, and `improvement`; their IDs are assigned as `CR.N`, `HI.N`, and `IM.N`. Positive notes use `PO.N`. Summary and verdict are singleton sections and are updated rather than appended.
 
+A finding may carry one Mermaid diagram through `-Diagram '<source>'` or `-DiagramPath <file>`. Attach one when the problem is structural and a picture explains it faster than prose: a dependency pointing the wrong way, a request or handoff flow that goes wrong, a lifecycle with a missing transition, unclear ownership. Do not attach one to a line-level defect. Draw only what the code shows, and follow `docs-html-report` for the diagram type and format.
+
 ## Render and report
 
 ```powershell
 pwsh <skill>/scripts/review-render.ps1 -ReviewPath <json>
 ```
 
-The renderer always emits the fixed Markdown section order. Summarize critical findings and the verdict in chat; keep the generated file as a local inspection artifact.
+The renderer writes one self-contained `.html` page beside the JSON, in a fixed section order: verdict, summary, critical, high, improvements, positives, and renders diagrams offline through `docs-html-report`'s embed script. HTML is the only rendered format; do not produce a Markdown review. Summarize critical findings and the verdict in chat, and give the path of the HTML file; keep it as a local inspection artifact.
 
 Review only. Return fixes to BUILD in gated flows or to Direct implementation, and never weaken tests or expand scope to make the review pass.

@@ -1,5 +1,5 @@
 #Requires -Version 7
-<# Renders canonical review JSON as deterministic Markdown. #>
+<# Renders canonical review JSON as one deterministic, self-contained HTML page. #>
 [CmdletBinding()]
 param(
     [Parameter(Mandatory)][string]$ReviewPath,
@@ -10,79 +10,136 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 Import-Module (Join-Path $PSScriptRoot 'Review.Common.psm1') -Force
 
-function ConvertTo-MarkdownLine {
+function ConvertTo-ReviewHtml {
+    <# Escapes note text for HTML and renders `backtick` spans as inline code. #>
     param([AllowEmptyString()][string]$Value)
 
-    $line = ($Value -replace '[\r\n]+', ' ').Trim().Replace('`', '``')
-    return $line -replace '^([#>])', '\$1'
+    $escaped = [Net.WebUtility]::HtmlEncode(($Value -replace '[\r\n]+', ' ').Trim())
+    return $escaped -replace '`+([^`]+?)`+', '<code>$1</code>'
 }
 
-function Get-FindingSectionLines {
+function Get-FindingSectionHtml {
+    <# Renders one finding section with a fixed heading, or an explicit empty state. #>
     param(
         [Parameter(Mandatory)][string]$Title,
+        [Parameter(Mandatory)][string]$Severity,
         [Parameter(Mandatory)][AllowEmptyCollection()][array]$Notes
     )
 
-    $sectionLines = [Collections.Generic.List[string]]::new()
-    $sectionLines.Add("### $Title")
-    $sectionLines.Add('')
+    $html = [Collections.Generic.List[string]]::new()
+    $html.Add("<section><h2>$Title</h2>")
     if ($Notes.Count -eq 0) {
-        $sectionLines.Add('None.')
+        $html.Add('<p class="empty">None.</p>')
     }
     foreach ($note in $Notes) {
-        $location = ConvertTo-MarkdownLine -Value $note.file
+        $location = [Net.WebUtility]::HtmlEncode($note.file)
         if ($note.line) {
             $location = "${location}:$($note.line)"
         }
-        $text = ConvertTo-MarkdownLine -Value $note.text
-        $recommendation = ConvertTo-MarkdownLine -Value $note.recommendation
-        $sectionLines.Add("- **$($note.id)** ``$location`` — $text Fix: $recommendation")
+        $html.Add("<article class=""finding $Severity"" id=""$($note.id)"">")
+        $html.Add("<div class=""head""><span class=""id"">$($note.id)</span><span class=""loc"">$location</span></div>")
+        $html.Add("<p>$(ConvertTo-ReviewHtml -Value $note.text)</p>")
+        if ($note.PSObject.Properties.Name -contains 'diagram') {
+            $html.Add("<div class=""diagram""><pre class=""mermaid"">$([Net.WebUtility]::HtmlEncode($note.diagram))</pre></div>")
+        }
+        $html.Add("<p class=""fix""><span class=""tag"">Fix</span> $(ConvertTo-ReviewHtml -Value $note.recommendation)</p>")
+        $html.Add('</article>')
     }
-    $sectionLines.Add('')
-    return $sectionLines.ToArray()
+    $html.Add('</section>')
+    return $html.ToArray()
 }
 
 $resolvedPath = Resolve-ReviewPath -Path $ReviewPath
 $review = Read-ReviewJson -Path $resolvedPath
 if (-not $OutputPath) {
-    $OutputPath = [IO.Path]::ChangeExtension($resolvedPath, '.md')
+    $OutputPath = [IO.Path]::ChangeExtension($resolvedPath, '.html')
 }
 elseif (-not [IO.Path]::IsPathRooted($OutputPath)) {
     $OutputPath = Join-Path (Get-Location) $OutputPath
 }
 $OutputPath = [IO.Path]::GetFullPath($OutputPath)
 if ((Split-Path -Parent $OutputPath) -ne (Split-Path -Parent $resolvedPath)) {
-    throw 'Rendered Markdown must remain directly inside REPO/.artifacts/code-review/.'
+    throw 'The rendered review must remain directly inside REPO/.artifacts/code-review/.'
+}
+if ([IO.Path]::GetExtension($OutputPath) -ne '.html') {
+    throw 'The rendered review is HTML; -OutputPath must end in .html.'
 }
 
-$lines = [Collections.Generic.List[string]]::new()
-$lines.Add("# Code review — $(ConvertTo-MarkdownLine -Value $review.reference)")
-$lines.Add('')
-$lines.Add("Scope: $($review.scope)")
-$lines.Add("Review: $($review.reviewId)")
-$lines.Add('')
-$lines.Add('## Summary')
-$lines.Add('')
-$lines.Add($(if ($review.summary) { ConvertTo-MarkdownLine -Value $review.summary } else { 'Not set.' }))
-$lines.Add('')
-$lines.Add('## Findings')
-$lines.Add('')
-foreach ($line in Get-FindingSectionLines -Title 'Critical — must fix before integration' -Notes @($review.sections.critical)) { $lines.Add($line) }
-foreach ($line in Get-FindingSectionLines -Title 'High' -Notes @($review.sections.high)) { $lines.Add($line) }
-foreach ($line in Get-FindingSectionLines -Title 'Improvements' -Notes @($review.sections.improvements)) { $lines.Add($line) }
-$lines.Add('## Positives')
-$lines.Add('')
-if (@($review.sections.positives).Count -eq 0) {
-    $lines.Add('None recorded.')
+$sections = $review.sections
+$counts = [ordered]@{
+    critical = @($sections.critical).Count
+    high = @($sections.high).Count
+    improvement = @($sections.improvements).Count
+    positive = @($sections.positives).Count
 }
-foreach ($note in @($review.sections.positives)) {
-    $lines.Add("- **$($note.id)** $(ConvertTo-MarkdownLine -Value $note.text)")
-}
-$lines.Add('')
-$lines.Add('## Verdict')
-$lines.Add('')
-$lines.Add("**$($review.verdict.decision)** — $(ConvertTo-MarkdownLine -Value $review.verdict.rationale)")
-$lines.Add('')
+$reference = [Net.WebUtility]::HtmlEncode($review.reference)
+$decision = [Net.WebUtility]::HtmlEncode($review.verdict.decision)
 
-Write-ReviewText -Text ($lines -join [Environment]::NewLine) -Path $OutputPath
+$html = [Collections.Generic.List[string]]::new()
+$html.Add('<!doctype html>')
+$html.Add('<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">')
+$html.Add("<title>Code review — $reference</title>")
+$html.Add(@'
+<style>
+:root { --bg: #f6f7f9; --paper: #fff; --ink: #1d2430; --muted: #5b6474; --rule: #d9dde4; --code: #eef1f5;
+  --critical: #b62665; --high: #bd421f; --improvement: #a66a00; --positive: #1a7f37; color-scheme: light; }
+@media (prefers-color-scheme: dark) { :root { --bg: #14171c; --paper: #1b1f26; --ink: #dfe3ea; --muted: #98a1b0;
+  --rule: #2e343e; --code: #232833; --critical: #ef7fac; --high: #fa845c; --improvement: #e5ad45; --positive: #89d185; color-scheme: dark; } }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.6 system-ui, "Segoe UI", sans-serif; }
+main { max-width: 880px; margin: 0 auto; padding: 40px 16px 80px; display: grid; gap: 32px; }
+h1, h2 { margin: 0; line-height: 1.2; } h1 { font-size: 1.9rem; } h2 { font-size: 1.3rem; }
+p { margin: 0; } section { display: grid; gap: 12px; }
+code, .loc, .id, .meta { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; }
+code { font-size: .88em; background: var(--code); padding: .1em .35em; border-radius: 4px; overflow-wrap: anywhere; }
+.meta { color: var(--muted); font-size: .85rem; display: flex; flex-wrap: wrap; gap: 4px 18px; }
+.verdict { background: var(--paper); border: 1px solid var(--rule); border-left: 6px solid var(--v); border-radius: 8px; padding: 16px 18px; display: grid; gap: 8px; }
+.verdict .decision { font-weight: 700; font-size: 1.2rem; color: var(--v); }
+.tally { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font-weight: 700; font-size: .85rem; padding: 2px 12px; border-radius: 999px; border: 1.5px solid currentColor; }
+.finding { background: var(--paper); border: 1px solid var(--rule); border-left: 6px solid var(--c); border-radius: 8px; padding: 14px 16px; display: grid; gap: 8px; }
+.critical { --c: var(--critical); } .high { --c: var(--high); } .improvement { --c: var(--improvement); } .positive { --c: var(--positive); }
+.chip.critical { color: var(--critical); } .chip.high { color: var(--high); } .chip.improvement { color: var(--improvement); } .chip.positive { color: var(--positive); }
+.head { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; }
+.id { font-weight: 700; color: var(--c); } .loc { font-size: .8rem; color: var(--muted); overflow-wrap: anywhere; }
+.fix { padding-top: 8px; border-top: 1px dashed var(--rule); }
+.tag { font-size: .75rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.empty { color: var(--muted); }
+.diagram { overflow-x: auto; background: var(--bg); border: 1px solid var(--rule); border-radius: 6px; padding: 12px; }
+.diagram pre { margin: 0; }
+</style></head><body><main>
+'@)
+$verdictColour = switch ($review.verdict.decision) {
+    'approve' { 'var(--positive)' }
+    'approve-with-comments' { 'var(--improvement)' }
+    'pending' { 'var(--muted)' }
+    default { 'var(--high)' }
+}
+$html.Add("<header><h1>Code review — $reference</h1>")
+$html.Add("<div class=""meta""><span>Scope: $([Net.WebUtility]::HtmlEncode($review.scope))</span><span>Review: $([Net.WebUtility]::HtmlEncode($review.reviewId))</span></div></header>")
+$html.Add("<div class=""verdict"" style=""--v: $verdictColour""><span class=""tag"">Verdict</span><span class=""decision"">$decision</span>")
+$html.Add("<p>$(ConvertTo-ReviewHtml -Value $review.verdict.rationale)</p>")
+$html.Add('<div class="tally">')
+foreach ($key in $counts.Keys) {
+    $html.Add("<span class=""chip $key"">$($counts[$key]) $key</span>")
+}
+$html.Add('</div></div>')
+$html.Add('<section><h2>Summary</h2>')
+$html.Add("<p>$(if ($review.summary) { ConvertTo-ReviewHtml -Value $review.summary } else { 'Not set.' })</p></section>")
+foreach ($line in Get-FindingSectionHtml -Title 'Critical — must fix before integration' -Severity 'critical' -Notes @($sections.critical)) { $html.Add($line) }
+foreach ($line in Get-FindingSectionHtml -Title 'High' -Severity 'high' -Notes @($sections.high)) { $html.Add($line) }
+foreach ($line in Get-FindingSectionHtml -Title 'Improvements' -Severity 'improvement' -Notes @($sections.improvements)) { $html.Add($line) }
+$html.Add('<section><h2>Positives</h2>')
+if (@($sections.positives).Count -eq 0) {
+    $html.Add('<p class="empty">None recorded.</p>')
+}
+foreach ($note in @($sections.positives)) {
+    $html.Add("<article class=""finding positive"" id=""$($note.id)""><div class=""head""><span class=""id"">$($note.id)</span></div><p>$(ConvertTo-ReviewHtml -Value $note.text)</p></article>")
+}
+$html.Add('</section>')
+$html.Add('</main></body></html>')
+
+Write-ReviewText -Text ($html -join [Environment]::NewLine) -Path $OutputPath
+# Diagrams render through the shared HTML report skill's pinned, offline Mermaid build.
+$embed = Join-Path $PSScriptRoot '../../docs-html-report/scripts/embed-mermaid.ps1'
+& $embed -Path $OutputPath | Out-Null
 Write-Output $OutputPath
