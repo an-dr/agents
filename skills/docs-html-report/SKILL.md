@@ -11,6 +11,7 @@ One file a reader can open from disk, in an editor preview, or as a published pa
 
 - One self-contained `.html` file: inline CSS and scripts, no fonts, styles, or scripts from the network.
 - Define colours as CSS variables on `:root`, with dark values under `@media (prefers-color-scheme: dark)`, and give `body` an explicit background.
+- Let paragraphs, list items, and table cells fill the width of their container. Never cap prose with `max-width`, a `ch` measure, or a fixed column narrower than its box: a paragraph that wraps early inside a wide card leaves a blank band beside it. Narrow the whole layout column instead when lines grow too long.
 - Keep it usable at phone width: wide tables, code, and diagrams sit in their own `overflow-x: auto` container so the page never scrolls sideways.
 - Stamp the page with what it was generated from — commit, branch, or range — and the date.
 
