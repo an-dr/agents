@@ -63,7 +63,7 @@ The reason is that a trailer is a record of who is accountable for the change. T
 ## Procedure
 
 1. Run `git log --oneline -6`. Squash tip-only WIP commits on the same concern into one clean commit before adding another.
-2. Review the staged diff. If it carries more than one concern, split it.
+2. Review the staged diff. If it carries more than one concern, split it. A formatting-only change and a mechanical rename are each a concern of their own.
 3. Delegate the drafting to a subagent on a mid-tier model, as described below.
 4. Check and record the returned draft in one call:
 
