@@ -67,6 +67,16 @@ Load `dev-workflow` for phase responsibilities and transitions. It names the oth
 - End a big change with the `dev-change-report` HTML report: a Detailed or Detailed Auto flow, or any delivery that adds a component, adds an ADR, or changes the architecture. End every other code delivery with a one-line offer to produce it.
 - Push back on workarounds. If no clean solution exists, explain the compromise and let the user decide.
 
+## Kaizen: fix the cause, not just the symptom
+
+When a repository problem blocks work, such as a missing tool, an unset environment, an undocumented prerequisite or a flaky step, getting past it once is not enough. Leave the repository so the next person or agent hits no surprise:
+
+- make the build check for the prerequisite and fail with a message that says how to fix it, or set it up automatically when that is safe;
+- document the prerequisite where people look before building (the README or the docs setup page);
+- make that change in the same delivery, or report it as follow-up work when it is outside the scope you were given.
+
+Don't install machine-wide software silently. Name what is missing and how to get it, and let the user decide.
+
 ## Git rules
 
 - Detailed flows edit only their feature branch. Direct and Quick commit to the current branch, including the default branch, except this process repository's uncommitted review rule.
