@@ -106,6 +106,6 @@ The failure mode of a generated overview is a confident, plausible, wrong archit
 
 ## Output
 
-Write to `.artifacts/overview/project-overview.html` in the scanned repository, then run `docs-html-report`'s embed script on it. Offer to publish it as an Artifact when the user wants a link rather than a file.
+Write `project-overview.html` to the `overview` directory `artifact-storage` gives you in the scanned repository, then run `docs-html-report`'s embed script on it. Offer to publish it as an Artifact when the user wants a link rather than a file.
 
 In the chat, report the count of drift rows and the top three problems with their severities, so the user learns the headline without opening the page.

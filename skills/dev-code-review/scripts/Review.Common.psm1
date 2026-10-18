@@ -10,37 +10,27 @@ function Get-ReviewRepositoryRoot {
     return $root.Trim()
 }
 
-function Initialize-ReviewDirectory {
-    <# Creates REPO/.artifacts/code-review and ensures its managed ignore rules. #>
-    param([Parameter(Mandatory)][string]$RepositoryRoot)
+function Get-ArtifactDirectoryScript {
+    <# Resolves artifact-storage's script, the one implementation of the layout. #>
+    $path = Join-Path $PSScriptRoot '../../artifact-storage/scripts/new-artifact-dir.ps1'
+    if (-not (Test-Path -LiteralPath $path)) {
+        throw 'artifact-storage must sit beside dev-code-review; its new-artifact-dir.ps1 owns the run directory.'
+    }
+    return (Resolve-Path -LiteralPath $path).Path
+}
 
-    $directory = Join-Path $RepositoryRoot '.artifacts/code-review'
-    New-Item -ItemType Directory -Force -Path $directory | Out-Null
-    $ignorePath = Join-Path $directory '.gitignore'
-    # The directory ignores itself, so a new artifact kind never needs a rule here.
-    $requiredLines = @(
-        '# Managed code-review artifacts'
-        '*'
-        '!.gitignore'
+function Initialize-ReviewDirectory {
+    <# Takes this run's code-review directory from artifact-storage. #>
+    param(
+        [Parameter(Mandatory)][string]$RepositoryRoot,
+        [string]$Run
     )
-    $existingLines = if (Test-Path -LiteralPath $ignorePath) {
-        @(Get-Content -LiteralPath $ignorePath)
-    }
-    else {
-        @()
-    }
-    $missingLines = @($requiredLines | Where-Object { $_ -notin $existingLines })
-    if ($missingLines.Count -gt 0) {
-        $lines = [Collections.Generic.List[string]]::new()
-        foreach ($line in $existingLines) { $lines.Add($line) }
-        if ($lines.Count -gt 0 -and $lines[$lines.Count - 1]) { $lines.Add('') }
-        foreach ($line in $missingLines) { $lines.Add($line) }
-        $lines.Add('')
-        [IO.File]::WriteAllText(
-            $ignorePath,
-            ($lines -join [Environment]::NewLine),
-            [Text.UTF8Encoding]::new($false)
-        )
+
+    $arguments = @{ Kind = 'code-review'; RepositoryRoot = $RepositoryRoot }
+    if ($Run) { $arguments['Run'] = $Run }
+    $directory = & (Get-ArtifactDirectoryScript) @arguments | Select-Object -Last 1
+    if (-not $directory) {
+        throw 'artifact-storage returned no directory for this review.'
     }
     return $directory
 }
@@ -241,14 +231,21 @@ function Read-ReviewJson {
 }
 
 function Resolve-ReviewPath {
-    <# Validates that canonical JSON stays directly under REPO/.artifacts/code-review. #>
+    <# Validates that canonical JSON stays in the run directory it was created in. #>
     param([Parameter(Mandatory)][string]$Path)
 
     $repositoryRoot = Get-ReviewRepositoryRoot
-    $reviewDirectory = Initialize-ReviewDirectory -RepositoryRoot $repositoryRoot
     $resolvedPath = (Resolve-Path -LiteralPath $Path).Path
-    if ((Split-Path -Parent $resolvedPath) -ne [IO.Path]::GetFullPath($reviewDirectory)) {
-        throw 'Review JSON must be directly inside REPO/.artifacts/code-review/.'
+    # The run directory is read from the path, never reallocated: a review keeps its
+    # findings and its rendered page together across midnight and across later runs.
+    $reviewDirectory = Split-Path -Parent $resolvedPath
+    $expectedRoot = [IO.Path]::GetFullPath((Join-Path $repositoryRoot '.artifacts'))
+    # The shape artifact-storage creates; that skill, not this guard, owns the layout.
+    $runDirectory = Split-Path -Parent $reviewDirectory
+    if ((Split-Path -Leaf $reviewDirectory) -ne 'code-review' -or
+        (Split-Path -Parent $runDirectory) -ne $expectedRoot -or
+        (Split-Path -Leaf $runDirectory) -cnotmatch '^ai-\d{4}-\d{2}-\d{2}-[A-Z]+$') {
+        throw 'Review JSON must be directly inside REPO/.artifacts/ai-<run>/code-review/.'
     }
     if (-not $resolvedPath.EndsWith('.review.json', [StringComparison]::OrdinalIgnoreCase)) {
         throw 'Canonical review files must end with .review.json.'
@@ -289,6 +286,7 @@ function Write-ReviewText {
 }
 
 Export-ModuleMember -Function Assert-ReviewJson, ConvertTo-ReviewSlug,
-    Enter-ReviewLock, Exit-ReviewLock, Get-ReviewRepositoryRoot,
+    Enter-ReviewLock, Exit-ReviewLock, Get-ArtifactDirectoryScript,
+    Get-ReviewRepositoryRoot,
     Initialize-ReviewDirectory, Read-ReviewJson, Resolve-ReviewPath,
     Write-ReviewJson, Write-ReviewText

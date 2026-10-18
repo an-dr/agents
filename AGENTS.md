@@ -93,7 +93,7 @@ Writing defaults live in `dev-build`. The host repository's own instructions ove
 
 ## Temporary artifacts
 
-Generated artifacts that are not repository content go to `.artifacts/<kind>/` in the host repository: code reviews, project overviews, rendered reports, scratch analysis. The directory carries a `.gitignore` containing `*` and `!.gitignore`, so it is never committed and needs no per-file rules as skills are added.
+Generated artifacts that are not repository content go to `.artifacts/ai-<YYYY-MM-DD>-<N>/<kind>/` in the host repository: code reviews, project overviews, rendered reports, scratch analysis. `<N>` is a letter naming the run, `A` for the day's first, so the newest run sorts last and holds everything that run produced however long it takes. Take the directory from `artifact-storage`, which owns this layout and creates it; never build the path by hand.
 
 Deliverables are the exception and are committed as ordinary repository content: ADRs, READMEs, and documentation under `docs/`.
 
@@ -116,6 +116,7 @@ Skills live in `skills/<name>/SKILL.md` next to this file. Read a matching skill
 | `docs-adr` | Record a settled architectural decision. |
 | `docs-md-writing` | Format conventions and a checker for any Markdown file. |
 | `docs-html-report` | Build a self-contained HTML report page with rendered Mermaid diagrams. |
+| `artifact-storage` | Place a generated artifact and create its run directory. |
 | `docs-readme` | Rewrite a README from what the repository actually contains. |
 | `ut-adversarial` | Build bug-finding tests before a debug or cleanup fix. |
 | `dev-code-review` | Review an increment or full branch diff. |

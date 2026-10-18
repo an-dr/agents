@@ -7,6 +7,10 @@ description: Build a self-contained HTML report page for people, with Mermaid di
 
 One file a reader can open from disk, in an editor preview, or as a published page, and see the same thing: text, tables, and rendered diagrams. The calling skill owns what the page says; this skill owns how it is built and how its diagrams render.
 
+## Where the page goes
+
+A generated page is not repository content: take its directory from `artifact-storage`, which owns where artifacts live, and report the path it prints to the reader.
+
 ## The page
 
 - One self-contained `.html` file: inline CSS and scripts, no fonts, styles, or scripts from the network.

@@ -59,7 +59,7 @@ elseif (-not [IO.Path]::IsPathRooted($OutputPath)) {
 }
 $OutputPath = [IO.Path]::GetFullPath($OutputPath)
 if ((Split-Path -Parent $OutputPath) -ne (Split-Path -Parent $resolvedPath)) {
-    throw 'The rendered review must remain directly inside REPO/.artifacts/code-review/.'
+    throw 'The rendered review must remain beside its JSON, in the same run directory.'
 }
 if ([IO.Path]::GetExtension($OutputPath) -ne '.html') {
     throw 'The rendered review is HTML; -OutputPath must end in .html.'

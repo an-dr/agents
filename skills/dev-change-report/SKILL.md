@@ -40,4 +40,4 @@ Omit a section only when it would be empty, and say so in the summary.
 
 ## Write and deliver
 
-Write the page to `REPO/.artifacts/reports/<short-name>.html` and render its diagrams as `docs-html-report` describes, again after every later edit of the page. When the tool can publish pages, publish it and give the user the link; otherwise name the file path. Tell the user when the page is private to them.
+Write the page as `<short-name>.html` in the `reports` directory `artifact-storage` gives you — this run's existing directory, so the report sits beside its code review — and render its diagrams as `docs-html-report` describes, again after every later edit of the page. When the tool can publish pages, publish it and give the user the link; otherwise name the file path. Tell the user when the page is private to them.

@@ -1,6 +1,6 @@
 ---
 name: dev-code-review
-description: Review a diff for defects, security issues, structural problems, convention violations, and outdated patterns. Use during Direct review, VERIFY on an increment diff, SUMMARY on the full branch diff, or when the user requests a code review; record structured findings in REPO/.artifacts/code-review JSON and render an HTML report through the bundled PowerShell scripts.
+description: Review a diff for defects, security issues, structural problems, convention violations, and outdated patterns. Use during Direct review, VERIFY on an increment diff, SUMMARY on the full branch diff, or when the user requests a code review; record structured findings in the run's code-review JSON and render an HTML report through the bundled PowerShell scripts.
 ---
 
 # Code review
@@ -32,7 +32,9 @@ From the repository being reviewed, run:
 pwsh <skill>/scripts/review-start.ps1 -Reference '<branch-or-ref>' -Scope <direct|verify|summary|requested>
 ```
 
-This creates `REPO/.artifacts/code-review/`, its `.gitignore`, and a schema-versioned JSON record from `assets/review-template.json`. The directory ignores itself, so review state and rendered reports stay local unless the user explicitly requests otherwise.
+This takes a `code-review` directory from `artifact-storage` and writes a schema-versioned JSON record into it from `assets/review-template.json`. Review state and rendered reports stay local there unless the user explicitly requests otherwise.
+
+Pass `-Run <YYYY-MM-DD>-<N>` to put the review in a run directory this run already has, so its review, change report, and overview sit together instead of taking a second letter. Every later step reads the run directory from the JSON path it is given, so findings and the rendered page stay together across midnight and across later runs.
 
 ## Record sections
 

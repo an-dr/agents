@@ -1,11 +1,12 @@
 #Requires -Version 7
-<# Creates a canonical JSON review in REPO/.artifacts/code-review/. #>
+<# Creates a canonical JSON review in REPO/.artifacts/ai-<run>/code-review/. #>
 [CmdletBinding()]
 param(
     [Parameter(Mandatory)][string]$Reference,
     [Parameter(Mandatory)]
     [ValidateSet('direct', 'verify', 'summary', 'requested')]
-    [string]$Scope
+    [string]$Scope,
+    [string]$Run
 )
 
 Set-StrictMode -Version Latest
@@ -13,7 +14,7 @@ $ErrorActionPreference = 'Stop'
 Import-Module (Join-Path $PSScriptRoot 'Review.Common.psm1') -Force
 
 $repositoryRoot = Get-ReviewRepositoryRoot
-$reviewDirectory = Initialize-ReviewDirectory -RepositoryRoot $repositoryRoot
+$reviewDirectory = Initialize-ReviewDirectory -RepositoryRoot $repositoryRoot -Run $Run
 $templatePath = Join-Path $PSScriptRoot '../assets/review-template.json'
 $review = Get-Content -Raw -LiteralPath $templatePath | ConvertFrom-Json
 $slug = ConvertTo-ReviewSlug -Value $Reference
@@ -36,4 +37,4 @@ $review.updatedAt = $now
 Write-ReviewJson -Review $review -Path $reviewPath
 
 Write-Output $reviewPath
-Write-Output "Commit '$reviewDirectory/.gitignore'; JSON and HTML artifacts remain local."
+Write-Output "Commit '$repositoryRoot/.artifacts/.gitignore'; JSON and HTML artifacts remain local."
