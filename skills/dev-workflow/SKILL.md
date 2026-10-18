@@ -39,7 +39,8 @@ Before leaving SPLIT, check that every request is covered, every question is ans
 
 - **DOCS:** load `docs-writing` and write needed documentation before implementation. Leave it uncommitted for the increment's COMMIT.
 - **BUILD:** load `dev-build` and implement only the selected Quick option or active increment.
-- **VERIFY:** load `dev-testing` for changed code and `dev-code-review` for the diff. For documentation-only changes, verify sources, links, and consistency through `docs-writing`. Report failure cases, untested edges, doc gaps, scope, and consistency; issues return to BUILD.
+- **VERIFY:** load `dev-testing` for changed code and `dev-code-review` for the diff. Per increment, run only the fast checks: build, lint, and test what the increment touched. For documentation-only changes, verify sources, links, and consistency through `docs-writing`. Report failure cases, untested edges, doc gaps, scope, and consistency; issues return to BUILD.
+- **Full suite:** run the project's full test suite once, after the last known increment is committed and before `SUMMARY`, not after each increment. Fix each failure in the commit of the increment that introduced it, folded in with a fixup, so every increment stays one reviewable commit. An increment added later reopens this step: the suite runs again once that work is committed.
 - **COMMIT:** commit verified work with `git-commit`, including current progress state.
 - **SUMMARY:** use `dev-summary` for the full branch and reconcile it with the intake requests.
 - **INTEGRATE:** after approval, run `finish`, commit its deletion, use `dev-workflow-clean-branch`, then use `git-integrate` and ask for its mode.
