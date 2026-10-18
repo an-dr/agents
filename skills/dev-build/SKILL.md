@@ -15,6 +15,7 @@ Implement the requested result in Direct, or only the current increment in a gat
 - Use names and call sites a new reader can understand, with straight control flow and no hidden state to hold in mind.
 - Give each unit one job. Split a block that needs a paragraph of explanation into named units.
 - Comment intent beside the few lines it explains. Put whole-function explanations in doc comments; never restate obvious code.
+- Write every comment and doc comment for a newcomer who knows nothing of the project's history. Describe what the code is and why, as it stands. Never define it by contrast with an earlier design or the change that produced it ("no longer", "moved out of", "is not here any more"): that reader cannot know what it is contrasted with. History belongs in commit messages, the changelog, and ADRs.
 - Keep one owner for each fact. Fail where the failure occurs, with enough context to act on it. Do not swallow errors.
 - Delete dead or commented-out code. Preserve intentional stubs unless changing them is the task.
 - Start function and method names with an action verb, except idiomatic constructors and builders. Document public interfaces and non-obvious decisions with Doxygen for C/C++, JSDoc for TS/JS, or docstrings for Python. Mark incomplete work with `TODO`.
