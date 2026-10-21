@@ -103,7 +103,7 @@ elseif ($hasAgentsMd -and -not $hasClaudeMd) {
     Add-Result -Scope 'repo' -Check 'per-tool' -Status 'warn' -Detail 'AGENTS.md only; Claude Code reads CLAUDE.md and will not see it from the repository'
 }
 elseif ($hasClaudeMd -and -not $hasAgentsMd) {
-    Add-Result -Scope 'repo' -Check 'per-tool' -Status 'warn' -Detail 'CLAUDE.md only; Codex and opencode read AGENTS.md and will not see it from the repository'
+    Add-Result -Scope 'repo' -Check 'per-tool' -Status 'warn' -Detail 'CLAUDE.md only; Codex, Copilot, and opencode read AGENTS.md and will not see it from the repository'
 }
 elseif ($hasAgentsMd -and $hasClaudeMd) {
     Add-Result -Scope 'repo' -Check 'per-tool' -Status 'pass' -Detail 'AGENTS.md and CLAUDE.md both present'

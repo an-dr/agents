@@ -26,7 +26,7 @@ pwsh agents/skills/agents-health-check/scripts/check-agents-health.ps1
 | --- | --- |
 | `-RepositoryPath <path>` | Repository to diagnose. Defaults to the current directory; a subdirectory resolves to its git root. |
 | `-AgentsRoot <path>` | Clone the global install should point at. Passed through to the install verifier. |
-| `-Tools <ids>` | Limit the install layer to `claude`, `codex`, `gemini`, `opencode`. |
+| `-Tools <ids>` | Limit the install layer to `claude`, `codex`, `copilot`, `gemini`, `opencode`. |
 | `-SkipInstallCheck` | Repository layer only, when the machine install is known good. |
 
 The script prints one Markdown table covering the machine and repository layers and exits non-zero on any failure. Report that table to the user as-is, then continue with the pickup layer yourself — a `pass` verdict is precisely the case where the answer lies there.
@@ -48,7 +48,7 @@ Name the layer, the cause, and one command or edit. Do not propose a fix for a l
 | --- | --- |
 | Install rows fail | Re-run `agents-install`'s `install-agents.ps1`; its SKILL.md owns conflicts, `unsupported` rows, and unknown tools. |
 | No root `AGENTS.md`/`CLAUDE.md`, or it does not reference the policy | Add a root instruction file referencing `agents/AGENTS.md` — but only if this repository should be governed. The `verdict` row reports this as `info`, not a failure, because silence in an un-wired repository is the guard working. |
-| `AGENTS.md` without `CLAUDE.md`, or the reverse | Add the missing one; Claude Code reads `CLAUDE.md`, Codex and opencode read `AGENTS.md`. A repository wired for one tool is invisible to the other. |
+| `AGENTS.md` without `CLAUDE.md`, or the reverse | Add the missing one; Claude Code reads `CLAUDE.md`; Codex, Copilot, and opencode read `AGENTS.md`. A repository wired for one tool is invisible to the other. |
 | `agents/` present but empty | `git submodule update --init --recursive`. |
 | No `## Commit scopes` section | Add one to the root `AGENTS.md`; `git-commit`'s checker rejects every scoped subject without it. |
 | Everything wired, policy not in context | A tool-side loading problem: instruction file too large, an `@` import the tool does not expand, a cached session. Restart the session, then reduce what the block asks the tool to load. |

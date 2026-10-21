@@ -1,6 +1,6 @@
 ---
 name: agents-install
-description: Install this agents clone globally for local AI tools (Claude Code, Codex, Gemini CLI, opencode) so every repository can use its policy and skills without a submodule. Use when the user wants the workflow available by default machine-wide, wants to move or update an existing global install, or wants to verify one.
+description: Install this agents clone globally for local AI tools (Claude Code, Codex, GitHub Copilot CLI, Gemini CLI, opencode) so every repository can use its policy and skills without a submodule. Use when the user wants the workflow available by default machine-wide, wants to move or update an existing global install, or wants to verify one.
 allowed-tools: PowerShell
 ---
 
@@ -24,7 +24,7 @@ pwsh <clone>/skills/agents-install/scripts/install-agents.ps1
 | Parameter | Effect |
 | --- | --- |
 | `-AgentsRoot <path>` | Clone to install from. Defaults to the clone holding this script. |
-| `-Tools <ids>` | Limit to `claude`, `codex`, `gemini`, `opencode`. Default: every tool whose home directory exists. |
+| `-Tools <ids>` | Limit to `claude`, `codex`, `copilot`, `gemini`, `opencode`. Default: every tool whose home directory exists. |
 | `-SkipSkills` | Write instruction blocks only, no junctions. |
 | `-Force` | Replace a real directory occupying a skill link path. |
 | `-Uninstall` | Remove the managed blocks and the junctions. |

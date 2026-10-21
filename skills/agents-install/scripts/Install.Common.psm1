@@ -56,6 +56,14 @@ function Get-AgentsToolTarget {
             SupportsImport = $false
         }
         [pscustomobject]@{
+            Id             = 'copilot'
+            Name           = 'GitHub Copilot CLI'
+            Home           = Join-Path $profileDir '.copilot'
+            Instructions   = Join-Path $profileDir '.copilot\copilot-instructions.md'
+            SkillsDir      = Join-Path $profileDir '.copilot\skills'
+            SupportsImport = $false
+        }
+        [pscustomobject]@{
             Id             = 'gemini'
             Name           = 'Gemini CLI'
             Home           = Join-Path $profileDir '.gemini'
