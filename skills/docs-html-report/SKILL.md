@@ -14,10 +14,11 @@ A generated page is not repository content: take its directory from `artifact-st
 ## The page
 
 - One self-contained `.html` file: inline CSS and scripts, no fonts, styles, or scripts from the network.
-- Define colours as CSS variables on `:root`, with dark values under `@media (prefers-color-scheme: dark)`, and give `body` an explicit background.
+- Take every colour and font from the report brand, `assets/brand.css`. It holds the agramakov.me palette: dark-blue headings, grey text, and fuchsia underlined links that turn cyan on hover. It defines light and dark values, sets the body's background, text, and font, and styles headings and links. Page styles use its `--brand-*` tokens and define no colour of their own.
 - Let paragraphs, list items, and table cells fill the width of their container. Never cap prose with `max-width`, a `ch` measure, or a fixed column narrower than its box: a paragraph that wraps early inside a wide card leaves a blank band beside it. Narrow the whole layout column instead when lines grow too long.
 - Keep it usable at phone width: wide tables, code, and diagrams sit in their own `overflow-x: auto` container so the page never scrolls sideways.
 - Stamp the page with what it was generated from — commit, branch, or range — and the date.
+- A page that reports findings, checks, verdicts, or risks follows `ui-dark-cockpit`, which owns the problem levels and their colours. Embed its stylesheet with that skill's script, and use no other colour for status.
 
 ## Diagrams
 
@@ -40,10 +41,13 @@ Use a diagram when structure or flow is the point: dependencies and layers, a re
 
 ## Render
 
-After writing the page, and again after every later edit of it, inline the pinned Mermaid build:
+After writing the page, and again after every later edit of it, inline the brand and the pinned Mermaid build:
 
 ```powershell
+pwsh <skill>/scripts/embed-brand.ps1 -Path <page>.html
 pwsh <skill>/scripts/embed-mermaid.ps1 -Path <page>.html
 ```
+
+The brand script places the stylesheet before the page's own styles and replaces it on a rerun.
 
 The script is idempotent, works offline, follows the reader's light or dark theme, and reports how many diagrams the page holds. Never load Mermaid from a CDN. A host that renders Mermaid itself does not render the embedded diagrams twice.

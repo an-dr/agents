@@ -119,10 +119,13 @@ foreach ($tool in $targets) {
 }
 
 # --- Report ---
+# Dark cockpit (ui-dark-cockpit): problems first and marked, passing rows plain and last.
+$rank = @{ fail = 0; warn = 1; pass = 2 }
+$mark = @{ fail = '▲ **fail**'; warn = '◆ warn'; pass = 'pass' }
 Write-Output '| Scope | Check | Status | Detail |'
 Write-Output '| --- | --- | --- | --- |'
-foreach ($r in $results) {
-    Write-Output "| $($r.Scope) | $($r.Check) | $($r.Status) | $($r.Detail) |"
+foreach ($r in ($results | Sort-Object -Stable { $rank[$_.Status] })) {
+    Write-Output "| $($r.Scope) | $($r.Check) | $($mark[$r.Status]) | $($r.Detail) |"
 }
 Write-Output ''
 

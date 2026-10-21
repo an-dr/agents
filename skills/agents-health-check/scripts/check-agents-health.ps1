@@ -196,7 +196,8 @@ else {
             if ($text -match '^\|\s*Scope\s*\|' -or $text -match '^\|\s*-{2,}') { continue }
             $cells = $text.Trim('|').Split('|')
             if ($cells.Count -lt 4) { continue }
-            $status = $cells[2].Trim()
+            # The verifier marks problem statuses with a glyph and bold; keep the word alone.
+            $status = $cells[2] -replace '[^a-z]', ''
             if ($status -notin @('pass', 'fail', 'warn', 'info')) { $status = 'info' }
             Add-Result -Scope "install/$($cells[0].Trim())" -Check $cells[1].Trim() -Status $status -Detail $cells[3].Trim()
         }
@@ -230,10 +231,13 @@ else {
 }
 
 # --- Report ---
+# Dark cockpit (ui-dark-cockpit): problems first and marked, passing rows plain and last.
+$rank = @{ fail = 0; warn = 1; info = 2; pass = 3 }
+$mark = @{ fail = '▲ **fail**'; warn = '◆ warn'; info = 'info'; pass = 'pass' }
 Write-Output '| Scope | Check | Status | Detail |'
 Write-Output '| --- | --- | --- | --- |'
-foreach ($r in $results) {
-    Write-Output "| $($r.Scope) | $($r.Check) | $($r.Status) | $($r.Detail) |"
+foreach ($r in ($results | Sort-Object -Stable { $rank[$_.Status] })) {
+    Write-Output "| $($r.Scope) | $($r.Check) | $($mark[$r.Status]) | $($r.Detail) |"
 }
 Write-Output ''
 

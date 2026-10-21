@@ -29,6 +29,8 @@ Use during `SUMMARY`, after every increment is committed and before the final us
 <numbered test steps>
 ```
 
+In `Requests delivered` and `How to verify`, follow `ui-dark-cockpit`'s text rules. List unmet requests and known failures first, with their level glyph. Delivered requests follow as plain lines.
+
 5. Run the `dev-change-report` skill for the branch and give the user the report's link or path with the handoff.
 
 An approving summary never grants integration permission. It is the material the user reads before giving the `integrate` approval — at `SUMMARY` in Detailed, at `FINAL_REVIEW` in Detailed Auto. That approval is then followed by the `git-integrate` mode question, a separate decision the summary does not make.

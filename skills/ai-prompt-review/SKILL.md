@@ -59,4 +59,4 @@ Propose a script when the steps are stable, the inputs are known, and failure is
 
 ## Report
 
-Return findings ranked, each with the file and line, what breaks, and the concrete edit. State separately what was checked and found sound, so a clean area is not re-reviewed later.
+Return findings ranked, each with the file and line, what breaks, and the concrete edit. State separately what was checked and found sound, so a clean area is not re-reviewed later. Present both by `ui-dark-cockpit`'s text rules: findings first with their level, and the sound areas as one quiet closing line.

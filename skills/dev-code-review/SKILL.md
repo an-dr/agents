@@ -62,6 +62,6 @@ A finding may carry one Mermaid diagram through `-Diagram '<source>'` or `-Diagr
 pwsh <skill>/scripts/review-render.ps1 -ReviewPath <json>
 ```
 
-The renderer writes one self-contained `.html` page beside the JSON, in a fixed section order: verdict, summary, critical, high, improvements, positives, and renders diagrams offline through `docs-html-report`'s embed script. HTML is the only rendered format; do not produce a Markdown review. Summarize critical findings and the verdict in chat, and give the path of the HTML file; keep it as a local inspection artifact.
+The renderer writes one self-contained `.html` page beside the JSON, in a fixed section order: verdict, summary, critical, high, improvements, positives, and renders diagrams offline through `docs-html-report`'s embed script. HTML is the only rendered format; do not produce a Markdown review. The page follows `ui-dark-cockpit`: critical findings are red, high amber, improvements unhued, and positives dimmed and collapsed. Summarize critical findings and the verdict in chat by the same skill's text rules, and give the path of the HTML file; keep it as a local inspection artifact.
 
 Review only. Return fixes to BUILD in gated flows or to Direct implementation, and never weaken tests or expand scope to make the review pass.

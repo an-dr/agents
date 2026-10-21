@@ -81,7 +81,13 @@ Say plainly when a category came up clean. "No import cycles found" is informati
 
 Build the page through `docs-html-report`: one self-contained HTML file that opens correctly from disk with no network access. Draw the C4 levels and the main flow as Mermaid diagrams — a `flowchart` with `subgraph` boundaries for each C4 level, a `sequenceDiagram` when the main flow is easier to follow as messages — and render them with that skill's embed script. Mark the system in focus, systems the project does not own, and inferred boxes with `classDef` stroke styles, and keep the legend in the caption.
 
-Start from `assets/overview-template.html`, which carries the structure, the provenance badges, the severity chips, and a light and dark palette. Sections in this order:
+Start from `assets/overview-template.html`, which carries the structure and a light and dark palette. Its provenance badges and severity chips use `ui-dark-cockpit` levels:
+- a `verified` statement is normal, so it stays dim as `ck-ok`;
+- an `inferred` statement is `ck-notice`;
+- a `claimed` statement is `ck-high`;
+- severity `blocker` is `ck-critical`, `major` is `ck-high`, and `minor` is `ck-notice`.
+
+Do not colour a badge any other way. Sections in this order:
 
 1. **What this is** — three sentences, then the one thing to remember if the reader remembers nothing else.
 2. **Facts** — languages, size, containers, test ratio, CI, licence, last activity, and the commit the page was generated from.
@@ -106,6 +112,6 @@ The failure mode of a generated overview is a confident, plausible, wrong archit
 
 ## Output
 
-Write `project-overview.html` to the `overview` directory `artifact-storage` gives you in the scanned repository, then run `docs-html-report`'s embed script on it. Offer to publish it as an Artifact when the user wants a link rather than a file.
+Write `project-overview.html` to the `overview` directory `artifact-storage` gives you in the scanned repository, then run `docs-html-report`'s brand and Mermaid embed scripts and `ui-dark-cockpit`'s embed script on it. Offer to publish it as an Artifact when the user wants a link rather than a file.
 
 In the chat, report the count of drift rows and the top three problems with their severities, so the user learns the headline without opening the page.

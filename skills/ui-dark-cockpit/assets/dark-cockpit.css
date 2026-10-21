@@ -1,0 +1,77 @@
+/* ui-dark-cockpit: what is normal stays dark, only problems light up.
+   Owned by skills/ui-dark-cockpit; embed with its script, never copy by hand.
+   The unlit levels read a brand's --brand-ok, --brand-info, and --brand-notice when the
+   page defines them, and lit items lift to its --brand-lift surface. The alarms,
+   --ck-high* and --ck-critical*, have no brand input. */
+:root {
+  --ck-lift: var(--brand-lift, #ffffff);
+  --ck-ok: var(--brand-ok, #8b919b);
+  --ck-info: var(--brand-info, #5d6573);
+  --ck-notice: var(--brand-notice, #1f2530);
+  --ck-high: #b25d00;
+  --ck-high-bg: #fdf2e4;
+  --ck-critical: #d01f1f;
+  --ck-critical-bg: #fdecec;
+  --ck-on-critical: #ffffff;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ck-lift: var(--brand-lift, #2b2b2b);
+    --ck-ok: var(--brand-ok, #6e6e6e);
+    --ck-info: var(--brand-info, #a0a0a0);
+    --ck-notice: var(--brand-notice, #e8e8e8);
+    --ck-high: #f0a350;
+    --ck-high-bg: #2a2015;
+    --ck-critical: #ff5a4f;
+    --ck-critical-bg: #3a1513;
+    --ck-on-critical: #1a0302;
+  }
+}
+:root[data-theme="dark"] {
+  --ck-lift: var(--brand-lift, #2b2b2b);
+  --ck-ok: var(--brand-ok, #6e6e6e);
+  --ck-info: var(--brand-info, #a0a0a0);
+  --ck-notice: var(--brand-notice, #e8e8e8);
+  --ck-high: #f0a350;
+  --ck-high-bg: #2a2015;
+  --ck-critical: #ff5a4f;
+  --ck-critical-bg: #3a1513;
+  --ck-on-critical: #1a0302;
+}
+
+/* One level per element. --ck is the level's ink, used by every component below. */
+.ck-ok { --ck: var(--ck-ok); }
+.ck-info { --ck: var(--ck-info); }
+.ck-notice { --ck: var(--ck-notice); }
+.ck-high { --ck: var(--ck-high); }
+.ck-critical { --ck: var(--ck-critical); }
+
+/* Badge: the level's name, with a glyph so it never depends on colour alone. */
+.ck-badge { display: inline-block; color: var(--ck); font: 600 .72rem/1.5 ui-monospace, "Cascadia Mono", Consolas, monospace;
+  text-transform: uppercase; letter-spacing: .05em; padding: 0 .45rem; border: 1px solid transparent; border-radius: 4px;
+  white-space: nowrap; vertical-align: middle; }
+.ck-badge.ck-ok, .ck-badge.ck-info { font-weight: 400; }
+.ck-badge.ck-notice::before { content: "\25C6\00a0"; }
+.ck-badge.ck-notice { border: 1px dashed currentColor; }
+.ck-badge.ck-high::before { content: "\25B2\00a0"; }
+.ck-badge.ck-high { border-color: currentColor; background: var(--ck-high-bg); }
+.ck-badge.ck-critical::before { content: "\2716\00a0"; }
+.ck-badge.ck-critical { background: var(--ck-critical); border-color: var(--ck-critical); color: var(--ck-on-critical); font-weight: 700; }
+
+/* Item: a card, list entry, or block holding one finding. */
+.ck-item.ck-ok { color: var(--ck-ok); }
+/* A lit item lifts to the brightest surface; normal items stay on the page's quieter one. */
+.ck-item.ck-notice { border-left: 4px dashed var(--ck-notice); background: var(--ck-lift); }
+.ck-item.ck-high { border-left: 4px solid var(--ck-high); background: var(--ck-lift); }
+.ck-item.ck-critical { border-left: 4px solid var(--ck-critical); background: var(--ck-critical-bg); }
+
+/* Table rows: a quiet row recedes, a problem row carries its level at the left edge. */
+tr.ck-ok > td { color: var(--ck-ok); }
+tr.ck-notice > td:first-child { box-shadow: inset 4px 0 0 var(--ck-notice); }
+tr.ck-high > td:first-child { box-shadow: inset 4px 0 0 var(--ck-high); }
+tr.ck-critical > td { background: var(--ck-critical-bg); }
+tr.ck-critical > td:first-child { box-shadow: inset 4px 0 0 var(--ck-critical); }
+
+/* The all-clear and the collapsed normal items: present, readable, unlit. */
+.ck-quiet, details.ck-quiet > summary { color: var(--ck-ok); }
+details.ck-quiet > summary { cursor: pointer; }

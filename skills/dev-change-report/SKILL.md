@@ -35,6 +35,11 @@ Omit a section only when it would be empty, and say so in the summary.
 ## Explain with diagrams, not code
 
 - Draw structure and flow as Mermaid: `flowchart` for layers and dependencies, `sequenceDiagram` for handshakes and request flows, decision flowcharts for branching behaviour.
+- Mark the Requests statuses and the Verification results by `ui-dark-cockpit`:
+  - delivered requests and passed checks stay dim as `ck-ok`;
+  - a partial request or an unverified item is `ck-notice`;
+  - a request not done is `ck-high`;
+  - a failed check that ships is `ck-critical`.
 - Build the page and its diagrams through `docs-html-report`, which owns the page rules, the diagram format, and the offline Mermaid renderer.
 - Prose is plain and short. Code appears only as interface signatures or the few lines an adopter must write; never paste implementation.
 

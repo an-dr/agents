@@ -113,6 +113,7 @@ Skills live in `skills/<name>/SKILL.md` next to this file. Read a matching skill
 | `agents-health-check` | Diagnose why a tool is not picking up or following this workflow. |
 | `agents-modify` | Change this repository's own instructions and land them after approval. |
 | `ai-prompt-review` | Review agent instructions for contradictions, weak rules, and wasted context. |
+| `ui-dark-cockpit` | Present findings with normal results unlit and only problems visible, red for critical alone. |
 | `docs-adr` | Record a settled architectural decision. |
 | `docs-md-writing` | Format conventions and a checker for any Markdown file. |
 | `docs-html-report` | Build a self-contained HTML report page with rendered Mermaid diagrams. |
