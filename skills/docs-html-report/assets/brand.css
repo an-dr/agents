@@ -61,3 +61,39 @@ h1, h2, h3, h4 { color: var(--brand-heading); }
 /* Links as on the blog: fuchsia and underlined, cyan on hover. The underline keeps them apart from critical red. */
 a, a:visited { color: var(--brand-link); text-decoration: underline; text-underline-offset: .15em; }
 a:hover { color: var(--brand-link-hover); }
+
+/* Theme switch: inserted at the top of every page by embed-brand.ps1. */
+.brand-theme {
+  position: fixed; top: .75rem; right: .75rem; z-index: 10;
+  font: inherit; font-size: .8rem; line-height: 1.2;
+  padding: .25rem .75rem; border-radius: 999px; cursor: pointer;
+  background: var(--brand-paper); color: var(--brand-ink); border: 1px solid var(--brand-rule);
+}
+.brand-theme:hover { color: var(--brand-link-hover); }
+
+/* Print: always the light palette on white paper, whatever the screen theme,
+   with wide content wrapped instead of clipped and blocks kept whole. */
+@media print {
+  :root, :root:not([data-theme="light"]), :root[data-theme="dark"] {
+    --brand-bg: #ffffff;
+    --brand-paper: #ffffff;
+    --brand-lift: #ffffff;
+    --brand-ink: #3d434c;
+    --brand-muted: #828282;
+    --brand-rule: #d5e6e7;
+    --brand-code: #eef4f5;
+    --brand-heading: #2659b7;
+    --brand-link: #f42471;
+    --brand-link-hover: #00bab3;
+    --brand-ok: #9a9a9a;
+    --brand-info: #777777;
+    --brand-notice: #1e3a75;
+    color-scheme: light;
+  }
+  body { background: #ffffff; }
+  .brand-theme { display: none; }
+  body, body * { overflow: visible !important; }
+  pre { white-space: pre-wrap; }
+  pre, table, svg, img, figure, .mermaid-diagram { break-inside: avoid; }
+  h1, h2, h3, h4 { break-after: avoid; }
+}
