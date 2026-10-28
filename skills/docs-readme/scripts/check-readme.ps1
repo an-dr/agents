@@ -1,8 +1,9 @@
 #Requires -Version 7
 <#
     Reports the repository evidence a README may rely on, then every claim the
-    README makes that the evidence does not support. Exits non-zero on a
-    contradiction or an unresolved link.
+    README makes that the evidence does not support, then the README's Markdown
+    format through docs-md-writing's checker. Exits non-zero on a
+    contradiction, an unresolved link, or a Markdown format error.
 #>
 [CmdletBinding()]
 param(
@@ -251,11 +252,26 @@ if ($images.Count -gt 0 -and $body -inotmatch '!\[') {
         'The repository contains images that the README never shows.')
 }
 
+# ---- markdown format (docs-md-writing) ------------------------------------
+
+$markdownChecker = Join-Path $PSScriptRoot '../../docs-md-writing/scripts/check-markdown.ps1'
+$markdownFailed = $false
+Write-Output ''
+if (Test-Path -LiteralPath $markdownChecker) {
+    Write-Output 'Markdown format (docs-md-writing):'
+    & pwsh -NoProfile -File $markdownChecker $readmePath | ForEach-Object { Write-Output "  $_" }
+    $markdownFailed = $LASTEXITCODE -ne 0
+} else {
+    Write-Output "Markdown format not checked: $markdownChecker is missing."
+    $markdownFailed = $true
+}
+
 # ---- report ---------------------------------------------------------------
 
 Write-Output ''
 if ($findings.Count -eq 0) {
     Write-Output "$Readme matches the repository evidence and the baseline structure."
+    if ($markdownFailed) { exit 1 }
     exit 0
 }
 
@@ -268,4 +284,4 @@ foreach ($finding in ($findings | Sort-Object @{ Expression = { $rank[$_.Severit
 $errorCount = @($findings | Where-Object { $_.Severity -eq 'error' }).Count
 Write-Output ''
 Write-Output "$($findings.Count) finding(s), $errorCount blocking."
-if ($errorCount -gt 0) { exit 1 }
+if ($errorCount -gt 0 -or $markdownFailed) { exit 1 }

@@ -1,6 +1,6 @@
 ---
 name: docs-readme
-description: Rewrite a repository's README from what the code actually contains — read the manifests, entry points, CI, tests, and docs first, then keep, reorder, cut, and add sections against that evidence. Use when a README is missing, stale, or disorganised, when a project needs one from scratch, or when the user wants the repository to read well to a newcomer.
+description: Rewrite or update a repository's README from what the code actually contains — read the manifests, entry points, CI, tests, and docs first, then keep, reorder, cut, and add sections against that evidence. Use when a README is missing, stale, or disorganised, when it needs updating after a change, when a project needs one from scratch, or when the user wants the repository to read well to a newcomer.
 allowed-tools: Read, Grep, Glob, Write, Edit, PowerShell
 ---
 
@@ -8,7 +8,7 @@ allowed-tools: Read, Grep, Glob, Write, Edit, PowerShell
 
 The README is the only document most readers will open. This skill edits it against the repository's own evidence: the code is ground truth, and the existing README is a claim about the code that may already be false.
 
-Markdown mechanics come from `docs-md-writing`; human-facing content principles come from `docs-writing`. What belongs in `docs/`, an ADR, or a design doc stays there and is linked, never summarised twice.
+Load `docs-md-writing` before writing a line: its rules govern line breaks, lists, tables, and links in the README, including in sections left otherwise unchanged. Human-facing content principles come from `docs-writing`. What belongs in `docs/`, an ADR, or a design doc stays there and is linked, never summarised twice.
 
 ## Read the repository first
 
@@ -92,7 +92,7 @@ Keep the project's own voice where it has one. The goal is this project's README
 pwsh agents/skills/docs-readme/scripts/check-readme.ps1 [-Path <repo>] [-Readme <file>]
 ```
 
-The script reports the evidence it found, then every claim the README makes that the repository does not support, every unresolved relative link, duplicated headings, missing baseline sections, and sections out of baseline order. It exits non-zero on a contradiction or a dead link. Run it before writing to see the evidence and the existing file's faults, and again afterwards. Then run `docs-md-writing`'s checker for the format.
+The script reports the evidence it found, then every claim the README makes that the repository does not support, every unresolved relative link, duplicated headings, missing baseline sections, and sections out of baseline order. It then runs `docs-md-writing`'s checker on the README and prints its findings. It exits non-zero on a contradiction, a dead link, or a Markdown format error. Run it before writing to see the evidence and the existing file's faults, and again afterwards; deliver only once it exits zero.
 
 ## Output
 
