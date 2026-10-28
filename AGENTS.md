@@ -120,6 +120,8 @@ Skills live in `skills/<name>/SKILL.md` next to this file. Read a matching skill
 | `docs-html-report` | Build a self-contained HTML report page with rendered Mermaid diagrams. |
 | `artifact-storage` | Place a generated artifact and create its run directory. |
 | `docs-readme` | Rewrite a README from what the repository actually contains. |
+| `docs-screenshot` | Capture a website, GUI application, or game as documentation media. |
+| `docs-gif` | Record an animated GIF of a website, application, or game, only on request. |
 | `ut-adversarial` | Build bug-finding tests before a debug or cleanup fix. |
 | `dev-code-review` | Review an increment or full branch diff. |
 | `dev-project-overview` | Explain an unfamiliar repository in one HTML page, code first. |

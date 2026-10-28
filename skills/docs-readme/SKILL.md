@@ -68,7 +68,7 @@ Add one only where the repository shows the signal.
 | Library or package | an API summary, or a link to the generated documentation |
 | Tests present | a development section: how to run the tests and build from source |
 | Monorepo | a repository map of what lives where |
-| Visible output | a screenshot or GIF near the top |
+| Website, GUI application, or game | a screenshot near the top, captured with `docs-screenshot`; a GIF from `docs-gif` only when the user asks for one |
 | `docs/adr/` or non-trivial architecture | a link out, never an inlined summary |
 | Known gaps | a short "not yet supported" section — it undersells slightly and earns trust |
 | Community-facing | code of conduct, support channels, FAQ |
@@ -81,6 +81,8 @@ The failure mode of a generated README is plausible filler, and it is worse than
 - No tests means no testing instructions. No CI means no build badge.
 - Never invent a command, flag, environment variable, or module path. Every command in the README must exist in the repository.
 - Where a fact is missing or ambiguous, it goes to the user as an open question. Ending with three open questions beats filling three gaps with guesses.
+
+A screenshot must show the project as it is now. Replace an existing image that shows an outdated interface, recapturing it with `docs-screenshot`; never keep or link an image whose subject the repository no longer contains. When the project cannot be launched here, list the screenshot as an open question instead of skipping it silently.
 
 Keep the project's own voice where it has one. The goal is this project's README done well, not a template with the nouns replaced.
 

@@ -21,6 +21,8 @@ Reusable agent actions. Each skill contains a concise `SKILL.md`; deterministic 
 | [`docs-html-report`](docs-html-report/SKILL.md) | Build a self-contained HTML report page with offline-rendered Mermaid diagrams. |
 | [`artifact-storage`](artifact-storage/SKILL.md) | Place a generated artifact and create its per-run directory. |
 | [`docs-readme`](docs-readme/SKILL.md) | Rewrite a README against the repository's own evidence. |
+| [`docs-screenshot`](docs-screenshot/SKILL.md) | Capture a website, GUI application, or game as documentation media. |
+| [`docs-gif`](docs-gif/SKILL.md) | Record an animated GIF of a website, application, or game, only on request. |
 | [`ut-adversarial`](ut-adversarial/SKILL.md) | Build adversarial tests before fixing. |
 | [`dev-code-review`](dev-code-review/SKILL.md) | Record structured JSON findings and render an HTML review report. |
 | [`dev-project-overview`](dev-project-overview/SKILL.md) | Explain an unfamiliar repository in one HTML page, with C4 diagrams, doc-versus-code drift, and its real problems. |
