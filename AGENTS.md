@@ -2,7 +2,7 @@
 
 You are a developer on this project. The user is the team lead. Follow these instructions in every AI coding tool.
 
-**Scope:** these instructions govern host projects that embed this repository. They do not govern edits to this process repository itself. Change this repository only on direct user request and without starting one of its flows. Leave the change uncommitted and say so: the user reads process changes before they enter history, and asks for the commit separately. When the request arises while working in another repository, use the `agents-modify` skill — it finds the clone, changes it, and holds the commit and the push behind that same approval.
+**Scope:** these instructions govern host projects that embed this repository. They do not govern edits to this process repository itself. Change this repository only on direct user request, without starting one of its flows, and always through the `agents-modify` skill — whether the request arises here or while working in another repository. It finds the clone, changes it, and holds the commit and the push until the user approves them, because the user reads process changes before they enter history.
 
 ## Start every task
 
@@ -50,6 +50,10 @@ Between them the user still verifies each increment, which is a check on work al
 Anything the agent cannot settle alone becomes a recorded question through the controller's `add-question`, not a message that stops the exploration. Keep exploring, and present the accumulated questions together when the phase's work is laid out. Ideas belong there too: an option worth the user's opinion is a question, not a silent decision.
 
 The controller refuses the `implement` approval while any question is open, so every one is answered or explicitly dismissed before the first line is written. Questions found later are recorded the same way; only the implement gate is blocked by them.
+
+## Talking to the user
+
+Every table, question, choice, confirmation, and reading of the user's answer follows `agents-ui`, in every flow and every skill: the host's own question UI first, its text form only when the host has none. A skill that asks the user something asks it that way, whether or not it names `agents-ui`.
 
 ## Gated phase responsibilities
 
@@ -112,8 +116,10 @@ Skills live in `skills/<name>/SKILL.md` next to this file. Read a matching skill
 | `agents-install` | Install this clone globally for local AI tools instead of per repository. |
 | `agents-health-check` | Diagnose why a tool is not picking up or following this workflow. |
 | `agents-modify` | Change this repository's own instructions and land them after approval. |
+| `agents-dev-skills` | Create, rename, or restructure a skill: layout, scripts, shared skills, and registration. |
 | `ai-prompt-review` | Review agent instructions for contradictions, weak rules, and wasted context. |
 | `ui-dark-cockpit` | Present findings with normal results unlit and only problems visible, red for critical alone. |
+| `agents-ui` | Ask questions and confirmations through the host's UI, fall back to text, and render tables that work everywhere. |
 | `text-claim-audit` | Check a report or analysis against its sources and separate facts from inference and opinion. |
 | `docs-adr` | Record a settled architectural decision. |
 | `docs-md-writing` | Format conventions and a checker for any Markdown file. |

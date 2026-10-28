@@ -33,7 +33,7 @@ Never hand-edit the manifest. Use the script so its shape and sorting stay valid
 
 ## First run
 
-When the manifest does not exist, create it and then interview the user for its contents. Ask for the repositories one at a time — the path, and whether it needs a build step, an install step, and an install directory. Inspect each repository before asking: a build or install script in the tree, a `*.csproj`, `package.json`, `Cargo.toml`, or `pyproject.toml` usually tells you the command, so propose it and let the user correct it rather than asking from nothing.
+When the manifest does not exist, create it and then interview the user for its contents. Ask for the repositories one at a time — the path, and whether it needs a build step, an install step, and an install directory. Inspect each repository before asking: a build or install script in the tree, a `*.csproj`, `package.json`, `Cargo.toml`, or `pyproject.toml` usually tells you the command, so propose it and let the user correct it rather than asking from nothing. Ask each repository as one `agents-ui` round, with the detected command as the recommended option.
 
 ```powershell
 pwsh <skill>/scripts/tools.ps1 init

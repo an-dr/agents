@@ -12,7 +12,7 @@ Separates what a text *shows* from what it *asserts*, so the user can accept the
 - **The text under audit**: the report, summary, or answer.
 - **The sources**: every file, dataset, document, codebase, or transcript the text is supposed to rest on.
 
-Without sources there is nothing to ground against. Ask for them. When the user wants the audit anyway, still split and label the claims, and report every factual claim as `unverifiable`.
+Without sources there is nothing to ground against. Ask for them through `agents-ui`. When the user wants the audit anyway, still split and label the claims, and report every factual claim as `unverifiable`.
 
 The sources are the only evidence. Your own background knowledge is not evidence. When it bears on a claim, put it in the note, labeled as outside knowledge, and leave the verdict unchanged. Do not audit whether the sources themselves are true, but report any place where a source contradicts itself.
 

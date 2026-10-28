@@ -13,8 +13,10 @@ Reusable agent actions. Each skill contains a concise `SKILL.md`; deterministic 
 | [`agents-install`](agents-install/SKILL.md) | Install this clone globally for local AI tools, so no submodule is needed. |
 | [`agents-health-check`](agents-health-check/SKILL.md) | Diagnose why a tool is not picking up or following the workflow. |
 | [`agents-modify`](agents-modify/SKILL.md) | Amend this repository's own instructions from wherever the need appeared. |
+| [`agents-dev-skills`](agents-dev-skills/SKILL.md) | Create, rename, or restructure a skill: layout, scripts, shared skills, and registration. |
 | [`ai-prompt-review`](ai-prompt-review/SKILL.md) | Review agent instructions for contradictions, weak rules, and wasted context. |
 | [`ui-dark-cockpit`](ui-dark-cockpit/SKILL.md) | Present findings with normal results unlit and only problems visible, red for critical alone. |
+| [`agents-ui`](agents-ui/SKILL.md) | Ask questions and confirmations through the host's UI, fall back to text, and render tables that work everywhere. |
 | [`text-claim-audit`](text-claim-audit/SKILL.md) | Check a report or analysis against its sources and separate facts from inference and opinion. |
 | [`docs-adr`](docs-adr/SKILL.md) | Record an architectural decision. |
 | [`docs-md-writing`](docs-md-writing/SKILL.md) | Format any Markdown file and check it. |

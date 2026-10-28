@@ -13,4 +13,4 @@ If installation is required, identify the operating system and use its native sh
 - macOS: download the signed package for the machine architecture from `https://learn.microsoft.com/en-us/powershell/scripting/install/install-powershell-on-macos`.
 - Linux: follow Microsoft's distribution-specific package instructions at `https://learn.microsoft.com/en-us/powershell/scripting/install/install-powershell`. Do not guess a package command without identifying the distribution and version.
 
-Ask before installing packages or elevating privileges. After installation, open a new shell and verify both `pwsh --version` and `pwsh -NoProfile -Command '$PSVersionTable.PSVersion'`.
+Ask before installing packages or elevating privileges, as an `agents-ui` confirmation that names the exact command. After installation, open a new shell and verify both `pwsh --version` and `pwsh -NoProfile -Command '$PSVersionTable.PSVersion'`.

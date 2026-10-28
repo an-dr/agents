@@ -95,7 +95,7 @@ A request recorded after the `intake` approval drops it: the approval said the l
 
 ## Questions
 
-`add-question` records what the agent cannot settle alone, at any phase, instead of interrupting. `answer-question` and `dismiss-question` close one, and both demand an `-Answer`: a dismissal records why the question stopped mattering.
+`add-question` records what the agent cannot settle alone, at any phase, instead of interrupting. `answer-question` and `dismiss-question` close one, and both demand an `-Answer`: a dismissal records why the question stopped mattering. Ask the accumulated questions as one `agents-ui` round, and pass each decision it echoes back as the `-Answer`.
 
 The controller refuses `approve -Gate implement` while any question is open and lists the offenders. This is the mechanism behind "explore first, build on command" — an unanswered question cannot be lost, because it holds the gate shut.
 

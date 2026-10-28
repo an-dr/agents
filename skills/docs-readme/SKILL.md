@@ -96,4 +96,4 @@ The script reports the evidence it found, then every claim the README makes that
 
 ## Output
 
-Deliver the finished `README.md`, or a diff first when the user wants to review before it lands. Follow it with the open questions, each naming what could not be established from the repository.
+Deliver the finished `README.md`, or a diff first when the user wants to review before it lands. Follow it with the open questions as one `agents-ui` round, each naming what could not be established from the repository.

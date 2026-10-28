@@ -40,7 +40,7 @@ Run the progress cleanup first, then the step scripts from `agents/skills/git-in
 2. Run **step 1**. Read the output: look at the recent log for WIP commits and the base-to-HEAD log for topic commits. It rejects any remaining progress history.
 3. If WIP commits exist at the tip, run **step 2** with `<hash>` set to the commit just before the first WIP and a clean message.
 4. Run **step 3** (fetch + rebase). Fix any conflicts; rebase pauses on them.
-5. Run **step 1** again, then present the three modes to the user and wait for the answer.
+5. Run **step 1** again, then ask for the mode as one `agents-ui` question with the three modes as its options, no recommendation, and wait for the answer.
 6. Run **step 4** with the chosen `-Mode`, adding `-Message` for `Squash` and `Request`. It performs the collapse itself; step 2 is not run again.
 
 ## For humans — use the interactive script

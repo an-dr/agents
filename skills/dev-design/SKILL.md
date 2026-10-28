@@ -13,7 +13,7 @@ Produces the material the DESIGN phase needs: a small, honest option space with 
 2. **Build the options table** — 2–4 real options (no strawmen), scored over explicit axes (see below).
 3. **Steelman the loser** — before recommending, argue the strongest case for the option you would reject. If the steelman wins, change the recommendation.
 4. **Pre-mortem the favourite** — "this shipped and failed six months later — why?" List the top 2–3 failure stories and what would detect each early.
-5. **Present** — options with tradeoffs via the option-selection UI in Quick and Detailed; the user picks. In Detailed Auto, record the agent's choice and rationale for final review. Never a single "correct" solution. Record each unresolved choice as a controller question first, so exploring the next one does not lose it.
+5. **Present** — options with tradeoffs as an `agents-ui` question in Quick and Detailed; the user picks. In Detailed Auto, record the agent's choice and rationale for final review. Never a single "correct" solution. Record each unresolved choice as a controller question first, so exploring the next one does not lose it.
 6. **Record** — the decision goes through the `docs-adr` skill and closes its question with `answer-question`; the resulting design goes into the topic's design doc.
 
 ## Options table

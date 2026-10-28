@@ -11,4 +11,4 @@ Write one imperative, observable rule at a time. Remove hedges, give a reason on
 
 Change instructions against an observed request, transcript, review finding, or failed run. Do not silently weaken an existing rule. Prefer a failing script to a reminder when inputs and failure are deterministic. Instructions must describe the system as it works now.
 
-Register a new skill in `AGENTS.md` and `skills/README.md`. Use `docs-md-writing` for Markdown format and `ai-prompt-review` for an instruction audit. Run their checkers, then reread the changed loading path as the receiving agent. If a skill or policy file is added, renamed, or moved, run `agents-health-check` to confirm tools can reach it.
+Change this repository through `agents-modify`, and shape its skills with `agents-dev-skills`. Use `docs-md-writing` for Markdown format and `ai-prompt-review` for an instruction audit. Run their checkers, then reread the changed loading path as the receiving agent. If a skill or policy file is added, renamed, or moved, run `agents-health-check` to confirm tools can reach it.

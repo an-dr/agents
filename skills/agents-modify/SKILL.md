@@ -1,6 +1,6 @@
 ---
 name: agents-modify
-description: Change this workflow repository's own instructions — AGENTS.md, roles, skills, and their scripts — from wherever the need appeared, then summarize the change and, once the user approves, commit and push it. Use when work in another repository shows that the agent instructions themselves must change.
+description: Change this workflow repository's own instructions — AGENTS.md, roles, skills, and their scripts — from wherever the need appeared, then summarize the change and, once the user approves, commit and push it. Use for every change to this repository, whether the request arises in it or while working in another repository.
 allowed-tools: PowerShell, Read, Grep, Glob, Write, Edit
 ---
 
@@ -21,18 +21,19 @@ It looks for the clone providing this skill (following the junction of a global 
 | Exit | Meaning | Do |
 | --- | --- | --- |
 | `0` | one clone resolved | work in the printed root |
-| `1` | no clone found | ask the user where their clone is, then re-run with `-AgentsRoot` |
-| `2` | several different clones | show the table, ask which one, then re-run with `-AgentsRoot` |
+| `1` | no clone found | ask the user where their clone is through `agents-ui`, then re-run with `-AgentsRoot` |
+| `2` | several different clones | show the table and ask which one as an `agents-ui` question with one option per clone, then re-run with `-AgentsRoot` |
 
 Report every note the script prints — a detached HEAD, a dirty tree, a missing upstream, and a nested clone each change what happens at the commit. Use the resolved root for every path afterwards, including the git calls; a globally installed skill path reaches the same files through a junction, but git must run in the clone itself.
 
 ## Change it
 
-1. **Name the observed behavior** — quote the evidence from the host repository: what the agent did, which instruction produced it, what it should do instead. An amendment with no such evidence is a preference, and the user decides on preferences.
+1. **Name the observed behavior** — quote the evidence, from the host repository or the user's request: what the agent did, which instruction produced it, what it should do instead. An amendment with no such evidence is a preference, and the user decides on preferences.
 2. **Edit with `ai-prompt-writing`** — it owns which carrier holds the rule and how the rule is written. Format comes from `docs-md-writing`.
-3. **Register anything new** — a skill needs its row in `AGENTS.md` and in `skills/README.md`; a new commit scope needs the scope list.
-4. **Check** — run `ai-prompt-review`'s `check-references.ps1` and `docs-md-writing`'s `check-markdown.ps1` against the clone, and fix what they report.
-5. **Relink a global install** — adding, renaming, or removing a skill directory changes the set of junctions, so re-run `agents-install`'s `install-agents.ps1` and report its table.
+3. **Shape skills with `agents-dev-skills`** — adding, renaming, or restructuring a skill follows its layout, the shared skills it must build on, and its registration. A new commit scope needs the scope list in `AGENTS.md`.
+4. **Remove redundancy that adds nothing** — across the changed files, and between them and the files they touch, find each rule stated in more than one place. Keep a repeat only when it improves the result: it adds a detail specific to that point, such as the exact options or the safe default, or it puts the rule where an agent would otherwise miss it. Otherwise delete it, or replace it with a reference to its owner by name.
+5. **Check** — run `ai-prompt-review`'s `check-references.ps1` and `docs-md-writing`'s `check-markdown.ps1` against the clone, and fix what they report.
+6. **Relink a global install** — adding, renaming, or removing a skill directory changes the set of junctions, so re-run `agents-install`'s `install-agents.ps1` and report its table.
 
 ## Summarize
 
@@ -55,7 +56,7 @@ Only after the user approves the summary in their own words. Approval covers thi
 
 ## Rules
 
-- Explain the intended change and obtain the user's approval before editing anything. The summary below covers the finished edit; this covers the plan, because a rule the user did not want is cheaper to discuss than to revert.
+- Explain the intended change and obtain the user's approval as an `agents-ui` confirmation before editing anything. The summary below covers the finished edit; this covers the plan, because a rule the user did not want is cheaper to discuss than to revert.
 - The host repository's own work is untouched: no phase advances, no host file is edited, and no host commit carries the amendment.
 - Stage only the files this amendment changed. A clone that was already dirty keeps its other changes; ask rather than sweep them in.
 - Never weaken or delete an existing rule as a side effect of an edit that touches it. That is a separate proposal, with its own approval.
