@@ -91,6 +91,8 @@ Four gate names exist, and the controller names the one it expects for the curre
 
 Detailed Auto refuses only `verify`, which it records itself; it takes `intake`, `implement`, and `integrate` from the user like any Detailed flow. Quick `INTAKE` and Detailed `DESIGN` have no gate at all — they advance freely, because nothing there touches a file and no list is being closed.
 
+Ask for every user gate as an `agents-ui` confirmation, never as a closing line such as "reply implement". Show the plan, increment, or summary first, then ask in the same message, with one option that approves the gate and one that asks for a change. Pass the chosen label, plus any notes the user added to it, as `-Note`. A choice the user makes in the widget counts as their own words. Any other answer leaves the gate closed.
+
 A request recorded after the `intake` approval drops it: the approval said the list was complete, and it no longer is, so the user closes the longer list again.
 
 ## Questions
