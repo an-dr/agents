@@ -1,6 +1,6 @@
 ---
 name: docs-html-report
-description: Build a self-contained HTML report page for people, with Mermaid diagrams rendered offline by a pinned, embedded build. Use from any skill that writes an HTML page — change reports, code reviews, project overviews — or when the user asks for an HTML report with diagrams.
+description: Build a self-contained HTML report page for people, with Mermaid diagrams rendered offline to inline SVG by a pinned build, each with a button that copies its source. Use from any skill that writes an HTML page — change reports, code reviews, project overviews — or when the user asks for an HTML report with diagrams.
 ---
 
 # HTML report
@@ -38,17 +38,17 @@ Use a diagram when structure or flow is the point: dependencies and layers, a re
 - Lay out a chain of more than four nodes top to bottom (`flowchart TB`); a long left-to-right chain shrinks to unreadable text at page width.
 - Do not style generic class names that Mermaid also uses inside its SVG — `label`, `node`, `edgeLabel`, `cluster`, `actor`, `note` — on the page; give page classes distinct names, or the page CSS leaks into the diagrams and clips their text.
 - Never use a Mermaid keyword as a node id — `graph`, `flowchart`, `subgraph`, `end`, `class`, `classDef`, `style`, `click`, `default`, `direction`. Such a diagram fails to parse; name the node after what it is instead.
-- Check every page after embedding by opening it, or by rendering it headless (`chrome --headless=new --virtual-time-budget=15000 --dump-dom <file-url>`) and searching the output for `aria-roledescription="error"`. A diagram that does not render is a defect in the page.
+- Open the page after rendering and look at every diagram in both themes. The render script already fails on a diagram Mermaid cannot parse; a diagram that parses but reads badly — clipped labels, a shrunken chain — is still a defect in the page.
 
 ## Render
 
-After writing the page, and again after every later edit of it, inline the brand and the pinned Mermaid build:
+After writing the page, and again after every later edit of it, inline the brand and render the diagrams:
 
 ```powershell
 pwsh <skill>/scripts/embed-brand.ps1 -Path <page>.html
-pwsh <skill>/scripts/embed-mermaid.ps1 -Path <page>.html
+pwsh <skill>/scripts/render-mermaid.ps1 -Path <page>.html
 ```
 
 The brand script places the stylesheet before the page's own styles, inserts the theme switch at the start of the body, and replaces both on a rerun.
 
-The script is idempotent, works offline, follows the reader's light or dark theme, and reports how many diagrams the page holds. Never load Mermaid from a CDN. A host that renders Mermaid itself does not render the embedded diagrams twice.
+`render-mermaid.ps1` runs the pinned Mermaid build in a local headless Chrome or Edge (`-Browser <exe>` when neither is found), and replaces each `<pre class="mermaid">` block with a figure holding a light and a dark SVG, a "Copy Mermaid" button, and the source. The page carries no renderer and shows the SVG matching the reader's theme. The script stops on any diagram that fails to parse and leaves the page unchanged. A rerun renders every figure again from its stored source, so edit a diagram by editing that source or by writing a new `<pre class="mermaid">` block. Never load Mermaid from a CDN.

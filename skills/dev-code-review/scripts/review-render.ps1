@@ -150,7 +150,6 @@ Write-ReviewText -Text ($html -join [Environment]::NewLine) -Path $OutputPath
 # Neutral colours come from the report brand, severity colours from the dark-cockpit sheet.
 & (Join-Path $PSScriptRoot '../../docs-html-report/scripts/embed-brand.ps1') -Path $OutputPath | Out-Null
 & (Join-Path $PSScriptRoot '../../ui-dark-cockpit/scripts/embed-cockpit.ps1') -Path $OutputPath | Out-Null
-# Diagrams render through the shared HTML report skill's pinned, offline Mermaid build.
-$embed = Join-Path $PSScriptRoot '../../docs-html-report/scripts/embed-mermaid.ps1'
-& $embed -Path $OutputPath | Out-Null
+# Diagrams become inline SVG through the shared HTML report skill's pinned, offline Mermaid build.
+& (Join-Path $PSScriptRoot '../../docs-html-report/scripts/render-mermaid.ps1') -Path $OutputPath | Out-Null
 Write-Output $OutputPath
