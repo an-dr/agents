@@ -1,6 +1,7 @@
 #Requires -Version 7
 <#
-    Interactive integration. Always asks which of the three modes to use.
+    Interactive integration. Always asks which mode to use. Regroup needs a
+    plan, so it is run through the step scripts instead.
 #>
 param([string]$BaseBranch)
 
@@ -25,18 +26,21 @@ Write-Output 'Integration mode:'
 Write-Output "  1  Commits  keep every commit, fast-forward '$base' (no merge commit)"
 Write-Output "  2  Squash   collapse the branch into one commit, fast-forward '$base'"
 Write-Output '  3  Request  collapse into one commit, push the branch, open a request'
+Write-Output '  4  RebaseMerge  push the branch with its commits, open a request;'
+Write-Output '                 integrate-5-rebase-merge.ps1 lands it once CI passes'
 $mode = ''
 while (-not $mode) {
-    switch ((Read-Host 'Choose 1, 2, or 3').Trim()) {
+    switch ((Read-Host 'Choose 1, 2, 3, or 4').Trim()) {
         '1' { $mode = 'Commits' }
         '2' { $mode = 'Squash' }
         '3' { $mode = 'Request' }
-        default { Write-Output 'Answer 1, 2, or 3.' }
+        '4' { $mode = 'RebaseMerge' }
+        default { Write-Output 'Answer 1, 2, 3, or 4.' }
     }
 }
 
 $message = ''
-if ($mode -ne 'Commits') {
+if ($mode -in @('Squash', 'Request')) {
     Write-Output 'The commit message must match the git-commit format; the squash is rejected otherwise.'
     $message = Read-Host 'Single commit subject'
     if ([string]::IsNullOrWhiteSpace($message)) {
