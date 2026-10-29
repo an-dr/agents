@@ -88,7 +88,7 @@ Don't install machine-wide software silently. Name what is missing and how to ge
 - Every commit goes through the `git-commit` skill, which owns the message format. Never write a message from memory. Rewrite non-conforming history with `git-commit-fix` while the branch is still unpushed.
 - Committing does not authorize pushing. Push only on explicit request or as part of an approved integration.
 - Integrations rebase first; the default branch never gains a merge commit from an integration. Delete the feature branch after success, except in the request mode, where the platform does it.
-- Ask the user which `git-integrate` mode to use — keep the commits, squash into one commit, or open a request — every time, before the integration touches anything. Approval to integrate is not a choice of mode, and there is no default.
+- Ask the user which `git-integrate` mode to use — keep the commits, regroup them into a few logical commits, squash into one commit, or open a request — every time, before the integration touches anything. Approval to integrate is not a choice of mode, and there is no default.
 - Before integration, run `dev-workflow-clean-branch` and verify both `git log <base>..HEAD -- .progress` and `git ls-tree -r HEAD -- .progress` are empty. Workflow state is never part of delivered history.
 
 ## Code conventions

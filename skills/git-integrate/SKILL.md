@@ -1,12 +1,12 @@
 ---
 name: git-integrate
-description: Integrate an approved feature branch into the default branch in one of three modes — keep the commits, squash into one commit, or open a request. Use after the integration gate; it removes workflow progress, rebases, applies the chosen mode, and cleans up the branch.
+description: Integrate an approved feature branch into the default branch in one of four modes — keep the commits, regroup them into a few logical commits, squash into one commit, or open a request. Use after the integration gate; it removes workflow progress, rebases, applies the chosen mode, and cleans up the branch.
 allowed-tools: PowerShell
 ---
 
 # Integrate
 
-Integration always rebases first, so the default branch never gains a merge commit from this skill. What happens after the rebase is the user's choice between three modes.
+Integration always rebases first, so the default branch never gains a merge commit from this skill. What happens after the rebase is the user's choice between four modes.
 
 ## The mode question
 
@@ -15,10 +15,11 @@ Ask it every time, before any mode-specific step, and never answer it yourself. 
 | Mode | What it does | Choose it when |
 | --- | --- | --- |
 | `Commits` | Rebases and fast-forwards the base, keeping every branch commit | each commit is a meaningful step worth keeping in the base history |
+| `Regroup` | Rebuilds the branch as the few logical commits the user asks for, then fast-forwards the base like `Commits` | the increments were too many to keep, but the change has parts worth separating |
 | `Squash` | Collapses the branch into one commit, then fast-forwards the base | the branch is one logical change and the increments were the route, not the result |
 | `Request` | Collapses the branch into one commit, pushes it, and opens a pull request | the change needs review or CI on the platform before it reaches the base |
 
-`Commits` and `Squash` push the base and delete the feature branch. `Request` leaves the base untouched and the branch alive — the platform merges it. `gh` opens the request when it is installed; otherwise the script pushes and prints where to open it by hand.
+`Commits`, `Regroup`, and `Squash` push the base and delete the feature branch. `Request` leaves the base untouched and the branch alive — the platform merges it. `gh` opens the request when it is installed; otherwise the script pushes and prints where to open it by hand.
 
 The message for `Squash` and `Request` is validated by the `git-commit` format checker before anything is rewritten, so compose it there rather than inventing one.
 
@@ -31,6 +32,7 @@ Run the progress cleanup first, then the step scripts from `agents/skills/git-in
 | 0 — remove progress | `pwsh agents/skills/dev-workflow-clean-branch/scripts/remove-progress.ps1 [-BaseBranch <name>]` |
 | 1 — check state | `pwsh integrate-1-check.ps1 [-BaseBranch <name>]` |
 | 2 — squash commits (optional) | `pwsh integrate-2-squash.ps1 -Hash <hash> -Message '<msg>' [-BaseBranch <name>]` |
+| 2 — regroup commits (`Regroup` only) | `pwsh integrate-2-regroup.ps1 -Plan <plan.json> [-BaseBranch <name>]` |
 | 3 — rebase | `pwsh integrate-3-rebase.ps1 [-BaseBranch <name>]` |
 | 4 — finish | `pwsh integrate-4-finish.ps1 -Mode <Commits\|Squash\|Request> [-Message '<msg>'] [-BaseBranch <name>]` |
 
@@ -40,8 +42,17 @@ Run the progress cleanup first, then the step scripts from `agents/skills/git-in
 2. Run **step 1**. Read the output: look at the recent log for WIP commits and the base-to-HEAD log for topic commits. It rejects any remaining progress history.
 3. If WIP commits exist at the tip, run **step 2** with `<hash>` set to the commit just before the first WIP and a clean message.
 4. Run **step 3** (fetch + rebase). Fix any conflicts; rebase pauses on them.
-5. Run **step 1** again, then ask for the mode as one `agents-ui` question with the three modes as its options, no recommendation, and wait for the answer.
-6. Run **step 4** with the chosen `-Mode`, adding `-Message` for `Squash` and `Request`. It performs the collapse itself; step 2 is not run again.
+5. Run **step 1** again, then ask for the mode as one `agents-ui` question with the four modes as its options, no recommendation, and wait for the answer.
+6. Run **step 4** with the chosen `-Mode`, adding `-Message` for `Squash` and `Request`. It performs the collapse itself; step 2 is not run again. For `Regroup`, first rebuild the branch as described below, then run step 4 with `-Mode Commits`.
+
+## Regroup
+
+Ask how many commits the user wants when the answer does not say. Then:
+
+1. **Plan the commits** in dependency order, so each builds on the ones before it: typically the contract or library a change rests on, then its users, then tools, then documentation. Write the plan as JSON, `{ "commits": [ { "message": "...", "paths": ["dir", "file"] } ] }`, with each message composed by `git-commit` and each path a file or directory whose final state belongs to that commit. A file that a generator or test reads belongs with the code that reads it.
+2. **Run step 2 regroup.** It checks every message first, keeps the branch under a `backup/` ref, commits each group from the final tree, and refuses a plan that leaves a change uncovered or alters the tree. Any failure restores the branch.
+3. **Check each commit on its own** in a separate worktree that reuses the build cache: the host's build at every commit, and the tests of the parts a commit completes. Move paths between groups and re-run step 2 until each commit builds.
+4. **Finish** with step 4 `-Mode Commits`, and tell the user the `backup/` branch is theirs to delete.
 
 ## For humans — use the interactive script
 
