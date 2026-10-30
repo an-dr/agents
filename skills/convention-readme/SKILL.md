@@ -2,7 +2,7 @@
 name: convention-readme
 description: What a README contains and in what order — the baseline sections, the modules a repository's evidence justifies, and the rule that every statement is backed by the repository. Use when writing, reviewing, or checking a README; a rewrite procedure applies it.
 metadata:
-  dependencies: concept-evidence-grounding convention-markdown
+  dependencies: concept-ai-slop concept-evidence-grounding convention-markdown
 ---
 
 # Convention: README
@@ -45,6 +45,7 @@ Add one only where the repository shows the signal.
 
 The failure mode of a generated README is plausible filler, and it is worse than a thin README because it cannot be trusted.
 
+- Apply `concept-ai-slop`: a section, badge, or feature bullet that fails its cut test is removed, and a feature list selects rather than inventories.
 - No `LICENSE` file means no license section. Report the gap; do not name a license.
 - No tests means no testing instructions. No CI means no build badge.
 - Never invent a command, flag, environment variable, or module path. Every command in the README must exist in the repository.

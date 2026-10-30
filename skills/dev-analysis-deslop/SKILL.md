@@ -2,7 +2,7 @@
 name: dev-analysis-deslop
 description: Analyse code and documentation for illogical design, contradictions, questionable complexity, misleading prose, and AI-like artifacts that make a human's work harder, on uncommitted changes, a commit or range, a branch diff, selected files or directories, or a whole repository, and deliver an HTML findings table with stable IDs, priorities, evidence, and proposed changes. Use when asked to deslop, audit coherence, or find questionable artifacts in a defined scope.
 metadata:
-  dependencies: agents-ui ai-prompt-review convention-artifact-layout docs-html-report
+  dependencies: agents-ui ai-prompt-review concept-ai-slop convention-artifact-layout docs-html-report
 ---
 
 # Code and documentation coherence analysis
@@ -21,13 +21,9 @@ Trace documented workflows to entry points, implementations, callers, and releva
 
 ## What to examine
 
-- Logic and consistency: contradictory conditions, impossible states, mismatched contracts, inconsistent terminology, and documentation that promises behavior the code does not provide.
-- Design and complexity: abstractions without consumers, unnecessary indirection, duplicate sources of truth, speculative configurability, and workarounds whose original constraint no longer exists.
-- Human understanding: misleading names, surprising side effects, scattered ownership, unexplained exceptions, and interfaces whose normal use requires knowledge of hidden implementation details.
-- Documentation quality: stale examples, missing prerequisites, circular explanations, unsupported claims, repeated boilerplate, obvious comments, and polished prose that never explains the actual behavior.
-- Incomplete or AI-like artifacts: placeholders presented as finished work, copied examples that do not fit the project, inconsistent conventions introduced together, and verbose scaffolding that obscures a simple operation.
+Examine the scope for the slop that `concept-ai-slop` describes in code, text, agent-loaded instructions, and reports, applying its cut, defence, and cost tests. Name the concrete cost of each finding.
 
-Judge each item against the project's intent and conventions. Explain the concrete cost to correctness, use, understanding, or maintenance. Do not infer AI authorship from style, demand rewrites based only on taste, or invent findings to fill a quota. Check for a legitimate constraint or consumer before proposing removal. Group repeated instances of one cause into one finding with representative locations.
+Judge each item against the project's intent and conventions. Explain the concrete cost to correctness, use, understanding, or maintenance. Do not demand rewrites based only on taste, or invent findings to fill a quota. Check for a legitimate constraint or consumer before proposing removal. Group repeated instances of one cause into one finding with representative locations.
 
 ## Findings and priorities
 

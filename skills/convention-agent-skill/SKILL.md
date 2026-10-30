@@ -79,7 +79,7 @@ Dependencies follow `concept-clean-dependencies`. Composing skills is intended; 
 
 ## Registration
 
-Add the skill to the table in `AGENTS.md` and in `skills/README.md`, with the same one-line use, and update the root `README.md` where it describes what the skill changes. A rename updates every reference in the repository in the same change; search for the old name until nothing is left.
+Add the skill to the table in `skills/README.md` with a one-line use, and update the root `README.md` where it describes what the skill changes. A rename updates every reference in the repository in the same change; search for the old name until nothing is left.
 
 ## Check
 
@@ -88,7 +88,7 @@ pwsh <skill>/scripts/check-registration.ps1 [-Root <repository>] [-FailOnCycle]
 pwsh <skill>/scripts/check-skills.ps1 [-Root <repository>]
 ```
 
-`check-registration.ps1` fails when the folders, the two skill tables, or the frontmatter disagree: a skill that names an undeclared skill or declares one it never names, a `PROHIBITED` skill that names any other, a name that does not match its folder, or code outside `skills/`. It lists every dependency cycle with its path, and fails on a cycle only with `-FailOnCycle`.
+`check-registration.ps1` fails when the folders, the skill table, or the frontmatter disagree: a skill that names an undeclared skill or declares one it never names, a `PROHIBITED` skill that names any other, a name that does not match its folder, or code outside `skills/`. It lists every dependency cycle with its path, and fails on a cycle only with `-FailOnCycle`.
 
 `check-skills.ps1` reads every `SKILL.md` and reports a description that lacks a trigger sentence, a title that does not match the skill's kind, a missing or misplaced section from the table above, and a skill over the size limit.
 

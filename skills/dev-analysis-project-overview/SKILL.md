@@ -3,14 +3,14 @@ name: dev-analysis-project-overview
 description: Produce a single self-contained HTML overview of an unfamiliar repository — what it is, C4 levels 1 to 3 drawn from the code, a reading path, the drift between what the documentation claims and what the code does, and a ranked list of the project's real structural problems. Use when arriving at a codebase, onboarding someone onto it, or auditing its architecture and health.
 allowed-tools: Read, Grep, Glob, Write, Edit, Bash, PowerShell
 metadata:
-  dependencies: concept-evidence-grounding convention-artifact-layout docs-html-report docs-writing
+  dependencies: concept-ai-slop convention-artifact-layout docs-html-report docs-writing
 ---
 
 # Project overview
 
 One HTML page that takes a competent stranger from nothing to productive, and tells them the truth about the codebase they just inherited.
 
-Use `docs-writing` for the prose. The page reports; it never fixes. Nothing in the scanned repository is edited.
+Use `docs-writing` for the prose, and keep the page free of the signals in `concept-ai-slop`: every statement is specific and checked against the code. The page reports; it never fixes. Nothing in the scanned repository is edited.
 
 ## Code is the authority, documentation is intent
 
@@ -104,8 +104,6 @@ Add no other badge colour. Sections in this order:
 11. **Open questions** — what could not be established, and what would settle it.
 
 ## Never fabricate
-
-This applies `concept-evidence-grounding`: observed, inferred, and claimed statements stay distinct.
 
 The failure mode of a generated overview is a confident, plausible, wrong architecture diagram, and it is worse than no overview because the reader will trust it for weeks.
 

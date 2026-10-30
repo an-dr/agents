@@ -4,7 +4,7 @@
 param(
     [Parameter(Mandatory)][string]$ReviewPath,
     [Parameter(Mandatory)]
-    [ValidateSet('summary', 'critical', 'high', 'improvement', 'positive', 'verdict')]
+    [ValidateSet('summary', 'critical', 'high', 'slop', 'improvement', 'positive', 'verdict')]
     [string]$Section,
     [Parameter(Mandatory)][string]$Text,
     [string]$File,
@@ -41,7 +41,7 @@ if ($Diagram -and $DiagramPath) {
 if ($DiagramPath) {
     $Diagram = [IO.File]::ReadAllText((Resolve-Path -LiteralPath $DiagramPath).Path)
 }
-if ($Diagram -and $Section -notin @('critical', 'high', 'improvement')) {
+if ($Diagram -and $Section -notin @('critical', 'high', 'slop', 'improvement')) {
     throw 'Only findings carry a diagram.'
 }
 
@@ -78,6 +78,7 @@ try {
         $definition = switch ($Section) {
             'critical' { @{ Collection = 'critical'; Prefix = 'CR' } }
             'high' { @{ Collection = 'high'; Prefix = 'HI' } }
+            'slop' { @{ Collection = 'slop'; Prefix = 'SL' } }
             'improvement' { @{ Collection = 'improvements'; Prefix = 'IM' } }
         }
         $notes = @($review.sections.($definition.Collection))

@@ -69,10 +69,11 @@ if ([IO.Path]::GetExtension($OutputPath) -ne '.html') {
 
 $sections = $review.sections
 # Each section's dark-cockpit level: only critical findings are red, positives stay unlit.
-$levels = [ordered]@{ critical = 'ck-critical'; high = 'ck-high'; improvement = 'ck-notice'; positive = 'ck-ok' }
+$levels = [ordered]@{ critical = 'ck-critical'; high = 'ck-high'; slop = 'ck-high'; improvement = 'ck-notice'; positive = 'ck-ok' }
 $counts = [ordered]@{
     critical = @($sections.critical).Count
     high = @($sections.high).Count
+    slop = @($sections.slop).Count
     improvement = @($sections.improvements).Count
     positive = @($sections.positives).Count
 }
@@ -132,6 +133,7 @@ $html.Add('<section><h2>Summary</h2>')
 $html.Add("<p>$(if ($review.summary) { ConvertTo-ReviewHtml -Value $review.summary } else { 'Not set.' })</p></section>")
 foreach ($line in Get-FindingSectionHtml -Title 'Critical — must fix before integration' -Level $levels.critical -Notes @($sections.critical)) { $html.Add($line) }
 foreach ($line in Get-FindingSectionHtml -Title 'High' -Level $levels.high -Notes @($sections.high)) { $html.Add($line) }
+foreach ($line in Get-FindingSectionHtml -Title 'Slop' -Level $levels.slop -Notes @($sections.slop)) { $html.Add($line) }
 foreach ($line in Get-FindingSectionHtml -Title 'Improvements' -Level $levels.improvement -Notes @($sections.improvements)) { $html.Add($line) }
 # Positives are normal state: present for the reader who looks, collapsed so they do not compete.
 $html.Add('<section><h2>Positives</h2>')

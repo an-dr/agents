@@ -1,8 +1,7 @@
 #Requires -Version 7
 <#
     Checks that the agents repository describes its skills consistently:
-    every skill folder is registered in AGENTS.md and skills/README.md with
-    the same one-line use, frontmatter names match folders, every skill declares
+    every skill folder is registered in skills/README.md, frontmatter names match folders, every skill declares
     the skills it names in metadata.dependencies (PROHIBITED forbids any, none
     allows none today), and no code lives outside skills/ except the root test
     runner. Dependency cycles are listed with their path.
@@ -87,18 +86,13 @@ function Find-DependencyCycle([hashtable]$Graph) {
 # ---- registration ----------------------------------------------------------
 
 $folders = @(Get-ChildItem -LiteralPath $skillsDir -Directory | Select-Object -ExpandProperty Name | Sort-Object)
-$policy = Get-SkillTable (Join-Path $Root 'AGENTS.md')
 $catalog = Get-SkillTable (Join-Path $skillsDir 'README.md')
 
 foreach ($name in $folders) {
-    if (-not $policy.Contains($name)) { Add-Problem $name 'missing from the AGENTS.md skill table' }
     if (-not $catalog.Contains($name)) { Add-Problem $name 'missing from the skills/README.md table' }
-    if ($policy.Contains($name) -and $catalog.Contains($name) -and $policy[$name] -cne $catalog[$name]) {
-        Add-Problem $name 'one-line use differs between AGENTS.md and skills/README.md'
-    }
 }
-foreach ($name in @($policy.Keys) + @($catalog.Keys) | Sort-Object -Unique) {
-    if ($name -notin $folders) { Add-Problem $name 'listed in a skill table but has no folder' }
+foreach ($name in $catalog.Keys) {
+    if ($name -notin $folders) { Add-Problem $name 'listed in the skills/README.md table but has no folder' }
 }
 
 # ---- frontmatter and dependencies -----------------------------------------
@@ -166,7 +160,7 @@ function Write-Cycle {
 $cycleFails = $FailOnCycle -and $cycles.Count -gt 0
 
 if ($problems.Count -eq 0) {
-    Write-Output "Registration check passed: $($folders.Count) skills, both tables and dependencies agree."
+    Write-Output "Registration check passed: $($folders.Count) skills, the skill table and dependencies agree."
     Write-Cycle
     if ($cycleFails) { exit 1 }
     exit 0

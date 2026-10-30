@@ -2,12 +2,12 @@
 name: dev-workflow
 description: Run, resume, and enforce the repository's gated Quick, Detailed, or Detailed Auto development workflow. Use when the user selects one of these flows, an existing .progress/workflow.json is present, workflow state must move to another machine, or increments must be inserted or reordered. Direct work does not use this controller.
 metadata:
-  dependencies: agents-ui concept-single-authority convention-adr dev-analysis-review dev-build dev-testing dev-workflow-clean-branch dev-workflow-design dev-workflow-integrate dev-workflow-summary docs-writing git-commit
+  dependencies: agents-ui convention-adr dev-analysis-review dev-build dev-testing dev-workflow-design dev-workflow-integrate dev-workflow-summary docs-writing git-commit
 ---
 
 # Workflow controller
 
-Use `scripts/workflow.ps1` as the authority for phase transitions and approval gates in Quick, Detailed, and Detailed Auto. Direct has no controller state. This is `concept-single-authority` applied: the controller owns the state, and chat memory is only a copy. Do not reconstruct workflow state from chat when `.progress/workflow.json` exists.
+Use `scripts/workflow.ps1` as the authority for phase transitions and approval gates in Quick, Detailed, and Detailed Auto. Direct has no controller state. Do not reconstruct workflow state from chat when `.progress/workflow.json` exists.
 
 ## Start or resume
 
@@ -45,7 +45,7 @@ Before leaving SPLIT, check that every request is covered, every question is ans
 - **Full suite:** run the project's full test suite once, after the last known increment is committed and before `SUMMARY`, not after each increment. Fix each failure in the commit of the increment that introduced it, folded in with a fixup, so every increment stays one reviewable commit. An increment added later reopens this step: the suite runs again once that work is committed.
 - **COMMIT:** commit verified work with `git-commit`, including current progress state.
 - **SUMMARY:** use `dev-workflow-summary` for the full branch and reconcile it with the intake requests.
-- **INTEGRATE:** after approval, run `finish`, commit its deletion, use `dev-workflow-clean-branch`, then use `dev-workflow-integrate` and ask for its mode.
+- **INTEGRATE:** after approval, run `finish`, commit its deletion, then use `dev-workflow-integrate`, which removes `.progress/` from the branch, and ask for its mode.
 
 ## Collect the intake
 
@@ -131,6 +131,6 @@ The switch is legal only before anything is built. It refuses once `BRANCH` has 
 
 Every command that changes state also regenerates `.progress/PROGRESS.md`, a human-readable snapshot (flow, phase, goal, the request list, the iteration list with statuses, and the questions with their answers) with no IDs. Read it for a quick human-facing status check instead of parsing `workflow.json`. `finish` deletes it along with `workflow.json`.
 
-Run `finish` at Quick/COMMIT before the final Quick commit, or at Detailed/INTEGRATE before integration. Commit the deletion, then run `dev-workflow-clean-branch` so `.progress/` is absent from every delivered feature-branch commit.
+Run `finish` at Quick/COMMIT before the final Quick commit, or at Detailed/INTEGRATE before integration. Commit the deletion; `dev-workflow-integrate`'s `remove-progress.ps1` then makes `.progress/` absent from every delivered feature-branch commit.
 
 The controller records approval evidence; it never supplies user approval — in Detailed Auto either. Code review, tests, documentation checks, and clean commits still run automatically there, between the user's `implement` and the final review.

@@ -14,8 +14,8 @@ Reusable agent actions. Each skill contains a concise `SKILL.md`; deterministic 
 | [`agents-install`](agents-install/SKILL.md) | Install this clone globally for local AI tools instead of per repository. |
 | [`agents-health-check`](agents-health-check/SKILL.md) | Diagnose why a tool is not picking up or following this workflow. |
 | [`agents-modify`](agents-modify/SKILL.md) | Change this repository's own instructions and land them after approval. |
-| [`agents-dev-skills`](agents-dev-skills/SKILL.md) | Create, rename, or restructure a skill: layout, scripts, shared skills, and registration. |
 | [`ai-prompt-review`](ai-prompt-review/SKILL.md) | Review agent instructions for contradictions, weak rules, and wasted context. |
+| [`concept-ai-slop`](concept-ai-slop/SKILL.md) | Recognise and avoid slop: output that looks finished but costs the reader more than it gives. |
 | [`concept-clean-dependencies`](concept-clean-dependencies/SKILL.md) | Apply clean-architecture rules to components: no cycles, no layer skipping, coherent components, public contracts only. |
 | [`concept-dark-cockpit`](concept-dark-cockpit/SKILL.md) | Decide severity levels for problem-finding output: normal stays quiet, red is for critical alone. |
 | [`concept-evidence-grounding`](concept-evidence-grounding/SKILL.md) | Keep conclusions traceable to evidence and separate observed, inferred, assumed, and intended statements. |
@@ -42,7 +42,6 @@ Reusable agent actions. Each skill contains a concise `SKILL.md`; deterministic 
 | [`dev-workflow-design`](dev-workflow-design/SKILL.md) | Explore a deeper decision with options, steelman, and pre-mortem. |
 | [`dev-workflow-summary`](dev-workflow-summary/SKILL.md) | Review the full branch and prepare the integration handoff. |
 | [`dev-analysis-change`](dev-analysis-change/SKILL.md) | Explain a finished change in one HTML page, with diagrams instead of code. |
-| [`dev-workflow-clean-branch`](dev-workflow-clean-branch/SKILL.md) | Remove `.progress/` from every feature-branch commit. |
 | [`git-commit`](git-commit/SKILL.md) | Compose and record a commit in the unified message format. |
 | [`git-commit-fix`](git-commit-fix/SKILL.md) | Rewrite existing commit messages to that format. |
 | [`dev-workflow-integrate`](dev-workflow-integrate/SKILL.md) | Integrate an approved branch in the mode the user chooses. |

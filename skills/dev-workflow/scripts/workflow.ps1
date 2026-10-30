@@ -1265,7 +1265,7 @@ switch ($Command) {
         if ((Get-ChildItem -Force -LiteralPath $directory | Measure-Object).Count -eq 0) {
             Remove-Item -LiteralPath $directory
         }
-        Write-Output 'Workflow state removed. Commit the deletion, then run dev-workflow-clean-branch before integration.'
+        Write-Output 'Workflow state removed. Commit the deletion; integration then removes .progress from the feature branch.'
         Show-WorkflowStatus -State $state -Status finished
     }
 }

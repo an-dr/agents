@@ -2,12 +2,12 @@
 name: dev-workflow-summary
 description: Prepare the full-branch integration summary by reviewing the complete diff, confirming tests and documentation, and reporting changes, motivation, exclusions, and verification. Use after all Detailed increments are committed, before the integration gate.
 metadata:
-  dependencies: agents-ui convention-adr dev-analysis-change dev-analysis-review
+  dependencies: agents-ui concept-ai-slop convention-adr dev-analysis-change dev-analysis-review
 ---
 
 # Integration summary
 
-Use during `SUMMARY`, after every increment is committed and before the final user approval gate.
+Use during `SUMMARY`, after every increment is committed and before the final user approval gate. Write the summary to the cut test of `concept-ai-slop`: report what changed, why, and what was left out, without restating the diff.
 
 1. Run the `dev-analysis-review` skill with `summary` scope against the workflow's base branch.
 2. Reconcile the branch against the intake request list in `.progress/workflow.json`. Every request the branch does not deliver is named in the handoff — as a deliberate exclusion, or as work that was missed. A request the user never withdrew and the branch never satisfied is a defect in the delivery, not a detail for the release notes.

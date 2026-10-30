@@ -2,7 +2,7 @@
 name: convention-code
 description: Writing defaults for source code — small changes, readable names and control flow, comments for newcomers, error handling, naming vocabulary, file layout, and reviewable commits of behaviour versus formatting. Use when writing, changing, or reviewing code; the host repository's own conventions override it.
 metadata:
-  dependencies: concept-clean-dependencies
+  dependencies: concept-ai-slop concept-clean-dependencies
 ---
 
 # Convention: code
@@ -12,6 +12,7 @@ These are writing defaults. The host repository's instructions and the edited fi
 ## Code quality
 
 - Make the smallest change that solves the stated problem. Avoid speculative options and abstractions.
+- Write no comment, option, abstraction, or defensive branch that fails the cut test of `concept-ai-slop`: if removing it loses nothing a reader needs, leave it out.
 - Use names and call sites a new reader can understand, with straight control flow and no hidden state to hold in mind.
 - Give each unit one job. Split a block that needs a paragraph of explanation into named units.
 - Comment intent beside the few lines it explains. Put whole-function explanations in doc comments; never restate obvious code.

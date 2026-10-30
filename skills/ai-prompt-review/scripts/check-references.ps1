@@ -40,7 +40,7 @@ $policyText = if (Test-Path $policyPath) { [IO.File]::ReadAllText($policyPath) }
 $indexPath = Join-Path $skillsRoot 'README.md'
 $indexText = if (Test-Path $indexPath) { [IO.File]::ReadAllText($indexPath) } else { '' }
 
-# Every skill needs a SKILL.md whose name matches its directory and appears in both tables.
+# Every skill needs a SKILL.md whose name matches its directory and appears in the skills index.
 foreach ($skill in $skills) {
     $manifest = Join-Path $skill.FullName 'SKILL.md'
     if (-not (Test-Path $manifest)) {
@@ -50,9 +50,6 @@ foreach ($skill in $skills) {
     $name = Get-FrontmatterName -File $manifest
     if ($name -ne $skill.Name) {
         Add-Finding (Get-RelativePath $manifest) 2 'skill.name' "The frontmatter name '$name' does not match directory '$($skill.Name)'."
-    }
-    if ($policyText -and $policyText -notmatch [regex]::Escape($skill.Name)) {
-        Add-Finding 'AGENTS.md' 0 'skill.unregistered' "Skill '$($skill.Name)' is missing from the AGENTS.md skill table."
     }
     if ($indexText -and $indexText -notmatch [regex]::Escape($skill.Name)) {
         Add-Finding 'skills/README.md' 0 'skill.unregistered' "Skill '$($skill.Name)' is missing from the skills index."

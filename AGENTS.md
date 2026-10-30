@@ -31,7 +31,7 @@ Within a gated flow, exploration can prove the chosen flow wrong — most often 
 
 For gated flows, the `dev-workflow` skill owns transitions, gates, increment state, branch checks, and `.progress/workflow.json`. Run it instead of inferring the next phase from conversation history. If prose conflicts with a controller result, stop and report the conflict.
 
-While progress exists, begin every response with the controller's emitted workflow status tables, exactly as their output comment instructs. Commit `.progress/workflow.json` with checkpoints and increment commits when the work must be resumed on another machine. Run the controller's `finish` operation at the terminal gate and commit its deletion. Before integration, `dev-workflow-clean-branch` removes `.progress/` from every feature-branch commit; completed repositories retain no workflow state.
+While progress exists, begin every response with the controller's emitted workflow status tables, exactly as their output comment instructs. Commit `.progress/workflow.json` with checkpoints and increment commits when the work must be resumed on another machine. Run the controller's `finish` operation at the terminal gate and commit its deletion. Before integration, `dev-workflow-integrate` removes `.progress/` from every feature-branch commit; completed repositories retain no workflow state.
 
 Detailed Auto removes the per-increment verification gate, not engineering work and not the decisions that frame it. The user still closes intake and still says implement; between those and the final review the agent designs, splits, branches, documents, builds, verifies, reviews, and commits every increment on its own. The user receives the full integration summary at the end; their final approval authorizes the INTEGRATE phase.
 
@@ -89,7 +89,7 @@ Don't install machine-wide software silently. Name what is missing and how to ge
 - Committing does not authorize pushing. Push only on explicit request or as part of an approved integration.
 - Integrations rebase first; the default branch never gains a merge commit from an integration. Delete the feature branch after success, except in the request modes, where the platform does it.
 - Ask the user which `dev-workflow-integrate` mode to use — keep the commits, regroup them into a few logical commits, squash into one commit, open a request, or land a regrouped request with rebase and merge — every time, before the integration touches anything. Approval to integrate is not a choice of mode, and there is no default.
-- Before integration, run `dev-workflow-clean-branch` and verify both `git log <base>..HEAD -- .progress` and `git ls-tree -r HEAD -- .progress` are empty. Workflow state is never part of delivered history.
+- Before integration, run `dev-workflow-integrate`'s `remove-progress.ps1` and verify both `git log <base>..HEAD -- .progress` and `git ls-tree -r HEAD -- .progress` are empty. Workflow state is never part of delivered history.
 
 ## Code conventions
 
@@ -103,53 +103,7 @@ Deliverables are the exception and are committed as ordinary repository content:
 
 ## Skills
 
-Skills live in `skills/<name>/SKILL.md` next to this file. Read a matching skill before acting and use its PowerShell scripts for mechanical operations. In skill commands, `<skill>` is that skill's own folder and `<other-skill>`, such as `<git-commit>`, is the folder you loaded that skill from. The user never sees raw script output; relay it as `agents-ui` describes.
-
-| Skill | Use |
-| --- | --- |
-| `dev-workflow` | Start, resume, advance, approve, reshape, or finish a workflow. |
-| `dev-build` | Implement code within the selected workflow and repository conventions. |
-| `dev-testing` | Verify changed code and report meaningful test coverage. |
-| `dev-untangle-dependencies` | Remove needless dependencies and break cycles by moving shared parts into common components. |
-| `docs-writing` | Write human-facing documentation and check its claims. |
-| `ai-prompt-writing` | Create or change agent-loaded instructions. |
-| `install-powershell` | Install or verify PowerShell 7 before running scripts. |
-| `agents-install` | Install this clone globally for local AI tools instead of per repository. |
-| `agents-health-check` | Diagnose why a tool is not picking up or following this workflow. |
-| `agents-modify` | Change this repository's own instructions and land them after approval. |
-| `agents-dev-skills` | Create, rename, or restructure a skill: layout, scripts, shared skills, and registration. |
-| `ai-prompt-review` | Review agent instructions for contradictions, weak rules, and wasted context. |
-| `concept-clean-dependencies` | Apply clean-architecture rules to components: no cycles, no layer skipping, coherent components, public contracts only. |
-| `concept-dark-cockpit` | Decide severity levels for problem-finding output: normal stays quiet, red is for critical alone. |
-| `concept-evidence-grounding` | Keep conclusions traceable to evidence and separate observed, inferred, assumed, and intended statements. |
-| `concept-single-authority` | Give every fact and state one owner; mark every other copy as derived. |
-| `convention-artifact-layout` | Locate generated artifacts: one run directory per day and letter, one subdirectory per kind. |
-| `convention-adr` | Write ADRs in one format: location, numbering, template, and when a decision is immutable. |
-| `convention-agent-skill` | Shape and write every skill alike: layout, kinds, description, sections, declared dependencies, registration. |
-| `convention-code` | Write code to shared defaults: small changes, clear names, newcomer comments, reviewable commits. |
-| `convention-commit-message` | Write commit messages in the unified Conventional Commits format with no attribution. |
-| `convention-markdown` | Format Markdown: one line per paragraph, heading, list, fence, link, and table rules. |
-| `convention-readme` | Write READMEs to a fixed baseline order, with modules the evidence supports and nothing invented. |
-| `convention-script` | Write skill scripts: PowerShell 7, non-interactive, tested, relayable output, folders passed in. |
-| `agents-ui` | Ask questions and confirmations through the host's UI, fall back to text, and render tables that work everywhere. |
-| `text-claim-audit` | Check a report or analysis against its sources and separate facts from inference and opinion. |
-| `docs-html-report` | Build a self-contained HTML report page with rendered Mermaid diagrams. |
-| `docs-readme` | Rewrite a README from what the repository actually contains. |
-| `docs-screenshot` | Capture a website, GUI application, or game as documentation media. |
-| `docs-gif` | Record an animated GIF of a website, application, or game, only on request. |
-| `ut-adversarial` | Build bug-finding tests before a debug or cleanup fix. |
-| `dev-analysis-deslop` | Analyse code and docs for illogical or questionable artifacts, with prioritized findings and proposed changes in HTML. |
-| `dev-analysis-review` | Review an increment or full branch diff. |
-| `dev-analysis-project-overview` | Explain an unfamiliar repository in one HTML page, code first. |
-| `dev-debug` | Reproduce and instrument a resistant failure. |
-| `dev-workflow-design` | Explore a deeper decision with options, steelman, and pre-mortem. |
-| `dev-workflow-summary` | Review the full branch and prepare the integration handoff. |
-| `dev-analysis-change` | Explain a finished change in one HTML page, with diagrams instead of code. |
-| `dev-workflow-clean-branch` | Remove `.progress/` from every feature-branch commit. |
-| `git-commit` | Compose and record a commit in the unified message format. |
-| `git-commit-fix` | Rewrite existing commit messages to that format. |
-| `dev-workflow-integrate` | Integrate an approved branch in the mode the user chooses. |
-| `agents-retro` | Propose process improvements after integration or on request. |
+Skills live in `skills/<name>/SKILL.md` next to this file, and `skills/README.md` lists each with its one-line use. Read a matching skill before acting and use its PowerShell scripts for mechanical operations. In skill commands, `<skill>` is that skill's own folder and `<other-skill>`, such as `<git-commit>`, is the folder you loaded that skill from. The user never sees raw script output; relay it as `agents-ui` describes.
 
 ADRs are immutable once integrated; supersede them instead of editing them. Immutability protects a decision others have read, so it begins at integration: an ADR written on the current feature branch is still a draft, and a later decision on that same branch edits it — or collapses two into one — rather than adding an ADR that corrects one nobody has seen. Use ADRs only for lasting architectural decisions, not tactical or tooling choices.
 

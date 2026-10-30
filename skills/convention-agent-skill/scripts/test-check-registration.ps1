@@ -18,8 +18,7 @@ function Remove-Fixture {
 function New-Fixture {
     if (Test-Path -LiteralPath $fixtureRoot) { Remove-Fixture }
     New-Item -ItemType Directory -Path $fixtureRoot | Out-Null
-    Copy-Item -LiteralPath (Join-Path $repositoryRoot 'AGENTS.md') -Destination $fixtureRoot
-    Copy-Item -LiteralPath (Join-Path $repositoryRoot 'skills') -Destination $fixtureRoot -Recurse
+        Copy-Item -LiteralPath (Join-Path $repositoryRoot 'skills') -Destination $fixtureRoot -Recurse
 }
 
 function Edit-Fixture([string]$Path, [string]$Old, [string]$New) {
@@ -47,14 +46,10 @@ New-Fixture
 $extra = 'dev-' + 'unregistered'
 New-Item -ItemType Directory -Path (Join-Path $fixtureRoot "skills/$extra") | Out-Null
 Set-Content -LiteralPath (Join-Path $fixtureRoot "skills/$extra/SKILL.md") -Value "---`nname: $extra`n---"
-Assert-Check 'unregistered folder' 1 'missing from the AGENTS.md skill table'
+Assert-Check 'unregistered folder' 1 'missing from the skills/README.md table'
 
 New-Fixture
-Edit-Fixture 'skills/README.md' '| Compose and record a commit' '| Write a commit'
-Assert-Check 'differing use' 1 'one-line use differs'
-
-New-Fixture
-Edit-Fixture 'skills/dev-workflow-integrate/SKILL.md' 'dev-workflow-clean-branch git-commit' 'dev-workflow-clean-branch'
+Edit-Fixture 'skills/dev-workflow-integrate/SKILL.md' 'convention-commit-message git-commit' 'convention-commit-message'
 Assert-Check 'undeclared skill' 1 'names git-commit but does not declare it in dependencies'
 
 New-Fixture
@@ -83,4 +78,4 @@ Set-Content -LiteralPath (Join-Path $fixtureRoot 'lib/Shared.psm1') -Value '# sh
 Assert-Check 'root code' 1 'code outside skills/'
 
 Remove-Fixture
-Write-Output 'check-registration tests passed (10 cases).'
+Write-Output 'check-registration tests passed (9 cases).'

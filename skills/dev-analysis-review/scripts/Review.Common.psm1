@@ -191,18 +191,19 @@ function Assert-ReviewJson {
         throw 'Review JSON is missing sections or verdict.'
     }
     Assert-ReviewProperties -Object $Review.sections -Expected @(
-        'critical', 'high', 'improvements', 'positives'
+        'critical', 'high', 'slop', 'improvements', 'positives'
     ) -Name 'Review sections'
     Assert-ReviewProperties -Object $Review.verdict -Expected @(
         'decision', 'rationale'
     ) -Name 'Review verdict'
-    foreach ($name in @('critical', 'high', 'improvements', 'positives')) {
+    foreach ($name in @('critical', 'high', 'slop', 'improvements', 'positives')) {
         if ($null -eq $Review.sections.$name) {
             throw "Review JSON is missing sections.$name."
         }
     }
     Assert-ReviewNotes -Notes @($Review.sections.critical) -Prefix 'CR'
     Assert-ReviewNotes -Notes @($Review.sections.high) -Prefix 'HI'
+    Assert-ReviewNotes -Notes @($Review.sections.slop) -Prefix 'SL'
     Assert-ReviewNotes -Notes @($Review.sections.improvements) -Prefix 'IM'
     Assert-ReviewNotes -Notes @($Review.sections.positives) -Prefix 'PO' -Positive
     if ($Review.verdict.decision -notin @('pending', 'approve', 'approve-with-comments', 'changes-required')) {
@@ -224,6 +225,10 @@ function Read-ReviewJson {
     $review = Get-Content -Raw -LiteralPath $Path | ConvertFrom-Json
     if ($review.scope -eq 'mr') {
         $review.scope = 'summary'
+    }
+    # Reviews recorded before the slop section existed read as having none.
+    if ($null -ne $review.sections -and $null -eq $review.sections.PSObject.Properties['slop']) {
+        $review.sections | Add-Member -NotePropertyName slop -NotePropertyValue @()
     }
     Assert-ReviewJson -Review $review
     $expectedName = "$($review.reviewId).review.json"

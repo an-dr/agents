@@ -4,8 +4,7 @@
     plan, so it is run through the step scripts instead.
 #>
 param(
-    # The agent passes both skills' folders, because skills need not be installed side by side.
-    [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$CleanBranchSkill,
+    # The agent passes the convention's folder, because skills need not be installed side by side.
     [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$ConventionCommitMessageSkill,
     [string]$BaseBranch
 )
@@ -15,12 +14,7 @@ $ErrorActionPreference = 'Stop'
 Import-Module (Join-Path $PSScriptRoot 'Integrate.Common.psm1') -Force
 
 $base = Get-IntegrateBaseBranch -RequestedBranch $BaseBranch
-# Workflow state is removed through dev-workflow-clean-branch's public script.
-$removeProgress = Join-Path $CleanBranchSkill 'scripts/remove-progress.ps1'
-if (-not (Test-Path -LiteralPath $removeProgress)) {
-    throw "-CleanBranchSkill must be the dev-workflow-clean-branch skill's folder; '$removeProgress' is missing."
-}
-& $removeProgress -BaseBranch $base
+& (Join-Path $PSScriptRoot 'remove-progress.ps1') -BaseBranch $base
 & (Join-Path $PSScriptRoot 'integrate-1-check.ps1') -BaseBranch $base
 Write-Output ''
 $confirm = Read-Host 'WIP commits at the tip are already squashed (or none exist)? [y/N]'

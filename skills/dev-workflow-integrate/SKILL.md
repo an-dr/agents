@@ -3,7 +3,7 @@ name: dev-workflow-integrate
 description: Integrate an approved feature branch into the default branch in one of five modes — keep the commits, regroup them into a few logical commits, squash into one commit, open a request, or land a regrouped request with rebase and merge. Use after the integration gate; it removes workflow progress, rebases, applies the chosen mode, and cleans up the branch.
 allowed-tools: PowerShell
 metadata:
-  dependencies: agents-ui convention-commit-message dev-workflow-clean-branch git-commit
+  dependencies: agents-ui convention-commit-message git-commit
 ---
 
 # Integrate
@@ -26,13 +26,24 @@ Ask it every time, before any mode-specific step, and never answer it yourself. 
 
 The message for `Squash` and `Request` is validated by `convention-commit-message`'s checker before anything is rewritten, so compose it with `git-commit` rather than inventing one.
 
+## Remove workflow progress
+
+Run this after the workflow's `finish` operation and committing the resulting deletion, before anything else. `remove-progress.ps1` rewrites only commits after the merge base with the repository's default branch; default-branch history is never changed. The feature branch must be linear and the working tree clean. The script:
+
+1. removes `.progress/` from every feature-branch commit;
+2. preserves each remaining commit's message, author, committer, and dates;
+3. prunes commits whose only content was workflow progress;
+4. verifies that neither the final tree nor feature-branch history contains `.progress/`.
+
+Run the relevant tests again if rewritten commits have not already been verified at their final content.
+
 ## For AI agents — use the step scripts (non-interactive)
 
-Run the progress cleanup first, then the step scripts from `<skill>/scripts/`. Each script exits non-zero on failure. `<convention-commit-message>` and `<dev-workflow-clean-branch>` are those skills' folders, wherever the agent loaded them from; the scripts take them as parameters instead of guessing where they are installed.
+Run the progress cleanup first, then the step scripts from `<skill>/scripts/`. Each script exits non-zero on failure. `<convention-commit-message>` is that convention's folder, wherever the agent loaded it from; the scripts take it as a parameter instead of guessing where it is installed.
 
 | Step | Command |
 | --- | --- |
-| 0 — remove progress | `pwsh <dev-workflow-clean-branch>/scripts/remove-progress.ps1 [-BaseBranch <name>]` |
+| 0 — remove progress | `pwsh remove-progress.ps1 [-BaseBranch <name>]` |
 | 1 — check state | `pwsh integrate-1-check.ps1 [-BaseBranch <name>]` |
 | 2 — squash commits (optional) | `pwsh integrate-2-squash.ps1 -Hash <hash> -Message '<msg>' -ConventionCommitMessageSkill <convention-commit-message> [-BaseBranch <name>]` |
 | 2 — regroup commits (`Regroup` only) | `pwsh integrate-2-regroup.ps1 -Plan <plan.json> -ConventionCommitMessageSkill <convention-commit-message> [-BaseBranch <name>]` |
@@ -73,4 +84,4 @@ The base's own CI still runs after the merge; report it rather than cancelling i
 
 ## For humans — use the interactive script
 
-Run `pwsh <skill>/scripts/integrate.ps1 -CleanBranchSkill <dev-workflow-clean-branch> -ConventionCommitMessageSkill <convention-commit-message>` and follow its prompts. It asks the mode question and refuses to proceed until it is answered.
+Run `pwsh <skill>/scripts/integrate.ps1 -ConventionCommitMessageSkill <convention-commit-message>` and follow its prompts. It asks the mode question and refuses to proceed until it is answered.

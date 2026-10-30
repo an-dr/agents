@@ -1,8 +1,8 @@
 ---
 name: dev-analysis-review
-description: Review a diff for defects, security issues, structural problems, convention violations, and outdated patterns, including a dev-analysis-deslop pass over the same scope. Use during Direct review, VERIFY on an increment diff, SUMMARY on the full branch diff, or when the user requests a code review; record structured findings in the run's code-review JSON and render an HTML report through the bundled PowerShell scripts.
+description: Review a diff for defects, security issues, structural problems, convention violations, and outdated patterns. Use during Direct review, VERIFY on an increment diff, SUMMARY on the full branch diff, or when the user requests a code review; record structured findings in the run's code-review JSON and render an HTML report through the bundled PowerShell scripts.
 metadata:
-  dependencies: agents-ui concept-clean-dependencies concept-evidence-grounding convention-artifact-layout convention-code dev-analysis-deslop docs-html-report
+  dependencies: agents-ui concept-ai-slop concept-clean-dependencies concept-evidence-grounding convention-artifact-layout convention-code docs-html-report
 ---
 
 # Code review
@@ -40,13 +40,9 @@ This takes a `code-review` directory from `convention-artifact-layout` and write
 
 Pass `-Run <YYYY-MM-DD>-<N>` to put the review in a run directory this run already has, so its review, change report, and overview sit together instead of taking a second letter. Every later step reads the run directory from the JSON path it is given, so findings and the rendered page stay together across midnight and across later runs.
 
-## Include deslop analysis
+## Judge for slop
 
-Run `dev-analysis-deslop` as part of every review, using exactly the selected review scope, refs, base, and working-tree state. Pass the scope already resolved here rather than asking the user to select it again. Keep its HTML report in the same artifact run. The deslop skill owns the coherence analysis and its evidence requirements; it does not invoke this review skill in return.
-
-Reconcile its findings with the defect review before recording the verdict. Record confirmed deslop findings through `review-note.ps1`, mapping P0 to `critical`, P1 to `high`, and P2/P3 to `improvement`. Include the originating `DS-` ID and priority in the finding text so the review's assigned ID can be traced to the deslop report. Merge findings that describe the same cause into one review entry, preserving their evidence and recommendations.
-
-Keep deslop questions explicitly labelled as questions in the review summary, with their `DS-` IDs and the evidence needed to resolve them; do not promote them to confirmed defects. Include the deslop report path and coverage limitations in that summary, and deliver both HTML paths. The review JSON remains the canonical record for the combined review and its verdict; the deslop report retains the detailed coherence analysis.
+Apply `concept-ai-slop` to the lines the diff adds: comments that restate code, options or layers with no consumer, padding and decoration in prose, names, paths, or commands that were never checked, and template residue. Record each confirmed instance in its own `slop` section, never among the improvements, with the line and its cost to a reader. Slop is a `high` priority: it is what a reader pays for on every later read. An item that also hides a defect or a wrong claim is recorded as a `critical` or `high` finding instead. A deeper coherence analysis of the scope is a separate request, not part of a review.
 
 ## Record sections
 
@@ -64,7 +60,7 @@ pwsh <skill>/scripts/review-note.ps1 -ReviewPath <json> `
   -Section verdict -Decision changes-required -Text '<rationale>'
 ```
 
-Finding sections are `critical`, `high`, and `improvement`; their IDs are assigned as `CR.N`, `HI.N`, and `IM.N`. Positive notes use `PO.N`. Summary and verdict are singleton sections and are updated rather than appended.
+Finding sections are `critical`, `high`, `slop`, and `improvement`; their IDs are assigned as `CR.N`, `HI.N`, `SL.N`, and `IM.N`. Positive notes use `PO.N`. Summary and verdict are singleton sections and are updated rather than appended.
 
 A finding may carry one Mermaid diagram through `-Diagram '<source>'` or `-DiagramPath <file>`. Attach one when the problem is structural and a picture explains it faster than prose: a dependency pointing the wrong way, a request or handoff flow that goes wrong, a lifecycle with a missing transition, unclear ownership. Do not attach one to a line-level defect. Draw only what the code shows, and follow `docs-html-report` for the diagram type and format.
 
@@ -74,6 +70,6 @@ A finding may carry one Mermaid diagram through `-Diagram '<source>'` or `-Diagr
 pwsh <skill>/scripts/review-render.ps1 -ReviewPath <json> -HtmlReportSkill <docs-html-report>
 ```
 
-The renderer writes one self-contained `.html` page beside the JSON, in a fixed section order: verdict, summary, critical, high, improvements, positives, and renders diagrams offline through `docs-html-report`'s embed script. HTML is the only rendered format; do not produce a Markdown review. `docs-html-report` styles the levels: critical findings stand out, positives are dimmed and collapsed. Summarize critical findings and the verdict in chat by `agents-ui`'s text levels, and give the path of the HTML file; keep it as a local inspection artifact.
+The renderer writes one self-contained `.html` page beside the JSON, in a fixed section order: verdict, summary, critical, high, slop, improvements, positives, and renders diagrams offline through `docs-html-report`'s embed script. HTML is the only rendered format; do not produce a Markdown review. `docs-html-report` styles the levels: critical findings stand out, positives are dimmed and collapsed. Summarize critical findings and the verdict in chat by `agents-ui`'s text levels, and give the path of the HTML file; keep it as a local inspection artifact.
 
 Review only. Return fixes to BUILD in gated flows or to Direct implementation, and never weaken tests or expand scope to make the review pass.
