@@ -3,12 +3,12 @@ name: git-commit
 description: Compose and record a commit in the repository's unified Conventional Commits format — subject shape, bullet body, footers, and the pre-commit checks. Use whenever work is ready to commit, including the workflow COMMIT phase.
 allowed-tools: PowerShell
 metadata:
-  dependencies: convention-commit-message git-commit-fix
+  dependencies: convention-commit-message
 ---
 
 # Commit
 
-The message format is `convention-commit-message`; this skill records the commit and holds the checker that enforces that format. `git-commit-fix` rewrites existing history against the same checker.
+The message format is `convention-commit-message`; this skill records the commit and holds the checker that enforces that format.
 
 ## Procedure
 

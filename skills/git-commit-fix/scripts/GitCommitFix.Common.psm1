@@ -1,7 +1,7 @@
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-# Vendored from git-integrate's Integrate.Common.psm1: skills share no modules, so
+# Vendored from dev-workflow-integrate's Integrate.Common.psm1: skills share no modules, so
 # this skill owns its copy and changes it on its own terms.
 
 function Invoke-GitCommand {

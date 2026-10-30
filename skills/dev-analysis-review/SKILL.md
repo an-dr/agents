@@ -2,7 +2,7 @@
 name: dev-analysis-review
 description: Review a diff for defects, security issues, structural problems, convention violations, and outdated patterns, including a dev-analysis-deslop pass over the same scope. Use during Direct review, VERIFY on an increment diff, SUMMARY on the full branch diff, or when the user requests a code review; record structured findings in the run's code-review JSON and render an HTML report through the bundled PowerShell scripts.
 metadata:
-  dependencies: agents-ui concept-clean-dependencies concept-evidence-grounding convention-artifact-layout dev-analysis-deslop dev-build docs-html-report
+  dependencies: agents-ui concept-clean-dependencies concept-evidence-grounding convention-artifact-layout convention-code dev-analysis-deslop docs-html-report
 ---
 
 # Code review
@@ -26,7 +26,7 @@ Ergonomics means the code is pleasant for a human to use and to read. Check that
 
 Check each item as a finding only when it costs the next reader or change: a unit doing several jobs, a stale or obvious comment, a public interface without useful documentation, duplicated facts, swallowed errors, dead code, or options nothing calls. Find defects, scope errors, and missing tests or docs; do not report mere differences of taste. Host conventions override general preferences.
 
-Review architecture and reviewability against `dev-build`'s Architecture, Names and structure, and Reviewable changes sections. Report as findings: dependencies pointing outward, a lifecycle held as scattered flags, a unit that gained a second responsibility, coupling to another component's private internals, a boundary format built outside the shared codec, optional members every implementation provides, names that describe a previous design or reuse one name for two concepts, structure or names an experienced developer in that ecosystem would not expect, stale references to removed code, and a missing ADR for a new public contract or ADR exception. Also judge the shape of the diff itself: formatting-only and mechanical changes mixed into behaviour changes are a finding, and a SUMMARY branch whose commits cannot each be reviewed and bisected as one concern is `high`.
+Review architecture and reviewability against `concept-clean-dependencies` and `convention-code`'s Architecture, Names and structure, and Reviewable changes sections. Report as findings: dependencies pointing outward, a lifecycle held as scattered flags, a unit that gained a second responsibility, coupling to another component's private internals, a boundary format built outside the shared codec, optional members every implementation provides, names that describe a previous design or reuse one name for two concepts, structure or names an experienced developer in that ecosystem would not expect, stale references to removed code, and a missing ADR for a new public contract or ADR exception. Also judge the shape of the diff itself: formatting-only and mechanical changes mixed into behaviour changes are a finding, and a SUMMARY branch whose commits cannot each be reviewed and bisected as one concern is `high`.
 
 ## Create the review
 

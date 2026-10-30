@@ -88,7 +88,7 @@ Don't install machine-wide software silently. Name what is missing and how to ge
 - Every commit goes through the `git-commit` skill, which owns the message format. Never write a message from memory. Rewrite non-conforming history with `git-commit-fix` while the branch is still unpushed.
 - Committing does not authorize pushing. Push only on explicit request or as part of an approved integration.
 - Integrations rebase first; the default branch never gains a merge commit from an integration. Delete the feature branch after success, except in the request modes, where the platform does it.
-- Ask the user which `git-integrate` mode to use — keep the commits, regroup them into a few logical commits, squash into one commit, open a request, or land a regrouped request with rebase and merge — every time, before the integration touches anything. Approval to integrate is not a choice of mode, and there is no default.
+- Ask the user which `dev-workflow-integrate` mode to use — keep the commits, regroup them into a few logical commits, squash into one commit, open a request, or land a regrouped request with rebase and merge — every time, before the integration touches anything. Approval to integrate is not a choice of mode, and there is no default.
 - Before integration, run `dev-workflow-clean-branch` and verify both `git log <base>..HEAD -- .progress` and `git ls-tree -r HEAD -- .progress` are empty. Workflow state is never part of delivered history.
 
 ## Code conventions
@@ -142,13 +142,13 @@ Skills live in `skills/<name>/SKILL.md` next to this file. Read a matching skill
 | `dev-analysis-review` | Review an increment or full branch diff. |
 | `dev-analysis-project-overview` | Explain an unfamiliar repository in one HTML page, code first. |
 | `dev-debug` | Reproduce and instrument a resistant failure. |
-| `dev-design` | Explore a deeper decision with options, steelman, and pre-mortem. |
-| `dev-analysis-summary` | Review the full branch and prepare the integration handoff. |
+| `dev-workflow-design` | Explore a deeper decision with options, steelman, and pre-mortem. |
+| `dev-workflow-summary` | Review the full branch and prepare the integration handoff. |
 | `dev-analysis-change` | Explain a finished change in one HTML page, with diagrams instead of code. |
 | `dev-workflow-clean-branch` | Remove `.progress/` from every feature-branch commit. |
 | `git-commit` | Compose and record a commit in the unified message format. |
 | `git-commit-fix` | Rewrite existing commit messages to that format. |
-| `git-integrate` | Integrate an approved branch in the mode the user chooses. |
+| `dev-workflow-integrate` | Integrate an approved branch in the mode the user chooses. |
 | `agents-retro` | Propose process improvements after integration or on request. |
 
 ADRs are immutable once integrated; supersede them instead of editing them. Immutability protects a decision others have read, so it begins at integration: an ADR written on the current feature branch is still a draft, and a later decision on that same branch edits it — or collapses two into one — rather than adding an ADR that corrects one nobody has seen. Use ADRs only for lasting architectural decisions, not tactical or tooling choices.

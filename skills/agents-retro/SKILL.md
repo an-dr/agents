@@ -2,7 +2,7 @@
 name: agents-retro
 description: Find where the process itself caused friction at the end of a Detailed flow (after integration) or on request, and propose AGENTS.md or skill amendments for the user's approval. Use after integration or when the user asks for a retrospective.
 metadata:
-  dependencies: agents-modify dev-analysis-review
+  dependencies: agents-modify
 ---
 
 # Retro
@@ -18,6 +18,6 @@ Reviews the process, not the code. The instruction set is process documentation 
 
 ## Rules
 
-- Process only: code findings go to `dev-analysis-review` or become new increments.
+- Process only: code findings are out of scope.
 - Every proposal names the evidence from this flow that motivates it — no speculative rules.
 - Prefer deleting or simplifying a rule over adding one; the instruction set stays lean.

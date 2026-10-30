@@ -2,7 +2,7 @@
 name: dev-build
 description: Implement code during Direct work or gated BUILD. Use for coding changes after the selected workflow allows edits; follow repository patterns, documentation, and the requested scope.
 metadata:
-  dependencies: concept-clean-dependencies convention-adr convention-code docs-writing
+  dependencies: convention-adr convention-code docs-writing
 ---
 
 # Build
@@ -13,23 +13,7 @@ Implement the requested result in Direct, or only the current increment in a gat
 
 ## Code conventions
 
-Write code by `convention-code`: its quality, naming, and reviewable-change rules are the defaults here, and the host repository's own conventions override them.
-
-## Architecture
-
-Structure components by `concept-clean-dependencies`: no cycles, dependencies pointing toward stable abstractions, no layer skipping, and use of another component only through its public contract.
-
-Shape the code the way an experienced developer in this language and domain expects to find it, so a reviewer recognises the structure instead of reverse-engineering it.
-
-- Keep dependencies pointing inward, as in Clean Architecture: domain rules and use cases depend on nothing outside them; I/O, frameworks, UI, transport, and persistence depend on them. Inner code reaches outer services through an interface it owns (a port), implemented by an adapter at the edge.
-- Wire concrete implementations together in one composition root. Do not construct or look up outer services from inside domain or use-case code.
-- Keep pure logic — parsing, validation, decisions, state transitions — free of I/O so it can be tested without the host, the network, or the UI.
-- Model a lifecycle that spans several events as one explicit state owned by one unit, with named states and transitions, never as flags spread across methods of a larger class.
-- Give each module one reason to change. When a class or file gains a second responsibility, extract it into a named unit instead of adding fields and branches to the existing one.
-- Extend another component only through its public interface. When it has none, add the extension point to that component; never depend on its private markup, internal fields, or undocumented behaviour.
-- Encode every format that crosses a process, component, or language boundary through the repository's shared codec or schema, with its fixtures. Do not hand-build bytes or ad-hoc JSON at a call site.
-- Make an interface member required when every implementation provides it; optional members are for genuine absence, not convenience.
-- Add structure for boundaries that exist now. This does not license speculative layers: a port with one adapter is justified by a real I/O or ownership boundary, not by a possible future one, and the smallest-change rule above still applies inside each unit.
+Write code by `convention-code`: its quality, architecture, naming, and reviewable-change rules are the defaults here, and the host repository's own conventions override them.
 
 ## Commits and decisions
 

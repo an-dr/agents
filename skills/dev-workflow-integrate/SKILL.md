@@ -1,9 +1,9 @@
 ---
-name: git-integrate
+name: dev-workflow-integrate
 description: Integrate an approved feature branch into the default branch in one of five modes — keep the commits, regroup them into a few logical commits, squash into one commit, open a request, or land a regrouped request with rebase and merge. Use after the integration gate; it removes workflow progress, rebases, applies the chosen mode, and cleans up the branch.
 allowed-tools: PowerShell
 metadata:
-  dependencies: agents-ui convention-commit-message dev-workflow dev-workflow-clean-branch git-commit
+  dependencies: agents-ui convention-commit-message dev-workflow-clean-branch git-commit
 ---
 
 # Integrate
@@ -42,7 +42,7 @@ Run the progress cleanup first, then the step scripts from `<skill>/scripts/`. E
 
 **Procedure:**
 
-1. Run **step 0** after `dev-workflow`'s `finish` operation and its deletion commit. It removes `.progress/` from every feature-branch commit and prunes progress-only commits.
+1. Run **step 0** after the workflow's `finish` operation and its deletion commit. It removes `.progress/` from every feature-branch commit and prunes progress-only commits.
 2. Run **step 1**. Read the output: look at the recent log for WIP commits and the base-to-HEAD log for topic commits. It rejects any remaining progress history.
 3. If WIP commits exist at the tip, run **step 2** with `<hash>` set to the commit just before the first WIP and a clean message.
 4. Run **step 3** (fetch + rebase). Fix any conflicts; rebase pauses on them.

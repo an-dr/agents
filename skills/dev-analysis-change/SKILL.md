@@ -2,12 +2,12 @@
 name: dev-analysis-change
 description: Produce one human-facing HTML report of a finished change — what was done and why, the responsibility of every new block, rendered Mermaid dependency graphs, a section per new and per upgraded component, decisions, and verification — explained with diagrams and plain prose rather than code. Use at the end of a big change, or when the user accepts the offer at the end of a smaller one.
 metadata:
-  dependencies: convention-artifact-layout dev-analysis-project-overview docs-html-report docs-writing
+  dependencies: convention-artifact-layout docs-html-report docs-writing
 ---
 
 # Change report
 
-One HTML page that lets a reader who did not watch the work understand what changed, why, and how the parts now fit. It explains a change; `dev-analysis-project-overview` explains a whole repository.
+One HTML page that lets a reader who did not watch the work understand what changed, why, and how the parts now fit. It explains a change, not a whole repository.
 
 Use `docs-writing` for the prose. The report describes work already delivered; it edits nothing in the repository.
 

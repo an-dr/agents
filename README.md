@@ -90,7 +90,7 @@ Future Detailed increments can be inserted or reordered without changing active 
 
 ## Development analysis
 
-The analysis skills cover distinct tasks: `dev-analysis-deslop` inspects selected changes, a branch diff, files, directories, or a whole repository for illogical or questionable code and documentation artifacts and proposes changes in a prioritized HTML findings table; `dev-analysis-review` reviews a diff and includes a deslop pass over the same scope; `dev-analysis-change` explains a delivered change in HTML; and `dev-analysis-summary` prepares the full-branch integration handoff.
+The analysis skills cover distinct tasks: `dev-analysis-deslop` inspects selected changes, a branch diff, files, directories, or a whole repository for illogical or questionable code and documentation artifacts and proposes changes in a prioritized HTML findings table; `dev-analysis-review` reviews a diff and includes a deslop pass over the same scope; `dev-analysis-change` explains a delivered change in HTML; and `dev-workflow-summary` prepares the full-branch integration handoff.
 
 ## Skills stay portable
 
@@ -98,9 +98,9 @@ Each skill runs from its own folder, so it works whether it is installed with th
 
 ## Skill dependencies
 
-This diagram maps direct operational dependencies in the [skill instructions](skills/README.md) and their scripts, including work delegated by the agent. Each skill's `metadata.dependencies` declares every skill it names, and `check-registration.ps1` fails on a skill that names an undeclared one. `PROHIBITED` marks a stable skill, such as a concept, that must name no other skill, and the checker lists every dependency cycle with its path.
+This diagram is generated from the `metadata.dependencies` each skill declares in its [instructions](skills/README.md). A skill declares every skill it names, and `check-registration.ps1` fails on a skill that names an undeclared one, declares one it never names, or sits on a dependency cycle. `PROHIBITED` marks a stable skill, such as a concept, that must name no other skill.
 
-Arrows point from a consumer to a skill it invokes or whose rules it uses. Solid arrows apply to the normal procedure; dashed arrows name a condition or handoff. Groups organise the view by current role, not installation boundaries. Cycles reflect the current instructions, including conditional collaboration, rather than recursive script calls. Examples, comparisons, and workflow ordering alone do not create edges. Skills without a relationship are omitted, and transitive dependencies are reached by following arrows.
+Arrows point from a skill to a skill it names. Groups organise the view by current role, not installation boundaries. Skills that name no skill and are named by none are omitted, and transitive dependencies are reached by following arrows.
 
 ```mermaid
 flowchart LR
@@ -115,12 +115,12 @@ flowchart LR
     end
     subgraph workflow["Workflow and Git"]
         dev-workflow
-        dev-design
+        dev-workflow-design
         dev-build
         dev-testing
         dev-untangle-dependencies
-        dev-analysis-summary
-        git-integrate
+        dev-workflow-summary
+        dev-workflow-integrate
         git-commit-fix
         dev-workflow-clean-branch
         ut-adversarial
@@ -160,89 +160,42 @@ flowchart LR
         convention-readme
         convention-script
     end
-    dev-analysis-change --> convention-artifact-layout
-    dev-analysis-deslop --> convention-artifact-layout
-    dev-analysis-review --> convention-artifact-layout
-    dev-analysis-project-overview --> convention-artifact-layout
-    docs-html-report --> convention-artifact-layout
-    agents-ui -. saved question rounds .-> convention-artifact-layout
-    docs-screenshot -. scratch captures .-> convention-artifact-layout
-    text-claim-audit -. more than 15 ledger rows .-> convention-artifact-layout
-    dev-analysis-review --> dev-analysis-deslop & dev-build & docs-html-report
-    dev-analysis-deslop --> docs-html-report & agents-ui
-    dev-analysis-change --> docs-writing & docs-html-report
-    dev-analysis-project-overview --> docs-writing & docs-html-report
-    dev-analysis-summary --> dev-analysis-review & dev-analysis-change & agents-ui
-    dev-analysis-summary -. reconcile draft ADRs .-> convention-adr
-    text-claim-audit --> agents-ui
-    text-claim-audit -. more than 15 ledger rows .-> docs-html-report
-    docs-html-report -. renders finding levels .-> concept-dark-cockpit
-    ai-prompt-review --> agents-ui
-    agents-ui -. renders finding levels in text .-> concept-dark-cockpit
-    agents-dev-skills --> concept-clean-dependencies
-    dev-build --> concept-clean-dependencies
-    dev-analysis-review --> concept-clean-dependencies & concept-evidence-grounding
-    text-claim-audit --> concept-evidence-grounding
-    docs-readme --> concept-evidence-grounding
-    dev-analysis-project-overview --> concept-evidence-grounding
-    dev-workflow --> concept-single-authority
+    agents-dev-skills --> concept-clean-dependencies & convention-agent-skill & convention-script
+    agents-health-check --> agents-install & convention-commit-message
+    agents-modify --> agents-dev-skills & agents-health-check & agents-install & agents-ui & ai-prompt-review & ai-prompt-writing & convention-agent-skill & convention-markdown & convention-script & git-commit
+    agents-retro --> agents-modify
+    agents-ui --> concept-dark-cockpit & convention-artifact-layout
+    ai-prompt-review --> agents-ui & convention-agent-skill
+    ai-prompt-writing --> ai-prompt-review & convention-agent-skill & convention-markdown
+    convention-agent-skill --> concept-clean-dependencies & convention-script
+    convention-code --> concept-clean-dependencies
+    convention-readme --> concept-evidence-grounding & convention-markdown
+    convention-script --> agents-ui
+    dev-analysis-change --> convention-artifact-layout & docs-html-report & docs-writing
+    dev-analysis-deslop --> agents-ui & ai-prompt-review & convention-artifact-layout & docs-html-report
+    dev-analysis-project-overview --> concept-evidence-grounding & convention-artifact-layout & docs-html-report & docs-writing
+    dev-analysis-review --> agents-ui & concept-clean-dependencies & concept-evidence-grounding & convention-artifact-layout & convention-code & dev-analysis-deslop & docs-html-report
+    dev-build --> convention-adr & convention-code & docs-writing
+    dev-testing --> agents-ui & ut-adversarial
+    dev-untangle-dependencies --> agents-modify & agents-ui & concept-clean-dependencies & convention-agent-skill & convention-artifact-layout & docs-html-report
+    dev-workflow --> agents-ui & concept-single-authority & convention-adr & dev-analysis-review & dev-build & dev-testing & dev-workflow-clean-branch & dev-workflow-design & dev-workflow-integrate & dev-workflow-summary & docs-writing & git-commit
+    dev-workflow-design --> agents-ui & convention-adr
+    dev-workflow-integrate --> agents-ui & convention-commit-message & dev-workflow-clean-branch & git-commit
+    dev-workflow-summary --> agents-ui & convention-adr & dev-analysis-change & dev-analysis-review
+    docs-gif --> docs-screenshot
+    docs-html-report --> concept-dark-cockpit & convention-artifact-layout
+    docs-readme --> agents-ui & convention-markdown & convention-readme & docs-gif & docs-screenshot & docs-writing
+    docs-screenshot --> convention-artifact-layout
+    docs-writing --> agents-ui & convention-markdown
     git-commit --> convention-commit-message
     git-commit-fix --> convention-commit-message
-    agents-dev-skills --> convention-script & convention-agent-skill
-    ai-prompt-writing --> convention-agent-skill
-    agents-modify --> convention-agent-skill
-    ai-prompt-review --> convention-agent-skill
-    convention-agent-skill --> convention-script & concept-clean-dependencies
-    dev-build --> convention-code
-    dev-untangle-dependencies --> concept-clean-dependencies & convention-agent-skill
-    dev-untangle-dependencies -. changes to this repository .-> agents-modify
-    dev-untangle-dependencies --> docs-html-report & convention-artifact-layout
-    dev-untangle-dependencies -. approval and questions .-> agents-ui
-    dev-build --> docs-writing
-    dev-build -. architectural contract or ADR exception .-> convention-adr
-    dev-build -. gated documentation questions .-> dev-workflow
-    dev-design --> agents-ui
-    dev-design -. architectural decision .-> convention-adr
-    dev-design -. controller questions .-> dev-workflow
-    dev-testing --> agents-ui
-    dev-testing -. systematic bug hunt .-> ut-adversarial
-    docs-writing --> convention-markdown
-    docs-writing -. README rewrite .-> docs-readme
-    docs-writing -. blocking documentation conflict .-> agents-ui
-    docs-readme --> convention-readme & convention-markdown & docs-writing
-    convention-readme --> convention-markdown
-    docs-readme -. visible application output .-> docs-screenshot
-    docs-readme -. requested animation .-> docs-gif
-    docs-readme -. open questions .-> agents-ui
-    docs-gif --> docs-screenshot
-    dev-workflow --> docs-writing & dev-build & dev-testing & dev-analysis-review & git-commit & agents-ui
-    dev-workflow -. deeper design decision .-> dev-design
-    dev-workflow -. architectural decision .-> convention-adr
-    dev-workflow -. Detailed branch summary .-> dev-analysis-summary
-    dev-workflow -. Detailed integration .-> dev-workflow-clean-branch & git-integrate
-    git-integrate --> dev-workflow-clean-branch & agents-ui
-    git-integrate -. compose or validate messages .-> git-commit
-    git-commit-fix --> git-commit
-    git-commit-fix -. history also needs regrouping .-> git-integrate
-    agents-dev-skills --> ai-prompt-writing & agents-ui & agents-modify
-    agents-modify --> ai-prompt-writing & convention-markdown & ai-prompt-review & agents-install
-    agents-modify -. skill layout changes .-> agents-dev-skills
-    agents-modify -. questions or plan confirmation .-> agents-ui
-    agents-modify -. approved commit .-> git-commit
-    ai-prompt-writing --> convention-markdown & ai-prompt-review
-    ai-prompt-writing -. edits to this repository .-> agents-modify
-    ai-prompt-writing -. skill layout changes .-> agents-dev-skills
-    ai-prompt-writing -. added or moved instructions .-> agents-health-check
-    agents-health-check -. machine install check .-> agents-install
-    agents-health-check -. loaded policy still misbehaves .-> agents-retro
-    agents-retro -. approved amendment .-> agents-modify
-    agents-retro -. code finding handoff .-> dev-analysis-review
-    install-powershell -. package installation approval .-> agents-ui
+    install-powershell --> agents-ui
+    text-claim-audit --> agents-ui & concept-evidence-grounding & convention-artifact-layout & docs-html-report
 ```
 
-Eight skills directly use `convention-artifact-layout`: five always produce stored reports, while `agents-ui`, `docs-screenshot`, and `text-claim-audit` use it for conditional outputs. Other skills reach storage transitively. Script inspection also reveals dependencies the instructions do not name: `agents-modify` loads `agents-install`'s module to locate the clone, and `agents-health-check` runs its verifier unless the install check is skipped.
+Script inspection reveals dependencies the instructions do not name: `agents-modify` loads `agents-install`'s module to locate the clone, and `agents-health-check` runs its verifier unless the install check is skipped.
 
-The [shared-skill rules](skills/agents-dev-skills/SKILL.md#shared-skills-it-must-build-on) additionally apply by activity: tables and questions use `agents-ui`, findings use `agents-ui` in chat and `docs-html-report` in HTML, the only skills that apply `concept-dark-cockpit`, facts about a source use `concept-evidence-grounding`, state kept in several places uses `concept-single-authority`, generated artifacts use `convention-artifact-layout`, HTML uses `docs-html-report`, Markdown uses `convention-markdown`, scripts use `convention-script`, code uses `convention-code`, ADRs use `convention-adr`, and commits use `git-commit` with `convention-commit-message`. The [PowerShell bootstrap skill](skills/install-powershell/SKILL.md) applies before running skill scripts when PowerShell 7 is unavailable. These activity-based requirements apply even where a skill does not repeat the dependency by name; the diagram shows the specific operational relationships rather than expanding those rules into an edge from every possible caller.
+The [PowerShell bootstrap skill](skills/install-powershell/SKILL.md) applies before running skill scripts when PowerShell 7 is unavailable.
 
 ## Checks
 

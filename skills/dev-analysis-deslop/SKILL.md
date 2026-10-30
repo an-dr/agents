@@ -2,12 +2,12 @@
 name: dev-analysis-deslop
 description: Analyse code and documentation for illogical design, contradictions, questionable complexity, misleading prose, and AI-like artifacts that make a human's work harder, on uncommitted changes, a commit or range, a branch diff, selected files or directories, or a whole repository, and deliver an HTML findings table with stable IDs, priorities, evidence, and proposed changes. Use when asked to deslop, audit coherence, or find questionable artifacts in a defined scope.
 metadata:
-  dependencies: agents-ui ai-prompt-review convention-artifact-layout dev-analysis-review docs-html-report
+  dependencies: agents-ui ai-prompt-review convention-artifact-layout docs-html-report
 ---
 
 # Code and documentation coherence analysis
 
-Inspect the requested code and documentation together from the perspective of the next human who must understand, use, or maintain them. Produce recommendations, not automatic fixes. This skill examines coherence within any selected scope, including diffs; `dev-analysis-review` provides the broader defect review, and `ai-prompt-review` examines agent instruction correctness.
+Inspect the requested code and documentation together from the perspective of the next human who must understand, use, or maintain them. Produce recommendations, not automatic fixes. This skill examines coherence within any selected scope, including diffs; a broader defect review is a separate skill, and `ai-prompt-review` examines agent instruction correctness.
 
 ## Establish scope
 

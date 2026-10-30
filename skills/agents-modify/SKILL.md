@@ -3,14 +3,14 @@ name: agents-modify
 description: Change this workflow repository's own instructions — AGENTS.md, roles, skills, and their scripts — from wherever the need appeared, then summarize the change and, once the user approves, commit and push it. Use for every change to this repository, whether the request arises in it or while working in another repository.
 allowed-tools: PowerShell, Read, Grep, Glob, Write, Edit
 metadata:
-  dependencies: agents-dev-skills agents-install agents-retro agents-ui ai-prompt-review ai-prompt-writing convention-agent-skill convention-markdown convention-script git-commit
+  dependencies: agents-dev-skills agents-health-check agents-install agents-ui ai-prompt-review ai-prompt-writing convention-agent-skill convention-markdown convention-script git-commit
 ---
 
 # Modify the agents repository
 
 The instruction set is used from other repositories, so that is where its defects appear: a rule misfires in a host project, and the fix belongs in the clone rather than in a note that only this conversation remembers. This skill finds that clone from wherever the agent is working, changes it with `ai-prompt-writing`, and lands it behind one explicit approval.
 
-`agents-retro` decides *what* to amend after a Detailed flow. This skill is *how* an amendment reaches the clone, whatever proposed it.
+This skill is how an amendment reaches the clone, whatever proposed it.
 
 ## Locate the clone
 
@@ -37,6 +37,7 @@ Report every note the script prints — a detached HEAD, a dirty tree, a missing
 5. **Update what describes the change** — read the root `README.md` and `skills/README.md` against the diff. Wherever they describe behavior the change alters, such as a mode, a phase, a skill, a command, or the layout, update them in the same change. A skill's own documentation going stale is a defect in this step, not a later task.
 6. **Check** — run `pwsh <clone>/tests/run-all.ps1`, where `<clone>` is the resolved root, and fix everything it reports. It runs every skill test, `convention-agent-skill`'s `check-registration.ps1` (folders, both skill tables, declared dependencies, and portable paths), `convention-script`'s `check-scripts.ps1`, `convention-agent-skill`'s `check-skills.ps1`, `ai-prompt-review`'s `check-references.ps1`, and `convention-markdown`'s `check-markdown.ps1`.
 7. **Relink a global install** — adding, renaming, or removing a skill directory changes the set of junctions, so re-run `agents-install`'s `install-agents.ps1` and report its table.
+8. **Verify reachability** — when a skill or policy file was added, renamed, or moved, run `agents-health-check` to confirm the tools can reach it.
 
 ## Summarize
 

@@ -3,7 +3,7 @@ name: git-commit-fix
 description: Rewrite existing commit messages on a branch so they match the commit message format, preserving every tree, author, and date. Use before a first release or before integration when history predates the format.
 allowed-tools: PowerShell
 metadata:
-  dependencies: convention-commit-message git-integrate
+  dependencies: convention-commit-message
 ---
 
 # Fix commit history
@@ -36,7 +36,7 @@ Every replacement is validated before any commit is written, so a rule violation
 
 ## Squashing
 
-This skill fixes messages; it never combines commits. When history also needs regrouping, squash first with `git-integrate`'s step 2 script, then rewrite the messages of the result.
+This skill fixes messages; it never combines commits. When history also needs regrouping, combine the commits first, then rewrite the messages of the result.
 
 ## Afterwards
 

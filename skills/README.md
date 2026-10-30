@@ -39,15 +39,15 @@ Reusable agent actions. Each skill contains a concise `SKILL.md`; deterministic 
 | [`dev-analysis-review`](dev-analysis-review/SKILL.md) | Review an increment or full branch diff. |
 | [`dev-analysis-project-overview`](dev-analysis-project-overview/SKILL.md) | Explain an unfamiliar repository in one HTML page, code first. |
 | [`dev-debug`](dev-debug/SKILL.md) | Reproduce and instrument a resistant failure. |
-| [`dev-design`](dev-design/SKILL.md) | Explore a deeper decision with options, steelman, and pre-mortem. |
-| [`dev-analysis-summary`](dev-analysis-summary/SKILL.md) | Review the full branch and prepare the integration handoff. |
+| [`dev-workflow-design`](dev-workflow-design/SKILL.md) | Explore a deeper decision with options, steelman, and pre-mortem. |
+| [`dev-workflow-summary`](dev-workflow-summary/SKILL.md) | Review the full branch and prepare the integration handoff. |
 | [`dev-analysis-change`](dev-analysis-change/SKILL.md) | Explain a finished change in one HTML page, with diagrams instead of code. |
 | [`dev-workflow-clean-branch`](dev-workflow-clean-branch/SKILL.md) | Remove `.progress/` from every feature-branch commit. |
 | [`git-commit`](git-commit/SKILL.md) | Compose and record a commit in the unified message format. |
 | [`git-commit-fix`](git-commit-fix/SKILL.md) | Rewrite existing commit messages to that format. |
-| [`git-integrate`](git-integrate/SKILL.md) | Integrate an approved branch in the mode the user chooses. |
+| [`dev-workflow-integrate`](dev-workflow-integrate/SKILL.md) | Integrate an approved branch in the mode the user chooses. |
 | [`agents-retro`](agents-retro/SKILL.md) | Propose process improvements after integration or on request. |
 
-Names carry a domain prefix — `agents-` for this repository's own installation and process, `ai-` for work on agent instructions in general, `dev-` for the development workflow, `git-` for repository history, `docs-` for documentation artifacts, `text-` for checking prose the user brings in, `concept-` for a reusable principle that other skills apply, `convention-` for the format rules of an artifact, `ut-` for tests. `install-powershell` is the one environment bootstrap and stays unprefixed.
+Names carry a domain prefix — `agents-` for this repository's own installation and process, `ai-` for work on agent instructions in general, `dev-` for the development workflow (`dev-workflow-` for skills that run only inside a gated flow), `git-` for repository history, `docs-` for documentation artifacts, `text-` for checking prose the user brings in, `concept-` for a reusable principle that other skills apply, `convention-` for the format rules of an artifact, `ut-` for tests. `install-powershell` is the one environment bootstrap and stays unprefixed.
 
 To add a skill, create `skills/<prefix>-<action>/SKILL.md` with a matching `name` and a trigger-focused `description`. Add a PowerShell script only for repeated, mechanical operations and ensure it exits non-zero on failure. Register the skill in this table and in `../AGENTS.md`.

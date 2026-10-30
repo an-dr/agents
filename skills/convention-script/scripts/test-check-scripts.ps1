@@ -38,13 +38,13 @@ New-Fixture
 Assert-Check 'clean copy' 0 'Script check passed'
 
 New-Fixture
-Edit-Fixture 'skills/git-integrate/scripts/integrate-2-squash.ps1' '#Requires -Version 7' '# no requirement'
+Edit-Fixture 'skills/dev-workflow-integrate/scripts/integrate-2-squash.ps1' '#Requires -Version 7' '# no requirement'
 Assert-Check 'missing requires' 1 "does not start with '#Requires -Version 7'"
 
 New-Fixture
 # Joined at run time so the checker does not flag this test file itself.
 $up = '..' + '/..'
-Edit-Fixture 'skills/git-integrate/scripts/integrate-2-squash.ps1' '#Requires -Version 7' "#Requires -Version 7`nImport-Module (Join-Path `$PSScriptRoot '$up/git-commit/scripts/new-commit.ps1')"
+Edit-Fixture 'skills/dev-workflow-integrate/scripts/integrate-2-squash.ps1' '#Requires -Version 7' "#Requires -Version 7`nImport-Module (Join-Path `$PSScriptRoot '$up/git-commit/scripts/new-commit.ps1')"
 Assert-Check 'sibling guess' 1 'guesses where git-commit is installed'
 
 Remove-Fixture

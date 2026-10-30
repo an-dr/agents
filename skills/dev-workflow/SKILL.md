@@ -2,7 +2,7 @@
 name: dev-workflow
 description: Run, resume, and enforce the repository's gated Quick, Detailed, or Detailed Auto development workflow. Use when the user selects one of these flows, an existing .progress/workflow.json is present, workflow state must move to another machine, or increments must be inserted or reordered. Direct work does not use this controller.
 metadata:
-  dependencies: agents-ui concept-single-authority convention-adr dev-analysis-review dev-analysis-summary dev-build dev-design dev-testing dev-workflow-clean-branch docs-writing git-commit git-integrate
+  dependencies: agents-ui concept-single-authority convention-adr dev-analysis-review dev-build dev-testing dev-workflow-clean-branch dev-workflow-design dev-workflow-integrate dev-workflow-summary docs-writing git-commit
 ---
 
 # Workflow controller
@@ -33,7 +33,7 @@ Use Detailed Auto only when the user selects it; never infer it from a request f
 
 ## Plan the gated work
 
-During INTAKE, DESIGN, and SPLIT, read the host `README.md`, `docs/index.md`, architecture docs, and existing ADRs. Record each request as it arrives, identify invariants and existing patterns, and map every touch-point, including docs, schemas, and tests. Keep these phases read-only. Record unresolved choices with `add-question`. In DESIGN, present 2–4 real options with their tradeoffs for Quick and Detailed; record the reasoned choice in Detailed Auto. Use `dev-design` when a decision needs deeper analysis, and `convention-adr` for a lasting architectural decision.
+During INTAKE, DESIGN, and SPLIT, read the host `README.md`, `docs/index.md`, architecture docs, and existing ADRs. Record each request as it arrives, identify invariants and existing patterns, and map every touch-point, including docs, schemas, and tests. Keep these phases read-only. Record unresolved choices with `add-question`. In DESIGN, present 2–4 real options with their tradeoffs for Quick and Detailed; record the reasoned choice in Detailed Auto. Use `dev-workflow-design` when a decision needs deeper analysis, and `convention-adr` for a lasting architectural decision.
 
 Before leaving SPLIT, check that every request is covered, every question is answered or dismissed, and each increment names its documentation work. Detailed increments should be about 300 changed lines or less. Present the numbered plan with estimated lines and answered questions before the user's `implement` approval. In Detailed Auto, record the agent's reasoned design choice for final review.
 
@@ -44,8 +44,8 @@ Before leaving SPLIT, check that every request is covered, every question is ans
 - **VERIFY:** load `dev-testing` for changed code and `dev-analysis-review` for the diff. Per increment, run only the fast checks: build, lint, and test what the increment touched. For documentation-only changes, verify sources, links, and consistency through `docs-writing`. Report failure cases, untested edges, doc gaps, scope, and consistency; issues return to BUILD.
 - **Full suite:** run the project's full test suite once, after the last known increment is committed and before `SUMMARY`, not after each increment. Fix each failure in the commit of the increment that introduced it, folded in with a fixup, so every increment stays one reviewable commit. An increment added later reopens this step: the suite runs again once that work is committed.
 - **COMMIT:** commit verified work with `git-commit`, including current progress state.
-- **SUMMARY:** use `dev-analysis-summary` for the full branch and reconcile it with the intake requests.
-- **INTEGRATE:** after approval, run `finish`, commit its deletion, use `dev-workflow-clean-branch`, then use `git-integrate` and ask for its mode.
+- **SUMMARY:** use `dev-workflow-summary` for the full branch and reconcile it with the intake requests.
+- **INTEGRATE:** after approval, run `finish`, commit its deletion, use `dev-workflow-clean-branch`, then use `dev-workflow-integrate` and ask for its mode.
 
 ## Collect the intake
 

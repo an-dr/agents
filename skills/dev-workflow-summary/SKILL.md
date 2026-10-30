@@ -1,8 +1,8 @@
 ---
-name: dev-analysis-summary
+name: dev-workflow-summary
 description: Prepare the full-branch integration summary by reviewing the complete diff, confirming tests and documentation, and reporting changes, motivation, exclusions, and verification. Use after all Detailed increments are committed, before the integration gate.
 metadata:
-  dependencies: agents-ui convention-adr dev-analysis-change dev-analysis-review git-integrate
+  dependencies: agents-ui convention-adr dev-analysis-change dev-analysis-review
 ---
 
 # Integration summary
@@ -35,4 +35,4 @@ In `Requests delivered` and `How to verify`, follow `agents-ui`'s finding levels
 
 5. Run the `dev-analysis-change` skill for the branch and give the user the report's link or path with the handoff.
 
-An approving summary never grants integration permission. It is the material the user reads before giving the `integrate` approval — at `SUMMARY` in Detailed, at `FINAL_REVIEW` in Detailed Auto. That approval is then followed by the `git-integrate` mode question, a separate decision the summary does not make.
+An approving summary never grants integration permission. It is the material the user reads before giving the `integrate` approval — at `SUMMARY` in Detailed, at `FINAL_REVIEW` in Detailed Auto. That approval is then followed by the integration mode question, a separate decision the summary does not make.

@@ -3,7 +3,7 @@ name: agents-health-check
 description: Diagnose why an AI tool is not following this workflow — the policy is installed but the agent ignores it, gated work bypasses the workflow controller, or one tool obeys while another does not. Checks the machine install, this repository's opt-in wiring, and whether the bot actually loaded the policy, then recommends the fix. Use when a tool ignores the policy or one tool follows it and another does not.
 allowed-tools: PowerShell, Read, Grep, Glob
 metadata:
-  dependencies: agents-install agents-retro git-commit
+  dependencies: agents-install convention-commit-message
 ---
 
 # Agents health check
@@ -52,11 +52,11 @@ Name the layer, the cause, and one command or edit. Do not propose a fix for a l
 | No root `AGENTS.md`/`CLAUDE.md`, or it does not reference the policy | Add a root instruction file referencing `agents/AGENTS.md` — but only if this repository should be governed. The `verdict` row reports this as `info`, not a failure, because silence in an un-wired repository is the guard working. |
 | `AGENTS.md` without `CLAUDE.md`, or the reverse | Add the missing one; Claude Code reads `CLAUDE.md`; Codex, Copilot, and opencode read `AGENTS.md`. A repository wired for one tool is invisible to the other. |
 | `agents/` present but empty | `git submodule update --init --recursive`. |
-| No `## Commit scopes` section | Add one to the root `AGENTS.md`; `git-commit`'s checker rejects every scoped subject without it. |
+| No `## Commit scopes` section | Add one to the root `AGENTS.md`; `convention-commit-message`'s checker rejects every scoped subject without it. |
 | Everything wired, policy not in context | A tool-side loading problem: instruction file too large, an `@` import the tool does not expand, a cached session. Restart the session, then reduce what the block asks the tool to load. |
-| Everything wired and loaded, but the agent still skipped the flow | The instructions are ambiguous or too weak for that tool. This is a process defect, not an installation one — hand it to `agents-retro`. |
+| Everything wired and loaded, but the agent still skipped the flow | The instructions are ambiguous or too weak for that tool. This is a process defect, not an installation one — report it as a process defect, with the concrete task that went wrong. |
 
-The last row is the boundary of this skill. A rule that one tool follows and another ignores is evidence about the wording, and belongs in a retro proposal against `AGENTS.md` or a skill; `agents-retro` requires evidence from real work, so carry the concrete task that went wrong into it rather than the observation alone.
+The last row is the boundary of this skill. A rule that one tool follows and another ignores is evidence about the wording, and belongs in a process proposal against `AGENTS.md` or a skill; a proposal needs evidence from real work, so carry the concrete task that went wrong rather than the observation alone.
 
 ## Rules
 

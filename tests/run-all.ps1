@@ -18,7 +18,7 @@ $steps = [System.Collections.Generic.List[object]]::new()
 foreach ($test in Get-ChildItem -LiteralPath $skills -Recurse -File -Filter 'test-*.ps1' | Sort-Object FullName) {
     $steps.Add(@{ Name = ($test.FullName.Substring($root.Length + 1) -replace '\\', '/'); Script = $test.FullName; Arguments = @() })
 }
-$steps.Add(@{ Name = 'registration'; Script = Join-Path $skills 'convention-agent-skill/scripts/check-registration.ps1'; Arguments = @('-Root', $root) })
+$steps.Add(@{ Name = 'registration'; Script = Join-Path $skills 'convention-agent-skill/scripts/check-registration.ps1'; Arguments = @('-Root', $root, '-FailOnCycle') })
 $steps.Add(@{ Name = 'scripts'; Script = Join-Path $skills 'convention-script/scripts/check-scripts.ps1'; Arguments = @('-Root', $root) })
 $steps.Add(@{ Name = 'skills'; Script = Join-Path $skills 'convention-agent-skill/scripts/check-skills.ps1'; Arguments = @('-Root', $root) })
 $steps.Add(@{ Name = 'references'; Script = Join-Path $skills 'ai-prompt-review/scripts/check-references.ps1'; Arguments = @('-Path', $root) })

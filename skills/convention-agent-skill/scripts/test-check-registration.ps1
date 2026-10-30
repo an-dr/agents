@@ -54,7 +54,7 @@ Edit-Fixture 'skills/README.md' '| Compose and record a commit' '| Write a commi
 Assert-Check 'differing use' 1 'one-line use differs'
 
 New-Fixture
-Edit-Fixture 'skills/git-integrate/SKILL.md' 'dev-workflow-clean-branch git-commit' 'dev-workflow-clean-branch'
+Edit-Fixture 'skills/dev-workflow-integrate/SKILL.md' 'dev-workflow-clean-branch git-commit' 'dev-workflow-clean-branch'
 Assert-Check 'undeclared skill' 1 'names git-commit but does not declare it in dependencies'
 
 New-Fixture
