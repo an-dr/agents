@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "BASE-001",
+      "prompt": "Propose where to enforce this deterministic requirement.",
+      "context": "Every release name must match v followed by a semantic version. Agents repeatedly forget the exact pattern. The always-loaded policy is already long.",
+      "expectations": [
+        "Proposes a deterministic validator for the release input instead of duplicating long prose in always-loaded instructions.",
+        "Keeps one authoritative owner and states an observable failure diagnostic."
+      ]
+    }
+  ]
+}

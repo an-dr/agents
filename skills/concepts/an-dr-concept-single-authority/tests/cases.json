@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "BASE-001",
+      "prompt": "Resolve this conflicting configuration ownership.",
+      "context": "README says timeout is 10; runtime configuration sets 30. The runtime reads configuration only, and the README was copied manually.",
+      "expectations": [
+        "Identifies runtime configuration as the effective authority and the README as a stale derived description.",
+        "Proposes deriving or clearly labeling the documentation without leaving conflicting mutable authorities."
+      ]
+    }
+  ]
+}

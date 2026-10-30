@@ -4,7 +4,7 @@ description: The format of an HTML report for people, with the scripts that appl
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "1.1.0"
   an-dr.type: convention
   an-dr.dependencies: an-dr-concept-dark-cockpit an-dr-convention-artifact-layout
 ---
@@ -41,7 +41,7 @@ This skill is the HTML implementor of `an-dr-concept-dark-cockpit`, which owns t
 
 - Collapse `ok` items into a closed `<details class="ck-quiet">`.
 - Normal content sits on an off-white page, never pure white; only lit `notice` and `high` items lift to the white `--ck-lift` surface, and `critical` keeps its red tint. In dark themes the lift is the lightest panel.
-- The script is idempotent and places `assets/an-dr-concept-dark-cockpit.css` before the page's own styles. It owns the palette for light and dark themes; page styles may use its `--ck-*` tokens but never define colours of their own for a level.
+- The script is idempotent and places `assets/dark-cockpit.css` before the page's own styles. It owns the palette for light and dark themes; page styles may use its `--ck-*` tokens but never define colours of their own for a level.
 
 ### Branded reports
 
@@ -78,10 +78,21 @@ After writing the page, and again after every later edit of it, inline the brand
 
 ```powershell
 pwsh <skill>/scripts/embed-brand.ps1 -Path <page>.html
+if ($LASTEXITCODE -ne 0) { throw 'Brand embedding failed.' }
 pwsh <skill>/scripts/embed-cockpit.ps1 -Path <page>.html
+if ($LASTEXITCODE -ne 0) { throw 'Status stylesheet embedding failed.' }
 pwsh <skill>/scripts/render-mermaid.ps1 -Path <page>.html
+if ($LASTEXITCODE -ne 0) { throw 'Diagram rendering failed.' }
 ```
 
-The cockpit script is described under problem levels. The brand script places the stylesheet before the page's own styles, inserts the theme switch at the start of the body, and replaces both on a rerun.
+The cockpit script is described under problem levels. Its `-Html <markup>` alternative returns embedded HTML without writing a file, for pipelines and in-memory regression tests. The brand script places the stylesheet before the page's own styles, inserts the theme switch at the start of the body, and replaces both on a rerun. Check each command's exit code before continuing; a later success must not hide an earlier failure.
 
 `render-mermaid.ps1` runs the pinned Mermaid build in a local headless Chrome or Edge (`-Browser <exe>` when neither is found), and replaces each `<pre class="mermaid">` block with a figure holding a light and a dark SVG, a "Copy Mermaid" button, and the source. The page carries no renderer and shows the SVG matching the reader's theme. The script stops on any diagram that fails to parse and leaves the page unchanged. A rerun renders every figure again from its stored source, so edit a diagram by editing that source or by writing a new `<pre class="mermaid">` block. Never load Mermaid from a CDN.
+
+## Verify
+
+After the final render, capture and open screenshots of the actual page in light and dark themes at both desktop width and a 390 CSS-pixel phone viewport. Inspect text, tables, diagrams, and controls in all four views. Saving an image, parsing HTML, or measuring overflow alone is not visual inspection. Recheck after later edits.
+
+Verify the browser's actual viewport width. A narrow headless Chrome window can retain a wider viewport and crop its screenshot. Use device emulation or a fixed-width 390-pixel iframe inside a wider capture window; record the inner viewport and document widths. Keep wide content in its own scroll container rather than allowing document overflow.
+
+Include a visual-check record with the report: final HTML hash, screenshot paths, theme and viewport for each view, which screenshots were actually opened, and observed issues. Claim verification complete only when all four views were inspected and no unresolved layout defect remains. If a browser or image viewer is unavailable, deliver the report with visual verification explicitly marked blocked and name the missing check; do not substitute the renderer's success or a later reviewer's inspection for the author's verification.

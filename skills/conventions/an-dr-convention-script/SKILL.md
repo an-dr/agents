@@ -1,10 +1,10 @@
 ---
 name: an-dr-convention-script
-description: Rules for the PowerShell scripts a skill ships — PowerShell 7, non-interactive, non-zero exit on failure, a test beside each branching script, output written for the user, and other skills reached only through a passed folder. Use when writing, changing, or reviewing any script under a skill.
+description: Rules for the PowerShell scripts a skill ships — PowerShell 7, non-interactive execution, tests in the skill's tests folder, a local test runner, and portable dependencies. Use when writing, changing, or reviewing any script under a skill.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "1.1.0"
   an-dr.type: convention
   an-dr.dependencies: an-dr-ai-send-message
 ---
@@ -14,7 +14,9 @@ metadata:
 A skill adds a script only for repeated, mechanical work. The skill's `SKILL.md` says when the agent runs it; the script does the deterministic part.
 
 - **Runtime:** PowerShell 7, starting with `#Requires -Version 7`, non-interactive, exiting non-zero on failure.
-- **Tests:** each script with branching logic gets a `test-<script>.ps1` beside it that writes its fixtures under `.artifacts/` and prints one pass line. `tests/run-all.ps1` finds and runs every one.
+- **Tests:** each script with branching logic gets a `tests/test-<script>.ps1` that exercises its observable behavior and prints one pass line. Keep reusable fixtures beneath `tests/fixtures/` and generated scratch data under `.artifacts/`. Tests reach production scripts through `$PSScriptRoot/../scripts/`.
+- **Runner:** every `scripts/` folder has a self-contained `run-tests.ps1` that runs only top-level `tests/test-*.ps1` in fresh, non-interactive PowerShell processes. Run all tests even if one fails, preserve diagnostics and exit codes, and return non-zero if any fails or no tests exist. Never execute nested fixtures or model evaluations. This skill's runner is a starting point for a vendored copy owned by the receiving skill.
+- **After modifications:** run a skill's script tests after every change to that skill, its scripts, or its tests. Test the final edited scripts before delivery; a passing run from before the edit does not verify it. Report missing tests or failed assertions instead of claiming success. Script tests run without model calls or separate approval; paid behavioral evaluations require an explicit user request.
 - **Output:** a script's result is printed for the user. Write it in `an-dr-ai-send-message`'s safe Markdown (pipe tables, short status lines, a report's path) with progress noise kept off stdout, so the agent can relay it as `an-dr-ai-send-message` requires without reshaping it. SKILL.md says what the output shows and that the agent relays it.
 - **Own files:** reach the skill's own files through `$PSScriptRoot`. Never use an absolute path, a path through the repository's layout such as `skills/<name>`, or a submodule folder name.
 - **Other skills:** call only a public script of another skill, through a folder the caller passes. Skills need not be installed side by side, so a script never guesses another skill's location, whether through `$PSScriptRoot/../..`, a registry, or a fixed path. It takes the folder as a mandatory parameter named after the skill, such as `-<Name>Skill`, and SKILL.md passes `<that-skill-name>` in the command. The script checks that the public script exists in that folder and throws naming the parameter when it does not. It never imports another skill's `.psm1` module. When a caller needs more than a public script offers, extend that script's parameters instead.
@@ -27,4 +29,4 @@ A skill adds a script only for repeated, mechanical work. The skill's `SKILL.md`
 pwsh <skill>/scripts/check-scripts.ps1 [-Root <repository>]
 ```
 
-It reports every script that lacks `#Requires -Version 7` and every script that guesses another skill's location, and exits non-zero on any. `test-check-scripts.ps1` in the same folder breaks a copy one way at a time and expects each break to be named.
+It reports missing runtime declarations, nonportable dependencies, missing test runners, and script tests left in production folders, and exits non-zero on any. `tests/test-check-scripts.ps1` breaks a copy one way at a time and expects each break to be named. Run the tests with `pwsh <skill>/scripts/run-tests.ps1`.

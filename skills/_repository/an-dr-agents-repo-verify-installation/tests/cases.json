@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "BASE-001",
+      "prompt": "Identify the first broken layer from the supplied health evidence.",
+      "context": "The global skill links are readable. The host repository has no AGENTS.md or CLAUDE.md reference to the policy and no active workflow. The tool proposes no flow.",
+      "expectations": [
+        "Recognizes the opt-in guard as working rather than a broken install.",
+        "Does not prescribe reinstalling links or adding host policy without establishing that the host should opt in."
+      ]
+    }
+  ]
+}

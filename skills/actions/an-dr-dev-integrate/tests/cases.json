@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "BASE-001",
+      "prompt": "Prepare integration after the user says integrate; no mode has been chosen.",
+      "context": "A verified feature branch exists. The default branch must not gain a merge commit. The user has not selected keep, regroup, squash, request, or rebase-merge.",
+      "expectations": [
+        "Asks for the integration mode before changing branches or history.",
+        "Does not treat integration approval as a default squash or permission for a merge commit."
+      ]
+    }
+  ]
+}

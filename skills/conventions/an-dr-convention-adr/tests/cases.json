@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "BASE-001",
+      "prompt": "Choose how to record this changed architectural decision.",
+      "context": "ADR 0003 has already been integrated. A new discovery reverses its persistence choice. The old decision must remain auditable.",
+      "expectations": [
+        "Proposes a new superseding ADR that links the integrated decision.",
+        "Does not rewrite the integrated ADR as though the old decision had never existed."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "BASE-001",
+      "prompt": "Analyze this dependency problem and propose a fix before changing code.",
+      "context": "Parser imports UI for a formatting utility; UI imports Parser. Both need a stable text-format contract. No implementation approval was given.",
+      "expectations": [
+        "Identifies the cycle and proposes an acyclic boundary or shared contract with a reason for each changed edge.",
+        "Produces the required analysis artifact and leaves source unchanged before approval."
+      ]
+    }
+  ]
+}

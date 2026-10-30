@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "AUTHOR-001",
+      "prompt": "Implement behavioral tests for the supplied skill. Do not run agent evaluations.",
+      "context": "The target skill summarizes a supplied incident log. It must distinguish observed events from hypotheses, name missing evidence, and leave source files unchanged. A prior failure reported a guessed cause as confirmed. Log: '09:00 request timed out. 09:02 retry succeeded.' No root cause was observed.",
+      "expectations": [
+        "Creates a structurally valid tests/cases.json suite with stable IDs and observable expectations.",
+        "Includes a regression case distinguishing the observed timeout and successful retry from an unproven root cause.",
+        "Includes a boundary such as missing evidence or unchanged source without requiring particular generated wording.",
+        "Runs only free structural validation; starts no tested-agent or grading sessions and does not report behavioral passes."
+      ]
+    },
+    {
+      "id": "AUTHOR-002",
+      "prompt": "Add a case for this observed scope failure, preserving the existing case. Do not evaluate the cases yet.",
+      "context": "The supplied target skill analyzes selected text without changing it. The observed failure was an unsolicited whole-document rewrite when asked to analyze one paragraph.",
+      "files": {
+        "target/SKILL.md": "---\nname: paragraph-analyzer\ndescription: Analyze selected paragraphs. Use when asked to propose text improvements.\n---\n\n# Paragraph analysis\n\nRead only the selected paragraph, propose cuts, and leave the source unchanged.\n",
+        "target/tests/cases.json": "{\"schema_version\":1,\"cases\":[{\"id\":\"PARA-001\",\"prompt\":\"Analyze this paragraph.\",\"context\":\"The command writes CSV.\",\"expectations\":[\"Preserves the concrete CSV fact.\"]}]}\n"
+      },
+      "expectations": [
+        "Preserves PARA-001 and its meaning, assigning a new ID to the new scope regression case.",
+        "Supplies selected and surrounding text so the new case can detect an unwanted broader rewrite.",
+        "Keeps the correct answer and rubric separate from the tested agent's prompt and context.",
+        "Leaves the target skill's behavior unchanged and does not execute evaluations."
+      ]
+    },
+    {
+      "id": "AUTHOR-003",
+      "prompt": "Add a deletion-only diff case for a skill that reviews a change without modifying it. Validate the suite without invoking an agent.",
+      "context": "The reviewer must identify the deletion of the only documented startup command. Before: README.md contains 'Run app --serve'. After: README.md is absent. There are no other changed files.",
+      "expectations": [
+        "Represents the deleted path in before and uses an empty after map, rather than an empty README file that was not the observed change.",
+        "Includes expectations for the lost startup instruction and source preservation.",
+        "Uses the structural checker and distinguishes validation success from a behavioral test verdict."
+      ]
+    },
+    {
+      "id": "AUTHOR-004",
+      "prompt": "Implement script tests for the supplied normalize skill. Capture the reported trailing-whitespace defect and run the tests, but do not fix the implementation or start agent evaluations.",
+      "context": "normalize.ps1 must remove whitespace at both ends and preserve interior spaces. The observed failure: input '  alpha beta  ' returns 'alpha beta  '.",
+      "files": {
+        "target/SKILL.md": "---\nname: normalize-text\ndescription: Normalize whitespace. Use when trimming supplied text.\n---\n\n# Text normalization\n\nRun scripts/normalize.ps1 to trim whitespace at both ends, preserving interior spaces.\n",
+        "target/scripts/normalize.ps1": "#Requires -Version 7\nparam([string]$Text)\n$Text.TrimStart()\n"
+      },
+      "follow_up": [
+        "Now fix the script to trim both ends and run its script tests again against the edited implementation. Do not start behavior evaluations."
+      ],
+      "expectations": [
+        "Creates tests/test-normalize.ps1 that executes the real normalize script and asserts boundary trimming and preservation of interior spaces.",
+        "Actually runs the test and records the trailing-whitespace regression as failed before the follow-up, without weakening assertions or changing the implementation prematurely.",
+        "After the follow-up edit, reruns the script tests against the final version and bases its final verdict on that run rather than the earlier result.",
+        "Starts no behavioral evaluation or paid grader and keeps script results distinct from case-structure checks.",
+        "Creates scripts/run-tests.ps1 and uses that entry point to execute tests from tests/ after the implementation change."
+      ]
+    }
+  ]
+}

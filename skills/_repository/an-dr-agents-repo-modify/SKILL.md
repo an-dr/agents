@@ -5,9 +5,9 @@ license: MIT
 allowed-tools: PowerShell Read Grep Glob Write Edit
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "1.1.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-agents-repo-convention-skills an-dr-agents-repo-install an-dr-agents-repo-verify-installation an-dr-ai-review-instruction an-dr-ai-send-message an-dr-ai-write-instruction an-dr-convention-agent-skill an-dr-convention-markdown an-dr-convention-script an-dr-git-commit
+  an-dr.dependencies: an-dr-agents-repo-convention-skills an-dr-agents-repo-install an-dr-agents-repo-verify-installation an-dr-ai-review-instruction an-dr-ai-send-message an-dr-ai-skill-implement-test an-dr-ai-skill-test an-dr-ai-write-instruction an-dr-convention-agent-skill an-dr-convention-markdown an-dr-convention-script an-dr-git-commit
 ---
 
 # Modify the agents repository
@@ -39,9 +39,10 @@ Report every note the script prints — a detached HEAD, a dirty tree, a missing
 3. **Shape skills with `an-dr-convention-agent-skill` and `an-dr-agents-repo-convention-skills`** — adding, renaming, or restructuring a skill follows the Agent Skills format and its extensions, its category folder and registration, and every name and metadata field follows this repository's naming rule. Its scripts follow `an-dr-convention-script`. A new commit scope needs the scope list in `AGENTS.md`.
 4. **Remove redundancy that adds nothing** — across the changed files, and between them and the files they touch, find each rule stated in more than one place. Keep a repeat only when it improves the result: it adds a detail specific to that point, such as the exact options or the safe default, or it puts the rule where an agent would otherwise miss it. Otherwise delete it, or replace it with a reference to its owner by name.
 5. **Update what describes the change** — read the root `README.md` and `skills/README.md` against the diff. Wherever they describe behavior the change alters, such as a mode, a phase, a skill, a command, or the layout, update them in the same change. A skill's own documentation going stale is a defect in this step, not a later task.
-6. **Check** — run `pwsh <clone>/tests/run-all.ps1`, where `<clone>` is the resolved root, and fix everything it reports. It runs every skill test, `an-dr-convention-agent-skill`'s `check-registration.ps1` (folders, the skill table, declared dependencies, and portable paths), `an-dr-convention-script`'s `check-scripts.ps1`, `an-dr-convention-agent-skill`'s `check-skills.ps1` and `check-skills-ref.ps1`, `an-dr-agents-repo-convention-skills`'s `check-names.ps1`, `an-dr-ai-review-instruction`'s `check-references.ps1`, and `an-dr-convention-markdown`'s `check-markdown.ps1`. When the run reports that `skills-ref`, the Agent Skills reference validator, is not installed, recommend its install command to the user and let them decide; never install it yourself.
-7. **Relink a global install** — adding, renaming, or removing a skill directory changes the set of junctions, so re-run `an-dr-agents-repo-install`'s `install-agents.ps1` and report its table.
-8. **Verify reachability** — when a skill or policy file was added, renamed, or moved, run `an-dr-agents-repo-verify-installation` to confirm the tools can reach it.
+6. **Maintain and run tests** — use `an-dr-ai-skill-implement-test` for script test coverage and, for new skill behavior or a corrected behavioral failure, behavior cases. After every modification, use `an-dr-ai-skill-test` to run the affected skills' cheap script tests and validate changed case data. Only its behavioral execution requires an explicit user request; changing instructions and running repository checks do not authorize that cost. Report unrun evaluations separately from script results and structural checks.
+7. **Check** — run `pwsh <clone>/tests/run-all.ps1`, where `<clone>` is the resolved root, and fix everything it reports. It runs every skill test, `an-dr-convention-agent-skill`'s `check-registration.ps1` (folders, the skill table, declared dependencies, and portable paths), `an-dr-convention-script`'s `check-scripts.ps1`, `an-dr-convention-agent-skill`'s `check-skills.ps1` and `check-skills-ref.ps1`, `an-dr-agents-repo-convention-skills`'s `check-names.ps1`, `an-dr-ai-review-instruction`'s `check-references.ps1`, and `an-dr-convention-markdown`'s `check-markdown.ps1`. When the run reports that `skills-ref`, the Agent Skills reference validator, is not installed, recommend its install command to the user and let them decide; never install it yourself.
+8. **Relink a global install** — adding, renaming, or removing a skill directory changes the set of junctions, so re-run `an-dr-agents-repo-install`'s `install-agents.ps1` and report its table.
+9. **Verify reachability** — when a skill or policy file was added, renamed, or moved, run `an-dr-agents-repo-verify-installation` to confirm the tools can reach it.
 
 ## Summarize
 

@@ -4,7 +4,7 @@ description: Produce one human-facing HTML report of a finished change — what 
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "1.1.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-send-message an-dr-concept-ai-slop an-dr-convention-adr an-dr-convention-artifact-layout an-dr-convention-html-report an-dr-dev-review an-dr-dev-write-documentation
 ---
@@ -82,4 +82,4 @@ An approving summary never grants integration permission. It is the material the
 
 ## Write and deliver
 
-Write the page as `<short-name>.html` in the `reports` directory `an-dr-convention-artifact-layout` gives you — this run's existing directory, so the report sits beside its code review — and render its diagrams as `an-dr-convention-html-report` describes, again after every later edit of the page. When the tool can publish pages, publish it and give the user the link; otherwise name the file path. Tell the user when the page is private to them.
+Write the page as `<short-name>.html` in the `reports` directory `an-dr-convention-artifact-layout` gives you — this run's existing directory, so the report sits beside its code review — and complete the rendering and visual-check record owned by `an-dr-convention-html-report`, again after every later edit of the page. State whether that verification is complete or blocked; generating HTML alone does not finish verification. When the tool can publish pages, publish it and give the user the link; otherwise name the file path. Tell the user when the page is private to them.

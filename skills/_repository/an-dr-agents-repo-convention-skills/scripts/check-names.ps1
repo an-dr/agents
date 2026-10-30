@@ -18,7 +18,7 @@ $ErrorActionPreference = 'Stop'
 $Root = (Resolve-Path -LiteralPath $Root).ProviderPath
 $skillsDir = Join-Path $Root 'skills'
 $namespace = 'an-dr-'
-$groups = @('ai', 'dev', 'architecture', 'project', 'text', 'git', 'files', 'env')
+$groups = @('ai-skill', 'ai', 'dev', 'architecture', 'project', 'text', 'git', 'files', 'env')
 $skillFile = Join-Path $PSScriptRoot '../SKILL.md'
 $verbs = @()
 $inVerbs = $false
@@ -63,8 +63,12 @@ foreach ($file in Get-ChildItem -Path (Join-Path $skillsDir '*/*/SKILL.md') | So
         'convention' { if ($rest -cnotlike 'convention-?*') { Add-Problem $where "a convention must be named ${namespace}convention-<name>" } }
         'action' {
             if ($parts.Count -lt 2) { Add-Problem $where 'an action needs a group and a verb: <group>-<verb>[-<noun>]'; break }
-            if ($parts[0] -cnotin $groups) { Add-Problem $where "group '$($parts[0])' is not one of $($groups -join ', ')" }
-            if ($parts[1] -cnotin $verbs) { Add-Problem $where "verb '$($parts[1])' is not in the Verbs table" }
+            $group = $groups | Where-Object { $rest -ceq $_ -or $rest.StartsWith("$_-", [StringComparison]::Ordinal) } | Sort-Object Length -Descending | Select-Object -First 1
+            if (-not $group) { Add-Problem $where "group '$($parts[0])' is not one of $($groups -join ', ')"; break }
+            $tail = $rest.Substring($group.Length).TrimStart('-')
+            if (-not $tail) { Add-Problem $where 'an action needs a group and a verb: <group>-<verb>[-<noun>]'; break }
+            $verb = ($tail -split '-')[0]
+            if ($verb -cnotin $verbs) { Add-Problem $where "verb '$verb' is not in the Verbs table" }
         }
     }
 }

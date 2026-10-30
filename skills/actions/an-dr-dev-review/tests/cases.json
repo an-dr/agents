@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "BASE-001",
+      "prompt": "Review only this changed behavior for defects.",
+      "context": "Before, a negative count raised ValueError. The diff removes the negative check. The public contract still requires non-negative counts. No test was run.",
+      "expectations": [
+        "Finds the introduced contract violation with the triggering negative input and concrete impact.",
+        "Does not claim tests passed or broaden the review into unrelated repository-wide findings."
+      ]
+    }
+  ]
+}

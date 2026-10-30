@@ -5,9 +5,9 @@ license: MIT
 allowed-tools: PowerShell
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "1.1.0"
   an-dr.type: action
-  an-dr.dependencies: none
+  an-dr.dependencies: an-dr-ai-skill-test
 ---
 
 # Install agents globally
@@ -59,7 +59,7 @@ The scripts do only what is mechanical and safe. Handle these yourself:
 - **`unsupported` skills row** — that tool has no known user-level skills directory. Check its current documentation; if one now exists, add it to `Get-AgentsToolTarget` in `scripts/Install.Common.psm1` rather than linking by hand.
 - **A tool the script does not know** — add it to the same function, with the correct instruction-file path and whether it supports `@` imports.
 - **`warn` on the git check** — a dirty or non-git clone still works but cannot be updated by `git pull`. Tell the user which it is.
-- **Semantic verification** — the script proves the files and links are right, not that a tool loaded them. Confirm by starting a session in an unrelated repository and checking the policy is visible but no flow is proposed.
+- **Semantic verification** — the script proves the files and links are right, not that a tool loaded them. Report that coverage limit. `an-dr-ai-skill-test` always runs cheap script tests, but its behavioral cases still require an explicit user request; installing links does not authorize new agent sessions.
 - **Anything the script reports that it cannot fix** — diagnose from its output rather than re-running it with different flags until it passes.
 
 ## Moving or removing the clone

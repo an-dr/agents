@@ -43,4 +43,4 @@ pwsh <skill>/scripts/check-markdown.ps1 -Path <file-or-directory>
 
 The script exits non-zero on any rule violation, including a hard-wrapped paragraph. HTML comments are excluded from prose checks; visible text around them is still checked. Run it on every `.md` file you write or touch.
 
-`reflow-markdown.ps1` in the same folder joins hard-wrapped paragraphs. Run the comment and paragraph regression cases with `pwsh <skill>/scripts/test-markdown.ps1`.
+`reflow-markdown.ps1` in the same folder joins hard-wrapped paragraphs. The comment and paragraph regressions live in `tests/test-markdown.ps1`; run them with `pwsh <skill>/scripts/run-tests.ps1`.

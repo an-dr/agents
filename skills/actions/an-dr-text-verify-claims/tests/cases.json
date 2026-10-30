@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "BASE-001",
+      "prompt": "Audit the summary against its source log.",
+      "context": "Summary: all 100 requests succeeded and latency improved by 20%. Log: 98 succeeded, 2 timed out. No timings were recorded.",
+      "expectations": [
+        "Flags the success total as contradicted by the log and the latency improvement as unsupported.",
+        "Separates observed counts from missing measurements without inventing replacement latency data."
+      ]
+    }
+  ]
+}

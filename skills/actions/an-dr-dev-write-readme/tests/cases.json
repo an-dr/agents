@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "BASE-001",
+      "prompt": "Plan a README correction from repository evidence.",
+      "context": "The package exposes one CLI command, export. The old README advertises a web server. No server entry point or dependency exists.",
+      "expectations": [
+        "Uses manifests and entry points as evidence rather than retaining the unsupported server claim.",
+        "Gives a newcomer a concrete runnable CLI path and identifies unsupported documentation without inventing features."
+      ]
+    }
+  ]
+}

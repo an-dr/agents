@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "BASE-001",
+      "prompt": "Judge this dependency graph and propose the smallest structural correction.",
+      "context": "Domain imports UI for an error string; UI imports Domain. The string can be represented as a domain error code.",
+      "expectations": [
+        "Identifies the cycle and the dependency pointing from stable domain logic toward UI.",
+        "Proposes an acyclic contract that keeps UI presentation outside Domain without introducing an unnecessary layer."
+      ]
+    }
+  ]
+}

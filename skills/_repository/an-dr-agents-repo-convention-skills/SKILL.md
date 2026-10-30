@@ -4,9 +4,9 @@ description: How the skills of this repository are named - the an-dr namespace, 
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "1.1.0"
   an-dr.type: convention
-  an-dr.dependencies: an-dr-convention-agent-skill an-dr-dev-test an-dr-dev-write-documentation an-dr-git-commit
+  an-dr.dependencies: an-dr-ai-skill-implement-test an-dr-ai-skill-test an-dr-convention-agent-skill an-dr-dev-test an-dr-dev-write-documentation an-dr-git-commit
 ---
 
 # Convention: this repository's skills
@@ -24,7 +24,7 @@ Every name starts with `an-dr-`, the namespace of this repository's author, beca
 | Convention | `convention-<name>` | `an-dr-convention-changelog` |
 | Of the repository itself | `agents-repo-<verb>[-<noun>]` for an action on the repository, `agents-<verb>[-<noun>]` for an action on the agents' own work, `agents-repo-concept-<name>` or `agents-repo-convention-<name>` for a concept or convention | `an-dr-agents-repo-install-tool`, `an-dr-agents-analyze-plan`, `an-dr-agents-repo-convention-layout` |
 
-- **Group:** the area an action works in: `ai` for agent instructions and the conversation with the user, `dev` for developing software, `architecture` for the structure of components, `project` for understanding a whole project, `text` for texts the user brings in, `git` for repository history, `files` for media and other files, `env` for the machine.
+- **Group:** the area an action works in: `ai` for agent instructions and the conversation with the user, `ai-skill` for implementing and executing skill behavior tests, `dev` for developing software, `architecture` for the structure of components, `project` for understanding a whole project, `text` for texts the user brings in, `git` for repository history, `files` for media and other files, `env` for the machine. Match the longest registered group before reading the verb.
 - **Verb:** one word from the list below, in lowercase.
 - **Noun:** what the action acts on, one or more words. Leave it out when the group and verb already say it, as in `an-dr-dev-write-documentation` or `an-dr-git-commit`.
 
@@ -48,7 +48,7 @@ The verbs are this repository's own, so each name says exactly what the action d
 | `modify` | change something that exists, in place |
 | `review` | judge a change or a text and give a verdict |
 | `send` | communicate with the user |
-| `test` | exercise changed code with tests |
+| `test` | exercise code or agent behavior against test expectations |
 | `verify` | check a result against criteria or sources |
 | `write` | produce a document or a report |
 
@@ -58,10 +58,18 @@ A skill sits in the folder of its type, and the skills of the repository itself 
 
 Every skill carries `license: MIT` as a standard frontmatter field, and `author` and `version` under `metadata`, next to the `an-dr.` extensions the general convention defines. The version is a quoted semantic version such as `"1.0.0"`; raise it when the skill's behaviour changes.
 
+## Tests
+
+Every skill, including a concept or convention, has a tracked `tests/` folder containing `cases.json` with observable behavior cases. Implement cases and script tests through `an-dr-ai-skill-implement-test`. Keep executable script tests as `tests/test-*.ps1`, fixtures beneath `tests/fixtures/`, and production code in `scripts/`.
+
+Every `scripts/` folder contains `run-tests.ps1`, a non-interactive entry point that runs the skill's top-level script tests in fresh PowerShell processes, preserves failures, and exits non-zero if any test fails or no script tests exist. It never runs `cases.json` or agent evaluations. A runner is local to its skill; it must not import another skill's test implementation.
+
+Run cheap tests through `an-dr-ai-skill-test` after modifications. The repository's root test command discovers these local runners instead of searching for individual test scripts. It validates case structure separately; behavioral execution remains on demand. Syntax checks may establish a baseline for a legacy script but do not establish runtime behavior or replace regression tests for changed logic.
+
 ## Check
 
 ```powershell
 pwsh <skill>/scripts/check-names.ps1 [-Root <repository>]
 ```
 
-The script reads the verbs from the table above. It reports every skill that breaks the naming table and exits non-zero on any. `test-check-names.ps1` in the same folder breaks a copy one way at a time and expects each break to be named.
+The script reads the verbs from the table above. It reports every skill that breaks the naming table and exits non-zero on any. `tests/test-check-names.ps1` breaks a copy one way at a time and expects each break to be named. Run it through `pwsh <skill>/scripts/run-tests.ps1`. The root test command also checks the required test layout.

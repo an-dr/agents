@@ -4,7 +4,7 @@ description: Analyse code and documentation for illogical design, contradictions
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "1.1.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-review-instruction an-dr-ai-send-message an-dr-concept-ai-slop an-dr-convention-artifact-layout an-dr-convention-html-report
 ---
@@ -56,6 +56,6 @@ Include, in order:
 1. Details keyed by the same IDs, including relevant locations, the reasoning, constraints the fix must preserve, and a way to verify the proposed change. Distinguish observed behavior from inference.
 1. Checks performed, limitations, and unresolved questions. Keep sound areas quiet rather than filling the page with positive findings.
 
-Escape repository text before inserting it into HTML. Render and inspect the page as `an-dr-convention-html-report` requires; check that every finding has a unique ID, priority, evidence, and an actionable proposal. Verify that table rows and details agree, and that the table is readable in both themes and at phone width. Add diagrams only when they explain a structural issue better than prose.
+Escape repository text before inserting it into HTML. Complete the rendering and visual-check record owned by `an-dr-convention-html-report`; check that every finding has a unique ID, priority, evidence, and an actionable proposal. Verify that table rows and details agree, and that the table is readable in both themes and at phone width. State whether visual verification is complete or blocked; report generation or an overflow measurement alone does not finish it. Add diagrams only when they explain a structural issue better than prose.
 
 Deliver the HTML link or local path with a short summary of the most consequential findings. HTML is the report format; do not substitute a Markdown report. Leave source changes to a separately requested implementation task under the repository's applicable workflow.

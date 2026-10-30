@@ -1,6 +1,6 @@
 # Skills
 
-Reusable skills in the [Agent Skills](https://agentskills.io/specification) format. Each skill is a folder with a concise `SKILL.md`; deterministic mechanical work may also use PowerShell 7 scripts under `scripts/`. A skill sits one level below its category folder, and the category says how the agent uses it.
+Reusable skills in the [Agent Skills](https://agentskills.io/specification) format. Each skill has `SKILL.md` and `tests/cases.json`; deterministic mechanical work may also use PowerShell 7 scripts under `scripts/`. Script tests live in `tests/test-*.ps1` and run through the skill's `scripts/run-tests.ps1`. A skill sits one level below its category folder, and the category says how the agent uses it.
 
 ## Actions
 
@@ -10,6 +10,8 @@ Procedures the agent runs. They produce a result, use scripts where the work is 
 | --- | --- |
 | [`an-dr-ai-review-instruction`](actions/an-dr-ai-review-instruction/SKILL.md) | Review agent instructions for contradictions, weak rules, and wasted context. |
 | [`an-dr-ai-send-message`](actions/an-dr-ai-send-message/SKILL.md) | Ask questions and confirmations through the host's UI, fall back to text, and render tables that work everywhere. |
+| [`an-dr-ai-skill-implement-test`](actions/an-dr-ai-skill-implement-test/SKILL.md) | Implement script tests and behavior cases; run cheap checks without starting agent evaluations. |
+| [`an-dr-ai-skill-test`](actions/an-dr-ai-skill-test/SKILL.md) | Always run cheap script tests after modifications; run and grade agent evaluations only on explicit request. |
 | [`an-dr-ai-write-instruction`](actions/an-dr-ai-write-instruction/SKILL.md) | Create or change agent-loaded instructions. |
 | [`an-dr-architecture-fix-dependencies`](actions/an-dr-architecture-fix-dependencies/SKILL.md) | Remove needless dependencies and break cycles by moving shared parts into common components. |
 | [`an-dr-dev-analyze-changes`](actions/an-dr-dev-analyze-changes/SKILL.md) | Explain a finished change in one HTML page, and prepare the full-branch integration handoff. |
@@ -35,7 +37,7 @@ Procedures the agent runs. They produce a result, use scripts where the work is 
 
 ## Concepts
 
-Passive. Principles the agent reads when their subject is in play and never runs. A concept holds only its `SKILL.md`.
+Passive. Principles the agent reads when their subject is in play and never runs. A concept holds `SKILL.md` and a `tests/` folder, with no production scripts.
 
 | Skill | When to use |
 | --- | --- |

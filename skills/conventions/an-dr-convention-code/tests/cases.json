@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "BASE-001",
+      "prompt": "Review this proposed code change against the local convention.",
+      "context": "The requirement fixes a one-line boundary condition. The proposal introduces a factory, an abstract registry, and two wrappers with only one consumer.",
+      "expectations": [
+        "Questions the added abstractions using their concrete maintenance cost and absent consumers.",
+        "Proposes a small readable correction that preserves existing interfaces."
+      ]
+    }
+  ]
+}

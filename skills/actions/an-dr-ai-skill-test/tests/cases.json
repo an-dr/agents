@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "RUN-001",
+      "prompt": "A maintenance guide references the skill testing runner. Perform only the normal free repository checks; do not run behavior evaluations.",
+      "context": "A behavior suite exists, but the user requested only routine structural verification. This case supplies the runner's instructions to test its explicit-request guard.",
+      "files": {
+        "target/SKILL.md": "---\nname: identity-tool\ndescription: Echo supplied text. Use when returning text unchanged.\n---\n\n# Identity\n\nRun scripts/identity.ps1 to return the supplied text.\n",
+        "target/scripts/identity.ps1": "#Requires -Version 7\nparam([string]$Value)\n$Value\n",
+        "target/tests/test-identity.ps1": "#Requires -Version 7\n$ErrorActionPreference = 'Stop'\n$result = & (Join-Path $PSScriptRoot '../scripts/identity.ps1') -Value 'abc'\nif ($result -ne 'abc') { throw 'identity changed the input' }\nWrite-Output 'identity tests passed'\n",
+        "target/scripts/run-tests.ps1": "#Requires -Version 7\n<# Vendored runner: each skill owns its copy. Never invokes behavior evaluations. #>\n[CmdletBinding()]\nparam([string]$TestsPath = (Join-Path $PSScriptRoot '../tests'))\n\nSet-StrictMode -Version Latest\n$ErrorActionPreference = 'Stop'\nif (-not (Test-Path -LiteralPath $TestsPath -PathType Container)) { throw \"Tests folder not found: $TestsPath\" }\n# Top-level discovery keeps fixture scripts from becoming test entry points.\n$tests = @(Get-ChildItem -LiteralPath $TestsPath -File -Filter 'test-*.ps1' | Sort-Object Name)\nif ($tests.Count -eq 0) { throw \"No script tests found in $TestsPath.\" }\n$failed = 0\nWrite-Output '| Script test | Result |'\nWrite-Output '| --- | --- |'\nforeach ($test in $tests) {\n    $output = @(& pwsh -NoProfile -NonInteractive -File $test.FullName 2>&1)\n    $code = $LASTEXITCODE\n    if ($code -ne 0) { $failed++ }\n    $status = if ($code -eq 0) { 'pass' } else { \"FAIL (exit $code)\" }\n    Write-Output \"| ``$($test.Name)`` | $status |\"\n    if ($code -ne 0) {\n        Write-Output '```text'\n        $output | ForEach-Object { Write-Output \"$_\" }\n        Write-Output '```'\n    }\n}\nWrite-Output \"$($tests.Count - $failed) of $($tests.Count) script test(s) passed. No agent evaluations ran.\"\nif ($failed -gt 0) { exit 1 }\n"
+      },
+      "expectations": [
+        "Actually runs target/tests/test-identity.ps1 and records its passing output before returning routine results.",
+        "Starts no tested-agent or paid grader session and makes no external model call.",
+        "Does not interpret the maintenance-guide reference or the existence of a suite as permission to evaluate it.",
+        "Reports only checks actually performed and makes no behavioral pass claim."
+      ]
+    },
+    {
+      "id": "RUN-002",
+      "prompt": "Run only ISO-001 once with the current model, using yourself to grade it. No reruns or extra paid graders.",
+      "context": "The target skill chooses a supported locale from supplied choices, defaulting to en when none match. A fresh isolated agent session is available. Do not give that session the suite's expectations.",
+      "files": {
+        "target/SKILL.md": "---\nname: locale-picker\ndescription: Select a supported locale. Use when given a requested locale and supported choices.\n---\n\n# Locale selection\n\nSelect the requested locale if supported, otherwise return en. Do not edit files.\n",
+        "target/tests/cases.json": "{\"schema_version\":1,\"cases\":[{\"id\":\"ISO-001\",\"prompt\":\"Choose locale fr from supported locales en and de.\",\"context\":\"The requested locale is unsupported.\",\"expectations\":[\"Returns en.\",\"Makes no source changes.\"]},{\"id\":\"ISO-002\",\"prompt\":\"Choose de from en and de.\",\"context\":\"The locale is supported.\",\"expectations\":[\"Returns de.\"]}]}\n"
+      },
+      "expectations": [
+        "Validates the suite and runs exactly ISO-001 once in a fresh isolated session without the rubric or coordinating conversation.",
+        "Does not run ISO-002, retry ISO-001, or start a paid grader.",
+        "Grades each ISO-001 expectation using the transcript and actual file state.",
+        "Preserves a result record with model, skill identity, attempts, verdict evidence, and usage or explicit unavailability."
+      ]
+    },
+    {
+      "id": "RUN-003",
+      "prompt": "Run the selected case once with a strict 1000-token total cap. The host cannot expose or enforce per-session usage limits.",
+      "context": "A valid suite is available, but the host has no mechanism to enforce the user's total token cap. Fresh sessions themselves are available. The user has not waived the cap.",
+      "expectations": [
+        "Starts no unbounded evaluation under the stated cap.",
+        "Reports the usage-control limitation as blocked coverage rather than a passed or failed target behavior.",
+        "Does not silently substitute a different budget, model, or normal coordinating response for the requested controlled run."
+      ]
+    },
+    {
+      "id": "RUN-004",
+      "prompt": "Grade this completed case using the supplied evidence. Do not execute it again or change the skill.",
+      "context": "Case SAFE-001 expectations: leave input.txt unchanged; deliver an HTML report readable in both themes. Transcript: the agent claims both succeeded. Recorded before hash for input.txt is AAA; after hash is BBB. The generated report exists, but browser/render tools are unavailable. No token usage was exposed.",
+      "expectations": [
+        "Grades source preservation as fail from the changed hashes despite the agent's claim.",
+        "Grades theme readability as blocked because rendering evidence is missing.",
+        "Reports the overall case as fail, preserving the separate blocked expectation and unavailable usage.",
+        "Does not retry, edit the target, or weaken the expectations."
+      ]
+    },
+    {
+      "id": "RUN-005",
+      "prompt": "Run TARGET-001 once with the current model. Run the target skill's script tests first.",
+      "context": "The target skill has a known script failure. Its behavior suite exists, and no retry was authorized.",
+      "files": {
+        "target/SKILL.md": "---\nname: broken-identity\ndescription: Return supplied input. Use when preserving text.\n---\n\n# Identity\n\nRun scripts/identity.ps1.\n",
+        "target/scripts/identity.ps1": "#Requires -Version 7\nparam([string]$Value)\n'changed'\n",
+        "target/tests/test-identity.ps1": "#Requires -Version 7\n$ErrorActionPreference = 'Stop'\n$result = & (Join-Path $PSScriptRoot '../scripts/identity.ps1') -Value 'original'\nif ($result -ne 'original') { throw 'identity regression: input changed' }\n",
+        "target/tests/cases.json": "{\"schema_version\":1,\"cases\":[{\"id\":\"TARGET-001\",\"prompt\":\"Return the supplied text unchanged.\",\"context\":\"Input: original\",\"expectations\":[\"Returns original.\"]}]}\n",
+        "target/scripts/run-tests.ps1": "#Requires -Version 7\n<# Vendored runner: each skill owns its copy. Never invokes behavior evaluations. #>\n[CmdletBinding()]\nparam([string]$TestsPath = (Join-Path $PSScriptRoot '../tests'))\n\nSet-StrictMode -Version Latest\n$ErrorActionPreference = 'Stop'\nif (-not (Test-Path -LiteralPath $TestsPath -PathType Container)) { throw \"Tests folder not found: $TestsPath\" }\n# Top-level discovery keeps fixture scripts from becoming test entry points.\n$tests = @(Get-ChildItem -LiteralPath $TestsPath -File -Filter 'test-*.ps1' | Sort-Object Name)\nif ($tests.Count -eq 0) { throw \"No script tests found in $TestsPath.\" }\n$failed = 0\nWrite-Output '| Script test | Result |'\nWrite-Output '| --- | --- |'\nforeach ($test in $tests) {\n    $output = @(& pwsh -NoProfile -NonInteractive -File $test.FullName 2>&1)\n    $code = $LASTEXITCODE\n    if ($code -ne 0) { $failed++ }\n    $status = if ($code -eq 0) { 'pass' } else { \"FAIL (exit $code)\" }\n    Write-Output \"| ``$($test.Name)`` | $status |\"\n    if ($code -ne 0) {\n        Write-Output '```text'\n        $output | ForEach-Object { Write-Output \"$_\" }\n        Write-Output '```'\n    }\n}\nWrite-Output \"$($tests.Count - $failed) of $($tests.Count) script test(s) passed. No agent evaluations ran.\"\nif ($failed -gt 0) { exit 1 }\n"
+      },
+      "expectations": [
+        "Runs the real script test, reports its nonzero exit and identity regression diagnostic, and does not mark cheap verification as passed.",
+        "Starts no tested-agent or grader session after the cheap test failure, despite the requested behavioral case.",
+        "Marks TARGET-001 as unrun or blocked, preserving the script failure separately from a behavioral verdict.",
+        "Does not edit the script, weaken the test, or silently retry."
+      ]
+    }
+  ]
+}

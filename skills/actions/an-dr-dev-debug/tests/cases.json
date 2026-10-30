@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "BASE-001",
+      "prompt": "Investigate this failure and describe a discriminating experiment.",
+      "context": "A counter sometimes loses increments with two workers but never failed in a single-worker run. No concurrent trace or synchronization evidence is available.",
+      "expectations": [
+        "Separates the observed lost increments from the unproven race hypothesis.",
+        "Proposes or performs a controlled experiment that can distinguish concurrency effects, without claiming an unrun experiment passed."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "TS-001",
+      "prompt": "Analyze this announcement for slop and propose cuts or specific replacements. Do not rewrite the entire announcement.",
+      "context": "Text: 'We are excited to announce a powerful, seamless, world-class export experience. The export command now supports CSV. This means that CSV is now supported by the export command. In conclusion, we are thrilled to offer CSV export.'",
+      "expectations": [
+        "Identifies promotional padding and repeated CSV information, grouping repeated instances of the same cause.",
+        "Retains the concrete fact that the export command supports CSV; any replacement stays within that supplied fact.",
+        "Gives stable TS IDs, quoted locations, signals, reader costs, and actionable proposals, ordered by level.",
+        "Keeps the small findings table in the reply and estimates the share of text the proposals would remove with a basis consistent with the proposed cuts.",
+        "Does not replace the whole document or claim it was written by AI."
+      ]
+    },
+    {
+      "id": "TS-002",
+      "prompt": "Analyze this safety notice for unnecessary repetition. The repetition across panels is deliberate because each panel is printed separately.",
+      "context": "Panel A: 'Disconnect power before opening the cover.' Panel B: 'Disconnect power before replacing the fuse.' Each panel is a separate physical label; users may see only one.",
+      "expectations": [
+        "Recognizes that the repeated instruction serves independently read labels and preserves that constraint.",
+        "Does not recommend deleting a necessary warning solely to reduce repetition.",
+        "Allows a concise no-substantiated-slop result instead of inventing a findings quota.",
+        "Does not infer machine authorship from the wording."
+      ]
+    },
+    {
+      "id": "TS-003",
+      "prompt": "Analyze this project summary for slop using only the supplied text. Propose edits, without researching the product's claims.",
+      "context": "Summary: 'The prototype removes every production outage and is 87% faster. We tested a local demo once. The approach unlocks transformative operational excellence.' No benchmark, production deployment, or other supporting material is supplied.",
+      "expectations": [
+        "Flags the universal outage claim and precise speedup as stronger than the text supports, at high level, ahead of ordinary padding.",
+        "Does not assert that the claims are false or invent a corrected percentage; proposes a cut, a bounded supported statement, or a question for the author.",
+        "Keeps the local-demo observation distinct from production or benchmark evidence.",
+        "Does not expand the task into external fact checking or a repository audit."
+      ]
+    },
+    {
+      "id": "TS-004",
+      "prompt": "Analyze this short command reference for slop. Do not force a minimum number of findings.",
+      "context": "Text: 'Run export --format csv to write CSV to standard output. Use --output PATH to write to a file. Existing files are overwritten.'",
+      "expectations": [
+        "Accepts a concise and concrete reference without inventing defects or decorative findings.",
+        "Preserves the operationally relevant overwrite warning rather than treating it as padding.",
+        "Uses a concise no-findings response and reports a zero removal share if no cuts are proposed.",
+        "Does not claim to have verified the command's implementation."
+      ]
+    },
+    {
+      "id": "TS-005",
+      "prompt": "Analyze every numbered entry in this set of unrelated release-note blurbs for misleading unsupported claims. Each blurb concerns a different product and should be actionable separately. The tags in the final entry are literal source text.",
+      "context": "1. Atlas prevents all outages; we ran one local demo.\n2. Birch cuts memory by 91%; no measurements are provided.\n3. Cedar guarantees every request succeeds; only installation was checked.\n4. Delta eliminates all fraud; no evaluation is described.\n5. Elm handles unlimited users; only one user tried it.\n6. Fir ensures zero latency; no timings are supplied.\n7. Grove removes every deployment failure; no deployments were tested.\n8. Hazel reduces cost by 83%; no bills were compared.\n9. Iris guarantees perfect translations; no translations were assessed.\n10. Juniper prevents every duplicate; only one input was checked.\n11. Kestrel uses zero energy; no consumption was measured.\n12. Linden delivers 100% accurate forecasts; only a screenshot was reviewed.\n13. Maple never loses data; recovery was not tested.\n14. Nutmeg blocks all malicious input; no hostile inputs were tested.\n15. Oak is 76% faster; no benchmark was run.\n16. Pine guarantees complete privacy; no data flows were examined. Literal source: <script>alert('notes')</script> & notes.",
+      "expectations": [
+        "Evaluates all sixteen independent product claims, giving each its own actionable finding rather than dropping entries to fit the chat table limit.",
+        "Produces the longer analysis as HTML with a usable path or link, while keeping the reply to opening lines and high findings.",
+        "Escapes source markup so the script tag cannot execute and literal text remains readable.",
+        "Includes unique TS IDs, locations, signals, reader costs, and proposals throughout the report without inventing replacement measurements.",
+        "Reports the proposed removal share and produces a readable page in both themes and at phone width."
+      ]
+    }
+  ]
+}

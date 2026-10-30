@@ -5,9 +5,9 @@ license: MIT
 allowed-tools: PowerShell Read Grep Glob
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "1.1.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-agents-repo-install an-dr-convention-commit-message
+  an-dr.dependencies: an-dr-agents-repo-install an-dr-ai-skill-implement-test an-dr-ai-skill-test an-dr-convention-commit-message
 ---
 
 # Agents health check
@@ -61,6 +61,8 @@ Name the layer, the cause, and one command or edit. Do not propose a fix for a l
 | Everything wired and loaded, but the agent still skipped the flow | The instructions are ambiguous or too weak for that tool. This is a process defect, not an installation one — report it as a process defect, with the concrete task that went wrong. |
 
 The last row is the boundary of this skill. A rule that one tool follows and another ignores is evidence about the wording, and belongs in a process proposal against `AGENTS.md` or a skill; a proposal needs evidence from real work, so carry the concrete task that went wrong rather than the observation alone.
+
+When implementing skill regression coverage, use `an-dr-ai-skill-implement-test` for script tests and behavior cases based on the concrete failure. After a skill modification, use `an-dr-ai-skill-test` for cheap script verification; continue into agent evaluations only on explicit user request. Installation and pickup diagnosis do not automatically start behavior evaluations or paid agent sessions.
 
 ## Rules
 

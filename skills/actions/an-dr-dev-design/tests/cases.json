@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "BASE-001",
+      "prompt": "Explore the storage choice without implementing it.",
+      "context": "A local offline tool needs durable storage for 1000 records and has no server. Options are an embedded database or a remote service. No design choice has been approved.",
+      "expectations": [
+        "Compares realistic options against offline and durability constraints, including the strongest case and failure modes.",
+        "Records unresolved decisions and does not build or branch before the applicable gate."
+      ]
+    }
+  ]
+}

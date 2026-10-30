@@ -83,7 +83,7 @@ Future Detailed increments can be inserted or reordered without changing active 
 - `skills/actions/` — procedures the agent runs, such as `an-dr-dev-follow-workflow`, the executable workflow state machine, and `an-dr-git-commit`, which records commits
 - `skills/concepts/` and `skills/conventions/` — passive skills: principles and format rules the agent reads when their subject is in play, such as `an-dr-convention-commit-message`, whose checker rejects AI co-author and generator trailers, and `an-dr-convention-agent-skill`, which defines the skill format, its `an-dr.type` and `an-dr.dependencies` extensions, and the registration check
 - `skills/_repository/` — the skills that maintain and install this repository: `an-dr-agents-repo-install` for global installation, `an-dr-agents-repo-modify` for changing the instructions from a host project, `an-dr-agents-repo-verify-installation`, and `an-dr-agents-analyze-session`
-- `tests/run-all.ps1` — runs every skill test and repository check; CI runs it on each push
+- `tests/run-all.ps1` — discovers each skill's `scripts/run-tests.ps1`, validates behavior case data, and runs repository checks; CI runs it on each push without agent evaluations
 - `.artifacts/ai-<YYYY-MM-DD>-<N>/` — ignored per-run directory holding that run's review JSON, rendered HTML, and reports; `an-dr-convention-artifact-layout` owns the layout
 
 ## Development analysis
@@ -115,6 +115,8 @@ flowchart LR
     subgraph g_actions["Actions"]
         an-dr-ai-review-instruction
         an-dr-ai-send-message
+        an-dr-ai-skill-implement-test
+        an-dr-ai-skill-test
         an-dr-ai-write-instruction
         an-dr-architecture-fix-dependencies
         an-dr-dev-analyze-changes
@@ -158,11 +160,14 @@ flowchart LR
     end
     an-dr-agents-analyze-session --> an-dr-agents-repo-modify
     an-dr-agents-repo-build-dependencies --> an-dr-ai-send-message & an-dr-convention-agent-skill
-    an-dr-agents-repo-convention-skills --> an-dr-convention-agent-skill & an-dr-dev-test & an-dr-dev-write-documentation & an-dr-git-commit
-    an-dr-agents-repo-modify --> an-dr-agents-repo-convention-skills & an-dr-agents-repo-install & an-dr-agents-repo-verify-installation & an-dr-ai-review-instruction & an-dr-ai-send-message & an-dr-ai-write-instruction & an-dr-convention-agent-skill & an-dr-convention-markdown & an-dr-convention-script & an-dr-git-commit
-    an-dr-agents-repo-verify-installation --> an-dr-agents-repo-install & an-dr-convention-commit-message
+    an-dr-agents-repo-convention-skills --> an-dr-ai-skill-implement-test & an-dr-ai-skill-test & an-dr-convention-agent-skill & an-dr-dev-test & an-dr-dev-write-documentation & an-dr-git-commit
+    an-dr-agents-repo-install --> an-dr-ai-skill-test
+    an-dr-agents-repo-modify --> an-dr-agents-repo-convention-skills & an-dr-agents-repo-install & an-dr-agents-repo-verify-installation & an-dr-ai-review-instruction & an-dr-ai-send-message & an-dr-ai-skill-implement-test & an-dr-ai-skill-test & an-dr-ai-write-instruction & an-dr-convention-agent-skill & an-dr-convention-markdown & an-dr-convention-script & an-dr-git-commit
+    an-dr-agents-repo-verify-installation --> an-dr-agents-repo-install & an-dr-ai-skill-implement-test & an-dr-ai-skill-test & an-dr-convention-commit-message
     an-dr-ai-review-instruction --> an-dr-ai-send-message
     an-dr-ai-send-message --> an-dr-concept-dark-cockpit & an-dr-convention-artifact-layout
+    an-dr-ai-skill-implement-test --> an-dr-ai-write-instruction & an-dr-convention-agent-skill & an-dr-convention-script
+    an-dr-ai-skill-test --> an-dr-ai-skill-implement-test & an-dr-ai-send-message & an-dr-convention-artifact-layout & an-dr-convention-script
     an-dr-ai-write-instruction --> an-dr-ai-review-instruction & an-dr-concept-ai-slop & an-dr-convention-markdown
     an-dr-architecture-fix-dependencies --> an-dr-ai-send-message & an-dr-concept-clean-dependencies & an-dr-convention-artifact-layout & an-dr-convention-html-report
     an-dr-dev-analyze-changes --> an-dr-ai-send-message & an-dr-concept-ai-slop & an-dr-convention-adr & an-dr-convention-artifact-layout & an-dr-convention-html-report & an-dr-dev-review & an-dr-dev-write-documentation
@@ -203,3 +208,5 @@ pwsh tests/run-all.ps1
 ```
 
 It prints one table of results and exits non-zero when any step fails.
+
+Skill tests follow [the testing guide](tests/README.md). Every skill has `tests/cases.json`; script tests live in `tests/test-*.ps1`, reusable fixtures in `tests/fixtures/`, and each `scripts/` folder has a local `run-tests.ps1` entry point. `an-dr-ai-skill-implement-test` implements those tests. `an-dr-ai-skill-test` always runs cheap script tests after modifications; only its agent evaluations require an explicit user request because those sessions cost tokens and money. The automated command runs local script runners and validates case data without executing agent evaluations. Syntax-only baselines for legacy scripts are distinguished from runtime regression coverage.

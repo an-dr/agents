@@ -32,11 +32,11 @@ The extensions are conventions of the project, not of the format. A tool that ig
 
 | Type | Holds | Agent uses it by | Contains |
 | --- | --- | --- | --- |
-| Action | A procedure that produces a result | running it | `SKILL.md`, scripts, assets |
-| Concept | A principle: what it requires, where its boundary is, how to recognise a violation | reading it when its subject is in play | `SKILL.md` only |
-| Convention | The format rules for an artifact: what a correct one looks like | reading it when writing or reviewing that artifact | `SKILL.md` and the scripts that check or generate it |
+| Action | A procedure that produces a result | running it | `SKILL.md`, scripts, assets, tests |
+| Concept | A principle: what it requires, where its boundary is, how to recognise a violation | reading it when its subject is in play | `SKILL.md` and tests; no production scripts |
+| Convention | The format rules for an artifact: what a correct one looks like | reading it when writing or reviewing that artifact | `SKILL.md`, tests, and the scripts that check or generate it |
 
-Concepts and conventions are passive: the agent reads them, never runs them as a procedure. A concept has no scripts and calls no action. A convention reinforces its rules with scripts that call no action, and actions reach them like any public script, through a passed folder. Colours, glyphs, and other presentation details belong to an implementor, not to a concept.
+Concepts and conventions are passive: the agent reads them, never runs them as a procedure. A concept has no production scripts and calls no action; its tests assess application of the principle. A convention reinforces its rules with scripts that call no action, and actions reach them like any public script, through a passed folder. Colours, glyphs, and other presentation details belong to an implementor, not to a concept.
 
 ## Layout
 
@@ -105,15 +105,15 @@ Add the skill to the table in `skills/README.md` with a one-line use, and update
 ## Check
 
 ```powershell
-pwsh <skill>/scripts/check-registration.ps1 [-Root <repository>] [-FailOnCycle]
+pwsh <skill>/scripts/check-registration.ps1 [-Root <repository>] [-FailOnCycle] [-RequireTests]
 pwsh <skill>/scripts/check-skills.ps1 [-Root <repository>]
 pwsh <skill>/scripts/check-skills-ref.ps1 [-Root <repository>] [-Require]
 ```
 
-`check-registration.ps1` fails on a misplaced or unregistered skill, a type that disagrees with its folder, a concept or convention whose name lacks its type, a concept that holds more than `SKILL.md`, a skill that names an undeclared skill or declares one it never names, a `PROHIBITED` skill that names any other, and a general skill that depends on one in an underscore folder. It lists every dependency cycle with its path, and fails on a cycle with `-FailOnCycle`.
+`check-registration.ps1` fails on a misplaced or unregistered skill, a type that disagrees with its folder, a concept or convention whose name lacks its type, a concept with production files outside `SKILL.md` and `tests/`, a skill that names an undeclared skill or declares one it never names, a `PROHIBITED` skill that names any other, and a general skill that depends on one in an underscore folder. It lists every dependency cycle with its path, and fails on a cycle with `-FailOnCycle`. `-RequireTests` also requires every skill to have `tests/cases.json`.
 
 `check-skills.ps1` fails on frontmatter outside the Agent Skills format, a missing licence, author, version, or extension, a comma-separated `allowed-tools`, a description without a trigger sentence, a title or section order that does not match the type, and a skill over the size limit.
 
 `check-skills-ref.ps1` runs `skills-ref validate`, the format's reference validator, on every skill. When `skills-ref` is missing it prints the install command and exits 0, and exits 1 with `-Require` or in CI. Installing it is the user's decision.
 
-All three exit non-zero on a problem. Each has a `test-` script in the same folder that breaks a copy of the repository one way at a time to prove every report.
+All three exit non-zero on a problem. Regression scripts live in `tests/` and run through `pwsh <skill>/scripts/run-tests.ps1`; they break copies to verify diagnostics. Syntax-only checks are identified separately from runtime coverage.

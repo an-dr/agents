@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "BASE-001",
+      "prompt": "Explain the dependency graph for these declarations and identify missing declarations.",
+      "context": "alpha declares beta; beta declares none; gamma has no dependencies key. No cycles exist.",
+      "expectations": [
+        "Distinguishes beta's explicit none from gamma's missing declaration.",
+        "Shows only alpha to beta as an edge and does not invent a cycle."
+      ]
+    }
+  ]
+}

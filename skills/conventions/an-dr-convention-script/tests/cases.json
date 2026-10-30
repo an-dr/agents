@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "BASE-001",
+      "prompt": "Review this test packaging and execution plan.",
+      "context": "The skill stores production scripts in scripts/, script tests in tests/, and behavior cases in tests/cases.json. Its scripts/run-tests.ps1 recursively runs every fixture and sends prompts to a paid agent.",
+      "expectations": [
+        "Requires the runner to execute top-level script tests without discovering nested fixture scripts as test entry points.",
+        "Rejects model calls in routine script testing and keeps behavioral execution explicitly requested."
+      ]
+    }
+  ]
+}

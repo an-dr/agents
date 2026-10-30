@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "BASE-001",
+      "prompt": "Make the smallest implementation change for this requirement.",
+      "context": "Direct work is selected. A formatter returns the requested name but drops its trailing newline. The public signature must remain stable; a new formatting framework is excluded.",
+      "expectations": [
+        "Keeps the existing public interface and limits the change to the trailing-newline requirement.",
+        "Verifies the changed result and does not introduce the excluded framework or unrelated refactoring."
+      ]
+    }
+  ]
+}

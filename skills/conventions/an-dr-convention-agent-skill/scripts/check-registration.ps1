@@ -8,14 +8,15 @@
     on its type, names only the skills it declares (PROHIBITED forbids any, none
     allows none today), and never depends on a skill of the repository's own folder
     unless it lives there. Dependency cycles are listed with their path, and concept
-    skills hold nothing but SKILL.md.
+    skills hold SKILL.md and tests only, without production scripts.
     Prints a Markdown table of problems and exits 1 when there are any, or on a
     cycle when -FailOnCycle is given.
 #>
 [CmdletBinding()]
 param(
     [string]$Root = (Join-Path $PSScriptRoot '../../../..'),
-    [switch]$FailOnCycle
+    [switch]$FailOnCycle,
+    [switch]$RequireTests
 )
 
 Set-StrictMode -Version Latest
@@ -143,9 +144,13 @@ foreach ($name in $folders) {
             if ($type -ceq 'convention' -and $name -cnotmatch '(^|-)convention-') { Add-Problem $where "is a convention, so its name needs 'convention-'" }
         }
         if ($type -ceq 'concept') {
-            $extra = @(Get-ChildItem -LiteralPath $skillPaths[$name].Path -Force | Where-Object Name -cne 'SKILL.md')
-            if ($extra.Count -gt 0) { Add-Problem $where "is a concept and holds $($extra[0].Name); a concept holds only SKILL.md" }
+            $extra = @(Get-ChildItem -LiteralPath $skillPaths[$name].Path -Force | Where-Object { $_.Name -cne 'SKILL.md' -and -not ($_.Name -ceq 'tests' -and $_.PSIsContainer) })
+            if ($extra.Count -gt 0) { Add-Problem $where "is a concept and holds $($extra[0].Name); a concept allows only SKILL.md and tests/" }
         }
+    }
+
+    if ($RequireTests -and -not (Test-Path -LiteralPath (Join-Path $skillPaths[$name].Path 'tests/cases.json') -PathType Leaf)) {
+        Add-Problem $where 'missing tests/cases.json'
     }
 
     $raw = $front.dependencies
