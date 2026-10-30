@@ -1,0 +1,14 @@
+name: checks
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  run-all:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run every skill test and repository check
+        shell: pwsh
+        run: ./tests/run-all.ps1

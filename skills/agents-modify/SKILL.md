@@ -13,7 +13,7 @@ The instruction set is used from other repositories, so that is where its defect
 ## Locate the clone
 
 ```powershell
-pwsh <clone>/skills/agents-modify/scripts/find-agents-root.ps1 [-Path <start-directory>] [-AgentsRoot <path>]
+pwsh <skill>/scripts/find-agents-root.ps1 [-Path <start-directory>] [-AgentsRoot <path>]
 ```
 
 It looks for the clone providing this skill (following the junction of a global install), the repository being worked in, an `agents` submodule inside it, and the policy path in each tool's `agents-install` block. It prints a candidate table, then the resolved root's branch, working tree, upstream, and whether it is nested in the host repository.
@@ -32,8 +32,9 @@ Report every note the script prints — a detached HEAD, a dirty tree, a missing
 2. **Edit with `ai-prompt-writing`** — it owns which carrier holds the rule and how the rule is written. Format comes from `docs-md-writing`.
 3. **Shape skills with `agents-dev-skills`** — adding, renaming, or restructuring a skill follows its layout, the shared skills it must build on, and its registration. A new commit scope needs the scope list in `AGENTS.md`.
 4. **Remove redundancy that adds nothing** — across the changed files, and between them and the files they touch, find each rule stated in more than one place. Keep a repeat only when it improves the result: it adds a detail specific to that point, such as the exact options or the safe default, or it puts the rule where an agent would otherwise miss it. Otherwise delete it, or replace it with a reference to its owner by name.
-5. **Check** — run `ai-prompt-review`'s `check-references.ps1` and `docs-md-writing`'s `check-markdown.ps1` against the clone, and fix what they report.
-6. **Relink a global install** — adding, renaming, or removing a skill directory changes the set of junctions, so re-run `agents-install`'s `install-agents.ps1` and report its table.
+5. **Update what describes the change** — read the root `README.md` and `skills/README.md` against the diff. Wherever they describe behavior the change alters, such as a mode, a phase, a skill, a command, or the layout, update them in the same change. A skill's own documentation going stale is a defect in this step, not a later task.
+6. **Check** — run `pwsh <clone>/tests/run-all.ps1`, where `<clone>` is the resolved root, and fix everything it reports. It runs every skill test, `check-registration.ps1` from this skill (folders, both skill tables, declared dependencies, and portable paths), `ai-prompt-review`'s `check-references.ps1`, and `docs-md-writing`'s `check-markdown.ps1`.
+7. **Relink a global install** — adding, renaming, or removing a skill directory changes the set of junctions, so re-run `agents-install`'s `install-agents.ps1` and report its table.
 
 ## Summarize
 

@@ -69,18 +69,33 @@ VERIFY -->|issues| BUILD
 | Mode | Result |
 | --- | --- |
 | Commits | every commit is kept and the base fast-forwards |
+| Regroup | the branch is rebuilt as a few logical commits and the base fast-forwards |
 | Squash | the branch becomes one commit and the base fast-forwards |
 | Request | the branch becomes one commit, is pushed, and a pull request is opened |
+| RebaseMerge | the branch is regrouped, pushed as a pull request, and landed by the platform's rebase and merge once CI passes |
 
 Future Detailed increments can be inserted or reordered without changing active or completed increment identity. The controller validates approvals, branches, commits, and legal transitions before saving state atomically. Every controller change prints user-presentable Markdown tables for the workflow phases and increment statuses.
 
 ## Repository layout
 
-- `AGENTS.md` — concise policy and entry point
-- `skills/` — task guidance and executable checks for planning, building, testing, reviewing, and writing
-- `.artifacts/ai-<YYYY-MM-DD>-<N>/` — ignored per-run directory holding that run's review JSON, rendered HTML, and reports; `skills/artifact-storage/` owns the layout
+- `AGENTS.md` — concise policy and entry point, including the skill table every tool reads
+- `skills/` — one self-contained folder per skill; `skills/README.md` lists them with the same one-line uses as `AGENTS.md`
 - `skills/dev-workflow/` — executable workflow state machine
-- `skills/install-powershell/` — PowerShell 7 bootstrap instructions
-- `skills/agents-install/` — global installation for local AI tools
 - `skills/git-commit/` — the commit message format and its checker. Commits are attributed to the person who records them; the checker rejects AI co-author and generator trailers
-- `skills/agents-modify/` — changing this repository's own instructions from a host project
+- `skills/agents-install/` — global installation for local AI tools
+- `skills/agents-modify/` — changing this repository's own instructions from a host project, and the registration check
+- `skills/install-powershell/` — PowerShell 7 bootstrap instructions
+- `tests/run-all.ps1` — runs every skill test and repository check; CI runs it on each push
+- `.artifacts/ai-<YYYY-MM-DD>-<N>/` — ignored per-run directory holding that run's review JSON, rendered HTML, and reports; `skills/artifact-storage/` owns the layout
+
+## Skills stay portable
+
+Each skill runs from its own folder, so it works whether it is installed with the rest of this repository, on its own, or through another tool. No code is shared through a folder outside `skills/<name>/`. When one skill's script needs another skill, it calls that skill's public script, and the agent passes the other skill's folder as a parameter, for example `-GitCommitSkill <git-commit>`. The script never guesses where the other skill is installed. Small generic helpers are copied into each skill that needs them. `skills/agents-dev-skills/` states the rules, and `check-registration.ps1` enforces them.
+
+## Checks
+
+```powershell
+pwsh tests/run-all.ps1
+```
+
+It prints one table of results and exits non-zero when any step fails.
