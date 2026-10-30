@@ -7,15 +7,20 @@
 param(
     [Parameter(Mandatory)][string]$MessageDirectory,
     [string]$Range,
-    [switch]$FromRoot
+    [switch]$FromRoot,
+    [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$GitCommitSkill
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 Import-Module (Join-Path $PSScriptRoot 'GitCommitFix.Common.psm1') -Force
-Import-Module (Join-Path $PSScriptRoot '../../git-commit/scripts/GitCommit.Format.psm1') -Force
-Import-Module (Join-Path $PSScriptRoot '../../git-integrate/scripts/Integrate.Common.psm1') -Force
+# Messages are checked through git-commit's public CLI, never its modules. The agent
+# passes that skill's folder, because skills need not be installed side by side.
+$checkMessage = Join-Path $GitCommitSkill 'scripts/check-message.ps1'
+if (-not (Test-Path -LiteralPath $checkMessage)) {
+    throw "-GitCommitSkill must be the git-commit skill's folder; '$checkMessage' is missing."
+}
 
 function Set-ProcessEnvironmentValue {
     param(
@@ -54,16 +59,14 @@ foreach ($file in Get-ChildItem -LiteralPath $MessageDirectory -Filter '*.txt') 
 if ($replacements.Count -eq 0) { throw "No <sha>.txt messages found in '$MessageDirectory'." }
 
 # Validate every replacement before touching history.
-$declaredScopes = Get-DeclaredScope
 $errorCount = 0
 foreach ($entry in $replacements.GetEnumerator()) {
     $short = (@(Invoke-GitCommand -Arguments @('rev-parse', '--short', $entry.Key)) -join '').Trim()
-    $violations = @(Get-CommitMessageViolation -Message $entry.Value -AllowedScope $declaredScopes)
-    Write-CommitViolation -Violation $violations -Label "$short replacement:"
-    $errorCount += Measure-CommitError -Violation $violations
+    & $checkMessage -Message $entry.Value -Label "$short replacement:" -Quiet
+    if ($LASTEXITCODE -ne 0) { $errorCount++ }
 }
 if ($errorCount -gt 0) {
-    Write-Output "$errorCount rule violation(s) in the replacements; history was not touched."
+    Write-Output "$errorCount replacement(s) break the format; history was not touched."
     exit 1
 }
 

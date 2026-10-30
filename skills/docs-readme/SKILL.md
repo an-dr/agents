@@ -2,6 +2,8 @@
 name: docs-readme
 description: Rewrite or update a repository's README from what the code actually contains — read the manifests, entry points, CI, tests, and docs first, then keep, reorder, cut, and add sections against that evidence. Use when a README is missing, stale, or disorganised, when it needs updating after a change, when a project needs one from scratch, or when the user wants the repository to read well to a newcomer.
 allowed-tools: Read, Grep, Glob, Write, Edit, PowerShell
+metadata:
+  requires: docs-md-writing
 ---
 
 # README
@@ -89,7 +91,7 @@ Keep the project's own voice where it has one. The goal is this project's README
 ## Check
 
 ```powershell
-pwsh agents/skills/docs-readme/scripts/check-readme.ps1 [-Path <repo>] [-Readme <file>]
+pwsh <skill>/scripts/check-readme.ps1 -DocsMdWritingSkill <docs-md-writing> [-Path <repo>] [-Readme <file>]
 ```
 
 The script reports the evidence it found, then every claim the README makes that the repository does not support, every unresolved relative link, duplicated headings, missing baseline sections, and sections out of baseline order. It then runs `docs-md-writing`'s checker on the README and prints its findings. It exits non-zero on a contradiction, a dead link, or a Markdown format error. Run it before writing to see the evidence and the existing file's faults, and again afterwards; deliver only once it exits zero.

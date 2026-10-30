@@ -1,6 +1,8 @@
 ---
 name: dev-code-review
 description: Review a diff for defects, security issues, structural problems, convention violations, and outdated patterns. Use during Direct review, VERIFY on an increment diff, SUMMARY on the full branch diff, or when the user requests a code review; record structured findings in the run's code-review JSON and render an HTML report through the bundled PowerShell scripts.
+metadata:
+  requires: artifact-storage docs-html-report ui-dark-cockpit
 ---
 
 # Code review
@@ -29,7 +31,7 @@ Review architecture and reviewability against `dev-build`'s Architecture, Names 
 From the repository being reviewed, run:
 
 ```powershell
-pwsh <skill>/scripts/review-start.ps1 -Reference '<branch-or-ref>' -Scope <direct|verify|summary|requested>
+pwsh <skill>/scripts/review-start.ps1 -Reference '<branch-or-ref>' -Scope <direct|verify|summary|requested> -ArtifactStorageSkill <artifact-storage>
 ```
 
 This takes a `code-review` directory from `artifact-storage` and writes a schema-versioned JSON record into it from `assets/review-template.json`. Review state and rendered reports stay local there unless the user explicitly requests otherwise.
@@ -59,7 +61,7 @@ A finding may carry one Mermaid diagram through `-Diagram '<source>'` or `-Diagr
 ## Render and report
 
 ```powershell
-pwsh <skill>/scripts/review-render.ps1 -ReviewPath <json>
+pwsh <skill>/scripts/review-render.ps1 -ReviewPath <json> -HtmlReportSkill <docs-html-report> -DarkCockpitSkill <ui-dark-cockpit>
 ```
 
 The renderer writes one self-contained `.html` page beside the JSON, in a fixed section order: verdict, summary, critical, high, improvements, positives, and renders diagrams offline through `docs-html-report`'s embed script. HTML is the only rendered format; do not produce a Markdown review. The page follows `ui-dark-cockpit`: critical findings are red, high amber, improvements unhued, and positives dimmed and collapsed. Summarize critical findings and the verdict in chat by the same skill's text rules, and give the path of the HTML file; keep it as a local inspection artifact.

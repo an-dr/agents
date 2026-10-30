@@ -16,7 +16,7 @@ Reviews the instructions themselves, not the code they produce. The subject is e
 4. Rank findings by what they cost: wrong behavior first, then unenforceable rules, then wasted context.
 
 ```powershell
-pwsh agents/skills/ai-prompt-review/scripts/check-references.ps1 [-Path <repo>]
+pwsh <skill>/scripts/check-references.ps1 [-Path <repo>]
 ```
 
 The script resolves every `skills/<name>/` reference, every relative Markdown link, and every skill `name` against its directory and registration tables. It reports per-file size and an approximate token cost, and exits non-zero on any broken reference.

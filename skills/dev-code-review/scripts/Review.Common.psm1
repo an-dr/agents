@@ -12,7 +12,9 @@ function Get-ReviewRepositoryRoot {
 
 function Get-ArtifactDirectoryScript {
     <# Resolves artifact-storage's script, the one implementation of the layout. #>
-    $path = Join-Path $PSScriptRoot '../../artifact-storage/scripts/new-artifact-dir.ps1'
+    param([Parameter(Mandatory)][string]$ArtifactStorageSkill)
+
+    $path = Join-Path $ArtifactStorageSkill 'scripts/new-artifact-dir.ps1'
     if (-not (Test-Path -LiteralPath $path)) {
         throw 'artifact-storage must sit beside dev-code-review; its new-artifact-dir.ps1 owns the run directory.'
     }
@@ -23,12 +25,13 @@ function Initialize-ReviewDirectory {
     <# Takes this run's code-review directory from artifact-storage. #>
     param(
         [Parameter(Mandatory)][string]$RepositoryRoot,
+        [Parameter(Mandatory)][string]$ArtifactStorageSkill,
         [string]$Run
     )
 
     $arguments = @{ Kind = 'code-review'; RepositoryRoot = $RepositoryRoot }
     if ($Run) { $arguments['Run'] = $Run }
-    $directory = & (Get-ArtifactDirectoryScript) @arguments | Select-Object -Last 1
+    $directory = & (Get-ArtifactDirectoryScript -ArtifactStorageSkill $ArtifactStorageSkill) @arguments | Select-Object -Last 1
     if (-not $directory) {
         throw 'artifact-storage returned no directory for this review.'
     }

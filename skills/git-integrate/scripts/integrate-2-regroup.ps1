@@ -12,13 +12,19 @@ result must hold exactly the original tree.
 #>
 param(
     [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$Plan,
+    [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$GitCommitSkill,
     [string]$BaseBranch
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 Import-Module (Join-Path $PSScriptRoot 'Integrate.Common.psm1') -Force
-Import-Module (Join-Path $PSScriptRoot '../../git-commit/scripts/GitCommit.Format.psm1') -Force
+# Messages are checked through git-commit's public CLI, never its modules. The agent
+# passes that skill's folder, because skills need not be installed side by side.
+$checkMessage = Join-Path $GitCommitSkill 'scripts/check-message.ps1'
+if (-not (Test-Path -LiteralPath $checkMessage)) {
+    throw "-GitCommitSkill must be the git-commit skill's folder; '$checkMessage' is missing."
+}
 
 $base = Get-IntegrateBaseBranch -RequestedBranch $BaseBranch
 $branch = Assert-IntegrateFeatureBranch -BaseBranch $base
@@ -31,16 +37,14 @@ if ($commits.Count -eq 0) {
 
 # A message rejected halfway would leave its group staged for the next
 # commit, so every message passes before the history is touched.
-$scopes = Get-DeclaredScope
 $rejected = 0
 for ($i = 0; $i -lt $commits.Count; $i++) {
     $entry = $commits[$i]
     if (-not $entry.message -or @($entry.paths).Count -eq 0) {
         throw "Plan commit $($i + 1) needs a message and at least one path."
     }
-    $violations = @(Get-CommitMessageViolation -Message $entry.message -AllowedScope $scopes)
-    Write-CommitViolation -Violation $violations -Label "Plan commit $($i + 1) message check:"
-    $rejected += Measure-CommitError -Violation $violations
+    & $checkMessage -Message $entry.message -Label "Plan commit $($i + 1) message check:" -Quiet
+    if ($LASTEXITCODE -ne 0) { $rejected++ }
 }
 if ($rejected -gt 0) {
     throw 'A plan message breaks the git-commit format; nothing was regrouped.'

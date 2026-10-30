@@ -2,6 +2,8 @@
 name: git-integrate
 description: Integrate an approved feature branch into the default branch in one of five modes — keep the commits, regroup them into a few logical commits, squash into one commit, open a request, or land a regrouped request with rebase and merge. Use after the integration gate; it removes workflow progress, rebases, applies the chosen mode, and cleans up the branch.
 allowed-tools: PowerShell
+metadata:
+  requires: dev-workflow-clean-branch git-commit
 ---
 
 # Integrate
@@ -26,16 +28,16 @@ The message for `Squash` and `Request` is validated by the `git-commit` format c
 
 ## For AI agents — use the step scripts (non-interactive)
 
-Run the progress cleanup first, then the step scripts from `agents/skills/git-integrate/scripts/`. Each script exits non-zero on failure.
+Run the progress cleanup first, then the step scripts from `<skill>/scripts/`. Each script exits non-zero on failure. `<git-commit>` and `<dev-workflow-clean-branch>` are those skills' folders, wherever the agent loaded them from; the scripts take them as parameters instead of guessing where they are installed.
 
 | Step | Command |
 | --- | --- |
-| 0 — remove progress | `pwsh agents/skills/dev-workflow-clean-branch/scripts/remove-progress.ps1 [-BaseBranch <name>]` |
+| 0 — remove progress | `pwsh <dev-workflow-clean-branch>/scripts/remove-progress.ps1 [-BaseBranch <name>]` |
 | 1 — check state | `pwsh integrate-1-check.ps1 [-BaseBranch <name>]` |
-| 2 — squash commits (optional) | `pwsh integrate-2-squash.ps1 -Hash <hash> -Message '<msg>' [-BaseBranch <name>]` |
-| 2 — regroup commits (`Regroup` only) | `pwsh integrate-2-regroup.ps1 -Plan <plan.json> [-BaseBranch <name>]` |
+| 2 — squash commits (optional) | `pwsh integrate-2-squash.ps1 -Hash <hash> -Message '<msg>' -GitCommitSkill <git-commit> [-BaseBranch <name>]` |
+| 2 — regroup commits (`Regroup` only) | `pwsh integrate-2-regroup.ps1 -Plan <plan.json> -GitCommitSkill <git-commit> [-BaseBranch <name>]` |
 | 3 — rebase | `pwsh integrate-3-rebase.ps1 [-BaseBranch <name>]` |
-| 4 — finish | `pwsh integrate-4-finish.ps1 -Mode <Commits\|Squash\|Request\|RebaseMerge> [-Message '<msg>'] [-BaseBranch <name>]` |
+| 4 — finish | `pwsh integrate-4-finish.ps1 -Mode <Commits\|Squash\|Request\|RebaseMerge> [-Message '<msg>' -GitCommitSkill <git-commit>] [-BaseBranch <name>]` |
 | 5 — rebase-merge (`RebaseMerge` only) | `pwsh integrate-5-rebase-merge.ps1 -TestedCommit <sha> [-BaseBranch <name>]` |
 
 **Procedure:**
@@ -71,4 +73,4 @@ The base's own CI still runs after the merge; report it rather than cancelling i
 
 ## For humans — use the interactive script
 
-Run `pwsh agents/skills/git-integrate/scripts/integrate.ps1` and follow its prompts. It asks the mode question and refuses to proceed until it is answered.
+Run `pwsh <skill>/scripts/integrate.ps1 -CleanBranchSkill <dev-workflow-clean-branch> -GitCommitSkill <git-commit>` and follow its prompts. It asks the mode question and refuses to proceed until it is answered.

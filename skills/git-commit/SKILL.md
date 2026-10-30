@@ -68,7 +68,7 @@ The reason is that a trailer is a record of who is accountable for the change. T
 4. Check and record the returned draft in one call:
 
 ```powershell
-pwsh agents/skills/git-commit/scripts/new-commit.ps1 `
+pwsh <skill>/scripts/new-commit.ps1 `
     -Type fix -Scope ci `
     -Summary 'comma-separate cargo install --features on win-arm64' `
     'cargo took only env_logger from --features, making structopt a package' `
@@ -80,8 +80,8 @@ Body entries are the trailing arguments, one quoted string each, written without
 To validate a message that already exists — a file, a string, or a commit — use the checker, which also works as a `commit-msg` hook:
 
 ```powershell
-pwsh agents/skills/git-commit/scripts/check-message.ps1 -Path <file>
-pwsh agents/skills/git-commit/scripts/check-message.ps1 -Commit HEAD
+pwsh <skill>/scripts/check-message.ps1 -Path <file>
+pwsh <skill>/scripts/check-message.ps1 -Commit HEAD
 ```
 
 Both exit non-zero on any violation and print entry-length warnings without failing. Committing never authorizes pushing.

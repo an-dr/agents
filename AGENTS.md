@@ -103,7 +103,7 @@ Deliverables are the exception and are committed as ordinary repository content:
 
 ## Skills
 
-Skills live in `skills/<name>/SKILL.md` next to this file. Read a matching skill before acting and use its PowerShell scripts for mechanical operations.
+Skills live in `skills/<name>/SKILL.md` next to this file. Read a matching skill before acting and use its PowerShell scripts for mechanical operations. In skill commands, `<skill>` is that skill's own folder and `<other-skill>`, such as `<git-commit>`, is the folder you loaded that skill from. The user never sees raw script output; relay it as `agents-ui` describes.
 
 | Skill | Use |
 | --- | --- |
@@ -140,7 +140,6 @@ Skills live in `skills/<name>/SKILL.md` next to this file. Read a matching skill
 | `git-commit-fix` | Rewrite existing commit messages to that format. |
 | `git-integrate` | Integrate an approved branch in the mode the user chooses. |
 | `agents-retro` | Propose process improvements after integration or on request. |
-| `an-dr-tools-update` | Register the user's local tool repositories and refresh them. |
 
 ADRs are immutable once integrated; supersede them instead of editing them. Immutability protects a decision others have read, so it begins at integration: an ADR written on the current feature branch is still a draft, and a later decision on that same branch edits it — or collapses two into one — rather than adding an ADR that corrects one nobody has seen. Use ADRs only for lasting architectural decisions, not tactical or tooling choices.
 

@@ -3,14 +3,24 @@
     Interactive integration. Always asks which mode to use. Regroup needs a
     plan, so it is run through the step scripts instead.
 #>
-param([string]$BaseBranch)
+param(
+    # The agent passes both skills' folders, because skills need not be installed side by side.
+    [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$CleanBranchSkill,
+    [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$GitCommitSkill,
+    [string]$BaseBranch
+)
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 Import-Module (Join-Path $PSScriptRoot 'Integrate.Common.psm1') -Force
 
 $base = Get-IntegrateBaseBranch -RequestedBranch $BaseBranch
-& (Join-Path $PSScriptRoot '../../dev-workflow-clean-branch/scripts/remove-progress.ps1') -BaseBranch $base
+# Workflow state is removed through dev-workflow-clean-branch's public script.
+$removeProgress = Join-Path $CleanBranchSkill 'scripts/remove-progress.ps1'
+if (-not (Test-Path -LiteralPath $removeProgress)) {
+    throw "-CleanBranchSkill must be the dev-workflow-clean-branch skill's folder; '$removeProgress' is missing."
+}
+& $removeProgress -BaseBranch $base
 & (Join-Path $PSScriptRoot 'integrate-1-check.ps1') -BaseBranch $base
 Write-Output ''
 $confirm = Read-Host 'WIP commits at the tip are already squashed (or none exist)? [y/N]'
@@ -48,4 +58,4 @@ if ($mode -in @('Squash', 'Request')) {
     }
 }
 
-& (Join-Path $PSScriptRoot 'integrate-4-finish.ps1') -Mode $mode -Message $message -BaseBranch $base
+& (Join-Path $PSScriptRoot 'integrate-4-finish.ps1') -Mode $mode -Message $message -BaseBranch $base -GitCommitSkill $GitCommitSkill

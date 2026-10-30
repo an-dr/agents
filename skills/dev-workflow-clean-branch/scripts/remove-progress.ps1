@@ -5,8 +5,7 @@ param([string]$BaseBranch)
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-$integrateModule = Join-Path $PSScriptRoot '../../git-integrate/scripts/Integrate.Common.psm1'
-Import-Module $integrateModule -Force
+Import-Module (Join-Path $PSScriptRoot 'CleanBranch.Git.psm1') -Force
 
 function Set-ProcessEnvironmentValue {
     param(

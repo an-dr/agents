@@ -19,7 +19,7 @@ Installation is only the first of three layers, and a passing install proves the
 ## Run
 
 ```powershell
-pwsh agents/skills/agents-health-check/scripts/check-agents-health.ps1
+pwsh <skill>/scripts/check-agents-health.ps1
 ```
 
 | Parameter | Effect |

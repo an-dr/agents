@@ -33,9 +33,9 @@ Break a line only where the break carries meaning: between list items, between t
 ## Check
 
 ```powershell
-pwsh agents/skills/docs-md-writing/scripts/check-markdown.ps1 -Path <file-or-directory>
+pwsh <skill>/scripts/check-markdown.ps1 -Path <file-or-directory>
 ```
 
 The script exits non-zero on any rule violation, including a hard-wrapped paragraph. HTML comments are excluded from prose checks; visible text around them is still checked.
 
-Run the comment and paragraph regression cases with `pwsh agents/skills/docs-md-writing/scripts/test-markdown.ps1`.
+Run the comment and paragraph regression cases with `pwsh <skill>/scripts/test-markdown.ps1`.

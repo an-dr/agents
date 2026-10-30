@@ -8,7 +8,7 @@ description: Remove `.progress/` from every commit on a linear workflow feature 
 Run this after `dev-workflow`'s `finish` operation and committing the resulting deletion, before the `git-integrate` skill. The script rewrites only commits after the merge base with the repository's default branch; default-branch history is never changed.
 
 ```powershell
-pwsh agents/skills/dev-workflow-clean-branch/scripts/remove-progress.ps1 [-BaseBranch <name>]
+pwsh <skill>/scripts/remove-progress.ps1 [-BaseBranch <name>]
 ```
 
 The feature branch must be linear and the working tree clean. The script:

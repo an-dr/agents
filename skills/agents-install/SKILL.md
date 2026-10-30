@@ -18,7 +18,7 @@ A repository that carries this clone as its own `agents/` submodule wins over th
 From anywhere:
 
 ```powershell
-pwsh <clone>/skills/agents-install/scripts/install-agents.ps1
+pwsh <skill>/scripts/install-agents.ps1
 ```
 
 | Parameter | Effect |
@@ -40,7 +40,7 @@ A global install has no submodule to signal intent, so the block it writes makes
 ## Verify
 
 ```powershell
-pwsh <clone>/skills/agents-install/scripts/verify-agents.ps1
+pwsh <skill>/scripts/verify-agents.ps1
 ```
 
 Checks the clone, each tool's managed block and policy path, and every junction — including that `SKILL.md` is readable *through* the link. Prints a Markdown table and exits non-zero on any failure. Report that table to the user as-is.

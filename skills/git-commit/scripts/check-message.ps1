@@ -7,7 +7,11 @@
 param(
     [Parameter(Mandatory, Position = 0, ParameterSetName = 'Path')][string]$Path,
     [Parameter(Mandatory, ParameterSetName = 'Message')][string]$Message,
-    [Parameter(Mandatory, ParameterSetName = 'Commit')][string]$Commit
+    [Parameter(Mandatory, ParameterSetName = 'Commit')][string]$Commit,
+    # Heading printed above the violations; callers checking many messages name each one.
+    [string]$Label = 'Commit message check:',
+    # Prints only the violations, without the closing summary line.
+    [switch]$Quiet
 )
 
 Set-StrictMode -Version Latest
@@ -29,10 +33,10 @@ $text = switch ($PSCmdlet.ParameterSetName) {
 }
 
 $violations = @(Get-CommitMessageViolation -Message $text -AllowedScope (Get-DeclaredScope))
-Write-CommitViolation -Violation $violations -Label 'Commit message check:'
+Write-CommitViolation -Violation $violations -Label $Label
 $errorCount = Measure-CommitError -Violation $violations
 if ($errorCount -gt 0) {
-    Write-Output "The message breaks $errorCount rule(s)."
+    if (-not $Quiet) { Write-Output "The message breaks $errorCount rule(s)." }
     exit 1
 }
-Write-Output 'The commit message matches the format.'
+if (-not $Quiet) { Write-Output 'The commit message matches the format.' }

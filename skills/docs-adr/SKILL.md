@@ -17,7 +17,7 @@ Before integrating, check the ADRs the branch added — `git diff --diff-filter=
 ## Usage
 
 ```powershell
-pwsh agents/skills/docs-adr/scripts/adr-new.ps1 -Title '<title>'
+pwsh <skill>/scripts/adr-new.ps1 -Title '<title>'
 ```
 
 The script creates `docs/adr/ADR-NNN-<slug>.md` with the next free number and the section skeleton. Fill in the sections afterwards; every section stays short.

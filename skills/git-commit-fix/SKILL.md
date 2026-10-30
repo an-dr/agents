@@ -2,6 +2,8 @@
 name: git-commit-fix
 description: Rewrite existing commit messages on a branch so they match the git-commit format, preserving every tree, author, and date. Use before a first release or before integration when history predates the format.
 allowed-tools: PowerShell
+metadata:
+  requires: git-commit
 ---
 
 # Fix commit history
@@ -15,7 +17,7 @@ Rewriting published history forces every other clone to recover by hand. Run thi
 1. Find what breaks the format. Changes nothing:
 
 ```powershell
-pwsh agents/skills/git-commit-fix/scripts/check-history.ps1 [-Range <rev>] [-FromRoot] [-FailingOnly]
+pwsh <skill>/scripts/check-history.ps1 -GitCommitSkill <git-commit> [-Range <rev>] [-FromRoot] [-FailingOnly]
 ```
 
 Without arguments it checks the merge base with the default branch to `HEAD`, and refuses to guess a range while the default branch is checked out.
@@ -25,7 +27,7 @@ Without arguments it checks the merge base with the default branch to `HEAD`, an
 3. Apply the replacements:
 
 ```powershell
-pwsh agents/skills/git-commit-fix/scripts/rewrite-messages.ps1 -MessageDirectory <directory> [-Range <rev>] [-FromRoot]
+pwsh <skill>/scripts/rewrite-messages.ps1 -MessageDirectory <directory> -GitCommitSkill <git-commit> [-Range <rev>] [-FromRoot]
 ```
 
 Every replacement is validated before any commit is written, so a rule violation aborts with history untouched. The script records a backup ref under `refs/backup/git-commit-fix/`, preserves author and committer identity and dates, and verifies that the rewritten tip has an identical tree to the old one — a content change aborts the run.

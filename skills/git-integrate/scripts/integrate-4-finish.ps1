@@ -8,7 +8,9 @@
 param(
     [Parameter(Mandatory)][ValidateSet('Commits', 'Squash', 'Request', 'RebaseMerge')][string]$Mode,
     [string]$Message,
-    [string]$BaseBranch
+    [string]$BaseBranch,
+    # git-commit's folder, required by the Squash and Request modes to check -Message.
+    [string]$GitCommitSkill
 )
 
 Set-StrictMode -Version Latest
@@ -22,6 +24,9 @@ $collapses = $Mode -in @('Squash', 'Request')
 if ($collapses -and [string]::IsNullOrWhiteSpace($Message)) {
     throw "-Mode $Mode collapses the branch into one commit, so -Message is required."
 }
+if ($collapses -and [string]::IsNullOrWhiteSpace($GitCommitSkill)) {
+    throw "-Mode $Mode checks -Message through git-commit, so -GitCommitSkill is required."
+}
 
 Write-Output "Refreshing 'origin/$base'..."
 Invoke-GitCommand -Arguments @('fetch', 'origin', $base)
@@ -30,7 +35,7 @@ Assert-GitAncestor -Ancestor "origin/$base" -Descendant 'HEAD'
 if ($collapses) {
     $squashPoint = Get-IntegrateSquashPoint -BaseBranch $base
     & (Join-Path $PSScriptRoot 'integrate-2-squash.ps1') `
-        -Hash $squashPoint -Message $Message -BaseBranch $base
+        -Hash $squashPoint -Message $Message -BaseBranch $base -GitCommitSkill $GitCommitSkill
 }
 
 if ($Mode -in @('Request', 'RebaseMerge')) {

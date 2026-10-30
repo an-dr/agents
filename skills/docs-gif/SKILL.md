@@ -16,8 +16,8 @@ Write the sequence down before recording: the starting state, each action, and t
 ## Record
 
 ```powershell
-pwsh agents/skills/docs-gif/scripts/record-gif.ps1 -Window <title> -OutFile docs/media/<name>.gif [-Seconds 8] [-Fps 12] [-Width 800]
-pwsh agents/skills/docs-gif/scripts/record-gif.ps1 -Video <recording.mp4> -OutFile docs/media/<name>.gif [-Start 2] [-Seconds 8] [-Fps 12] [-Width 800]
+pwsh <skill>/scripts/record-gif.ps1 -Window <title> -OutFile docs/media/<name>.gif [-Seconds 8] [-Fps 12] [-Width 800]
+pwsh <skill>/scripts/record-gif.ps1 -Video <recording.mp4> -OutFile docs/media/<name>.gif [-Start 2] [-Seconds 8] [-Fps 12] [-Width 800]
 ```
 
 - `-Window` records one window on Windows by its exact title through ffmpeg while you or the user perform the planned actions. The script counts down before it starts.

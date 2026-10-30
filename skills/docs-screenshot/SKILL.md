@@ -23,8 +23,8 @@ The capture shows the project at its best realistic use, not an empty state or a
 ## Capture
 
 ```powershell
-pwsh agents/skills/docs-screenshot/scripts/capture-screenshot.ps1 -Url <url> -OutFile docs/media/<name>.png [-Width 1280] [-Height 720] [-FullPage]
-pwsh agents/skills/docs-screenshot/scripts/capture-screenshot.ps1 -Window <process-or-title> -OutFile docs/media/<name>.png [-Method Screen|Print]
+pwsh <skill>/scripts/capture-screenshot.ps1 -Url <url> -OutFile docs/media/<name>.png [-Width 1280] [-Height 720] [-FullPage]
+pwsh <skill>/scripts/capture-screenshot.ps1 -Window <process-or-title> -OutFile docs/media/<name>.png [-Method Screen|Print]
 ```
 
 - `-Url` drives headless Chromium through Playwright, so a local development server works as well as a public site. The script stops with the install command when Node.js or the Playwright browser is missing.

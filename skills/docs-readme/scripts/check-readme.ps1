@@ -8,7 +8,9 @@
 [CmdletBinding()]
 param(
     [string]$Path = '.',
-    [string]$Readme = 'README.md'
+    [string]$Readme = 'README.md',
+    # docs-md-writing's folder, passed by the agent because skills need not sit side by side.
+    [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$DocsMdWritingSkill
 )
 
 Set-StrictMode -Version Latest
@@ -254,7 +256,7 @@ if ($images.Count -gt 0 -and $body -inotmatch '!\[') {
 
 # ---- markdown format (docs-md-writing) ------------------------------------
 
-$markdownChecker = Join-Path $PSScriptRoot '../../docs-md-writing/scripts/check-markdown.ps1'
+$markdownChecker = Join-Path $DocsMdWritingSkill 'scripts/check-markdown.ps1'
 $markdownFailed = $false
 Write-Output ''
 if (Test-Path -LiteralPath $markdownChecker) {
@@ -262,7 +264,7 @@ if (Test-Path -LiteralPath $markdownChecker) {
     & pwsh -NoProfile -File $markdownChecker $readmePath | ForEach-Object { Write-Output "  $_" }
     $markdownFailed = $LASTEXITCODE -ne 0
 } else {
-    Write-Output "Markdown format not checked: $markdownChecker is missing."
+    Write-Output "Markdown format not checked: -DocsMdWritingSkill has no $markdownChecker."
     $markdownFailed = $true
 }
 

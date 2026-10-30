@@ -7,31 +7,36 @@
 param(
     [string]$Range,
     [switch]$FromRoot,
-    [switch]$FailingOnly
+    [switch]$FailingOnly,
+    [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$GitCommitSkill
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 Import-Module (Join-Path $PSScriptRoot 'GitCommitFix.Common.psm1') -Force
-Import-Module (Join-Path $PSScriptRoot '../../git-commit/scripts/GitCommit.Format.psm1') -Force
+# Messages are checked through git-commit's public CLI, never its modules. The agent
+# passes that skill's folder, because skills need not be installed side by side.
+$checkMessage = Join-Path $GitCommitSkill 'scripts/check-message.ps1'
+if (-not (Test-Path -LiteralPath $checkMessage)) {
+    throw "-GitCommitSkill must be the git-commit skill's folder; '$checkMessage' is missing."
+}
 
 $target = Resolve-RewriteRange -Range $Range -FromRoot:$FromRoot -AllowDirty
-$declaredScopes = Get-DeclaredScope
 $failing = 0
 
 foreach ($commit in $target.Commits) {
     $short = (@(& git rev-parse --short $commit) -join '').Trim()
     $message = Get-CommitMessageText -Commit $commit
     $subject = ($message -split "`n")[0]
-    $violations = @(Get-CommitMessageViolation -Message $message -AllowedScope $declaredScopes)
-    $errorCount = Measure-CommitError -Violation $violations
+    $report = @(& $checkMessage -Message $message -Label "$short $subject" -Quiet)
+    $broken = $LASTEXITCODE -ne 0
 
-    if ($errorCount -gt 0) { $failing++ }
-    if ($FailingOnly -and $errorCount -eq 0) { continue }
+    if ($broken) { $failing++ }
+    if ($FailingOnly -and -not $broken) { continue }
 
-    if ($violations.Count -eq 0) { Write-Output "$short $subject" }
-    else { Write-CommitViolation -Violation $violations -Label "$short $subject" }
+    if ($report.Count -eq 0) { Write-Output "$short $subject" }
+    else { $report }
 }
 
 Write-Output ''

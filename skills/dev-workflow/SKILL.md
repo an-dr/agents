@@ -12,13 +12,13 @@ Use `scripts/workflow.ps1` as the authority for phase transitions and approval g
 From the host repository root, locate this embedded skill relative to the active `AGENTS.md`, then run:
 
 ```powershell
-pwsh <skill-path>/scripts/workflow.ps1 status
+pwsh <skill>/scripts/workflow.ps1 status
 ```
 
 If there is no active state, start one as soon as the flow is chosen. Only `-Flow` is required; pass whatever of the four facts the request already makes plain, and `INTAKE` collects the rest:
 
 ```powershell
-pwsh <skill-path>/scripts/workflow.ps1 start -Flow Detailed [-Goal '<problem>']
+pwsh <skill>/scripts/workflow.ps1 start -Flow Detailed [-Goal '<problem>']
 ```
 
 Supported flows:

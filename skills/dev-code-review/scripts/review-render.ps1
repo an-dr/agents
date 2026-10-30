@@ -3,6 +3,9 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory)][string]$ReviewPath,
+    # Both skills' folders, passed by the agent because skills need not sit side by side.
+    [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$HtmlReportSkill,
+    [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$DarkCockpitSkill,
     [string]$OutputPath
 )
 
@@ -147,9 +150,16 @@ $html.Add('</section>')
 $html.Add('</main></body></html>')
 
 Write-ReviewText -Text ($html -join [Environment]::NewLine) -Path $OutputPath
-# Neutral colours come from the report brand, severity colours from the dark-cockpit sheet.
-& (Join-Path $PSScriptRoot '../../docs-html-report/scripts/embed-brand.ps1') -Path $OutputPath | Out-Null
-& (Join-Path $PSScriptRoot '../../ui-dark-cockpit/scripts/embed-cockpit.ps1') -Path $OutputPath | Out-Null
-# Diagrams become inline SVG through the shared HTML report skill's pinned, offline Mermaid build.
-& (Join-Path $PSScriptRoot '../../docs-html-report/scripts/render-mermaid.ps1') -Path $OutputPath | Out-Null
+# Neutral colours come from the report brand, severity colours from the dark-cockpit sheet,
+# and diagrams become inline SVG through the HTML report skill's pinned, offline Mermaid build.
+foreach ($step in @(
+        @{ Skill = $HtmlReportSkill; Parameter = 'HtmlReportSkill'; Script = 'scripts/embed-brand.ps1' },
+        @{ Skill = $DarkCockpitSkill; Parameter = 'DarkCockpitSkill'; Script = 'scripts/embed-cockpit.ps1' },
+        @{ Skill = $HtmlReportSkill; Parameter = 'HtmlReportSkill'; Script = 'scripts/render-mermaid.ps1' })) {
+    $script = Join-Path $step.Skill $step.Script
+    if (-not (Test-Path -LiteralPath $script)) {
+        throw "-$($step.Parameter) has no $($step.Script); pass that skill's folder."
+    }
+    & $script -Path $OutputPath | Out-Null
+}
 Write-Output $OutputPath
