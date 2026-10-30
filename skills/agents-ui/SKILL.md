@@ -1,6 +1,6 @@
 ---
 name: agents-ui
-description: Talk to the user in a form that works in every host — terminal CLIs, GUI apps, and the Claude and Codex editor extensions — using the host's own question UI wherever it exists and a fixed text form only where it does not, with readable tables, questions with options, confirmations, and one answer format the agent reads the same way everywhere. Use whenever a reply shows a table, asks the user to choose or confirm, or reads the user's answer to such a question.
+description: Talk to the user in a form that works in every host — terminal CLIs, GUI apps, and the Claude and Codex editor extensions — using the host's own question UI wherever it exists and a fixed text form only where it does not, with readable tables, questions with options, confirmations, and one answer format the agent reads the same way everywhere. Use whenever a reply shows a table, relays a script's output, asks the user to choose or confirm, or reads the user's answer to such a question.
 ---
 
 # Agents UI
@@ -25,6 +25,15 @@ Use only: paragraphs, `#`–`###` headings, bold, inline code, fenced code block
 - Keep each cell to one line: no line breaks, no lists, and write `\|` for a literal pipe. Right-align numbers with `---:`.
 - Order rows by what the reader acts on first; for findings, that is `ui-dark-cockpit`'s ladder.
 - Past about 15 rows, show the rows that matter, and say how many were left out and where the full list is.
+
+## Script output
+
+The user does not see tool results: hosts collapse them, cut them short, or hide them. A script's output reaches the user only through the agent's reply.
+
+- **Relay what the user would act on.** When a skill script prints a result, such as a table, a status, a report path, a set of findings, or a failure, put it in the reply. The script having printed it does not count as the user having seen it.
+- **Present it, don't paste it.** Rewrite the output in the safe Markdown above: tables follow the table rules, findings follow `ui-dark-cockpit`, and file paths become clickable links where the host supports them. Keep a Markdown table the script already shaped for the user as it is. Wrap raw text whose layout carries meaning, such as a diff or an error trace, in a fenced block.
+- **Keep every fact, drop the noise.** Show every row and number a decision depends on. Leave out progress lines, banners, and repeated boilerplate, and say when you shortened something long.
+- **Failures in full.** A non-zero exit is always reported, with the message that explains it, even when you go on to fix it.
 
 ## Questions
 
