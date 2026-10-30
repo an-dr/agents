@@ -1,6 +1,8 @@
 ---
 name: docs-html-report
 description: Build a self-contained HTML report page for people, with Mermaid diagrams rendered offline to inline SVG by a pinned build, each with a button that copies its source. Use from any skill that writes an HTML page — change reports, code reviews, project overviews — or when the user asks for an HTML report with diagrams.
+metadata:
+  dependencies: concept-dark-cockpit convention-artifact-layout
 ---
 
 # HTML report
@@ -9,7 +11,7 @@ One file a reader can open from disk, in an editor preview, or as a published pa
 
 ## Where the page goes
 
-A generated page is not repository content: take its directory from `artifact-storage`, which owns where artifacts live, and report the path it prints to the reader.
+A generated page is not repository content: take its directory from `convention-artifact-layout`, which owns where artifacts live, and report the path it prints to the reader.
 
 ## The page
 
@@ -19,7 +21,33 @@ A generated page is not repository content: take its directory from `artifact-st
 - Keep it usable at phone width: wide tables, code, and diagrams sit in their own `overflow-x: auto` container so the page never scrolls sideways.
 - Every page gets a theme switch and a print layout, both supplied by `embed-brand.ps1`: the switch cycles Auto / Light / Dark and is remembered per browser; print uses white paper and the light palette, with collapsed `<details>` opened. Never write a page's own theme control, `data-theme` handling, or print palette; page styles may only add layout rules under `@media print`.
 - Stamp the page with what it was generated from — commit, branch, or range — and the date.
-- A page that reports findings, checks, verdicts, or risks follows `ui-dark-cockpit`, which owns the problem levels and their colours. Embed its stylesheet with that skill's script, and use no other colour for status.
+- This skill decides whether a page needs problem levels. A page that reports findings, checks, verdicts, or risks gets them, as set out in the section below, and uses no other colour for status. Calling skills hand over items with a level (`critical`, `high`, `notice`, `info`, `ok`) and never name classes, colours, or scripts.
+
+## Problem levels
+
+This skill is the HTML implementor of `concept-dark-cockpit`, which owns the ladder and its rules. Mark each finding with one level class on its badge (`ck-badge`), its block (`ck-item`), or its table row. `embed-cockpit.ps1` then inlines the stylesheet, and does nothing when the page carries no `ck-` class, so the render step below is the same for every page.
+
+| Level | Class | Look |
+| --- | --- | --- |
+| `critical` | `ck-critical` | red, filled badge, tinted background, `✖` |
+| `high` | `ck-high` | amber, solid edge, `▲` |
+| `notice` | `ck-notice` | full ink, no hue, dashed edge, `◆` |
+| `info` | `ck-info` | secondary ink, no edge |
+| `ok` | `ck-ok` | low-contrast grey, no hue, no edge |
+
+- Collapse `ok` items into a closed `<details class="ck-quiet">`.
+- Normal content sits on an off-white page, never pure white; only lit `notice` and `high` items lift to the white `--ck-lift` surface, and `critical` keeps its red tint. In dark themes the lift is the lightest panel.
+- The script is idempotent and places `assets/dark-cockpit.css` before the page's own styles. It owns the palette for light and dark themes; page styles may use its `--ck-*` tokens but never define colours of their own for a level.
+
+### Branded reports
+
+When the reader asks for a branded report, the brand becomes the neutral layer:
+
+- **The brand owns the unlit levels.** Brand colours replace the neutral chrome: headings, rules, and layout. A desaturated brand tint may carry `ok` and `info`, and the brand accent may carry `notice`.
+- **Alarms stay off-brand.** `high` and `critical` never take a brand colour.
+- **A red or orange brand stays in the chrome.** Its accent does not carry `notice`, and inside a finding it may colour only underlined links, never a fill, an edge, or a badge. `critical` stays red and is told apart by its filled badge, tint, and glyph.
+
+To brand a page, define `--brand-ok`, `--brand-info`, and `--brand-notice`; the stylesheet reads them in place of its own greys, in either embedding order. `assets/brand.css` already defines them for every report. The alarm tokens have no brand input, and a page never overrides a `--ck-high*` or `--ck-critical*` token.
 
 ## Diagrams
 
@@ -46,9 +74,10 @@ After writing the page, and again after every later edit of it, inline the brand
 
 ```powershell
 pwsh <skill>/scripts/embed-brand.ps1 -Path <page>.html
+pwsh <skill>/scripts/embed-cockpit.ps1 -Path <page>.html
 pwsh <skill>/scripts/render-mermaid.ps1 -Path <page>.html
 ```
 
-The brand script places the stylesheet before the page's own styles, inserts the theme switch at the start of the body, and replaces both on a rerun.
+The cockpit script is described under problem levels. The brand script places the stylesheet before the page's own styles, inserts the theme switch at the start of the body, and replaces both on a rerun.
 
 `render-mermaid.ps1` runs the pinned Mermaid build in a local headless Chrome or Edge (`-Browser <exe>` when neither is found), and replaces each `<pre class="mermaid">` block with a figure holding a light and a dark SVG, a "Copy Mermaid" button, and the source. The page carries no renderer and shows the SVG matching the reader's theme. The script stops on any diagram that fails to parse and leaves the page unchanged. A rerun renders every figure again from its stored source, so edit a diagram by editing that source or by writing a new `<pre class="mermaid">` block. Never load Mermaid from a CDN.

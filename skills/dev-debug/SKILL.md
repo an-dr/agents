@@ -1,6 +1,8 @@
 ---
 name: dev-debug
 description: Root-cause a concrete failure through experiments, not just reading — reproduce, instrument, bisect, and involve the user where the agent cannot run the experiment itself. Use when a bug or unexplained behaviour resists quick code evaluation.
+metadata:
+  dependencies: none
 ---
 
 # Debug

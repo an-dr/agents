@@ -1,6 +1,8 @@
 ---
 name: docs-writing
-description: Write or update human-facing project documentation during Direct work or gated DOCS, including design and architecture prose. Use for content and structure; use docs-md-writing for Markdown mechanics and docs-readme for a README rewrite.
+description: Write or update human-facing project documentation during Direct work or gated DOCS, including design and architecture prose. Use for content and structure; use convention-markdown for Markdown mechanics and docs-readme for a README rewrite.
+metadata:
+  dependencies: agents-ui ai-prompt-writing convention-markdown docs-readme
 ---
 
 # Documentation writing
@@ -22,6 +24,6 @@ An ordinary refactoring should not require a documentation update. Give each spe
 
 ## Verify
 
-Use `docs-md-writing` for format and run its checker on touched Markdown. Resolve every internal link, including references to a moved page. Check claims against the layer above them: architecture against ADRs and the user's intent, design against architecture, and code against design. Check counts and field layouts rather than trusting them. No two documents should state one fact differently.
+Use `convention-markdown` for format and run its checker on touched Markdown. Resolve every internal link, including references to a moved page. Check claims against the layer above them: architecture against ADRs and the user's intent, design against architecture, and code against design. Check counts and field layouts rather than trusting them. No two documents should state one fact differently.
 
 When an existing behavior contract and code disagree, report the contradiction and evidence for which may be stale. Do not quietly choose either side; ask the user through `agents-ui` when that decision is needed. The written contract normally governs implementation, but abandoned documentation may be stale. For a README rewrite, follow `docs-readme` and verify its orientation against the repository evidence.

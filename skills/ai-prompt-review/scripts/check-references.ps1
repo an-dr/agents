@@ -61,7 +61,7 @@ foreach ($skill in $skills) {
 
 # Referenced skills and relative links must resolve.
 $sources = @(Get-ChildItem $root -Recurse -File -Include '*.md', '*.ps1', '*.psm1' |
-        Where-Object { $_.FullName -notmatch '\\(\.git|node_modules)\\' })
+        Where-Object { $_.FullName -notmatch '\\(\.git|\.artifacts|node_modules)\\' })
 foreach ($source in $sources) {
     $relative = Get-RelativePath $source.FullName
     $lines = @([IO.File]::ReadAllLines($source.FullName))

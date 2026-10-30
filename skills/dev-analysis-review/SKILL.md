@@ -2,10 +2,12 @@
 name: dev-analysis-review
 description: Review a diff for defects, security issues, structural problems, convention violations, and outdated patterns, including a dev-analysis-deslop pass over the same scope. Use during Direct review, VERIFY on an increment diff, SUMMARY on the full branch diff, or when the user requests a code review; record structured findings in the run's code-review JSON and render an HTML report through the bundled PowerShell scripts.
 metadata:
-  requires: artifact-storage docs-html-report ui-dark-cockpit
+  dependencies: agents-ui concept-clean-dependencies concept-evidence-grounding convention-artifact-layout dev-analysis-deslop dev-build docs-html-report
 ---
 
 # Code review
+
+Judge component structure and dependencies by `concept-clean-dependencies`, and ground each finding in evidence from the diff by `concept-evidence-grounding`.
 
 Use JSON as the canonical review record. Never hand-edit the JSON or the generated HTML; use the scripts so sections, stable IDs, and numbering remain valid.
 
@@ -31,10 +33,10 @@ Review architecture and reviewability against `dev-build`'s Architecture, Names 
 From the repository being reviewed, run:
 
 ```powershell
-pwsh <skill>/scripts/review-start.ps1 -Reference '<branch-or-ref>' -Scope <direct|verify|summary|requested> -ArtifactStorageSkill <artifact-storage>
+pwsh <skill>/scripts/review-start.ps1 -Reference '<branch-or-ref>' -Scope <direct|verify|summary|requested> -ConventionArtifactLayoutSkill <convention-artifact-layout>
 ```
 
-This takes a `code-review` directory from `artifact-storage` and writes a schema-versioned JSON record into it from `assets/review-template.json`. Review state and rendered reports stay local there unless the user explicitly requests otherwise.
+This takes a `code-review` directory from `convention-artifact-layout` and writes a schema-versioned JSON record into it from `assets/review-template.json`. Review state and rendered reports stay local there unless the user explicitly requests otherwise.
 
 Pass `-Run <YYYY-MM-DD>-<N>` to put the review in a run directory this run already has, so its review, change report, and overview sit together instead of taking a second letter. Every later step reads the run directory from the JSON path it is given, so findings and the rendered page stay together across midnight and across later runs.
 
@@ -69,9 +71,9 @@ A finding may carry one Mermaid diagram through `-Diagram '<source>'` or `-Diagr
 ## Render and report
 
 ```powershell
-pwsh <skill>/scripts/review-render.ps1 -ReviewPath <json> -HtmlReportSkill <docs-html-report> -DarkCockpitSkill <ui-dark-cockpit>
+pwsh <skill>/scripts/review-render.ps1 -ReviewPath <json> -HtmlReportSkill <docs-html-report>
 ```
 
-The renderer writes one self-contained `.html` page beside the JSON, in a fixed section order: verdict, summary, critical, high, improvements, positives, and renders diagrams offline through `docs-html-report`'s embed script. HTML is the only rendered format; do not produce a Markdown review. The page follows `ui-dark-cockpit`: critical findings are red, high amber, improvements unhued, and positives dimmed and collapsed. Summarize critical findings and the verdict in chat by the same skill's text rules, and give the path of the HTML file; keep it as a local inspection artifact.
+The renderer writes one self-contained `.html` page beside the JSON, in a fixed section order: verdict, summary, critical, high, improvements, positives, and renders diagrams offline through `docs-html-report`'s embed script. HTML is the only rendered format; do not produce a Markdown review. `docs-html-report` styles the levels: critical findings stand out, positives are dimmed and collapsed. Summarize critical findings and the verdict in chat by `agents-ui`'s text levels, and give the path of the HTML file; keep it as a local inspection artifact.
 
 Review only. Return fixes to BUILD in gated flows or to Direct implementation, and never weaken tests or expand scope to make the review pass.

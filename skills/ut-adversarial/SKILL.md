@@ -1,6 +1,8 @@
 ---
 name: ut-adversarial
 description: Build a bug-finding unit test suite before fixing anything. Use at the start of a debug or cleanup iteration to capture bugs as passing regression tests.
+metadata:
+  dependencies: none
 ---
 
 # Adversarial unit tests

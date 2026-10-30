@@ -18,7 +18,7 @@
       even when this script never ran.
 
     - Idempotent: blocks between the begin and end markers are replaced, never duplicated.
-    - Order-free with ui-dark-cockpit: the cockpit reads the --brand-* tokens through
+    - Order-free with the dark-cockpit sheet: the cockpit reads the --brand-* tokens through
       var() fallbacks, so either stylesheet may be embedded first.
 #>
 [CmdletBinding()]
@@ -51,7 +51,7 @@ if ($html -match $pattern) {
 }
 else {
     # Before the page's first stylesheet, so its own rules can refine the brand defaults.
-    $match = [regex]::Match($html, '<!-- ui-dark-cockpit begin -->|<style[\s>]|</head>', 'IgnoreCase')
+    $match = [regex]::Match($html, '<!-- docs-html-report:cockpit begin -->|<style[\s>]|</head>', 'IgnoreCase')
     if (-not $match.Success) {
         throw "$page has no <head>; write the page as a complete HTML document first."
     }

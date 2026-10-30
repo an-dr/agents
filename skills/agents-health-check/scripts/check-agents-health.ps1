@@ -231,7 +231,7 @@ else {
 }
 
 # --- Report ---
-# Dark cockpit (ui-dark-cockpit): problems first and marked, passing rows plain and last.
+# Finding levels (agents-ui): problems first and marked, passing rows plain and last.
 $rank = @{ fail = 0; warn = 1; info = 2; pass = 3 }
 $mark = @{ fail = '▲ **fail**'; warn = '◆ warn'; info = 'info'; pass = 'pass' }
 Write-Output '| Scope | Check | Status | Detail |'

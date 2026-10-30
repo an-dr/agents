@@ -1,6 +1,6 @@
 #Requires -Version 7
 <#
-    Checks Markdown files against the docs-md-writing format rules.
+    Checks Markdown files against the convention-markdown format rules.
     Exits non-zero on any error, including hard-wrapped paragraphs.
 #>
 [CmdletBinding()]

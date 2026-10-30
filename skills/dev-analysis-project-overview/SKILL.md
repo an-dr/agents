@@ -1,7 +1,9 @@
 ---
-name: dev-project-overview
+name: dev-analysis-project-overview
 description: Produce a single self-contained HTML overview of an unfamiliar repository — what it is, C4 levels 1 to 3 drawn from the code, a reading path, the drift between what the documentation claims and what the code does, and a ranked list of the project's real structural problems. Use when arriving at a codebase, onboarding someone onto it, or auditing its architecture and health.
 allowed-tools: Read, Grep, Glob, Write, Edit, Bash, PowerShell
+metadata:
+  dependencies: concept-evidence-grounding convention-artifact-layout docs-html-report docs-writing
 ---
 
 # Project overview
@@ -81,13 +83,13 @@ Say plainly when a category came up clean. "No import cycles found" is informati
 
 Build the page through `docs-html-report`: one self-contained HTML file that opens correctly from disk with no network access. Draw the C4 levels and the main flow as Mermaid diagrams — a `flowchart` with `subgraph` boundaries for each C4 level, a `sequenceDiagram` when the main flow is easier to follow as messages — and render them with that skill's embed script. Mark the system in focus, systems the project does not own, and inferred boxes with `classDef` stroke styles, and keep the legend in the caption.
 
-Start from `assets/overview-template.html`, which carries the structure and a light and dark palette. Its provenance badges and severity chips use `ui-dark-cockpit` levels:
-- a `verified` statement is normal, so it stays dim as `ck-ok`;
-- an `inferred` statement is `ck-notice`;
-- a `claimed` statement is `ck-high`;
-- severity `blocker` is `ck-critical`, `major` is `ck-high`, and `minor` is `ck-notice`.
+Start from `assets/overview-template.html`, which carries the structure and a light and dark palette. Its provenance badges and severity chips carry a level:
+- a `verified` statement is `ok`;
+- an `inferred` statement is `notice`;
+- a `claimed` statement is `high`;
+- severity `blocker` is `critical`, `major` is `high`, and `minor` is `notice`.
 
-Do not colour a badge any other way. Sections in this order:
+Add no other badge colour. Sections in this order:
 
 1. **What this is** — three sentences, then the one thing to remember if the reader remembers nothing else.
 2. **Facts** — languages, size, containers, test ratio, CI, licence, last activity, and the commit the page was generated from.
@@ -103,6 +105,8 @@ Do not colour a badge any other way. Sections in this order:
 
 ## Never fabricate
 
+This applies `concept-evidence-grounding`: observed, inferred, and claimed statements stay distinct.
+
 The failure mode of a generated overview is a confident, plausible, wrong architecture diagram, and it is worse than no overview because the reader will trust it for weeks.
 
 - Every path, command, port, and environment variable on the page exists in the repository.
@@ -112,6 +116,6 @@ The failure mode of a generated overview is a confident, plausible, wrong archit
 
 ## Output
 
-Write `project-overview.html` to the `overview` directory `artifact-storage` gives you in the scanned repository, then run `docs-html-report`'s brand and Mermaid render scripts and `ui-dark-cockpit`'s embed script on it. Offer to publish it as an Artifact when the user wants a link rather than a file.
+Write `project-overview.html` to the `overview` directory `convention-artifact-layout` gives you in the scanned repository, then run `docs-html-report`'s render scripts on it. Offer to publish it as an Artifact when the user wants a link rather than a file.
 
 In the chat, report the count of drift rows and the top three problems with their severities, so the user learns the headline without opening the page.

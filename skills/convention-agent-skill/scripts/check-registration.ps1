@@ -2,13 +2,18 @@
 <#
     Checks that the agents repository describes its skills consistently:
     every skill folder is registered in AGENTS.md and skills/README.md with
-    the same one-line use, frontmatter names match folders, scripts never
-    guess another skill's location, passed skills are declared with no cycles, and no
-    code lives outside skills/ except the root test runner.
-    Prints a Markdown table of problems and exits 1 when there are any.
+    the same one-line use, frontmatter names match folders, every skill declares
+    the skills it names in metadata.dependencies (PROHIBITED forbids any, none
+    allows none today), and no code lives outside skills/ except the root test
+    runner. Dependency cycles are listed with their path.
+    Prints a Markdown table of problems and exits 1 when there are any, or on a
+    cycle when -FailOnCycle is given.
 #>
 [CmdletBinding()]
-param([string]$Root = (Join-Path $PSScriptRoot '../../..'))
+param(
+    [string]$Root = (Join-Path $PSScriptRoot '../../..'),
+    [switch]$FailOnCycle
+)
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -32,20 +37,51 @@ function Get-SkillTable([string]$Path) {
 }
 
 function Get-Frontmatter([string]$Path) {
-    <# Returns name and metadata.requires from a SKILL.md frontmatter. #>
+    <# Returns name, metadata.dependencies (raw string, or $null), and the body of a SKILL.md. #>
     $lines = [IO.File]::ReadAllLines($Path)
-    $result = @{ name = $null; requires = @() }
+    $result = @{ name = $null; dependencies = $null; body = '' }
     if ($lines.Count -eq 0 -or $lines[0] -ne '---') { return $result }
     $inMetadata = $false
-    for ($i = 1; $i -lt $lines.Count -and $lines[$i] -ne '---'; $i++) {
+    $end = $lines.Count
+    for ($i = 1; $i -lt $lines.Count; $i++) {
         $line = $lines[$i]
+        if ($line -eq '---') { $end = $i; break }
         if ($line -match '^name:\s*(?<v>\S+)') { $result.name = $Matches['v'] }
         if ($line -match '^\S') { $inMetadata = $line -match '^metadata:\s*$' }
-        if ($inMetadata -and $line -match '^\s+requires:\s*(?<v>.+)$') {
-            $result.requires = @($Matches['v'].Trim() -split '\s+')
+        if ($inMetadata -and $line -match '^\s+dependencies:\s*(?<v>.+)$') {
+            $result.dependencies = $Matches['v'].Trim()
         }
     }
+    if ($end + 1 -lt $lines.Count) { $result.body = ($lines[($end + 1)..($lines.Count - 1)] -join "`n") }
     return $result
+}
+
+function Find-DependencyCycle([hashtable]$Graph) {
+    <# One shortest cycle through each skill that lies on a cycle, deduplicated by rotation. #>
+    $cycles = @{}
+    foreach ($start in ($Graph.Keys | Sort-Object)) {
+        $queue = [System.Collections.Generic.Queue[object]]::new()
+        $queue.Enqueue(@($start))
+        $seen = @{ $start = $true }
+        $found = $null
+        while ($queue.Count -gt 0 -and -not $found) {
+            $path = $queue.Dequeue()
+            foreach ($next in $Graph[$path[-1]]) {
+                if ($next -eq $start) { $found = $path; break }
+                if (-not $seen.ContainsKey($next) -and $Graph.ContainsKey($next)) {
+                    $seen[$next] = $true
+                    $queue.Enqueue(@($path + $next))
+                }
+            }
+        }
+        if ($found) {
+            $smallest = ($found | Sort-Object)[0]
+            $rotate = [array]::IndexOf($found, $smallest)
+            $ordered = @($found[$rotate..($found.Count - 1)]) + @(if ($rotate -gt 0) { $found[0..($rotate - 1)] })
+            $cycles[($ordered -join ' -> ') + " -> $($ordered[0])"] = $true
+        }
+    }
+    return @($cycles.Keys | Sort-Object)
 }
 
 # ---- registration ----------------------------------------------------------
@@ -67,50 +103,37 @@ foreach ($name in @($policy.Keys) + @($catalog.Keys) | Sort-Object -Unique) {
 
 # ---- frontmatter and dependencies -----------------------------------------
 
-$requires = @{}
+$graph = @{}
 foreach ($name in $folders) {
     $skillFile = Join-Path $skillsDir "$name/SKILL.md"
     if (-not (Test-Path -LiteralPath $skillFile)) { Add-Problem $name 'has no SKILL.md'; continue }
     $front = Get-Frontmatter $skillFile
     if ($front.name -cne $name) { Add-Problem $name "frontmatter name is '$($front.name)'" }
-    $requires[$name] = $front.requires
-    foreach ($dependency in $front.requires) {
-        if ($dependency -notin $folders) { Add-Problem $name "requires '$dependency', which does not exist" }
-    }
-}
 
-# A script never guesses where another skill is installed; the agent passes its folder.
-$siblingPattern = '\.\./\.\./(?<skill>[a-z0-9-]+)'
-foreach ($file in Get-ChildItem -LiteralPath $skillsDir -Recurse -File -Include '*.ps1', '*.psm1') {
-    $relative = $file.FullName.Substring($Root.Length + 1) -replace '\\', '/'
-    foreach ($match in [regex]::Matches([IO.File]::ReadAllText($file.FullName), $siblingPattern)) {
-        $target = $match.Groups['skill'].Value
-        if ($target -in $folders) {
-            Add-Problem $relative "guesses where $target is installed; take its folder as a -<Name>Skill parameter"
+    $raw = $front.dependencies
+    if ($null -eq $raw) { Add-Problem $name 'has no metadata.dependencies; declare the skills it names, or none, or PROHIBITED'; continue }
+    $declared = if ($raw -ceq 'PROHIBITED' -or $raw -ceq 'none') { @() } else { @($raw -split '\s+') }
+    foreach ($dependency in $declared) {
+        if ($dependency -notin $folders) { Add-Problem $name "declares dependency '$dependency', which does not exist" }
+    }
+    $graph[$name] = @($declared | Where-Object { $_ -in $folders })
+
+    # Every skill the instructions name is a dependency, passed folder or not.
+    $mentioned = @($folders | Where-Object {
+            $_ -ne $name -and $front.body -match ('(?<![\w-])' + [regex]::Escape($_) + '(?![\w-])')
+        })
+    foreach ($other in $mentioned) {
+        if ($raw -ceq 'PROHIBITED') { Add-Problem "skills/$name/SKILL.md" "is PROHIBITED from depending on other skills but names $other" }
+        elseif ($other -notin $declared) { Add-Problem "skills/$name/SKILL.md" "names $other but does not declare it in dependencies" }
+    }
+    foreach ($dependency in $declared) {
+        if ($dependency -in $folders -and $dependency -notin $mentioned) {
+            Add-Problem "skills/$name/SKILL.md" "declares $dependency but never names it"
         }
     }
 }
 
-# Every other skill's folder a SKILL.md command passes, as <skill-name>, is declared.
-foreach ($name in $folders) {
-    $skillFile = Join-Path $skillsDir "$name/SKILL.md"
-    if (-not (Test-Path -LiteralPath $skillFile)) { continue }
-    $used = [regex]::Matches([IO.File]::ReadAllText($skillFile), '-\w+Skill\s+<(?<skill>[a-z0-9-]+)>') |
-        ForEach-Object { $_.Groups['skill'].Value } | Where-Object { $_ -in $folders -and $_ -ne $name } | Sort-Object -Unique
-    foreach ($dependency in $used) {
-        if ($dependency -notin $requires[$name]) {
-            Add-Problem "skills/$name/SKILL.md" "passes <$dependency> but does not declare it in requires"
-        }
-    }
-}
-
-foreach ($name in $requires.Keys) {
-    foreach ($dependency in $requires[$name]) {
-        if ($requires.ContainsKey($dependency) -and $name -in $requires[$dependency]) {
-            Add-Problem $name "depends on $dependency, which depends back on it"
-        }
-    }
-}
+$cycles = @(Find-DependencyCycle $graph)
 
 # ---- paths and layout ------------------------------------------------------
 
@@ -133,8 +156,19 @@ foreach ($file in Get-ChildItem -LiteralPath $Root -Recurse -File -Include '*.ps
 
 # ---- report ----------------------------------------------------------------
 
+function Write-Cycle {
+    if ($cycles.Count -eq 0) { return }
+    Write-Output ''
+    Write-Output "Dependency cycles ($($cycles.Count), shortest through each skill on one):"
+    Write-Output ''
+    foreach ($cycle in $cycles) { Write-Output "- ``$cycle``" }
+}
+$cycleFails = $FailOnCycle -and $cycles.Count -gt 0
+
 if ($problems.Count -eq 0) {
     Write-Output "Registration check passed: $($folders.Count) skills, both tables and dependencies agree."
+    Write-Cycle
+    if ($cycleFails) { exit 1 }
     exit 0
 }
 Write-Output "Registration check: $($problems.Count) problem(s)."
@@ -144,4 +178,5 @@ Write-Output '| --- | --- |'
 foreach ($problem in $problems) {
     Write-Output "| ``$($problem.Where)`` | $($problem.What -replace '\|', '\|') |"
 }
+Write-Cycle
 exit 1

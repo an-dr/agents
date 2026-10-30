@@ -3,7 +3,7 @@
 Rebuilds the feature branch as the logical commits a plan names, for the
 Regroup mode. The plan is a JSON file:
 
-    { "commits": [ { "message": "<git-commit message>", "paths": ["dir", "file"] } ] }
+    { "commits": [ { "message": "<commit message>", "paths": ["dir", "file"] } ] }
 
 Commits are made in plan order from the branch's final tree; each stages its
 paths with `git add -A`. Every message is checked before anything is touched,
@@ -12,18 +12,18 @@ result must hold exactly the original tree.
 #>
 param(
     [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$Plan,
-    [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$GitCommitSkill,
+    [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$ConventionCommitMessageSkill,
     [string]$BaseBranch
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 Import-Module (Join-Path $PSScriptRoot 'Integrate.Common.psm1') -Force
-# Messages are checked through git-commit's public CLI, never its modules. The agent
+# Messages are checked through convention-commit-message's public CLI, never its modules. The agent
 # passes that skill's folder, because skills need not be installed side by side.
-$checkMessage = Join-Path $GitCommitSkill 'scripts/check-message.ps1'
+$checkMessage = Join-Path $ConventionCommitMessageSkill 'scripts/check-message.ps1'
 if (-not (Test-Path -LiteralPath $checkMessage)) {
-    throw "-GitCommitSkill must be the git-commit skill's folder; '$checkMessage' is missing."
+    throw "-ConventionCommitMessageSkill must be the convention-commit-message folder; '$checkMessage' is missing."
 }
 
 $base = Get-IntegrateBaseBranch -RequestedBranch $BaseBranch
@@ -47,7 +47,7 @@ for ($i = 0; $i -lt $commits.Count; $i++) {
     if ($LASTEXITCODE -ne 0) { $rejected++ }
 }
 if ($rejected -gt 0) {
-    throw 'A plan message breaks the git-commit format; nothing was regrouped.'
+    throw 'A plan message breaks the commit message format; nothing was regrouped.'
 }
 
 $point = Get-IntegrateSquashPoint -BaseBranch $base

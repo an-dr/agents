@@ -1,5 +1,5 @@
-/* ui-dark-cockpit: what is normal stays dark, only problems light up.
-   Owned by skills/ui-dark-cockpit; embed with its script, never copy by hand.
+/* dark-cockpit: what is normal stays dark, only problems light up.
+   Owned by docs-html-report, which implements concept-dark-cockpit; embed with embed-cockpit.ps1, never copy by hand.
    The unlit levels read a brand's --brand-ok, --brand-info, and --brand-notice when the
    page defines them, and lit items lift to its --brand-lift surface. The alarms,
    --ck-high* and --ck-critical*, have no brand input. */

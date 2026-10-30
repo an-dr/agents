@@ -2,15 +2,15 @@
 <#
     Reports the repository evidence a README may rely on, then every claim the
     README makes that the evidence does not support, then the README's Markdown
-    format through docs-md-writing's checker. Exits non-zero on a
+    format through convention-markdown's checker. Exits non-zero on a
     contradiction, an unresolved link, or a Markdown format error.
 #>
 [CmdletBinding()]
 param(
     [string]$Path = '.',
     [string]$Readme = 'README.md',
-    # docs-md-writing's folder, passed by the agent because skills need not sit side by side.
-    [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$DocsMdWritingSkill
+    # convention-markdown's folder, passed by the agent because skills need not sit side by side.
+    [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$ConventionMarkdownSkill
 )
 
 Set-StrictMode -Version Latest
@@ -254,17 +254,17 @@ if ($images.Count -gt 0 -and $body -inotmatch '!\[') {
         'The repository contains images that the README never shows.')
 }
 
-# ---- markdown format (docs-md-writing) ------------------------------------
+# ---- markdown format (convention-markdown) ------------------------------------
 
-$markdownChecker = Join-Path $DocsMdWritingSkill 'scripts/check-markdown.ps1'
+$markdownChecker = Join-Path $ConventionMarkdownSkill 'scripts/check-markdown.ps1'
 $markdownFailed = $false
 Write-Output ''
 if (Test-Path -LiteralPath $markdownChecker) {
-    Write-Output 'Markdown format (docs-md-writing):'
+    Write-Output 'Markdown format (convention-markdown):'
     & pwsh -NoProfile -File $markdownChecker $readmePath | ForEach-Object { Write-Output "  $_" }
     $markdownFailed = $LASTEXITCODE -ne 0
 } else {
-    Write-Output "Markdown format not checked: -DocsMdWritingSkill has no $markdownChecker."
+    Write-Output "Markdown format not checked: -ConventionMarkdownSkill has no $markdownChecker."
     $markdownFailed = $true
 }
 

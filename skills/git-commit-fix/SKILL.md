@@ -1,14 +1,14 @@
 ---
 name: git-commit-fix
-description: Rewrite existing commit messages on a branch so they match the git-commit format, preserving every tree, author, and date. Use before a first release or before integration when history predates the format.
+description: Rewrite existing commit messages on a branch so they match the commit message format, preserving every tree, author, and date. Use before a first release or before integration when history predates the format.
 allowed-tools: PowerShell
 metadata:
-  requires: git-commit
+  dependencies: convention-commit-message git-integrate
 ---
 
 # Fix commit history
 
-Rewrites messages only. The `git-commit` skill defines the format and holds the validator both skills call, so read it first and never restate its rules here.
+Rewrites messages only. `convention-commit-message` defines the format and holds the validator both skills call, so read the convention first and never restate its rules here.
 
 Rewriting published history forces every other clone to recover by hand. Run this only where that is agreed: before a first release, or on an unpushed feature branch.
 
@@ -17,7 +17,7 @@ Rewriting published history forces every other clone to recover by hand. Run thi
 1. Find what breaks the format. Changes nothing:
 
 ```powershell
-pwsh <skill>/scripts/check-history.ps1 -GitCommitSkill <git-commit> [-Range <rev>] [-FromRoot] [-FailingOnly]
+pwsh <skill>/scripts/check-history.ps1 -ConventionCommitMessageSkill <convention-commit-message> [-Range <rev>] [-FromRoot] [-FailingOnly]
 ```
 
 Without arguments it checks the merge base with the default branch to `HEAD`, and refuses to guess a range while the default branch is checked out.
@@ -27,7 +27,7 @@ Without arguments it checks the merge base with the default branch to `HEAD`, an
 3. Apply the replacements:
 
 ```powershell
-pwsh <skill>/scripts/rewrite-messages.ps1 -MessageDirectory <directory> -GitCommitSkill <git-commit> [-Range <rev>] [-FromRoot]
+pwsh <skill>/scripts/rewrite-messages.ps1 -MessageDirectory <directory> -ConventionCommitMessageSkill <convention-commit-message> [-Range <rev>] [-FromRoot]
 ```
 
 Every replacement is validated before any commit is written, so a rule violation aborts with history untouched. The script records a backup ref under `refs/backup/git-commit-fix/`, preserves author and committer identity and dates, and verifies that the rewritten tip has an identical tree to the old one — a content change aborts the run.

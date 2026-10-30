@@ -1,12 +1,13 @@
 ---
-name: docs-md-writing
-description: Format conventions for Markdown files — line breaks, headings, lists, fences, links, and tables — with a checker script. Use whenever writing or editing any .md file, including documentation and SKILL.md files.
-allowed-tools: PowerShell
+name: convention-markdown
+description: Format rules for Markdown files — one line per paragraph, heading levels, lists, fences, emphasis, links, and tables. Use when writing, editing, or reviewing any .md file, including documentation and SKILL.md files; check-markdown.ps1 in this skill checks it.
+metadata:
+  dependencies: PROHIBITED
 ---
 
-# Markdown writing
+# Convention: Markdown
 
-Mechanics only. `docs-writing` owns human-facing content and structure; `ai-prompt-writing` owns agent-loaded instructions.
+Mechanics only: content and structure belong to whoever writes the document. The scripts below enforce these rules. A commit message is not Markdown and has its own format.
 
 ## Line breaks
 
@@ -36,6 +37,6 @@ Break a line only where the break carries meaning: between list items, between t
 pwsh <skill>/scripts/check-markdown.ps1 -Path <file-or-directory>
 ```
 
-The script exits non-zero on any rule violation, including a hard-wrapped paragraph. HTML comments are excluded from prose checks; visible text around them is still checked.
+The script exits non-zero on any rule violation, including a hard-wrapped paragraph. HTML comments are excluded from prose checks; visible text around them is still checked. Run it on every `.md` file you write or touch.
 
-Run the comment and paragraph regression cases with `pwsh <skill>/scripts/test-markdown.ps1`.
+`reflow-markdown.ps1` in the same folder joins hard-wrapped paragraphs. Run the comment and paragraph regression cases with `pwsh <skill>/scripts/test-markdown.ps1`.

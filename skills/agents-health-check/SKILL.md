@@ -1,7 +1,9 @@
 ---
 name: agents-health-check
-description: Diagnose why an AI tool is not following this workflow — the policy is installed but the agent ignores it, gated work bypasses dev-workflow, or one tool obeys while another does not. Checks the machine install, this repository's opt-in wiring, and whether the bot actually loaded the policy, then recommends the fix.
+description: Diagnose why an AI tool is not following this workflow — the policy is installed but the agent ignores it, gated work bypasses the workflow controller, or one tool obeys while another does not. Checks the machine install, this repository's opt-in wiring, and whether the bot actually loaded the policy, then recommends the fix. Use when a tool ignores the policy or one tool follows it and another does not.
 allowed-tools: PowerShell, Read, Grep, Glob
+metadata:
+  dependencies: agents-install agents-retro git-commit
 ---
 
 # Agents health check

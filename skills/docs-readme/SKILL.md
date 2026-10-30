@@ -3,14 +3,14 @@ name: docs-readme
 description: Rewrite or update a repository's README from what the code actually contains — read the manifests, entry points, CI, tests, and docs first, then keep, reorder, cut, and add sections against that evidence. Use when a README is missing, stale, or disorganised, when it needs updating after a change, when a project needs one from scratch, or when the user wants the repository to read well to a newcomer.
 allowed-tools: Read, Grep, Glob, Write, Edit, PowerShell
 metadata:
-  requires: docs-md-writing
+  dependencies: agents-ui convention-markdown convention-readme docs-gif docs-screenshot docs-writing
 ---
 
 # README
 
 The README is the only document most readers will open. This skill edits it against the repository's own evidence: the code is ground truth, and the existing README is a claim about the code that may already be false.
 
-Load `docs-md-writing` before writing a line: its rules govern line breaks, lists, tables, and links in the README, including in sections left otherwise unchanged. Human-facing content principles come from `docs-writing`. What belongs in `docs/`, an ADR, or a design doc stays there and is linked, never summarised twice.
+Load `convention-markdown` before writing a line: its rules govern line breaks, lists, tables, and links in the README, including in sections left otherwise unchanged. Human-facing content principles come from `docs-writing`. What belongs in `docs/`, an ADR, or a design doc stays there and is linked, never summarised twice.
 
 ## Read the repository first
 
@@ -43,58 +43,17 @@ Cutting is work. A section removed for redundancy improves the README as much as
 
 Relocating is the one that goes wrong quietly. A README that restates a specification kept elsewhere drifts from it, and the copy readers reach first is the one that is wrong: check such a section against its owning document before deciding, because the discrepancy is usually already there.
 
-## Baseline structure
+## Write to the convention
 
-In this order, every time:
-
-1. Title and a one-line description of what it is — not a tagline.
-2. Badges, only where they are accurate. A stale or broken badge is worse than none.
-3. Why it exists and what it solves, in two to four sentences.
-4. Table of contents, only past roughly four screens.
-5. Installation — copy-pasteable commands with no prose between them.
-6. Quickstart — one realistic example of the primary use, not a hello-world, if the project has an obvious main job.
-7. Features — five to ten scannable bullets, not an inventory.
-8. Configuration — the common knobs only, linking out for the rest.
-9. Documentation — a pointer to `docs/`, the wiki, or the ADRs.
-10. Contributing — one line is enough signal.
-11. License.
-12. Status — actively maintained, experimental, or archived. Readers weight this heavily.
-
-## Conditional modules
-
-Add one only where the repository shows the signal.
-
-| Signal | Add |
-| --- | --- |
-| CLI tool | the command and flag reference, or the generated `--help` output |
-| Library or package | an API summary, or a link to the generated documentation |
-| Tests present | a development section: how to run the tests and build from source |
-| Monorepo | a repository map of what lives where |
-| Website, GUI application, or game | a screenshot near the top, captured with `docs-screenshot`; a GIF from `docs-gif` only when the user asks for one |
-| `docs/adr/` or non-trivial architecture | a link out, never an inlined summary |
-| Known gaps | a short "not yet supported" section — it undersells slightly and earns trust |
-| Community-facing | code of conduct, support channels, FAQ |
-
-## Never fabricate
-
-The failure mode of a generated README is plausible filler, and it is worse than a thin README because it cannot be trusted.
-
-- No `LICENSE` file means no license section. Report the gap; do not name a license.
-- No tests means no testing instructions. No CI means no build badge.
-- Never invent a command, flag, environment variable, or module path. Every command in the README must exist in the repository.
-- Where a fact is missing or ambiguous, it goes to the user as an open question. Ending with three open questions beats filling three gaps with guesses.
-
-A screenshot must show the project as it is now. Replace an existing image that shows an outdated interface, recapturing it with `docs-screenshot`; never keep or link an image whose subject the repository no longer contains. When the project cannot be launched here, list the screenshot as an open question instead of skipping it silently.
-
-Keep the project's own voice where it has one. The goal is this project's README done well, not a template with the nouns replaced.
+Shape the README by `convention-readme`: its baseline order, conditional modules, and truth rules decide what stays, moves, or is added. Never fabricate; a missing fact becomes an open question. Capture screenshots with `docs-screenshot` and a GIF with `docs-gif` only when the user asks. A screenshot must show the project as it is now: recapture an outdated one, and when the project cannot be launched here, list the screenshot as an open question instead of skipping it silently.
 
 ## Check
 
 ```powershell
-pwsh <skill>/scripts/check-readme.ps1 -DocsMdWritingSkill <docs-md-writing> [-Path <repo>] [-Readme <file>]
+pwsh <convention-readme>/scripts/check-readme.ps1 -ConventionMarkdownSkill <convention-markdown> [-Path <repo>] [-Readme <file>]
 ```
 
-The script reports the evidence it found, then every claim the README makes that the repository does not support, every unresolved relative link, duplicated headings, missing baseline sections, and sections out of baseline order. It then runs `docs-md-writing`'s checker on the README and prints its findings. It exits non-zero on a contradiction, a dead link, or a Markdown format error. Run it before writing to see the evidence and the existing file's faults, and again afterwards; deliver only once it exits zero.
+Run it before writing to see the evidence and the existing file's faults, and again afterwards; deliver only once it exits zero.
 
 ## Output
 

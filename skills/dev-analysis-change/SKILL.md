@@ -1,11 +1,13 @@
 ---
 name: dev-analysis-change
 description: Produce one human-facing HTML report of a finished change — what was done and why, the responsibility of every new block, rendered Mermaid dependency graphs, a section per new and per upgraded component, decisions, and verification — explained with diagrams and plain prose rather than code. Use at the end of a big change, or when the user accepts the offer at the end of a smaller one.
+metadata:
+  dependencies: convention-artifact-layout dev-analysis-project-overview docs-html-report docs-writing
 ---
 
 # Change report
 
-One HTML page that lets a reader who did not watch the work understand what changed, why, and how the parts now fit. It explains a change; `dev-project-overview` explains a whole repository.
+One HTML page that lets a reader who did not watch the work understand what changed, why, and how the parts now fit. It explains a change; `dev-analysis-project-overview` explains a whole repository.
 
 Use `docs-writing` for the prose. The report describes work already delivered; it edits nothing in the repository.
 
@@ -35,14 +37,14 @@ Omit a section only when it would be empty, and say so in the summary.
 ## Explain with diagrams, not code
 
 - Draw structure and flow as Mermaid: `flowchart` for layers and dependencies, `sequenceDiagram` for handshakes and request flows, decision flowcharts for branching behaviour.
-- Mark the Requests statuses and the Verification results by `ui-dark-cockpit`:
-  - delivered requests and passed checks stay dim as `ck-ok`;
-  - a partial request or an unverified item is `ck-notice`;
-  - a request not done is `ck-high`;
-  - a failed check that ships is `ck-critical`.
+- Give the Requests statuses and the Verification results a level, and let `docs-html-report` style them:
+  - delivered requests and passed checks are `ok`;
+  - a partial request or an unverified item is `notice`;
+  - a request not done is `high`;
+  - a failed check that ships is `critical`.
 - Build the page and its diagrams through `docs-html-report`, which owns the page rules, the diagram format, and the offline Mermaid renderer.
 - Prose is plain and short. Code appears only as interface signatures or the few lines an adopter must write; never paste implementation.
 
 ## Write and deliver
 
-Write the page as `<short-name>.html` in the `reports` directory `artifact-storage` gives you — this run's existing directory, so the report sits beside its code review — and render its diagrams as `docs-html-report` describes, again after every later edit of the page. When the tool can publish pages, publish it and give the user the link; otherwise name the file path. Tell the user when the page is private to them.
+Write the page as `<short-name>.html` in the `reports` directory `convention-artifact-layout` gives you — this run's existing directory, so the report sits beside its code review — and render its diagrams as `docs-html-report` describes, again after every later edit of the page. When the tool can publish pages, publish it and give the user the link; otherwise name the file path. Tell the user when the page is private to them.

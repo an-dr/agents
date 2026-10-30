@@ -1,6 +1,8 @@
 ---
 name: dev-workflow-clean-branch
-description: Remove `.progress/` from every commit on a linear workflow feature branch before integration, preserving non-progress content and commit metadata while pruning commits that become empty.
+description: Remove `.progress/` from every commit on a linear workflow feature branch, preserving non-progress content and commit metadata while pruning commits that become empty. Use before integrating a workflow feature branch.
+metadata:
+  dependencies: dev-workflow git-integrate
 ---
 
 # Remove workflow progress from history

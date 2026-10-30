@@ -1,6 +1,6 @@
 #Requires -Version 7
 <#
-    Reports every commit in a range whose message breaks the git-commit format.
+    Reports every commit in a range whose message breaks the commit message format.
     Changes nothing; exits non-zero when any commit needs rewriting.
 #>
 [CmdletBinding()]
@@ -8,18 +8,18 @@ param(
     [string]$Range,
     [switch]$FromRoot,
     [switch]$FailingOnly,
-    [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$GitCommitSkill
+    [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$ConventionCommitMessageSkill
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 Import-Module (Join-Path $PSScriptRoot 'GitCommitFix.Common.psm1') -Force
-# Messages are checked through git-commit's public CLI, never its modules. The agent
+# Messages are checked through convention-commit-message's public CLI, never its modules. The agent
 # passes that skill's folder, because skills need not be installed side by side.
-$checkMessage = Join-Path $GitCommitSkill 'scripts/check-message.ps1'
+$checkMessage = Join-Path $ConventionCommitMessageSkill 'scripts/check-message.ps1'
 if (-not (Test-Path -LiteralPath $checkMessage)) {
-    throw "-GitCommitSkill must be the git-commit skill's folder; '$checkMessage' is missing."
+    throw "-ConventionCommitMessageSkill must be the convention-commit-message folder; '$checkMessage' is missing."
 }
 
 $target = Resolve-RewriteRange -Range $Range -FromRoot:$FromRoot -AllowDirty

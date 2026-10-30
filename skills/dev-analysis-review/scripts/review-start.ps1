@@ -6,8 +6,8 @@ param(
     [Parameter(Mandatory)]
     [ValidateSet('direct', 'verify', 'summary', 'requested')]
     [string]$Scope,
-    # artifact-storage's folder, passed by the agent because skills need not sit side by side.
-    [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$ArtifactStorageSkill,
+    # convention-artifact-layout's folder, passed by the agent because skills need not sit side by side.
+    [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$ConventionArtifactLayoutSkill,
     [string]$Run
 )
 
@@ -16,7 +16,7 @@ $ErrorActionPreference = 'Stop'
 Import-Module (Join-Path $PSScriptRoot 'Review.Common.psm1') -Force
 
 $repositoryRoot = Get-ReviewRepositoryRoot
-$reviewDirectory = Initialize-ReviewDirectory -RepositoryRoot $repositoryRoot -ArtifactStorageSkill $ArtifactStorageSkill -Run $Run
+$reviewDirectory = Initialize-ReviewDirectory -RepositoryRoot $repositoryRoot -ConventionArtifactLayoutSkill $ConventionArtifactLayoutSkill -Run $Run
 $templatePath = Join-Path $PSScriptRoot '../assets/review-template.json'
 $review = Get-Content -Raw -LiteralPath $templatePath | ConvertFrom-Json
 $slug = ConvertTo-ReviewSlug -Value $Reference

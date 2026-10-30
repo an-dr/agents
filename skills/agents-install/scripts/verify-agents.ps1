@@ -119,7 +119,7 @@ foreach ($tool in $targets) {
 }
 
 # --- Report ---
-# Dark cockpit (ui-dark-cockpit): problems first and marked, passing rows plain and last.
+# Finding levels (agents-ui): problems first and marked, passing rows plain and last.
 $rank = @{ fail = 0; warn = 1; pass = 2 }
 $mark = @{ fail = '▲ **fail**'; warn = '◆ warn'; pass = 'pass' }
 Write-Output '| Scope | Check | Status | Detail |'

@@ -1,6 +1,8 @@
 ---
 name: dev-analysis-summary
-description: Prepare the full-branch integration summary after all Detailed increments are committed by reviewing the complete diff, confirming tests and documentation, and reporting changes, motivation, exclusions, and verification.
+description: Prepare the full-branch integration summary by reviewing the complete diff, confirming tests and documentation, and reporting changes, motivation, exclusions, and verification. Use after all Detailed increments are committed, before the integration gate.
+metadata:
+  dependencies: agents-ui convention-adr dev-analysis-change dev-analysis-review git-integrate
 ---
 
 # Integration summary
@@ -9,7 +11,7 @@ Use during `SUMMARY`, after every increment is committed and before the final us
 
 1. Run the `dev-analysis-review` skill with `summary` scope against the workflow's base branch.
 2. Reconcile the branch against the intake request list in `.progress/workflow.json`. Every request the branch does not deliver is named in the handoff — as a deliberate exclusion, or as work that was missed. A request the user never withdrew and the branch never satisfied is a defect in the delivery, not a detail for the release notes.
-3. Confirm the full test matrix, documentation consistency, exclusions, and any remaining risk. Documentation consistency includes the ADRs the branch added: none of them is integrated yet, so one correcting another from the same branch is a draft that should have been edited — collapse them before the handoff (`docs-adr`).
+3. Confirm the full test matrix, documentation consistency, exclusions, and any remaining risk. Documentation consistency includes the ADRs the branch added: none of them is integrated yet, so one correcting another from the same branch is a draft that should have been edited — collapse them before the handoff (`convention-adr`).
 4. Return this exact handoff shape:
 
 ```text
@@ -29,7 +31,7 @@ Use during `SUMMARY`, after every increment is committed and before the final us
 <numbered test steps>
 ```
 
-In `Requests delivered` and `How to verify`, follow `ui-dark-cockpit`'s text rules. List unmet requests and known failures first, with their level glyph. Delivered requests follow as plain lines.
+In `Requests delivered` and `How to verify`, follow `agents-ui`'s finding levels. List unmet requests and known failures first, with their level glyph. Delivered requests follow as plain lines.
 
 5. Run the `dev-analysis-change` skill for the branch and give the user the report's link or path with the handoff.
 

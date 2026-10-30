@@ -1,6 +1,8 @@
 ---
 name: dev-analysis-deslop
-description: Analyse code and documentation for illogical design, contradictions, questionable complexity, misleading prose, and AI-like artifacts that make a human's work harder. Apply to uncommitted changes, a commit or range, a branch diff, selected files or directories, or a whole repository; deliver an HTML findings table with stable IDs, priorities, evidence, and proposed changes.
+description: Analyse code and documentation for illogical design, contradictions, questionable complexity, misleading prose, and AI-like artifacts that make a human's work harder, on uncommitted changes, a commit or range, a branch diff, selected files or directories, or a whole repository, and deliver an HTML findings table with stable IDs, priorities, evidence, and proposed changes. Use when asked to deslop, audit coherence, or find questionable artifacts in a defined scope.
+metadata:
+  dependencies: agents-ui ai-prompt-review convention-artifact-layout dev-analysis-review docs-html-report
 ---
 
 # Code and documentation coherence analysis
@@ -35,7 +37,7 @@ Each finding states the observed evidence with file and line or documentation se
 
 Use these priorities, ordered by consequence rather than how easy a fix is:
 
-- **P0 — critical:** demonstrated wrong results, data loss, security exposure, or a contradiction that blocks safe use. Map to `ui-dark-cockpit`'s `critical` level.
+- **P0 — critical:** demonstrated wrong results, data loss, security exposure, or a contradiction that blocks safe use. Map to the `critical` level.
 - **P1 — high:** a confirmed problem with substantial user or maintenance cost that should be fixed soon. Map to `high`.
 - **P2 — normal:** a local inconsistency, avoidable complexity, or documentation defect with a concrete cost. Map to `notice`.
 - **P3 — low:** a small clarity improvement with an explained benefit. Map to `notice`.
@@ -44,7 +46,7 @@ Keep unconfirmed questions at P2 or P3 and state any potentially larger conseque
 
 ## HTML report
 
-Use `artifact-storage` to take a `deslop` directory in this run and write `deslop.html` there. Build one self-contained page through `docs-html-report`, and apply `ui-dark-cockpit` to findings and counts. Use `agents-ui` for tables and any questions to the user.
+Use `convention-artifact-layout` to take a `deslop` directory in this run and write `deslop.html` there. Build one self-contained page through `docs-html-report`, and give findings and counts their priority level; that skill decides how levels look. Use `agents-ui` for tables and any questions to the user.
 
 Include, in order:
 

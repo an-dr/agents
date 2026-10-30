@@ -1,11 +1,13 @@
 ---
 name: docs-screenshot
 description: Capture a screenshot of a website or a running GUI application or game and store it as repository documentation media. Use when a README or document needs an image of visible output, or when the user asks for a screenshot of a page, app, or game.
+metadata:
+  dependencies: convention-artifact-layout
 ---
 
 # Screenshot
 
-A screenshot is repository content: it lands in the host repository next to the document that shows it and is committed with it. Scratch captures taken only to check something go to the `screenshots` directory `artifact-storage` gives you instead.
+A screenshot is repository content: it lands in the host repository next to the document that shows it and is committed with it. Scratch captures taken only to check something go to the `screenshots` directory `convention-artifact-layout` gives you instead.
 
 ## Where the image goes
 

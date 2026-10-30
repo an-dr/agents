@@ -1,6 +1,8 @@
 ---
 name: agents-ui
 description: Talk to the user in a form that works in every host — terminal CLIs, GUI apps, and the Claude and Codex editor extensions — using the host's own question UI wherever it exists and a fixed text form only where it does not, with readable tables, questions with options, confirmations, and one answer format the agent reads the same way everywhere. Use whenever a reply shows a table, relays a script's output, asks the user to choose or confirm, or reads the user's answer to such a question.
+metadata:
+  dependencies: concept-dark-cockpit convention-artifact-layout
 ---
 
 # Agents UI
@@ -15,7 +17,7 @@ Hosts differ: some give the agent a clickable question widget, others show only 
 
 ## Safe Markdown
 
-Use only: paragraphs, `#`–`###` headings, bold, inline code, fenced code blocks, bullet and numbered lists one level deep, and pipe tables. Do not use HTML tags, lists nested more than one level, footnotes, task-list checkboxes, Mermaid in chat, or emoji that carry meaning. Status glyphs come from `ui-dark-cockpit`.
+Use only: paragraphs, `#`–`###` headings, bold, inline code, fenced code blocks, bullet and numbered lists one level deep, and pipe tables. Do not use HTML tags, lists nested more than one level, footnotes, task-list checkboxes, Mermaid in chat, or emoji that carry meaning. Status glyphs come from the text levels below.
 
 ## Tables
 
@@ -23,7 +25,7 @@ Use only: paragraphs, `#`–`###` headings, bold, inline code, fenced code block
 - Keep a table to at most 5 columns and about 80 characters per row, so it does not wrap in an 80-column terminal. Put long text in a numbered note under the table and point to it from the cell: `see 2`.
 - Give the first column a short key the reader can quote back: `1`, `A`, a file name.
 - Keep each cell to one line: no line breaks, no lists, and write `\|` for a literal pipe. Right-align numbers with `---:`.
-- Order rows by what the reader acts on first; for findings, that is `ui-dark-cockpit`'s ladder.
+- Order rows by what the reader acts on first; for findings, that is the ladder of `concept-dark-cockpit`.
 - Past about 15 rows, show the rows that matter, and say how many were left out and where the full list is.
 
 ## Script output
@@ -31,9 +33,21 @@ Use only: paragraphs, `#`–`###` headings, bold, inline code, fenced code block
 The user does not see tool results: hosts collapse them, cut them short, or hide them. A script's output reaches the user only through the agent's reply.
 
 - **Relay what the user would act on.** When a skill script prints a result, such as a table, a status, a report path, a set of findings, or a failure, put it in the reply. The script having printed it does not count as the user having seen it.
-- **Present it, don't paste it.** Rewrite the output in the safe Markdown above: tables follow the table rules, findings follow `ui-dark-cockpit`, and file paths become clickable links where the host supports them. Keep a Markdown table the script already shaped for the user as it is. Wrap raw text whose layout carries meaning, such as a diff or an error trace, in a fenced block.
+- **Present it, don't paste it.** Rewrite the output in the safe Markdown above: tables follow the table rules, findings follow the text levels below, and file paths become clickable links where the host supports them. Keep a Markdown table the script already shaped for the user as it is. Wrap raw text whose layout carries meaning, such as a diff or an error trace, in a fenced block.
 - **Keep every fact, drop the noise.** Show every row and number a decision depends on. Leave out progress lines, banners, and repeated boilerplate, and say when you shortened something long.
 - **Failures in full.** A non-zero exit is always reported, with the message that explains it, even when you go on to fix it.
+
+## Findings in text
+
+Text has no colour, so order and weight carry the signal; this section renders the levels of `concept-dark-cockpit`, which owns what each means. Put lit rows first, bold only `critical` and `high`, prefix lit levels with their glyph, and end with the `ok` items as one line, such as `ok: 14 checks passed`.
+
+| Level | Text |
+| --- | --- |
+| `critical` | `✖ **CRITICAL**` |
+| `high` | `▲ **high**` |
+| `notice` | `◆ notice` |
+| `info` | plain |
+| `ok` | plain, grouped |
 
 ## Questions
 
@@ -93,7 +107,7 @@ Skip the repeat when the native UI already showed the chosen labels and there wa
 
 ## Answers as JSON
 
-When a decision must outlive the conversation, or another script or agent acts on it, keep the round as JSON in the `ui` directory `artifact-storage` gives you. Write the round to `questions.json` before asking:
+When a decision must outlive the conversation, or another script or agent acts on it, keep the round as JSON in the `ui` directory `convention-artifact-layout` gives you. Write the round to `questions.json` before asking:
 
 ```json
 { "questions": [

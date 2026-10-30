@@ -71,10 +71,10 @@ a, a:visited { color: var(--brand-link); text-decoration: underline; text-underl
 a:hover { color: var(--brand-link-hover); }
 </style>
 <!-- docs-html-report:brand end -->
-<!-- ui-dark-cockpit begin -->
+<!-- docs-html-report:cockpit begin -->
 <style>
-/* ui-dark-cockpit: what is normal stays dark, only problems light up.
-   Owned by skills/ui-dark-cockpit; embed with its script, never copy by hand.
+/* dark-cockpit: what is normal stays dark, only problems light up.
+   Owned by docs-html-report; embed with its embed-cockpit.ps1, never copy by hand.
    The unlit levels read a brand's --brand-ok, --brand-info, and --brand-notice when the
    page defines them, and lit items lift to its --brand-lift surface. The alarms,
    --ck-high* and --ck-critical*, have no brand input. */
@@ -151,7 +151,7 @@ tr.ck-critical > td:first-child { box-shadow: inset 4px 0 0 var(--ck-critical); 
 .ck-quiet, details.ck-quiet > summary { color: var(--ck-ok); }
 details.ck-quiet > summary { cursor: pointer; }
 </style>
-<!-- ui-dark-cockpit end -->
+<!-- docs-html-report:cockpit end -->
 <style>
   :root {
     --bg: var(--brand-bg); --panel: var(--brand-paper); --ink: var(--brand-ink); --muted: var(--brand-muted);

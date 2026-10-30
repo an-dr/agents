@@ -1,11 +1,13 @@
 ---
 name: dev-workflow
 description: Run, resume, and enforce the repository's gated Quick, Detailed, or Detailed Auto development workflow. Use when the user selects one of these flows, an existing .progress/workflow.json is present, workflow state must move to another machine, or increments must be inserted or reordered. Direct work does not use this controller.
+metadata:
+  dependencies: agents-ui concept-single-authority convention-adr dev-analysis-review dev-analysis-summary dev-build dev-design dev-testing dev-workflow-clean-branch docs-writing git-commit git-integrate
 ---
 
 # Workflow controller
 
-Use `scripts/workflow.ps1` as the authority for phase transitions and approval gates in Quick, Detailed, and Detailed Auto. Direct has no controller state. Do not reconstruct workflow state from chat when `.progress/workflow.json` exists.
+Use `scripts/workflow.ps1` as the authority for phase transitions and approval gates in Quick, Detailed, and Detailed Auto. Direct has no controller state. This is `concept-single-authority` applied: the controller owns the state, and chat memory is only a copy. Do not reconstruct workflow state from chat when `.progress/workflow.json` exists.
 
 ## Start or resume
 
@@ -31,7 +33,7 @@ Use Detailed Auto only when the user selects it; never infer it from a request f
 
 ## Plan the gated work
 
-During INTAKE, DESIGN, and SPLIT, read the host `README.md`, `docs/index.md`, architecture docs, and existing ADRs. Record each request as it arrives, identify invariants and existing patterns, and map every touch-point, including docs, schemas, and tests. Keep these phases read-only. Record unresolved choices with `add-question`. In DESIGN, present 2–4 real options with their tradeoffs for Quick and Detailed; record the reasoned choice in Detailed Auto. Use `dev-design` when a decision needs deeper analysis, and `docs-adr` for a lasting architectural decision.
+During INTAKE, DESIGN, and SPLIT, read the host `README.md`, `docs/index.md`, architecture docs, and existing ADRs. Record each request as it arrives, identify invariants and existing patterns, and map every touch-point, including docs, schemas, and tests. Keep these phases read-only. Record unresolved choices with `add-question`. In DESIGN, present 2–4 real options with their tradeoffs for Quick and Detailed; record the reasoned choice in Detailed Auto. Use `dev-design` when a decision needs deeper analysis, and `convention-adr` for a lasting architectural decision.
 
 Before leaving SPLIT, check that every request is covered, every question is answered or dismissed, and each increment names its documentation work. Detailed increments should be about 300 changed lines or less. Present the numbered plan with estimated lines and answered questions before the user's `implement` approval. In Detailed Auto, record the agent's reasoned design choice for final review.
 

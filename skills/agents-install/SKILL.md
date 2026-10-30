@@ -2,6 +2,8 @@
 name: agents-install
 description: Install this agents clone globally for local AI tools (Claude Code, Codex, GitHub Copilot CLI, Gemini CLI, opencode) so every repository can use its policy and skills without a submodule. Use when the user wants the workflow available by default machine-wide, wants to move or update an existing global install, or wants to verify one.
 allowed-tools: PowerShell
+metadata:
+  dependencies: none
 ---
 
 # Install agents globally

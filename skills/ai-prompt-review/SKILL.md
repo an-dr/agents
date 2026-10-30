@@ -2,6 +2,8 @@
 name: ai-prompt-review
 description: Review agentic instructions — AGENTS.md, CLAUDE.md, and SKILL.md files — for contradictions, weakened rules, wasted context, and logic that belongs in a script. Use after editing instructions, before installing them globally, or when an agent keeps behaving in a way the instructions did not intend.
 allowed-tools: PowerShell
+metadata:
+  dependencies: agents-ui convention-agent-skill
 ---
 
 # Agent instruction review
@@ -10,7 +12,7 @@ Reviews the instructions themselves, not the code they produce. The subject is e
 
 ## Method
 
-1. Run the reference checker for the mechanical faults.
+1. Run the reference checker for the mechanical faults, and compare each `SKILL.md` with `convention-agent-skill`.
 2. Map the loading moments — for every rule, name the file that carries it and the moment that file enters context. A rule nothing loads at the right time does not exist.
 3. Read each file as the agent that loads it, in its order, and stop at the first place two files disagree.
 4. Rank findings by what they cost: wrong behavior first, then unenforceable rules, then wasted context.
@@ -59,4 +61,4 @@ Propose a script when the steps are stable, the inputs are known, and failure is
 
 ## Report
 
-Return findings ranked, each with the file and line, what breaks, and the concrete edit. State separately what was checked and found sound, so a clean area is not re-reviewed later. Present both by `ui-dark-cockpit`'s text rules: findings first with their level, and the sound areas as one quiet closing line.
+Return findings ranked, each with the file and line, what breaks, and the concrete edit. State separately what was checked and found sound, so a clean area is not re-reviewed later. Present both by `agents-ui`'s finding levels: findings first with their level, and the sound areas as one quiet closing line.

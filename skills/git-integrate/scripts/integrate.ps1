@@ -6,7 +6,7 @@
 param(
     # The agent passes both skills' folders, because skills need not be installed side by side.
     [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$CleanBranchSkill,
-    [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$GitCommitSkill,
+    [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$ConventionCommitMessageSkill,
     [string]$BaseBranch
 )
 
@@ -51,11 +51,11 @@ while (-not $mode) {
 
 $message = ''
 if ($mode -in @('Squash', 'Request')) {
-    Write-Output 'The commit message must match the git-commit format; the squash is rejected otherwise.'
+    Write-Output 'The commit message must match the commit message format; the squash is rejected otherwise.'
     $message = Read-Host 'Single commit subject'
     if ([string]::IsNullOrWhiteSpace($message)) {
         throw 'A non-empty commit message is required.'
     }
 }
 
-& (Join-Path $PSScriptRoot 'integrate-4-finish.ps1') -Mode $mode -Message $message -BaseBranch $base -GitCommitSkill $GitCommitSkill
+& (Join-Path $PSScriptRoot 'integrate-4-finish.ps1') -Mode $mode -Message $message -BaseBranch $base -ConventionCommitMessageSkill $ConventionCommitMessageSkill

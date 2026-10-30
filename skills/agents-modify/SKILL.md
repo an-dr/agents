@@ -2,6 +2,8 @@
 name: agents-modify
 description: Change this workflow repository's own instructions — AGENTS.md, roles, skills, and their scripts — from wherever the need appeared, then summarize the change and, once the user approves, commit and push it. Use for every change to this repository, whether the request arises in it or while working in another repository.
 allowed-tools: PowerShell, Read, Grep, Glob, Write, Edit
+metadata:
+  dependencies: agents-dev-skills agents-install agents-retro agents-ui ai-prompt-review ai-prompt-writing convention-agent-skill convention-markdown convention-script git-commit
 ---
 
 # Modify the agents repository
@@ -29,11 +31,11 @@ Report every note the script prints — a detached HEAD, a dirty tree, a missing
 ## Change it
 
 1. **Name the observed behavior** — quote the evidence, from the host repository or the user's request: what the agent did, which instruction produced it, what it should do instead. An amendment with no such evidence is a preference, and the user decides on preferences.
-2. **Edit with `ai-prompt-writing`** — it owns which carrier holds the rule and how the rule is written. Format comes from `docs-md-writing`.
+2. **Edit with `ai-prompt-writing`** — it owns which carrier holds the rule and how the rule is written. Skill text follows `convention-agent-skill`, and format comes from `convention-markdown`.
 3. **Shape skills with `agents-dev-skills`** — adding, renaming, or restructuring a skill follows its layout, the shared skills it must build on, and its registration. A new commit scope needs the scope list in `AGENTS.md`.
 4. **Remove redundancy that adds nothing** — across the changed files, and between them and the files they touch, find each rule stated in more than one place. Keep a repeat only when it improves the result: it adds a detail specific to that point, such as the exact options or the safe default, or it puts the rule where an agent would otherwise miss it. Otherwise delete it, or replace it with a reference to its owner by name.
 5. **Update what describes the change** — read the root `README.md` and `skills/README.md` against the diff. Wherever they describe behavior the change alters, such as a mode, a phase, a skill, a command, or the layout, update them in the same change. A skill's own documentation going stale is a defect in this step, not a later task.
-6. **Check** — run `pwsh <clone>/tests/run-all.ps1`, where `<clone>` is the resolved root, and fix everything it reports. It runs every skill test, `check-registration.ps1` from this skill (folders, both skill tables, declared dependencies, and portable paths), `ai-prompt-review`'s `check-references.ps1`, and `docs-md-writing`'s `check-markdown.ps1`.
+6. **Check** — run `pwsh <clone>/tests/run-all.ps1`, where `<clone>` is the resolved root, and fix everything it reports. It runs every skill test, `convention-agent-skill`'s `check-registration.ps1` (folders, both skill tables, declared dependencies, and portable paths), `convention-script`'s `check-scripts.ps1`, `convention-agent-skill`'s `check-skills.ps1`, `ai-prompt-review`'s `check-references.ps1`, and `convention-markdown`'s `check-markdown.ps1`.
 7. **Relink a global install** — adding, renaming, or removing a skill directory changes the set of junctions, so re-run `agents-install`'s `install-agents.ps1` and report its table.
 
 ## Summarize

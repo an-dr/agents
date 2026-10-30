@@ -1,6 +1,8 @@
 ---
 name: install-powershell
 description: Install or verify PowerShell 7 when pwsh is unavailable or older than version 7 and repository skills require PowerShell. Use before running any .ps1 workflow or mechanical skill on a machine without a suitable pwsh executable.
+metadata:
+  dependencies: agents-ui
 ---
 
 # Install PowerShell

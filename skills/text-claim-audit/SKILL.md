@@ -1,6 +1,8 @@
 ---
 name: text-claim-audit
 description: Audit a text against the material it claims to be based on — split it into claims, label each as observed fact, derived figure, inference, assumption, opinion, or speculation, and check every one against the sources. Use when the user hands over a report, analysis, summary, or answer written by an AI or a person together with its data — other text, code, files, logs, spreadsheets — and wants to know what is backed, what is invented, and what is opinion.
+metadata:
+  dependencies: agents-ui concept-evidence-grounding convention-artifact-layout docs-html-report
 ---
 
 # Text claim audit
@@ -76,7 +78,7 @@ Close by sorting the claims into three groups for the user's next step:
 
 ### Presentation
 
-Render every audit by `ui-dark-cockpit`. A grounded claim is normal state, so it stays dark, and the reader's eye lands on the claims that need work. Give each claim one level from its verdict:
+Give every audit finding levels, which `agents-ui` renders in chat and `docs-html-report` in HTML. A grounded claim is normal state, so it stays dark, and the reader's eye lands on the claims that need work. Give each claim one level from its verdict:
 
 | Level | Claims |
 | --- | --- |
@@ -88,15 +90,17 @@ Render every audit by `ui-dark-cockpit`. A grounded claim is normal state, so it
 
 Sort the ledger by level, then by consequence. Put the `ok` rows in a collapsed group.
 
-A ledger of 15 rows or fewer goes in the reply, by the text rules. A longer audit becomes an HTML page:
-- write it as `claim-audit.html` in the `claim-audit` directory that `artifact-storage` gives you;
+A ledger of 15 rows or fewer goes in the reply, by `agents-ui`'s text levels. A longer audit becomes an HTML page:
+- write it as `claim-audit.html` in the `claim-audit` directory that `convention-artifact-layout` gives you;
 - build it through `docs-html-report`;
-- put each claim's level class on its ledger row, and its verdict and kind as `ck-badge` labels;
-- run `ui-dark-cockpit`'s embed script.
+- give each claim's ledger row its level, and show its verdict and kind as labels;
+- run `docs-html-report`'s render scripts.
 
 Report the page's path, and put only the opening lines and the lit findings in the reply.
 
 ## Rules
+
+The claim kinds follow `concept-evidence-grounding`.
 
 - Audit the text as written. Do not rewrite it, soften it, or improve it unless the user asks.
 - Neither the author's tone nor their confidence is evidence. Hedged wording does not excuse an unsupported claim, and confident wording does not support one.

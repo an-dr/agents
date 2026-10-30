@@ -1,11 +1,13 @@
 ---
 name: dev-design
 description: Structure the DESIGN phase for a decision deeper than a quick pick — explore the space with an options table, steelman, and pre-mortem before the user or a Detailed Auto agent decides. Use in a Detailed flow, or when a Quick design question turns out deeper than expected.
+metadata:
+  dependencies: agents-ui convention-adr
 ---
 
 # Design
 
-Produces the material the DESIGN phase needs: a small, honest option space with named tradeoffs. The user decides in Quick and Detailed; the agent records its reasoned choice in Detailed Auto. A lasting architectural decision is recorded via `docs-adr`; the resulting design lives in `docs/design/<topic>.md`.
+Produces the material the DESIGN phase needs: a small, honest option space with named tradeoffs. The user decides in Quick and Detailed; the agent records its reasoned choice in Detailed Auto. A lasting architectural decision is recorded via `convention-adr`; the resulting design lives in `docs/design/<topic>.md`.
 
 ## Process
 
@@ -14,7 +16,7 @@ Produces the material the DESIGN phase needs: a small, honest option space with 
 3. **Steelman the loser** — before recommending, argue the strongest case for the option you would reject. If the steelman wins, change the recommendation.
 4. **Pre-mortem the favourite** — "this shipped and failed six months later — why?" List the top 2–3 failure stories and what would detect each early.
 5. **Present** — options with tradeoffs as an `agents-ui` question in Quick and Detailed; the user picks. In Detailed Auto, record the agent's choice and rationale for final review. Never a single "correct" solution. Record each unresolved choice as a controller question first, so exploring the next one does not lose it.
-6. **Record** — the decision goes through the `docs-adr` skill and closes its question with `answer-question`; the resulting design goes into the topic's design doc.
+6. **Record** — the decision goes through the `convention-adr` skill and closes its question with `answer-question`; the resulting design goes into the topic's design doc.
 
 ## Options table
 

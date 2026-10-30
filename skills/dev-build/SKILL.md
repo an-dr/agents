@@ -1,6 +1,8 @@
 ---
 name: dev-build
 description: Implement code during Direct work or gated BUILD. Use for coding changes after the selected workflow allows edits; follow repository patterns, documentation, and the requested scope.
+metadata:
+  dependencies: concept-clean-dependencies convention-adr convention-code docs-writing
 ---
 
 # Build
@@ -9,20 +11,13 @@ Read the host `README.md`, `docs/index.md`, and project instructions before codi
 
 Implement the requested result in Direct, or only the current increment in a gated flow. Follow the recorded design. Work discovered outside that scope becomes a separate request or future increment, not a silent expansion. Compile and run a relevant test subset after each touch-point so failures stay local. Write inline documentation with the implementation.
 
-## Code quality
+## Code conventions
 
-- Make the smallest change that solves the stated problem. Avoid speculative options and abstractions.
-- Use names and call sites a new reader can understand, with straight control flow and no hidden state to hold in mind.
-- Give each unit one job. Split a block that needs a paragraph of explanation into named units.
-- Comment intent beside the few lines it explains. Put whole-function explanations in doc comments; never restate obvious code.
-- Write every comment and doc comment for a newcomer who knows nothing of the project's history. Describe what the code is and why, as it stands. Never define it by contrast with an earlier design or the change that produced it ("no longer", "moved out of", "is not here any more"): that reader cannot know what it is contrasted with. History belongs in commit messages, the changelog, and ADRs.
-- Keep one owner for each fact. Fail where the failure occurs, with enough context to act on it. Do not swallow errors.
-- Delete dead or commented-out code. Preserve intentional stubs unless changing them is the task.
-- Start function and method names with an action verb, except idiomatic constructors and builders. Document public interfaces and non-obvious decisions with Doxygen for C/C++, JSDoc for TS/JS, or docstrings for Python. Mark incomplete work with `TODO`.
-
-The host repository's instructions and the edited file's conventions override these writing defaults. Review judges defects and reader cost, not preference compliance.
+Write code by `convention-code`: its quality, naming, and reviewable-change rules are the defaults here, and the host repository's own conventions override them.
 
 ## Architecture
+
+Structure components by `concept-clean-dependencies`: no cycles, dependencies pointing toward stable abstractions, no layer skipping, and use of another component only through its public contract.
 
 Shape the code the way an experienced developer in this language and domain expects to find it, so a reviewer recognises the structure instead of reverse-engineering it.
 
@@ -36,22 +31,10 @@ Shape the code the way an experienced developer in this language and domain expe
 - Make an interface member required when every implementation provides it; optional members are for genuine absence, not convenience.
 - Add structure for boundaries that exist now. This does not license speculative layers: a port with one adapter is justified by a real I/O or ownership boundary, not by a possible future one, and the smallest-change rule above still applies inside each unit.
 
-## Names and structure
+## Commits and decisions
 
-- Use the domain's own vocabulary and the ecosystem's standard terms: established pattern names (`Repository`, `Adapter`, `Controller`, `Factory`, `Builder`, `Coordinator`) only for code that is that pattern, and the language's naming, module, and directory conventions.
-- Name each unit after its current responsibility. When a responsibility moves to a new owner, rename the types, messages, functions, and files that describe it in the same change, so no name still describes the old design.
-- Never give two different concepts the same name within one codebase boundary, even in different modules.
-- Lay out files where the ecosystem expects them — entry points, modules, tests, fixtures — and follow the repository's existing layout when it has one.
-
-## Reviewable changes
-
-A human reviewer must be able to tell which lines change behaviour, and `git bisect` must be able to separate one cause from another.
-
-- Keep formatter runs, re-wrapped prose, and other formatting-only edits out of behaviour changes. Do not reformat lines you are not otherwise changing unless the repository enforces a formatter.
-- Do mechanical renames and migrations as their own pass, before any behaviour change that depends on them.
 - In Direct, each internal pass becomes its own commit, so a large request lands as a sequence of single-concern commits rather than one.
-- After removing or moving a module, file, crate, or type, search for its name across code comments, scripts, documentation, and agent instructions, and update every reference to its new owner.
-- Record a lasting decision through `docs-adr` when the change creates a public contract other programs depend on, or makes a deliberate exception to an existing ADR.
+- Record a lasting decision through `convention-adr` when the change creates a public contract other programs depend on, or makes a deliberate exception to an existing ADR.
 
 ## Documentation and delivery
 

@@ -1,6 +1,8 @@
 ---
 name: docs-gif
 description: Record a short animated GIF of a website, GUI application, or game in action and store it as repository documentation media. Use only when the user explicitly asks for a GIF or an animation; a still image comes from docs-screenshot.
+metadata:
+  dependencies: docs-screenshot
 ---
 
 # GIF

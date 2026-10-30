@@ -11,29 +11,29 @@ function Get-ReviewRepositoryRoot {
 }
 
 function Get-ArtifactDirectoryScript {
-    <# Resolves artifact-storage's script, the one implementation of the layout. #>
-    param([Parameter(Mandatory)][string]$ArtifactStorageSkill)
+    <# Resolves convention-artifact-layout's script, the one implementation of the layout. #>
+    param([Parameter(Mandatory)][string]$ConventionArtifactLayoutSkill)
 
-    $path = Join-Path $ArtifactStorageSkill 'scripts/new-artifact-dir.ps1'
+    $path = Join-Path $ConventionArtifactLayoutSkill 'scripts/new-artifact-dir.ps1'
     if (-not (Test-Path -LiteralPath $path)) {
-        throw 'artifact-storage must sit beside dev-analysis-review; its new-artifact-dir.ps1 owns the run directory.'
+        throw 'convention-artifact-layout must sit beside dev-analysis-review; its new-artifact-dir.ps1 owns the run directory.'
     }
     return (Resolve-Path -LiteralPath $path).Path
 }
 
 function Initialize-ReviewDirectory {
-    <# Takes this run's code-review directory from artifact-storage. #>
+    <# Takes this run's code-review directory from convention-artifact-layout. #>
     param(
         [Parameter(Mandatory)][string]$RepositoryRoot,
-        [Parameter(Mandatory)][string]$ArtifactStorageSkill,
+        [Parameter(Mandatory)][string]$ConventionArtifactLayoutSkill,
         [string]$Run
     )
 
     $arguments = @{ Kind = 'code-review'; RepositoryRoot = $RepositoryRoot }
     if ($Run) { $arguments['Run'] = $Run }
-    $directory = & (Get-ArtifactDirectoryScript -ArtifactStorageSkill $ArtifactStorageSkill) @arguments | Select-Object -Last 1
+    $directory = & (Get-ArtifactDirectoryScript -ConventionArtifactLayoutSkill $ConventionArtifactLayoutSkill) @arguments | Select-Object -Last 1
     if (-not $directory) {
-        throw 'artifact-storage returned no directory for this review.'
+        throw 'convention-artifact-layout returned no directory for this review.'
     }
     return $directory
 }
@@ -243,7 +243,7 @@ function Resolve-ReviewPath {
     # findings and its rendered page together across midnight and across later runs.
     $reviewDirectory = Split-Path -Parent $resolvedPath
     $expectedRoot = [IO.Path]::GetFullPath((Join-Path $repositoryRoot '.artifacts'))
-    # The shape artifact-storage creates; that skill, not this guard, owns the layout.
+    # The shape convention-artifact-layout creates; that skill, not this guard, owns the layout.
     $runDirectory = Split-Path -Parent $reviewDirectory
     if ((Split-Path -Leaf $reviewDirectory) -ne 'code-review' -or
         (Split-Path -Parent $runDirectory) -ne $expectedRoot -or

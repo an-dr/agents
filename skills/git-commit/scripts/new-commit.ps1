@@ -12,6 +12,8 @@ param(
     [switch]$Breaking,
     [switch]$Amend,
     [switch]$DryRun,
+    # convention-commit-message's folder; its checker validates the assembled message.
+    [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$ConventionCommitMessageSkill,
     # Body entries follow the named parameters, one quoted argument each,
     # written without the '- ' marker so PowerShell cannot read them as flags.
     [Parameter(ValueFromRemainingArguments)][string[]]$Entry
@@ -20,7 +22,10 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-Import-Module (Join-Path $PSScriptRoot 'GitCommit.Format.psm1') -Force
+$checkMessage = Join-Path $ConventionCommitMessageSkill 'scripts/check-message.ps1'
+if (-not (Test-Path -LiteralPath $checkMessage)) {
+    throw "-ConventionCommitMessageSkill must be the convention-commit-message folder; '$checkMessage' is missing."
+}
 
 $subject = $Type
 if ($Scope) { $subject += "($Scope)" }
@@ -53,10 +58,11 @@ if ($footers.Count -gt 0) {
 
 $message = ($parts -join "`n") + "`n"
 
-$violations = @(Get-CommitMessageViolation -Message $message -AllowedScope (Get-DeclaredScope))
-Write-CommitViolation -Violation $violations -Label 'Commit message check:'
+$global:LASTEXITCODE = 0
+& $checkMessage -Message $message -Quiet | Out-Host
+$checkFailed = $LASTEXITCODE -ne 0
 Write-Output $message
-if ((Measure-CommitError -Violation $violations) -gt 0) {
+if ($checkFailed) {
     Write-Output 'The message breaks the format; nothing was committed.'
     exit 1
 }
