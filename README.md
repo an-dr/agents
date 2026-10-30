@@ -1,24 +1,28 @@
-# agents
+# 🤖 agents
 
-Agent instructions, reusable skills, and a PowerShell controller for AI-assisted development.
+[![Checks](https://github.com/an-dr/agents/actions/workflows/checks.yml/badge.svg)](https://github.com/an-dr/agents/actions/workflows/checks.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE) [![Agent Skills](https://img.shields.io/badge/format-Agent%20Skills-blueviolet)](https://agentskills.io/specification) [![Works with](https://img.shields.io/badge/works%20with-Claude%20Code%20%7C%20Codex%20%7C%20Copilot%20CLI%20%7C%20Gemini%20CLI%20%7C%20opencode-informational)](#-installation)
 
-## Why
+**Transparent, human-controlled AI development. Not vibe coding.**
 
-Development decisions and approvals need to survive beyond a chat session. This repository supplies shared engineering policy and skills, with an executable controller for gated work and saved state in `.progress/workflow.json`. Direct work uses the same engineering guidance without controller state or approval gates.
+Agent instructions, reusable skills, and a deterministic workflow controller that expose the agent's decisions, so you can understand and steer the development instead of reviewing a finished diff you never saw coming.
 
-## Contents
+## 🎯 Why
 
-- [Installation](#installation)
-- [Quickstart](#quickstart)
-- [Features](#features)
-- [Configuration](#configuration)
-- [Documentation](#documentation)
-- [Development](#development)
-- [Contributing](#contributing)
-- [License](#license)
-- [Status](#status)
+Vibe coding hides the decisions. This repository makes them visible and puts you in charge of them: the agent records requests, questions, and design choices, and it stops at gates where only your explicit approval moves the work forward (intake, implement, integrate). Those decisions and approvals need to survive beyond a chat session, so this repository supplies shared engineering policy and skills, with an executable controller for gated work and saved state in `.progress/workflow.json`. Direct work uses the same engineering guidance without controller state or approval gates.
 
-## Installation
+## 📑 Contents
+
+- [📦 Installation](#-installation)
+- [🚀 Quickstart](#-quickstart)
+- [✨ Features](#-features)
+- [🔧 Configuration](#-configuration)
+- [📚 Documentation](#-documentation)
+- [🧰 Development](#-development)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
+- [📈 Status](#-status)
+
+## 📦 Installation
 
 Install Git and PowerShell 7 first. The [PowerShell setup skill](skills/actions/an-dr-env-install-powershell/SKILL.md) covers a missing or outdated `pwsh` runtime.
 
@@ -31,7 +35,7 @@ pwsh skills/_repository/an-dr-agents-repo-install/scripts/verify-agents.ps1
 
 The installer adds a managed policy reference and links the skills into supported tools' user configuration. It handles Claude Code, Codex, GitHub Copilot CLI, Gemini CLI, and opencode; its current skill-link support covers the first three, while Gemini CLI and opencode receive policy references. See the [installation skill](skills/_repository/an-dr-agents-repo-install/SKILL.md) for tool selection, updates, conflicts, and removal.
 
-## Quickstart
+## 🚀 Quickstart
 
 Open the project you want to change in your AI tool and select a flow in the request:
 
@@ -49,7 +53,7 @@ API and run the existing tests before committing the change. Do not push.
 
 For gated work, the [workflow controller skill](skills/actions/an-dr-dev-follow-workflow/SKILL.md) owns the commands and transitions. The agent resumes existing state instead of reconstructing it from conversation history. [AGENTS.md](AGENTS.md) defines the policy, including the separate review rule for changes to this process repository.
 
-## Features
+## ✨ Features
 
 - Shared engineering instructions available across projects through one global installation.
 - Explicit workflow gates and resumable state for Quick, Detailed, and Detailed Auto.
@@ -58,7 +62,7 @@ For gated work, the [workflow controller skill](skills/actions/an-dr-dev-follow-
 - Deterministic script checks and separate, explicitly requested agent evaluations.
 - Integration choices that rebase before landing and remove workflow state from delivered history.
 
-## Configuration
+## 🔧 Configuration
 
 A global installation engages the workflow policy when the host project's root `AGENTS.md` or `CLAUDE.md` references this clone, an active `.progress/workflow.json` exists, or the user names a flow or one of its skills. Otherwise the skills remain available on request. Add a reference to the clone's [AGENTS.md](AGENTS.md) in the host's instruction file when the project should opt in permanently.
 
@@ -66,7 +70,7 @@ The installer's `-Tools` parameter limits which tools are configured. Re-run the
 
 Generated reports and scratch output live under `.artifacts/` according to the [artifact layout convention](skills/conventions/an-dr-convention-artifact-layout/SKILL.md). HTML diagram rendering requires a local Chromium-based browser; the [HTML report convention](skills/conventions/an-dr-convention-html-report/SKILL.md) describes rendering and visual verification.
 
-## Documentation
+## 📚 Documentation
 
 - [Engineering policy](AGENTS.md): workflow selection, approvals, delivery, and Git rules.
 - [Skill catalog](skills/README.md): actions, concepts, conventions, and repository maintenance skills.
@@ -74,7 +78,7 @@ Generated reports and scratch output live under `.artifacts/` according to the [
 - [Skill testing convention](skills/conventions/an-dr-convention-agent-skill-testing/SKILL.md): the evaluation contract and execution environment.
 - [ADR-001](docs/an-dr-convention-adr/ADR-001-keep-skill-testing-contracts-independent-of-evaluation-runners.md): ownership of testing contracts independently of evaluation runners.
 
-### Repository layout
+### 📁 Repository layout
 
 | Path | Purpose |
 | --- | --- |
@@ -87,7 +91,7 @@ Generated reports and scratch output live under `.artifacts/` according to the [
 | `docs/an-dr-convention-adr/` | Architecture decisions |
 | `.artifacts/` | Ignored generated reports and scratch output |
 
-### Skill dependencies
+### 🔗 Skill dependencies
 
 Skills declare the other skills they name through `metadata.an-dr.dependencies`. The [skill convention](skills/conventions/an-dr-convention-agent-skill/SKILL.md) defines this contract and the portability rules: each skill owns its files, and callers pass the location of another skill's public script rather than assuming an installation layout.
 
@@ -195,7 +199,7 @@ flowchart LR
 
 </details>
 
-## Development
+## 🧰 Development
 
 Run the repository checks from the clone root:
 
@@ -209,14 +213,14 @@ Skills with scripts keep deterministic tests in `scripts/tests/`. Every skill ha
 
 [GitHub Actions](.github/workflows/checks.yml) runs free checks on pushes and pull requests. CI installs the Agent Skills reference validator, `skills-ref`; local checks report its installation command when it is missing. Agent evaluations consume model usage and run only on explicit request, with declared environments and bounded attempts.
 
-## Contributing
+## 🤝 Contributing
 
 Follow [AGENTS.md](AGENTS.md) for changes to this repository, use the [skill convention](skills/conventions/an-dr-convention-agent-skill/SKILL.md) when changing skills, and run the repository checks before proposing a change. Keep generated artifacts out of commits.
 
-## License
+## 📄 License
 
 [MIT](LICENSE), copyright 2026 Andrei Gramakov.
 
-## Status
+## 📈 Status
 
 Actively maintained, with automated checks on pushes and pull requests. CI checks scripts and packaging; behavioral reliability requires separately executed agent evaluations.
