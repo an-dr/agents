@@ -118,6 +118,7 @@ flowchart LR
         dev-design
         dev-build
         dev-testing
+        dev-untangle-dependencies
         dev-analysis-summary
         git-integrate
         git-commit-fix
@@ -193,6 +194,10 @@ flowchart LR
     ai-prompt-review --> convention-agent-skill
     convention-agent-skill --> convention-script & concept-clean-dependencies
     dev-build --> convention-code
+    dev-untangle-dependencies --> concept-clean-dependencies & convention-agent-skill
+    dev-untangle-dependencies -. changes to this repository .-> agents-modify
+    dev-untangle-dependencies --> docs-html-report & convention-artifact-layout
+    dev-untangle-dependencies -. approval and questions .-> agents-ui
     dev-build --> docs-writing
     dev-build -. architectural contract or ADR exception .-> convention-adr
     dev-build -. gated documentation questions .-> dev-workflow

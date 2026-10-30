@@ -7,6 +7,7 @@ Reusable agent actions. Each skill contains a concise `SKILL.md`; deterministic 
 | [`dev-workflow`](dev-workflow/SKILL.md) | Start, resume, advance, approve, reshape, or finish a workflow. |
 | [`dev-build`](dev-build/SKILL.md) | Implement code within the selected workflow and repository conventions. |
 | [`dev-testing`](dev-testing/SKILL.md) | Verify changed code and report meaningful test coverage. |
+| [`dev-untangle-dependencies`](dev-untangle-dependencies/SKILL.md) | Remove needless dependencies and break cycles by moving shared parts into common components. |
 | [`docs-writing`](docs-writing/SKILL.md) | Write human-facing documentation and check its claims. |
 | [`ai-prompt-writing`](ai-prompt-writing/SKILL.md) | Create or change agent-loaded instructions. |
 | [`install-powershell`](install-powershell/SKILL.md) | Install or verify PowerShell 7 before running scripts. |

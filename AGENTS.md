@@ -110,6 +110,7 @@ Skills live in `skills/<name>/SKILL.md` next to this file. Read a matching skill
 | `dev-workflow` | Start, resume, advance, approve, reshape, or finish a workflow. |
 | `dev-build` | Implement code within the selected workflow and repository conventions. |
 | `dev-testing` | Verify changed code and report meaningful test coverage. |
+| `dev-untangle-dependencies` | Remove needless dependencies and break cycles by moving shared parts into common components. |
 | `docs-writing` | Write human-facing documentation and check its claims. |
 | `ai-prompt-writing` | Create or change agent-loaded instructions. |
 | `install-powershell` | Install or verify PowerShell 7 before running scripts. |
