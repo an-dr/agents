@@ -1,5 +1,5 @@
 ---
-name: dev-change-report
+name: dev-analysis-change
 description: Produce one human-facing HTML report of a finished change — what was done and why, the responsibility of every new block, rendered Mermaid dependency graphs, a section per new and per upgraded component, decisions, and verification — explained with diagrams and plain prose rather than code. Use at the end of a big change, or when the user accepts the offer at the end of a smaller one.
 ---
 

@@ -1,6 +1,6 @@
 ---
-name: dev-code-review
-description: Review a diff for defects, security issues, structural problems, convention violations, and outdated patterns. Use during Direct review, VERIFY on an increment diff, SUMMARY on the full branch diff, or when the user requests a code review; record structured findings in the run's code-review JSON and render an HTML report through the bundled PowerShell scripts.
+name: dev-analysis-review
+description: Review a diff for defects, security issues, structural problems, convention violations, and outdated patterns, including a dev-analysis-deslop pass over the same scope. Use during Direct review, VERIFY on an increment diff, SUMMARY on the full branch diff, or when the user requests a code review; record structured findings in the run's code-review JSON and render an HTML report through the bundled PowerShell scripts.
 metadata:
   requires: artifact-storage docs-html-report ui-dark-cockpit
 ---
@@ -37,6 +37,14 @@ pwsh <skill>/scripts/review-start.ps1 -Reference '<branch-or-ref>' -Scope <direc
 This takes a `code-review` directory from `artifact-storage` and writes a schema-versioned JSON record into it from `assets/review-template.json`. Review state and rendered reports stay local there unless the user explicitly requests otherwise.
 
 Pass `-Run <YYYY-MM-DD>-<N>` to put the review in a run directory this run already has, so its review, change report, and overview sit together instead of taking a second letter. Every later step reads the run directory from the JSON path it is given, so findings and the rendered page stay together across midnight and across later runs.
+
+## Include deslop analysis
+
+Run `dev-analysis-deslop` as part of every review, using exactly the selected review scope, refs, base, and working-tree state. Pass the scope already resolved here rather than asking the user to select it again. Keep its HTML report in the same artifact run. The deslop skill owns the coherence analysis and its evidence requirements; it does not invoke this review skill in return.
+
+Reconcile its findings with the defect review before recording the verdict. Record confirmed deslop findings through `review-note.ps1`, mapping P0 to `critical`, P1 to `high`, and P2/P3 to `improvement`. Include the originating `DS-` ID and priority in the finding text so the review's assigned ID can be traced to the deslop report. Merge findings that describe the same cause into one review entry, preserving their evidence and recommendations.
+
+Keep deslop questions explicitly labelled as questions in the review summary, with their `DS-` IDs and the evidence needed to resolve them; do not promote them to confirmed defects. Include the deslop report path and coverage limitations in that summary, and deliver both HTML paths. The review JSON remains the canonical record for the combined review and its verdict; the deslop report retains the detailed coherence analysis.
 
 ## Record sections
 

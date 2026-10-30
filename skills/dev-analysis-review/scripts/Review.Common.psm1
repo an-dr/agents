@@ -16,7 +16,7 @@ function Get-ArtifactDirectoryScript {
 
     $path = Join-Path $ArtifactStorageSkill 'scripts/new-artifact-dir.ps1'
     if (-not (Test-Path -LiteralPath $path)) {
-        throw 'artifact-storage must sit beside dev-code-review; its new-artifact-dir.ps1 owns the run directory.'
+        throw 'artifact-storage must sit beside dev-analysis-review; its new-artifact-dir.ps1 owns the run directory.'
     }
     return (Resolve-Path -LiteralPath $path).Path
 }

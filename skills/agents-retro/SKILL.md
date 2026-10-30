@@ -16,6 +16,6 @@ Reviews the process, not the code. The instruction set is process documentation 
 
 ## Rules
 
-- Process only: code findings go to `dev-code-review` or become new increments.
+- Process only: code findings go to `dev-analysis-review` or become new increments.
 - Every proposal names the evidence from this flow that motivates it — no speculative rules.
 - Prefer deleting or simplifying a rule over adding one; the instruction set stays lean.

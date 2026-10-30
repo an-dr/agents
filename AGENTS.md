@@ -21,7 +21,7 @@ Present all four numbered choices in this order when asking. A workflow named by
 
 ## Direct
 
-Work on the current branch without `.progress/`, phase transitions, or approval gates. Read the request and repository context, make the smallest sound design choice, use `docs-writing` for needed documentation, `dev-build` for code, `dev-testing` for changed code, and `dev-code-review` for the diff. Fix findings and deliver the usable result in the same request. Ask only when essential information is missing or an action requires permission for a reason outside this workflow; continue independent work while waiting.
+Work on the current branch without `.progress/`, phase transitions, or approval gates. Read the request and repository context, make the smallest sound design choice, use `docs-writing` for needed documentation, `dev-build` for code, `dev-testing` for changed code, and `dev-analysis-review` for the diff. Fix findings and deliver the usable result in the same request. Ask only when essential information is missing or an action requires permission for a reason outside this workflow; continue independent work while waiting.
 
 Commit verified work through `git-commit` on the current branch. Do not push unless the user requests it. When this process repository itself is the target, its Scope rule takes precedence: leave the change uncommitted for review. A request that grows stays Direct unless the user asks to switch to a gated flow; break larger work into coherent internal passes without adding user gates.
 
@@ -68,7 +68,7 @@ Load `dev-workflow` for phase responsibilities and transitions. It names the oth
 - Do not expand scope silently. Add a future increment through the controller in Detailed flows; propose follow-up work in Quick. In Direct, complete the requested result and report any distinct follow-up work.
 - When the user rejects output, redo the delivery from its explanation rather than layering a patch over the rejected approach.
 - Hand over work the user can check without assembling it first. A project that produces an executable is built as part of the delivery and the artefact's path is named, so trying it is one command; anything else names the single command that demonstrates the change. Reporting a change the user cannot run is reporting half of it.
-- End a big change with the `dev-change-report` HTML report: a Detailed or Detailed Auto flow, or any delivery that adds a component, adds an ADR, or changes the architecture. End every other code delivery with a one-line offer to produce it.
+- End a big change with the `dev-analysis-change` HTML report: a Detailed or Detailed Auto flow, or any delivery that adds a component, adds an ADR, or changes the architecture. End every other code delivery with a one-line offer to produce it.
 - Push back on workarounds. If no clean solution exists, explain the compromise and let the user decide.
 
 ## Kaizen: fix the cause, not just the symptom
@@ -129,12 +129,13 @@ Skills live in `skills/<name>/SKILL.md` next to this file. Read a matching skill
 | `docs-screenshot` | Capture a website, GUI application, or game as documentation media. |
 | `docs-gif` | Record an animated GIF of a website, application, or game, only on request. |
 | `ut-adversarial` | Build bug-finding tests before a debug or cleanup fix. |
-| `dev-code-review` | Review an increment or full branch diff. |
+| `dev-analysis-deslop` | Analyse code and docs for illogical or questionable artifacts, with prioritized findings and proposed changes in HTML. |
+| `dev-analysis-review` | Review an increment or full branch diff. |
 | `dev-project-overview` | Explain an unfamiliar repository in one HTML page, code first. |
 | `dev-debug` | Reproduce and instrument a resistant failure. |
 | `dev-design` | Explore a deeper decision with options, steelman, and pre-mortem. |
-| `dev-summary` | Review the full branch and prepare the integration handoff. |
-| `dev-change-report` | Explain a finished change in one HTML page, with diagrams instead of code. |
+| `dev-analysis-summary` | Review the full branch and prepare the integration handoff. |
+| `dev-analysis-change` | Explain a finished change in one HTML page, with diagrams instead of code. |
 | `dev-workflow-clean-branch` | Remove `.progress/` from every feature-branch commit. |
 | `git-commit` | Compose and record a commit in the unified message format. |
 | `git-commit-fix` | Rewrite existing commit messages to that format. |

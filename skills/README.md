@@ -26,12 +26,13 @@ Reusable agent actions. Each skill contains a concise `SKILL.md`; deterministic 
 | [`docs-screenshot`](docs-screenshot/SKILL.md) | Capture a website, GUI application, or game as documentation media. |
 | [`docs-gif`](docs-gif/SKILL.md) | Record an animated GIF of a website, application, or game, only on request. |
 | [`ut-adversarial`](ut-adversarial/SKILL.md) | Build bug-finding tests before a debug or cleanup fix. |
-| [`dev-code-review`](dev-code-review/SKILL.md) | Review an increment or full branch diff. |
+| [`dev-analysis-deslop`](dev-analysis-deslop/SKILL.md) | Analyse code and docs for illogical or questionable artifacts, with prioritized findings and proposed changes in HTML. |
+| [`dev-analysis-review`](dev-analysis-review/SKILL.md) | Review an increment or full branch diff. |
 | [`dev-project-overview`](dev-project-overview/SKILL.md) | Explain an unfamiliar repository in one HTML page, code first. |
 | [`dev-debug`](dev-debug/SKILL.md) | Reproduce and instrument a resistant failure. |
 | [`dev-design`](dev-design/SKILL.md) | Explore a deeper decision with options, steelman, and pre-mortem. |
-| [`dev-summary`](dev-summary/SKILL.md) | Review the full branch and prepare the integration handoff. |
-| [`dev-change-report`](dev-change-report/SKILL.md) | Explain a finished change in one HTML page, with diagrams instead of code. |
+| [`dev-analysis-summary`](dev-analysis-summary/SKILL.md) | Review the full branch and prepare the integration handoff. |
+| [`dev-analysis-change`](dev-analysis-change/SKILL.md) | Explain a finished change in one HTML page, with diagrams instead of code. |
 | [`dev-workflow-clean-branch`](dev-workflow-clean-branch/SKILL.md) | Remove `.progress/` from every feature-branch commit. |
 | [`git-commit`](git-commit/SKILL.md) | Compose and record a commit in the unified message format. |
 | [`git-commit-fix`](git-commit-fix/SKILL.md) | Rewrite existing commit messages to that format. |

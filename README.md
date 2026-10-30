@@ -88,6 +88,10 @@ Future Detailed increments can be inserted or reordered without changing active 
 - `tests/run-all.ps1` — runs every skill test and repository check; CI runs it on each push
 - `.artifacts/ai-<YYYY-MM-DD>-<N>/` — ignored per-run directory holding that run's review JSON, rendered HTML, and reports; `skills/artifact-storage/` owns the layout
 
+## Development analysis
+
+The analysis skills cover distinct tasks: `dev-analysis-deslop` inspects selected changes, a branch diff, files, directories, or a whole repository for illogical or questionable code and documentation artifacts and proposes changes in a prioritized HTML findings table; `dev-analysis-review` reviews a diff and includes a deslop pass over the same scope; `dev-analysis-change` explains a delivered change in HTML; and `dev-analysis-summary` prepares the full-branch integration handoff.
+
 ## Skills stay portable
 
 Each skill runs from its own folder, so it works whether it is installed with the rest of this repository, on its own, or through another tool. No code is shared through a folder outside `skills/<name>/`. When one skill's script needs another skill, it calls that skill's public script, and the agent passes the other skill's folder as a parameter, for example `-GitCommitSkill <git-commit>`. The script never guesses where the other skill is installed. Small generic helpers are copied into each skill that needs them. `skills/agents-dev-skills/` states the rules, and `check-registration.ps1` enforces them.
