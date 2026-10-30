@@ -1,0 +1,140 @@
+---
+name: an-dr-dev-follow-workflow
+description: Run, resume, and enforce the repository's gated Quick, Detailed, or Detailed Auto development workflow. Use when the user selects one of these flows, an existing .progress/workflow.json is present, workflow state must move to another machine, or increments must be inserted or reordered. Direct work does not use this controller.
+license: MIT
+metadata:
+  author: Andrei Gramakov (an-dr)
+  version: "1.0.0"
+  an-dr.type: action
+  an-dr.dependencies: an-dr-ai-send-message an-dr-convention-adr an-dr-dev-analyze-changes an-dr-dev-design an-dr-dev-implement-code an-dr-dev-integrate an-dr-dev-review an-dr-dev-test an-dr-dev-write-documentation an-dr-git-commit
+---
+
+# Workflow controller
+
+Use `scripts/workflow.ps1` as the authority for phase transitions and approval gates in Quick, Detailed, and Detailed Auto. Direct has no controller state. Do not reconstruct workflow state from chat when `.progress/workflow.json` exists.
+
+## Start or resume
+
+From the host repository root, locate this embedded skill relative to the active `AGENTS.md`, then run:
+
+```powershell
+pwsh <skill>/scripts/workflow.ps1 status
+```
+
+If there is no active state, start one as soon as the flow is chosen. Only `-Flow` is required; pass whatever of the four facts the request already makes plain, and `INTAKE` collects the rest:
+
+```powershell
+pwsh <skill>/scripts/workflow.ps1 start -Flow Detailed [-Goal '<problem>']
+```
+
+Supported flows:
+
+- `Quick`: one document/build/verify/commit pass with user decisions and verification.
+- `Detailed`: increments, a feature branch, documentation written before each increment's code, per-increment user verification, integration summary, and explicit integration approval.
+- `DetailedAuto`: the same engineering phases and the same intake, plan, and integration approvals as Detailed; what it automates is the per-increment verification in between, which the agent performs and records itself until `FINAL_REVIEW`.
+
+Use Detailed Auto only when the user selects it; never infer it from a request for autonomy or end-only involvement.
+
+## Plan the gated work
+
+During INTAKE, DESIGN, and SPLIT, read the host `README.md`, `docs/index.md`, architecture docs, and existing ADRs. Record each request as it arrives, identify invariants and existing patterns, and map every touch-point, including docs, schemas, and tests. Keep these phases read-only. Record unresolved choices with `add-question`. In DESIGN, present 2–4 real options with their tradeoffs for Quick and Detailed; record the reasoned choice in Detailed Auto. Use `an-dr-dev-design` when a decision needs deeper analysis, and `an-dr-convention-adr` for a lasting architectural decision.
+
+Before leaving SPLIT, check that every request is covered, every question is answered or dismissed, and each increment names its documentation work. Detailed increments should be about 300 changed lines or less. Present the numbered plan with estimated lines and answered questions before the user's `implement` approval. In Detailed Auto, record the agent's reasoned design choice for final review.
+
+## Work by phase
+
+- **DOCS:** load `an-dr-dev-write-documentation` and write needed documentation before implementation. Leave it uncommitted for the increment's COMMIT.
+- **BUILD:** load `an-dr-dev-implement-code` and implement only the selected Quick option or active increment.
+- **VERIFY:** load `an-dr-dev-test` for changed code and `an-dr-dev-review` for the diff. Per increment, run only the fast checks: build, lint, and test what the increment touched. For documentation-only changes, verify sources, links, and consistency through `an-dr-dev-write-documentation`. Report failure cases, untested edges, doc gaps, scope, and consistency; issues return to BUILD.
+- **Full suite:** run the project's full test suite once, after the last known increment is committed and before `SUMMARY`, not after each increment. Fix each failure in the commit of the increment that introduced it, folded in with a fixup, so every increment stays one reviewable commit. An increment added later reopens this step: the suite runs again once that work is committed.
+- **COMMIT:** commit verified work with `an-dr-git-commit`, including current progress state.
+- **SUMMARY:** use `an-dr-dev-analyze-changes` for the full branch: it runs the review, reconciles the branch with the intake requests, and hands over the summary.
+- **INTEGRATE:** after approval, run `finish`, commit its deletion, then use `an-dr-dev-integrate`, which removes `.progress/` from the branch, and ask for its mode.
+
+## Collect the intake
+
+`INTAKE` is where the user says what this branch should deliver, over as many messages as it takes. Record each one as it arrives instead of holding the conversation in memory, and map the repository between them — what the exploration turns up becomes a question, which may itself produce another request.
+
+```powershell
+pwsh <script> add-request -Text '<something the user wants from this branch>'
+pwsh <script> remove-request -Number 3
+pwsh <script> set-requirement -Field goal -Value '<the problem>'
+```
+
+Requests are collected during `INTAKE` only. Once it closes, new scope is an increment, not a request.
+
+Leaving `INTAKE` needs three things: at least one request, all four requirement fields written with `set-requirement`, and — in Detailed — the `intake` approval. The four facts are the *distillation* of the request list, not a precondition for starting: read the accumulated requests and write what the whole set means, including the exclusions it implies. Never invent a fact the user has not given; ask instead, as a question.
+
+The list stays in state for the rest of the workflow, so `SUMMARY` can check the finished branch against everything that was asked for.
+
+## Operate the workflow
+
+```powershell
+pwsh <script> add-question -Text '<what the user must decide>'
+pwsh <script> answer-question -Number 2 -Answer '<the user's answer>'
+pwsh <script> dismiss-question -Number 3 -Answer '<why it stopped mattering>'
+pwsh <script> approve -Gate intake -Note '<the user's own words>'
+pwsh <script> advance
+pwsh <script> return-to-build
+pwsh <script> switch-flow -Flow Detailed
+pwsh <script> add-increment -At 2 -Scope '<scope>' -Description '<result>'
+pwsh <script> move-increment -Number 4 -To 2
+pwsh <script> defer-increment -To 6
+pwsh <script> remove-increment -Number 7
+pwsh <script> finish
+```
+
+## Gates
+
+Four gate names exist, and the controller names the one it expects for the current phase.
+
+| Gate | Where | Meaning |
+| --- | --- | --- |
+| `intake` | `INTAKE` in both Detailed flows | the user says the request list is complete |
+| `implement` | Quick `DESIGN`, `SPLIT` in both Detailed flows | the user has seen the plan and says build it |
+| `verify` | `VERIFY`, once per increment | the user accepts that increment's verification |
+| `integrate` | Detailed `SUMMARY`, Detailed Auto `FINAL_REVIEW` | the user says land the branch |
+
+Detailed Auto refuses only `verify`, which it records itself; it takes `intake`, `implement`, and `integrate` from the user like any Detailed flow. Quick `INTAKE` and Detailed `DESIGN` have no gate at all — they advance freely, because nothing there touches a file and no list is being closed.
+
+Ask for every user gate as an `an-dr-ai-send-message` confirmation, never as a closing line such as "reply implement". Show the plan, increment, or summary first, then ask in the same message, with one option that approves the gate and one that asks for a change. Pass the chosen label, plus any notes the user added to it, as `-Note`. A choice the user makes in the widget counts as their own words. Any other answer leaves the gate closed.
+
+A request recorded after the `intake` approval drops it: the approval said the list was complete, and it no longer is, so the user closes the longer list again.
+
+## Questions
+
+`add-question` records what the agent cannot settle alone, at any phase, instead of interrupting. `answer-question` and `dismiss-question` close one, and both demand an `-Answer`: a dismissal records why the question stopped mattering. Ask the accumulated questions as one `an-dr-ai-send-message` round, and pass each decision it echoes back as the `-Answer`.
+
+The controller refuses `approve -Gate implement` while any question is open and lists the offenders. This is the mechanism behind "explore first, build on command" — an unanswered question cannot be lost, because it holds the gate shut.
+
+Run `status` before every response while state exists. Present the controller's Markdown status table to the user verbatim, as its emitted agent instruction requires. `advance` rejects missing approvals, missing increments, wrong branches, uncommitted increments, and illegal transitions. `return-to-build` records a failed verification, invalidates the increment's verification approval, and resumes BUILD without changing increment identity.
+
+Only planned increments can be inserted or reordered with `move-increment`. Completed increments retain immutable IDs and fixed positions; renumbering never changes which increment is active.
+
+`defer-increment` is the one way the *active* increment changes position. Use it when priorities move an untouched increment later — not to escape an increment already under way. It returns the active increment to `planned` at `-To`, starts the increment that now sits first among the planned ones, and stays in `BUILD`. It requires a clean working tree and refuses when no planned increment remains. The clean tree is the only evidence the controller has that nothing was built yet; work already committed under the increment is invisible to it, so never defer an increment whose commits are on the branch. Increment IDs survive a deferral, so its history and approvals stay attached to it.
+
+`remove-increment` drops work the user has decided against. A completed increment is delivered history and cannot be removed. The active increment can be, under the same BUILD-and-clean-tree rule as `defer-increment`; the next planned increment then starts, or the flow moves to `SUMMARY` when none remains. Removing an increment is a scope change, so record why in the response — the plan no longer explains its own shape.
+
+New work discovered in `SUMMARY` or `FINAL_REVIEW` can be added as an increment. The controller drops the `implement` and `integrate` approvals and returns to `SPLIT`, so the enlarged plan is authorized again before the new work passes through the branch cycle.
+
+## Switch the flow
+
+The flow is chosen before the work is understood, so exploration can prove it wrong: a Quick fix whose intake keeps growing needs Detailed, and a Detailed plan that collapses to one obvious change does not. `switch-flow` is that transition. Never delete `.progress/` to start over — the requests, the questions and their answers, and the four requirements describe the work rather than the process, and all of them survive the switch.
+
+```powershell
+pwsh <script> switch-flow -Flow Detailed
+```
+
+It returns the workflow to `INTAKE` and drops every approval and every planned increment. That is deliberate: the flows do not collect the same gates, so a phase carried across would credit the new flow with an approval nobody gave — Quick never asks for `intake`, and Detailed cannot leave `INTAKE` without it. Reopening the request list is usually the point, since the flow changed because the user asked for something the old one was not sized for.
+
+The switch is legal only before anything is built. It refuses once `BRANCH` has created a feature branch, once any increment has left `planned`, and while the working tree is dirty apart from `.progress/` — the same evidence `defer-increment` relies on. Past those points the branch is finished or abandoned on its own terms instead, because a flow switch must never orphan delivered work.
+
+## Share and finish
+
+`.progress/workflow.json` is intentionally committable. Include it in checkpoint and increment commits, then push normally when work must continue on another machine. Never add `.progress/` to an ignore file.
+
+Every command that changes state also regenerates `.progress/PROGRESS.md`, a human-readable snapshot (flow, phase, goal, the request list, the iteration list with statuses, and the questions with their answers) with no IDs. Read it for a quick human-facing status check instead of parsing `workflow.json`. `finish` deletes it along with `workflow.json`.
+
+Run `finish` at Quick/COMMIT before the final Quick commit, or at Detailed/INTEGRATE before integration. Commit the deletion; `an-dr-dev-integrate`'s `remove-progress.ps1` then makes `.progress/` absent from every delivered feature-branch commit.
+
+The controller records approval evidence; it never supplies user approval — in Detailed Auto either. Code review, tests, documentation checks, and clean commits still run automatically there, between the user's `implement` and the final review.

@@ -1,0 +1,42 @@
+#Requires -Version 7
+<# Creates a canonical JSON review in REPO/.artifacts/ai-<run>/code-review/. #>
+[CmdletBinding()]
+param(
+    [Parameter(Mandatory)][string]$Reference,
+    [Parameter(Mandatory)]
+    [ValidateSet('direct', 'verify', 'summary', 'requested')]
+    [string]$Scope,
+    # artifact-layout's folder, passed by the agent because skills need not sit side by side.
+    [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$ArtifactLayoutSkill,
+    [string]$Run
+)
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
+Import-Module (Join-Path $PSScriptRoot 'Review.Common.psm1') -Force
+
+$repositoryRoot = Get-ReviewRepositoryRoot
+$reviewDirectory = Initialize-ReviewDirectory -RepositoryRoot $repositoryRoot -ArtifactLayoutSkill $ArtifactLayoutSkill -Run $Run
+$templatePath = Join-Path $PSScriptRoot '../assets/review-template.json'
+$review = Get-Content -Raw -LiteralPath $templatePath | ConvertFrom-Json
+$slug = ConvertTo-ReviewSlug -Value $Reference
+$reviewId = '{0}-{1}-{2}' -f (
+    (Get-Date).ToUniversalTime().ToString('yyyy-MM-dd-HHmmssfffZ'),
+    [guid]::NewGuid().ToString('N').Substring(0, 8),
+    $slug
+)
+$reviewPath = Join-Path $reviewDirectory "$reviewId.review.json"
+if (Test-Path -LiteralPath $reviewPath) {
+    throw "Review already exists: $reviewPath"
+}
+
+$now = (Get-Date).ToUniversalTime().ToString('o')
+$review.reviewId = $reviewId
+$review.reference = $Reference
+$review.scope = $Scope
+$review.createdAt = $now
+$review.updatedAt = $now
+Write-ReviewJson -Review $review -Path $reviewPath
+
+Write-Output $reviewPath
+Write-Output "Commit '$repositoryRoot/.artifacts/.gitignore'; JSON and HTML artifacts remain local."

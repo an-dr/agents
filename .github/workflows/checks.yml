@@ -9,6 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Install the Agent Skills reference validator
+        run: pipx install "git+https://github.com/agentskills/agentskills#subdirectory=skills-ref"
       - name: Run every skill test and repository check
         shell: pwsh
         run: ./tests/run-all.ps1

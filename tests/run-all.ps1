@@ -1,7 +1,8 @@
 #Requires -Version 7
 <#
     Runs every check this repository has: each skill's test-*.ps1, the
-    registration check, the script and skill-text checks, the reference check,
+    registration check, the dependency diagram, the script, skill-text, and skill-name checks, the Agent Skills
+    reference validator, the reference check,
     and the Markdown format check.
     Prints one Markdown table and exits 1 when any step fails.
 #>
@@ -18,13 +19,16 @@ $steps = [System.Collections.Generic.List[object]]::new()
 foreach ($test in Get-ChildItem -LiteralPath $skills -Recurse -File -Filter 'test-*.ps1' | Sort-Object FullName) {
     $steps.Add(@{ Name = ($test.FullName.Substring($root.Length + 1) -replace '\\', '/'); Script = $test.FullName; Arguments = @() })
 }
-$steps.Add(@{ Name = 'registration'; Script = Join-Path $skills 'convention-agent-skill/scripts/check-registration.ps1'; Arguments = @('-Root', $root, '-FailOnCycle') })
-$steps.Add(@{ Name = 'scripts'; Script = Join-Path $skills 'convention-script/scripts/check-scripts.ps1'; Arguments = @('-Root', $root) })
-$steps.Add(@{ Name = 'skills'; Script = Join-Path $skills 'convention-agent-skill/scripts/check-skills.ps1'; Arguments = @('-Root', $root) })
-$steps.Add(@{ Name = 'references'; Script = Join-Path $skills 'ai-prompt-review/scripts/check-references.ps1'; Arguments = @('-Path', $root) })
+$steps.Add(@{ Name = 'registration'; Script = Join-Path $skills 'conventions/an-dr-convention-agent-skill/scripts/check-registration.ps1'; Arguments = @('-Root', $root, '-FailOnCycle') })
+$steps.Add(@{ Name = 'scripts'; Script = Join-Path $skills 'conventions/an-dr-convention-script/scripts/check-scripts.ps1'; Arguments = @('-Root', $root) })
+$steps.Add(@{ Name = 'skills'; Script = Join-Path $skills 'conventions/an-dr-convention-agent-skill/scripts/check-skills.ps1'; Arguments = @('-Root', $root) })
+$steps.Add(@{ Name = 'dependency-diagram'; Script = Join-Path $skills 'actions/an-dr-architecture-build-dependencies/scripts/build-dependencies.ps1'; Arguments = @('-Root', $root, '-Markdown', (Join-Path $root 'README.md'), '-Check') })
+$steps.Add(@{ Name = 'names'; Script = Join-Path $skills '_repository/an-dr-agents-repo-convention-skills/scripts/check-names.ps1'; Arguments = @('-Root', $root) })
+$steps.Add(@{ Name = 'skills-ref'; Script = Join-Path $skills 'conventions/an-dr-convention-agent-skill/scripts/check-skills-ref.ps1'; Arguments = @('-Root', $root) })
+$steps.Add(@{ Name = 'references'; Script = Join-Path $skills 'actions/an-dr-ai-review-instruction/scripts/check-references.ps1'; Arguments = @('-Path', $root) })
 # The repository's own Markdown only; ignored local artifacts are not checked.
 foreach ($target in @('AGENTS.md', 'README.md', 'skills')) {
-    $steps.Add(@{ Name = "markdown $target"; Script = Join-Path $skills 'convention-markdown/scripts/check-markdown.ps1'; Arguments = @((Join-Path $root $target)) })
+    $steps.Add(@{ Name = "markdown $target"; Script = Join-Path $skills 'conventions/an-dr-convention-markdown/scripts/check-markdown.ps1'; Arguments = @((Join-Path $root $target)) })
 }
 
 $results = [System.Collections.Generic.List[object]]::new()

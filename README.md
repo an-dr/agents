@@ -2,7 +2,7 @@
 
 An executable AI development workflow focused on reliable engineering rather than conversational memory.
 
-`AGENTS.md` defines policy. Before changing files, the agent asks the user to select Direct, Quick, Detailed, or Detailed Auto unless the user already selected a workflow or one is active. Direct completes and delivers the request without approval gates or workflow state. `skills/dev-workflow/scripts/workflow.ps1` enforces the gated flows' phase transitions and stores committable state in `.progress/workflow.json`. Before integration, `dev-workflow-integrate` removes that state from every feature-branch commit.
+`AGENTS.md` defines policy. Before changing files, the agent asks the user to select Direct, Quick, Detailed, or Detailed Auto unless the user already selected a workflow or one is active. Direct completes and delivers the request without approval gates or workflow state. `skills/an-dr-dev-follow-workflow/scripts/workflow.ps1` enforces the gated flows' phase transitions and stores committable state in `.progress/workflow.json`. Before integration, `an-dr-dev-integrate` removes that state from every feature-branch commit.
 
 In the gated-flow diagrams below, 👤 marks a transition the user's own words drive. Every other edge is the agent's to take.
 
@@ -79,121 +79,122 @@ Future Detailed increments can be inserted or reordered without changing active 
 ## Repository layout
 
 - `AGENTS.md` — concise policy and entry point, including the pointer to the skill catalog
-- `skills/` — one self-contained folder per skill; `skills/README.md` lists them with the same one-line uses as `AGENTS.md`
-- `skills/dev-workflow/` — executable workflow state machine
-- `skills/git-commit/` — the commit message format and its checker. Commits are attributed to the person who records them; the checker rejects AI co-author and generator trailers
-- `skills/agents-install/` — global installation for local AI tools
-- `skills/agents-modify/` — changing this repository's own instructions from a host project, and the registration check
-- `skills/install-powershell/` — PowerShell 7 bootstrap instructions
+- `skills/` — one self-contained folder per skill in the [Agent Skills](https://agentskills.io/specification) format, grouped in four categories; `skills/README.md` lists them
+- `skills/actions/` — procedures the agent runs, such as `an-dr-dev-follow-workflow`, the executable workflow state machine, and `an-dr-git-commit`, which records commits
+- `skills/concepts/` and `skills/conventions/` — passive skills: principles and format rules the agent reads when their subject is in play, such as `an-dr-convention-commit-message`, whose checker rejects AI co-author and generator trailers, and `an-dr-convention-agent-skill`, which defines the skill format, its `an-dr.type` and `an-dr.dependencies` extensions, and the registration check
+- `skills/_repository/` — the skills that maintain and install this repository: `an-dr-agents-repo-install` for global installation, `an-dr-agents-repo-modify` for changing the instructions from a host project, `an-dr-agents-repo-verify-installation`, and `an-dr-agents-analyze-session`
 - `tests/run-all.ps1` — runs every skill test and repository check; CI runs it on each push
-- `.artifacts/ai-<YYYY-MM-DD>-<N>/` — ignored per-run directory holding that run's review JSON, rendered HTML, and reports; `skills/convention-artifact-layout/` owns the layout
+- `.artifacts/ai-<YYYY-MM-DD>-<N>/` — ignored per-run directory holding that run's review JSON, rendered HTML, and reports; `an-dr-convention-artifact-layout` owns the layout
 
 ## Development analysis
 
-The analysis skills cover distinct tasks: `dev-analysis-deslop` inspects selected changes, a branch diff, files, directories, or a whole repository for illogical or questionable code and documentation artifacts and proposes changes in a prioritized HTML findings table; `dev-analysis-review` reviews a diff and judges the lines it adds against `concept-ai-slop`; `dev-analysis-change` explains a delivered change in HTML; and `dev-workflow-summary` prepares the full-branch integration handoff.
+The analysis skills cover distinct tasks: `an-dr-dev-analyze-slop` inspects selected changes, a branch diff, files, directories, or a whole repository for illogical or questionable code and documentation artifacts and proposes changes in a prioritized HTML findings table; `an-dr-dev-review` reviews a diff and judges the lines it adds against `an-dr-concept-ai-slop`; and `an-dr-dev-analyze-changes` explains a delivered change in HTML and prepares the full-branch integration handoff.
 
 ## Skills stay portable
 
-Each skill runs from its own folder, so it works whether it is installed with the rest of this repository, on its own, or through another tool. No code is shared through a folder outside `skills/<name>/`. When one skill's script needs another skill, it calls that skill's public script, and the agent passes the other skill's folder as a parameter, for example `-ConventionCommitMessageSkill <convention-commit-message>`. The script never guesses where the other skill is installed. Small generic helpers are copied into each skill that needs them. `skills/convention-agent-skill/` states the rules, and its `check-registration.ps1` enforces them.
+Each skill runs from its own folder, so it works whether it is installed with the rest of this repository, on its own, or through another tool. No code is shared through a folder outside `skills/<name>/`. When one skill's script needs another skill, it calls that skill's public script, and the agent passes the other skill's folder as a parameter, for example `-CommitMessageSkill <an-dr-convention-commit-message>`. The script never guesses where the other skill is installed. Small generic helpers are copied into each skill that needs them. `skills/an-dr-convention-agent-skill/` states the rules, and its `check-registration.ps1` enforces them.
 
 ## Skill dependencies
 
-This diagram is generated from the `metadata.dependencies` each skill declares in its [instructions](skills/README.md). A skill declares every skill it names, and `check-registration.ps1` fails on a skill that names an undeclared one, declares one it never names, or sits on a dependency cycle. `PROHIBITED` marks a stable skill, such as a concept, that must name no other skill.
+This diagram is built from the `an-dr.dependencies` each skill declares in its [instructions](skills/README.md) by `an-dr-architecture-build-dependencies`, which marks any skill that declares none. A skill declares every skill it names, and `check-registration.ps1` fails on a skill that names an undeclared one, declares one it never names, or sits on a dependency cycle. `PROHIBITED` marks a stable skill, such as a concept, that must name no other skill.
 
-Arrows point from a skill to a skill it names. Groups organise the view by current role, not installation boundaries. Skills that name no skill and are named by none are omitted, and transitive dependencies are reached by following arrows.
+Arrows point from a skill to a skill it names. Groups are the category folders under `skills/`; no skill outside the agents repository's group depends on one inside it. Skills that name no skill and are named by none are omitted, and transitive dependencies are reached by following arrows.
+
+<!-- skill-dependencies begin -->
 
 ```mermaid
 flowchart LR
-    subgraph maintenance["Maintaining the skills"]
-        agents-modify
-        ai-prompt-writing
-        agents-health-check
-        agents-install
-        agents-retro
-        install-powershell
+    subgraph g_repository["Repository"]
+        an-dr-agents-analyze-session
+        an-dr-agents-repo-convention-skills
+        an-dr-agents-repo-install
+        an-dr-agents-repo-modify
+        an-dr-agents-repo-verify-installation
     end
-    subgraph workflow["Workflow and Git"]
-        dev-workflow
-        dev-workflow-design
-        dev-build
-        dev-testing
-        dev-untangle-dependencies
-        dev-workflow-summary
-        dev-workflow-integrate
-        git-commit-fix
-        ut-adversarial
+    subgraph g_actions["Actions"]
+        an-dr-ai-review-instruction
+        an-dr-ai-send-message
+        an-dr-ai-write-instruction
+        an-dr-architecture-build-dependencies
+        an-dr-architecture-fix-dependencies
+        an-dr-dev-analyze-changes
+        an-dr-dev-analyze-slop
+        an-dr-dev-debug
+        an-dr-dev-design
+        an-dr-dev-follow-workflow
+        an-dr-dev-implement-adversarial-ut
+        an-dr-dev-implement-code
+        an-dr-dev-integrate
+        an-dr-dev-review
+        an-dr-dev-test
+        an-dr-dev-write-documentation
+        an-dr-dev-write-readme
+        an-dr-env-install-powershell
+        an-dr-files-make-screengif
+        an-dr-files-make-screenshot
+        an-dr-git-commit
+        an-dr-git-fix-commit-messages
+        an-dr-project-write-overview
+        an-dr-text-analyze-slop
+        an-dr-text-verify-claims
     end
-    subgraph analysis["Analysis and reports"]
-        dev-analysis-review
-        dev-analysis-deslop
-        dev-analysis-change
-        dev-analysis-project-overview
-        text-claim-audit
-        ai-prompt-review
+    subgraph g_concepts["Concepts"]
+        an-dr-concept-ai-slop
+        an-dr-concept-clean-dependencies
+        an-dr-concept-dark-cockpit
+        an-dr-concept-evidence-grounding
+        an-dr-concept-single-authority
     end
-    subgraph documentation["Documentation and media"]
-        docs-writing
-        docs-readme
-        docs-screenshot
-        docs-gif
+    subgraph g_conventions["Conventions"]
+        an-dr-convention-adr
+        an-dr-convention-agent-skill
+        an-dr-convention-artifact-layout
+        an-dr-convention-code
+        an-dr-convention-commit-message
+        an-dr-convention-html-report
+        an-dr-convention-markdown
+        an-dr-convention-readme
+        an-dr-convention-script
     end
-    subgraph shared["Shared services"]
-        docs-html-report
-        agents-ui
-        git-commit
-    end
-    subgraph concepts["Concepts"]
-        concept-ai-slop
-        concept-clean-dependencies
-        concept-dark-cockpit
-        concept-evidence-grounding
-        concept-single-authority
-    end
-    subgraph conventions["Conventions"]
-        convention-adr
-        convention-agent-skill
-        convention-artifact-layout
-        convention-code
-        convention-commit-message
-        convention-markdown
-        convention-readme
-        convention-script
-    end
-    agents-health-check --> agents-install & convention-commit-message
-    agents-modify --> agents-health-check & agents-install & agents-ui & ai-prompt-review & ai-prompt-writing & convention-agent-skill & convention-markdown & convention-script & git-commit
-    agents-retro --> agents-modify
-    agents-ui --> concept-dark-cockpit & convention-artifact-layout
-    ai-prompt-review --> agents-ui & convention-agent-skill
-    ai-prompt-writing --> ai-prompt-review & concept-ai-slop & convention-agent-skill & convention-markdown
-    convention-agent-skill --> concept-clean-dependencies & convention-script
-    convention-code --> concept-ai-slop & concept-clean-dependencies
-    convention-readme --> concept-ai-slop & concept-evidence-grounding & convention-markdown
-    convention-script --> agents-ui
-    dev-analysis-change --> concept-ai-slop & convention-artifact-layout & docs-html-report & docs-writing
-    dev-analysis-deslop --> agents-ui & ai-prompt-review & concept-ai-slop & convention-artifact-layout & docs-html-report
-    dev-analysis-project-overview --> concept-ai-slop & convention-artifact-layout & docs-html-report & docs-writing
-    dev-analysis-review --> agents-ui & concept-ai-slop & concept-clean-dependencies & concept-evidence-grounding & convention-artifact-layout & convention-code & docs-html-report
-    dev-build --> convention-adr & convention-code & docs-writing
-    dev-testing --> agents-ui & ut-adversarial
-    dev-untangle-dependencies --> agents-modify & agents-ui & concept-clean-dependencies & convention-agent-skill & convention-artifact-layout & docs-html-report
-    dev-workflow --> agents-ui & convention-adr & dev-analysis-review & dev-build & dev-testing & dev-workflow-design & dev-workflow-integrate & dev-workflow-summary & docs-writing & git-commit
-    dev-workflow-design --> agents-ui & convention-adr
-    dev-workflow-integrate --> agents-ui & convention-commit-message & git-commit
-    dev-workflow-summary --> agents-ui & concept-ai-slop & convention-adr & dev-analysis-change & dev-analysis-review
-    docs-gif --> docs-screenshot
-    docs-html-report --> concept-dark-cockpit & convention-artifact-layout
-    docs-readme --> agents-ui & convention-markdown & convention-readme & docs-gif & docs-screenshot & docs-writing
-    docs-screenshot --> convention-artifact-layout
-    docs-writing --> agents-ui & concept-ai-slop & convention-markdown
-    git-commit --> convention-commit-message
-    git-commit-fix --> convention-commit-message
-    install-powershell --> agents-ui
-    text-claim-audit --> agents-ui & convention-artifact-layout & docs-html-report
+    an-dr-agents-analyze-session --> an-dr-agents-repo-modify
+    an-dr-agents-repo-convention-skills --> an-dr-convention-agent-skill & an-dr-dev-test & an-dr-dev-write-documentation & an-dr-git-commit
+    an-dr-agents-repo-modify --> an-dr-agents-repo-convention-skills & an-dr-agents-repo-install & an-dr-agents-repo-verify-installation & an-dr-ai-review-instruction & an-dr-ai-send-message & an-dr-ai-write-instruction & an-dr-convention-agent-skill & an-dr-convention-markdown & an-dr-convention-script & an-dr-git-commit
+    an-dr-agents-repo-verify-installation --> an-dr-agents-repo-install & an-dr-convention-commit-message
+    an-dr-ai-review-instruction --> an-dr-ai-send-message
+    an-dr-ai-send-message --> an-dr-concept-dark-cockpit & an-dr-convention-artifact-layout
+    an-dr-ai-write-instruction --> an-dr-ai-review-instruction & an-dr-concept-ai-slop & an-dr-convention-markdown
+    an-dr-architecture-build-dependencies --> an-dr-ai-send-message & an-dr-convention-agent-skill
+    an-dr-architecture-fix-dependencies --> an-dr-ai-send-message & an-dr-concept-clean-dependencies & an-dr-convention-artifact-layout & an-dr-convention-html-report
+    an-dr-dev-analyze-changes --> an-dr-ai-send-message & an-dr-concept-ai-slop & an-dr-convention-adr & an-dr-convention-artifact-layout & an-dr-convention-html-report & an-dr-dev-review & an-dr-dev-write-documentation
+    an-dr-dev-analyze-slop --> an-dr-ai-review-instruction & an-dr-ai-send-message & an-dr-concept-ai-slop & an-dr-convention-artifact-layout & an-dr-convention-html-report
+    an-dr-dev-design --> an-dr-ai-send-message & an-dr-convention-adr
+    an-dr-dev-follow-workflow --> an-dr-ai-send-message & an-dr-convention-adr & an-dr-dev-analyze-changes & an-dr-dev-design & an-dr-dev-implement-code & an-dr-dev-integrate & an-dr-dev-review & an-dr-dev-test & an-dr-dev-write-documentation & an-dr-git-commit
+    an-dr-dev-implement-code --> an-dr-convention-adr & an-dr-convention-code & an-dr-dev-write-documentation
+    an-dr-dev-integrate --> an-dr-ai-send-message & an-dr-convention-commit-message & an-dr-git-commit
+    an-dr-dev-review --> an-dr-ai-send-message & an-dr-concept-ai-slop & an-dr-concept-clean-dependencies & an-dr-concept-evidence-grounding & an-dr-convention-artifact-layout & an-dr-convention-code & an-dr-convention-html-report
+    an-dr-dev-test --> an-dr-ai-send-message & an-dr-dev-implement-adversarial-ut
+    an-dr-dev-write-documentation --> an-dr-ai-send-message & an-dr-concept-ai-slop & an-dr-convention-markdown
+    an-dr-dev-write-readme --> an-dr-ai-send-message & an-dr-convention-markdown & an-dr-convention-readme & an-dr-dev-write-documentation & an-dr-files-make-screengif & an-dr-files-make-screenshot
+    an-dr-env-install-powershell --> an-dr-ai-send-message
+    an-dr-files-make-screengif --> an-dr-files-make-screenshot
+    an-dr-files-make-screenshot --> an-dr-convention-artifact-layout
+    an-dr-git-commit --> an-dr-convention-commit-message
+    an-dr-git-fix-commit-messages --> an-dr-convention-commit-message
+    an-dr-project-write-overview --> an-dr-concept-ai-slop & an-dr-convention-artifact-layout & an-dr-convention-html-report & an-dr-dev-write-documentation
+    an-dr-text-analyze-slop --> an-dr-ai-send-message & an-dr-concept-ai-slop & an-dr-convention-artifact-layout & an-dr-convention-html-report
+    an-dr-text-verify-claims --> an-dr-ai-send-message & an-dr-convention-artifact-layout & an-dr-convention-html-report
+    an-dr-convention-agent-skill --> an-dr-concept-clean-dependencies & an-dr-convention-script
+    an-dr-convention-code --> an-dr-concept-ai-slop & an-dr-concept-clean-dependencies
+    an-dr-convention-html-report --> an-dr-concept-dark-cockpit & an-dr-convention-artifact-layout
+    an-dr-convention-readme --> an-dr-concept-ai-slop & an-dr-concept-evidence-grounding & an-dr-convention-markdown
+    an-dr-convention-script --> an-dr-ai-send-message
 ```
 
-Script inspection reveals dependencies the instructions do not name: `agents-modify` loads `agents-install`'s module to locate the clone, and `agents-health-check` runs its verifier unless the install check is skipped.
+<!-- skill-dependencies end -->
 
-The [PowerShell bootstrap skill](skills/install-powershell/SKILL.md) applies before running skill scripts when PowerShell 7 is unavailable.
+Script inspection reveals dependencies the instructions do not name: `an-dr-agents-repo-modify` loads `an-dr-agents-repo-install`'s module to locate the clone, and `an-dr-agents-repo-verify-installation` runs its verifier unless the install check is skipped.
+
+The [PowerShell bootstrap skill](skills/actions/an-dr-env-install-powershell/SKILL.md) applies before running skill scripts when PowerShell 7 is unavailable.
 
 ## Checks
 
