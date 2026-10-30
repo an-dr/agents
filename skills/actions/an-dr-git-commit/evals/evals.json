@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-git-commit",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-git-commit. Prepare to commit verified work while preserving unrelated edits.",
+      "expected_skill": "an-dr-git-commit",
+      "context": "The requested formatter change is verified. A separate config file was already dirty. The user did not request pushing.",
+      "expected_behavior": [
+        "Checks recent history and stages only the verified change with the repository's validated message format.",
+        "Preserves the unrelated edit and does not push."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Checks recent history and stages only the verified change with the repository's validated message format."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Preserves the unrelated edit and does not push."
+        }
+      ],
+      "runs": 5,
+      "fixtures": [
+        "fixtures/task.zip"
+      ]
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Prepare to commit verified work while preserving unrelated edits.",
+      "expected_skill": "an-dr-git-commit",
+      "context": "The requested formatter change is verified. A separate config file was already dirty. The user did not request pushing.",
+      "expected_behavior": [
+        "Checks recent history and stages only the verified change with the repository's validated message format.",
+        "Preserves the unrelated edit and does not push."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Checks recent history and stages only the verified change with the repository's validated message format."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Preserves the unrelated edit and does not push."
+        }
+      ],
+      "runs": 5,
+      "fixtures": [
+        "fixtures/task.zip"
+      ]
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Prepare to commit verified work while preserving unrelated edits.",
+      "expected_skill": "an-dr-git-commit",
+      "context": "The requested formatter change is verified. A separate config file was already dirty. The user did not request pushing.",
+      "expected_behavior": [
+        "Checks recent history and stages only the verified change with the repository's validated message format.",
+        "Preserves the unrelated edit and does not push."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Checks recent history and stages only the verified change with the repository's validated message format."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Preserves the unrelated edit and does not push."
+        }
+      ],
+      "runs": 5,
+      "fixtures": [
+        "fixtures/task.zip"
+      ]
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Explain the supplied git status entry M app.py. Do not stage or commit files.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 5
+    }
+  ]
+}

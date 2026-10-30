@@ -4,14 +4,14 @@ description: What a skill looks like in any repository that uses it — the Agen
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "1.2.0"
   an-dr.type: convention
-  an-dr.dependencies: an-dr-concept-clean-dependencies an-dr-convention-script
+  an-dr.dependencies: an-dr-concept-clean-dependencies an-dr-convention-script an-dr-convention-agent-skill-testing
 ---
 
 # Convention: agent skill
 
-A reader or an agent that has seen one skill should find every other one in the same places. This convention owns the shape of a skill: the standard format it builds on, the extensions it adds, where a skill lives, what its text says and in what order, and how it is registered. Scripts follow `an-dr-convention-script`.
+A reader or an agent that has seen one skill should find every other one in the same places. This convention owns the shape of a skill: the standard format it builds on, the extensions it adds, where a skill lives, what its text says and in what order, and how it is registered. Scripts follow `an-dr-convention-script`; test packaging and execution follow `an-dr-convention-agent-skill-testing`.
 
 ## The format and its extensions
 
@@ -33,7 +33,7 @@ The extensions are conventions of the project, not of the format. A tool that ig
 | Type | Holds | Agent uses it by | Contains |
 | --- | --- | --- | --- |
 | Action | A procedure that produces a result | running it | `SKILL.md`, scripts, assets, tests |
-| Concept | A principle: what it requires, where its boundary is, how to recognise a violation | reading it when its subject is in play | `SKILL.md` and tests; no production scripts |
+| Concept | A principle: what it requires, where its boundary is, how to recognise a violation | reading it when its subject is in play | `SKILL.md` and evals; no production scripts |
 | Convention | The format rules for an artifact: what a correct one looks like | reading it when writing or reviewing that artifact | `SKILL.md`, tests, and the scripts that check or generate it |
 
 Concepts and conventions are passive: the agent reads them, never runs them as a procedure. A concept has no production scripts and calls no action; its tests assess application of the principle. A convention reinforces its rules with scripts that call no action, and actions reach them like any public script, through a passed folder. Colours, glyphs, and other presentation details belong to an implementor, not to a concept.
@@ -110,10 +110,10 @@ pwsh <skill>/scripts/check-skills.ps1 [-Root <repository>]
 pwsh <skill>/scripts/check-skills-ref.ps1 [-Root <repository>] [-Require]
 ```
 
-`check-registration.ps1` fails on a misplaced or unregistered skill, a type that disagrees with its folder, a concept or convention whose name lacks its type, a concept with production files outside `SKILL.md` and `tests/`, a skill that names an undeclared skill or declares one it never names, a `PROHIBITED` skill that names any other, and a general skill that depends on one in an underscore folder. It lists every dependency cycle with its path, and fails on a cycle with `-FailOnCycle`. `-RequireTests` also requires every skill to have `tests/cases.json`.
+`check-registration.ps1` fails on a misplaced or unregistered skill, a type that disagrees with its folder, a concept or convention whose name lacks its type, a concept with production files outside `SKILL.md` and `evals/`, a skill that names an undeclared skill or declares one it never names, a `PROHIBITED` skill that names any other, and a general skill that depends on one in an underscore folder. It lists every dependency cycle with its path, and fails on a cycle with `-FailOnCycle`. `-RequireTests` also requires every skill to have `evals/evals.json` and `evals/EVAL.md`.
 
 `check-skills.ps1` fails on frontmatter outside the Agent Skills format, a missing licence, author, version, or extension, a comma-separated `allowed-tools`, a description without a trigger sentence, a title or section order that does not match the type, and a skill over the size limit.
 
 `check-skills-ref.ps1` runs `skills-ref validate`, the format's reference validator, on every skill. When `skills-ref` is missing it prints the install command and exits 0, and exits 1 with `-Require` or in CI. Installing it is the user's decision.
 
-All three exit non-zero on a problem. Regression scripts live in `tests/` and run through `pwsh <skill>/scripts/run-tests.ps1`; they break copies to verify diagnostics. Syntax-only checks are identified separately from runtime coverage.
+All three exit non-zero on a problem. Regression scripts live in `scripts/tests/` and run through `pwsh <skill>/scripts/tests/run.ps1`; they break copies to verify diagnostics. Syntax-only checks are identified separately from runtime coverage.

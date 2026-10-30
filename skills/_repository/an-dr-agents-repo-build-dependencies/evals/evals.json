@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-agents-repo-build-dependencies",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-agents-repo-build-dependencies. Explain the dependency graph for these declarations and identify missing declarations.",
+      "expected_skill": "an-dr-agents-repo-build-dependencies",
+      "context": "alpha declares beta; beta declares none; gamma has no dependencies key. No cycles exist.",
+      "expected_behavior": [
+        "Distinguishes beta's explicit none from gamma's missing declaration.",
+        "Shows only alpha to beta as an edge and does not invent a cycle."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Distinguishes beta's explicit none from gamma's missing declaration."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Shows only alpha to beta as an edge and does not invent a cycle."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Explain the dependency graph for these declarations and identify missing declarations.",
+      "expected_skill": "an-dr-agents-repo-build-dependencies",
+      "context": "alpha declares beta; beta declares none; gamma has no dependencies key. No cycles exist.",
+      "expected_behavior": [
+        "Distinguishes beta's explicit none from gamma's missing declaration.",
+        "Shows only alpha to beta as an edge and does not invent a cycle."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Distinguishes beta's explicit none from gamma's missing declaration."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Shows only alpha to beta as an edge and does not invent a cycle."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Explain the dependency graph for these declarations and identify missing declarations.",
+      "expected_skill": "an-dr-agents-repo-build-dependencies",
+      "context": "alpha declares beta; beta declares none; gamma has no dependencies key. No cycles exist.",
+      "expected_behavior": [
+        "Distinguishes beta's explicit none from gamma's missing declaration.",
+        "Shows only alpha to beta as an edge and does not invent a cycle."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Distinguishes beta's explicit none from gamma's missing declaration."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Shows only alpha to beta as an edge and does not invent a cycle."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Explain what a graph node is. No skill dependency diagram is requested.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 5
+    }
+  ]
+}

@@ -1,35 +1,23 @@
 # Tests
 
-Run the automated repository checks with `pwsh tests/run-all.ps1`. It discovers each skill's `scripts/run-tests.ps1`, validates case data, and checks packaging. Local runners execute only top-level `tests/test-*.ps1` in fresh PowerShell processes. They preserve failures and never execute nested fixtures or agent evaluations. These checks do not establish that an agent follows a skill.
+Run `pwsh tests/run-all.ps1` for free repository checks. It discovers skill manifests and invokes each skill's `scripts/tests/run.ps1`. Each owning suite supplies its repository checks; the testing convention's suite discovers and validates `evals/evals.json` and ZIP fixtures. The root runner carries no validator list. It never invokes a model. A structural pass does not establish behavioral success.
 
-## Test layout
+## Deterministic tests
 
-Every skill has `tests/cases.json`, including passive concepts and conventions. Script tests live in `tests/test-*.ps1`; reusable fixtures live beneath `tests/fixtures/`. Every `scripts/` folder contains its own `run-tests.ps1`, so one skill can be checked with `pwsh <skill>/scripts/run-tests.ps1` without relying on another skill's installed location.
+Production helpers live in `scripts/`; their tests live in `scripts/tests/test-*.ps1` and reusable script fixtures in `scripts/tests/fixtures/`. Run one skill with `pwsh <skill>/scripts/tests/run.ps1`. Local runners execute only top-level test scripts in fresh non-interactive PowerShell processes and preserve failures. Syntax baselines are identified separately from runtime regression coverage.
 
-Existing regression suites were moved into this layout. Skills whose scripts have no runtime regression suite have an explicit syntax baseline, `tests/test-script-syntax.ps1`. That baseline parses production scripts and catches syntax errors; it does not exercise runtime behavior. Add regression coverage for changed logic rather than treating a syntax pass as proof of correctness.
+## Skill evaluations
 
-## Behavioral tests
+[The testing convention](../skills/conventions/an-dr-convention-agent-skill-testing/SKILL.md) owns the layout, environment, fixture, assertion, grading, and result contracts. [Test implementation](../skills/actions/an-dr-ai-skill-implement-test/SKILL.md) authors coverage; [skill testing](../skills/actions/an-dr-ai-skill-test/SKILL.md) performs checks and explicitly requested agent runs.
 
-[Skill test implementation](../skills/actions/an-dr-ai-skill-implement-test/SKILL.md) owns script test implementation, the behavior case format, and the free structural checker. [Skill testing](../skills/actions/an-dr-ai-skill-test/SKILL.md) always runs cheap script tests and owns isolated behavioral execution and grading. Run script tests after every modification to a skill, its scripts, or its tests. Only agent evaluations need an explicit user request; normal development and the automated suite never start them.
+Every skill has `evals/evals.json` and `evals/EVAL.md`. Cases cover explicit, implicit, contextual, and negative activation, with behavior outcomes kept private from the tested agent. Repository fixtures are ZIPs under `evals/fixtures/`, containing complete baseline and working snapshots. The harness validates them before extraction, initializes a fresh scratch Git repository, and applies the working snapshot, including deletions.
 
-The focused suites include:
-
-- [Change reports](../skills/actions/an-dr-dev-analyze-changes/tests/cases.json)
-- [Code and documentation analysis](../skills/actions/an-dr-dev-analyze-slop/tests/cases.json)
-- [Text analysis](../skills/actions/an-dr-text-analyze-slop/tests/cases.json)
-- [Test authoring](../skills/actions/an-dr-ai-skill-implement-test/tests/cases.json)
-- [Script testing and on-demand evaluations](../skills/actions/an-dr-ai-skill-test/tests/cases.json)
-
-`run-all.ps1` checks the structure of these suites without executing their prompts. It also exercises the validator's rejection cases.
-
-The remaining skills have baseline behavior cases in the same location. These describe observable expectations for a representative task; they are not an exhaustive audit or evidence of a successful evaluation.
-
-Each case supplies a user prompt, raw input, and observable expectations. The expectations are a grading rubric, not instructions to give the agent being tested. Matching particular wording is unnecessary.
-
-Check a suite's structure without running an agent:
+Validate a suite without starting an agent:
 
 ```powershell
-pwsh skills/actions/an-dr-ai-skill-implement-test/scripts/check-test-cases.ps1 -Path skills/actions/an-dr-dev-analyze-changes/tests/cases.json
+pwsh skills/conventions/an-dr-convention-agent-skill-testing/scripts/check-evals.ps1 -Path skills/actions/an-dr-dev-analyze-changes/evals/evals.json
 ```
 
-To request execution, name the skill, suite, and desired limits, for example: "Use an-dr-ai-skill-test to run AC-001 once against the change-report skill with the current model." Fresh-session and tool requirements, fixture preparation, result records, and grading follow the execution skill. Parsing a case file is not a passing behavioral evaluation.
+To request execution, name the skill, cases, and limits: "Use an-dr-ai-skill-test to run AC-001 once against the change-report skill with the current model, single arm, no extra paid grader." A comparative run also names its arms and trial limits. The environment declaration is preflighted and resolved in the run manifest. Missing isolation or capabilities produce blocked coverage. Script results, activation, behavior, security, and usage are reported separately. Five declared trials are a starting point; an explicit request overrides them.
+
+PR CI runs free checks only. Modifying cases does not authorize paid execution, retries, or comparisons. Existing baseline cases are coverage declarations, not evidence of completed evaluations.

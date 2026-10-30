@@ -1,0 +1,182 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-convention-agent-skill-testing",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "TESTING-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-convention-agent-skill-testing. Review this proposed skill testing plan without executing models.",
+      "expected_skill": "an-dr-convention-agent-skill-testing",
+      "context": "The plan stores behavior cases in evals/evals.json, embeds a grading rubric in the tested prompt, extracts a repository ZIP without inspecting entries, uses one shared agent session, and reports a single successful run as reliable. Its script runner recurses through fixtures.",
+      "expected_behavior": [
+        "Places evaluations in evals/evals.json and deterministic tests under scripts/tests/ with run.ps1.",
+        "Keeps the rubric private, requires fresh isolated trials and declares and checks the host environment.",
+        "Rejects unsafe ZIP extraction and requires baseline and working snapshots inside the sandbox.",
+        "Separates invocation from behavior results, uses bounded repeated comparisons, and runs no model evaluation without an explicit request."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Places evaluations in evals/evals.json and deterministic tests under scripts/tests/ with run.ps1."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Keeps the rubric private, requires fresh isolated trials and declares and checks the host environment."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Rejects unsafe ZIP extraction and requires baseline and working snapshots inside the sandbox."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Separates invocation from behavior results, uses bounded repeated comparisons, and runs no model evaluation without an explicit request."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Review this proposed skill testing plan without executing models.",
+      "expected_skill": "an-dr-convention-agent-skill-testing",
+      "context": "The plan stores behavior cases in evals/evals.json, embeds a grading rubric in the tested prompt, extracts a repository ZIP without inspecting entries, uses one shared agent session, and reports a single successful run as reliable. Its script runner recurses through fixtures.",
+      "expected_behavior": [
+        "Places evaluations in evals/evals.json and deterministic tests under scripts/tests/ with run.ps1.",
+        "Keeps the rubric private, requires fresh isolated trials and declares and checks the host environment.",
+        "Rejects unsafe ZIP extraction and requires baseline and working snapshots inside the sandbox.",
+        "Separates invocation from behavior results, uses bounded repeated comparisons, and runs no model evaluation without an explicit request."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Places evaluations in evals/evals.json and deterministic tests under scripts/tests/ with run.ps1."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Keeps the rubric private, requires fresh isolated trials and declares and checks the host environment."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Rejects unsafe ZIP extraction and requires baseline and working snapshots inside the sandbox."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Separates invocation from behavior results, uses bounded repeated comparisons, and runs no model evaluation without an explicit request."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Review this proposed skill testing plan without executing models.",
+      "expected_skill": "an-dr-convention-agent-skill-testing",
+      "context": "The plan stores behavior cases in evals/evals.json, embeds a grading rubric in the tested prompt, extracts a repository ZIP without inspecting entries, uses one shared agent session, and reports a single successful run as reliable. Its script runner recurses through fixtures.",
+      "expected_behavior": [
+        "Places evaluations in evals/evals.json and deterministic tests under scripts/tests/ with run.ps1.",
+        "Keeps the rubric private, requires fresh isolated trials and declares and checks the host environment.",
+        "Rejects unsafe ZIP extraction and requires baseline and working snapshots inside the sandbox.",
+        "Separates invocation from behavior results, uses bounded repeated comparisons, and runs no model evaluation without an explicit request."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Places evaluations in evals/evals.json and deterministic tests under scripts/tests/ with run.ps1."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Keeps the rubric private, requires fresh isolated trials and declares and checks the host environment."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Rejects unsafe ZIP extraction and requires baseline and working snapshots inside the sandbox."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Separates invocation from behavior results, uses bounded repeated comparisons, and runs no model evaluation without an explicit request."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Explain the word assertion in ordinary English. Do not author, package, execute, or review skill tests.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "TESTING-002",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-convention-agent-skill-testing to review this proposed repository test runner.",
+      "expected_skill": "an-dr-convention-agent-skill-testing",
+      "context": "The root runner hardcodes six validator paths. A newly added conventional skill has scripts/tests/run.ps1, but its repository check will not run until a maintainer edits the root list. A nested test fixture also contains a run.ps1 file.",
+      "expected_behavior": [
+        "Requires discovery of skill-local scripts/tests/run.ps1 entry points from skill manifests, with repository checks owned by those suites.",
+        "Excludes nested fixture runners and rejects an empty discovery result without starting models."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Proposes conventional discovery and suite-owned checks without executing nested fixture programs or models."
+        }
+      ],
+      "runs": 5
+    }
+  ]
+}

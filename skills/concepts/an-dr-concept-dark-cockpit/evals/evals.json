@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-concept-dark-cockpit",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-concept-dark-cockpit. Assign attention levels to these reported outcomes.",
+      "expected_skill": "an-dr-concept-dark-cockpit",
+      "context": "99 routine checks passed. One unmeasured performance question remains. One demonstrated data-loss defect exists.",
+      "expected_behavior": [
+        "Makes the demonstrated data-loss defect the strongest signal and keeps routine passes quiet.",
+        "Does not make the unmeasured question a demonstrated critical defect or rely on color alone."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": [
+            ".artifacts"
+          ]
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Makes the demonstrated data-loss defect the strongest signal and keeps routine passes quiet."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not make the unmeasured question a demonstrated critical defect or rely on color alone."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Assign attention levels to these reported outcomes.",
+      "expected_skill": "an-dr-concept-dark-cockpit",
+      "context": "99 routine checks passed. One unmeasured performance question remains. One demonstrated data-loss defect exists.",
+      "expected_behavior": [
+        "Makes the demonstrated data-loss defect the strongest signal and keeps routine passes quiet.",
+        "Does not make the unmeasured question a demonstrated critical defect or rely on color alone."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": [
+            ".artifacts"
+          ]
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Makes the demonstrated data-loss defect the strongest signal and keeps routine passes quiet."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not make the unmeasured question a demonstrated critical defect or rely on color alone."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Assign attention levels to these reported outcomes.",
+      "expected_skill": "an-dr-concept-dark-cockpit",
+      "context": "99 routine checks passed. One unmeasured performance question remains. One demonstrated data-loss defect exists.",
+      "expected_behavior": [
+        "Makes the demonstrated data-loss defect the strongest signal and keeps routine passes quiet.",
+        "Does not make the unmeasured question a demonstrated critical defect or rely on color alone."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": [
+            ".artifacts"
+          ]
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Makes the demonstrated data-loss defect the strongest signal and keeps routine passes quiet."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not make the unmeasured question a demonstrated critical defect or rely on color alone."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Translate the single word hello into Czech and return only the translation. No analysis, design, report, or source assessment is requested.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 5
+    }
+  ]
+}

@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-agents-repo-verify-installation",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-agents-repo-verify-installation. Identify the first broken layer from the supplied health evidence.",
+      "expected_skill": "an-dr-agents-repo-verify-installation",
+      "context": "The global skill links are readable. The host repository has no AGENTS.md or CLAUDE.md reference to the policy and no active workflow. The tool proposes no flow.",
+      "expected_behavior": [
+        "Recognizes the opt-in guard as working rather than a broken install.",
+        "Does not prescribe reinstalling links or adding host policy without establishing that the host should opt in."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Recognizes the opt-in guard as working rather than a broken install."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not prescribe reinstalling links or adding host policy without establishing that the host should opt in."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Identify the first broken layer from the supplied health evidence.",
+      "expected_skill": "an-dr-agents-repo-verify-installation",
+      "context": "The global skill links are readable. The host repository has no AGENTS.md or CLAUDE.md reference to the policy and no active workflow. The tool proposes no flow.",
+      "expected_behavior": [
+        "Recognizes the opt-in guard as working rather than a broken install.",
+        "Does not prescribe reinstalling links or adding host policy without establishing that the host should opt in."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Recognizes the opt-in guard as working rather than a broken install."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not prescribe reinstalling links or adding host policy without establishing that the host should opt in."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Identify the first broken layer from the supplied health evidence.",
+      "expected_skill": "an-dr-agents-repo-verify-installation",
+      "context": "The global skill links are readable. The host repository has no AGENTS.md or CLAUDE.md reference to the policy and no active workflow. The tool proposes no flow.",
+      "expected_behavior": [
+        "Recognizes the opt-in guard as working rather than a broken install.",
+        "Does not prescribe reinstalling links or adding host policy without establishing that the host should opt in."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Recognizes the opt-in guard as working rather than a broken install."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not prescribe reinstalling links or adding host policy without establishing that the host should opt in."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Explain what an environment variable is. No agent-policy installation problem was reported.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 5
+    }
+  ]
+}

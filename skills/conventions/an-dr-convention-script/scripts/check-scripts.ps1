@@ -21,11 +21,11 @@ $scripts = @(Get-ChildItem -LiteralPath $skillsDir -Recurse -File -Include '*.ps
 
 foreach ($folder in Get-ChildItem -Path (Join-Path $skillsDir '*/*/scripts') -Directory) {
     $relative = $folder.FullName.Substring($Root.Length + 1) -replace '\\', '/'
-    if (-not (Test-Path -LiteralPath (Join-Path $folder.FullName 'run-tests.ps1') -PathType Leaf)) {
-        $problems.Add([pscustomobject]@{ Where = $relative; What = 'missing run-tests.ps1' })
+    if (-not (Test-Path -LiteralPath (Join-Path $folder.FullName 'tests/run.ps1') -PathType Leaf)) {
+        $problems.Add([pscustomobject]@{ Where = $relative; What = 'missing tests/run.ps1' })
     }
     foreach ($test in Get-ChildItem -LiteralPath $folder.FullName -File -Filter 'test-*.ps1') {
-        $problems.Add([pscustomobject]@{ Where = $relative; What = "$($test.Name) belongs in tests/, not scripts/" })
+        $problems.Add([pscustomobject]@{ Where = $relative; What = "$($test.Name) belongs in scripts/tests/, not scripts/" })
     }
 }
 

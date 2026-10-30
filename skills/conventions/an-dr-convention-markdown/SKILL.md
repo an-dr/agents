@@ -4,7 +4,7 @@ description: Format rules for Markdown files — one line per paragraph, heading
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "1.1.0"
   an-dr.type: convention
   an-dr.dependencies: PROHIBITED
 ---
@@ -41,6 +41,6 @@ Break a line only where the break carries meaning: between list items, between t
 pwsh <skill>/scripts/check-markdown.ps1 -Path <file-or-directory>
 ```
 
-The script exits non-zero on any rule violation, including a hard-wrapped paragraph. HTML comments are excluded from prose checks; visible text around them is still checked. Run it on every `.md` file you write or touch.
+The script exits non-zero on any rule violation, including a hard-wrapped paragraph. HTML comments are excluded from prose checks; visible text around them is still checked. Run it on every `.md` file you write or touch. Its `-Path` parameter also accepts an array of files or directories; the repository test discovers Markdown through Git so ignored artifacts are excluded.
 
-`reflow-markdown.ps1` in the same folder joins hard-wrapped paragraphs. The comment and paragraph regressions live in `tests/test-markdown.ps1`; run them with `pwsh <skill>/scripts/run-tests.ps1`.
+`reflow-markdown.ps1` in the same folder joins hard-wrapped paragraphs. The comment and paragraph regressions live in `scripts/tests/test-markdown.ps1`; run them with `pwsh <skill>/scripts/tests/run.ps1`.

@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-text-verify-claims",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-text-verify-claims. Audit the summary against its source log.",
+      "expected_skill": "an-dr-text-verify-claims",
+      "context": "Summary: all 100 requests succeeded and latency improved by 20%. Log: 98 succeeded, 2 timed out. No timings were recorded.",
+      "expected_behavior": [
+        "Flags the success total as contradicted by the log and the latency improvement as unsupported.",
+        "Separates observed counts from missing measurements without inventing replacement latency data."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": [
+            ".artifacts"
+          ]
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Flags the success total as contradicted by the log and the latency improvement as unsupported."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Separates observed counts from missing measurements without inventing replacement latency data."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Audit the summary against its source log.",
+      "expected_skill": "an-dr-text-verify-claims",
+      "context": "Summary: all 100 requests succeeded and latency improved by 20%. Log: 98 succeeded, 2 timed out. No timings were recorded.",
+      "expected_behavior": [
+        "Flags the success total as contradicted by the log and the latency improvement as unsupported.",
+        "Separates observed counts from missing measurements without inventing replacement latency data."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": [
+            ".artifacts"
+          ]
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Flags the success total as contradicted by the log and the latency improvement as unsupported."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Separates observed counts from missing measurements without inventing replacement latency data."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Audit the summary against its source log.",
+      "expected_skill": "an-dr-text-verify-claims",
+      "context": "Summary: all 100 requests succeeded and latency improved by 20%. Log: 98 succeeded, 2 timed out. No timings were recorded.",
+      "expected_behavior": [
+        "Flags the success total as contradicted by the log and the latency improvement as unsupported.",
+        "Separates observed counts from missing measurements without inventing replacement latency data."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": [
+            ".artifacts"
+          ]
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Flags the success total as contradicted by the log and the latency improvement as unsupported."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Separates observed counts from missing measurements without inventing replacement latency data."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Write a fictional sentence about a dragon. No source-backed claim audit is requested.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 5
+    }
+  ]
+}

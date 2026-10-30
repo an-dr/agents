@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-convention-code",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-convention-code. Review this proposed code change against the local convention.",
+      "expected_skill": "an-dr-convention-code",
+      "context": "The requirement fixes a one-line boundary condition. The proposal introduces a factory, an abstract registry, and two wrappers with only one consumer.",
+      "expected_behavior": [
+        "Questions the added abstractions using their concrete maintenance cost and absent consumers.",
+        "Proposes a small readable correction that preserves existing interfaces."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Questions the added abstractions using their concrete maintenance cost and absent consumers."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Proposes a small readable correction that preserves existing interfaces."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Review this proposed code change against the local convention.",
+      "expected_skill": "an-dr-convention-code",
+      "context": "The requirement fixes a one-line boundary condition. The proposal introduces a factory, an abstract registry, and two wrappers with only one consumer.",
+      "expected_behavior": [
+        "Questions the added abstractions using their concrete maintenance cost and absent consumers.",
+        "Proposes a small readable correction that preserves existing interfaces."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Questions the added abstractions using their concrete maintenance cost and absent consumers."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Proposes a small readable correction that preserves existing interfaces."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Review this proposed code change against the local convention.",
+      "expected_skill": "an-dr-convention-code",
+      "context": "The requirement fixes a one-line boundary condition. The proposal introduces a factory, an abstract registry, and two wrappers with only one consumer.",
+      "expected_behavior": [
+        "Questions the added abstractions using their concrete maintenance cost and absent consumers.",
+        "Proposes a small readable correction that preserves existing interfaces."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Questions the added abstractions using their concrete maintenance cost and absent consumers."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Proposes a small readable correction that preserves existing interfaces."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Translate the word function into Czech. No source code is being written or reviewed.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 5
+    }
+  ]
+}

@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-convention-markdown",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-convention-markdown. Correct the Markdown mechanics while preserving meaning.",
+      "expected_skill": "an-dr-convention-markdown",
+      "context": "A paragraph is hard-wrapped across two lines, a fence has no language, and the file has multiple trailing newlines.",
+      "expected_behavior": [
+        "Produces one line per paragraph, a labeled fence, and exactly one final newline.",
+        "Preserves content rather than expanding the document or rewriting its claims."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Produces one line per paragraph, a labeled fence, and exactly one final newline."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Preserves content rather than expanding the document or rewriting its claims."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Correct the Markdown mechanics while preserving meaning.",
+      "expected_skill": "an-dr-convention-markdown",
+      "context": "A paragraph is hard-wrapped across two lines, a fence has no language, and the file has multiple trailing newlines.",
+      "expected_behavior": [
+        "Produces one line per paragraph, a labeled fence, and exactly one final newline.",
+        "Preserves content rather than expanding the document or rewriting its claims."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Produces one line per paragraph, a labeled fence, and exactly one final newline."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Preserves content rather than expanding the document or rewriting its claims."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Correct the Markdown mechanics while preserving meaning.",
+      "expected_skill": "an-dr-convention-markdown",
+      "context": "A paragraph is hard-wrapped across two lines, a fence has no language, and the file has multiple trailing newlines.",
+      "expected_behavior": [
+        "Produces one line per paragraph, a labeled fence, and exactly one final newline.",
+        "Preserves content rather than expanding the document or rewriting its claims."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Produces one line per paragraph, a labeled fence, and exactly one final newline."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Preserves content rather than expanding the document or rewriting its claims."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Return the number 42. No Markdown file or formatting review is requested.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 5
+    }
+  ]
+}

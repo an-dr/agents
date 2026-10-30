@@ -1,0 +1,150 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-files-make-screenshot",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-files-make-screenshot. Prepare one screenshot of the running local application for documentation.",
+      "expected_skill": "an-dr-files-make-screenshot",
+      "context": "The user requested the settings panel only. The full desktop contains unrelated private windows.",
+      "expected_behavior": [
+        "Captures the intended settings view without including unrelated windows.",
+        "Stores and reports a usable documentation image path and checks the captured content."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Captures the intended settings view without including unrelated windows."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Stores and reports a usable documentation image path and checks the captured content."
+        }
+      ],
+      "runs": 5,
+      "environment": {
+        "tools": [
+          "git",
+          "pwsh",
+          "desktop-capture",
+          "image-inspection"
+        ]
+      }
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Prepare one screenshot of the running local application for documentation.",
+      "expected_skill": "an-dr-files-make-screenshot",
+      "context": "The user requested the settings panel only. The full desktop contains unrelated private windows.",
+      "expected_behavior": [
+        "Captures the intended settings view without including unrelated windows.",
+        "Stores and reports a usable documentation image path and checks the captured content."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Captures the intended settings view without including unrelated windows."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Stores and reports a usable documentation image path and checks the captured content."
+        }
+      ],
+      "runs": 5,
+      "environment": {
+        "tools": [
+          "git",
+          "pwsh",
+          "desktop-capture",
+          "image-inspection"
+        ]
+      }
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Prepare one screenshot of the running local application for documentation.",
+      "expected_skill": "an-dr-files-make-screenshot",
+      "context": "The user requested the settings panel only. The full desktop contains unrelated private windows.",
+      "expected_behavior": [
+        "Captures the intended settings view without including unrelated windows.",
+        "Stores and reports a usable documentation image path and checks the captured content."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Captures the intended settings view without including unrelated windows."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Stores and reports a usable documentation image path and checks the captured content."
+        }
+      ],
+      "runs": 5,
+      "environment": {
+        "tools": [
+          "git",
+          "pwsh",
+          "desktop-capture",
+          "image-inspection"
+        ]
+      }
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Explain what a screenshot is. Do not capture any screen or write media.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 5
+    }
+  ]
+}

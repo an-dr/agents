@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-ai-write-instruction",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-ai-write-instruction. Propose where to enforce this deterministic requirement.",
+      "expected_skill": "an-dr-ai-write-instruction",
+      "context": "Every release name must match v followed by a semantic version. Agents repeatedly forget the exact pattern. The always-loaded policy is already long.",
+      "expected_behavior": [
+        "Proposes a deterministic validator for the release input instead of duplicating long prose in always-loaded instructions.",
+        "Keeps one authoritative owner and states an observable failure diagnostic."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Proposes a deterministic validator for the release input instead of duplicating long prose in always-loaded instructions."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Keeps one authoritative owner and states an observable failure diagnostic."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Propose where to enforce this deterministic requirement.",
+      "expected_skill": "an-dr-ai-write-instruction",
+      "context": "Every release name must match v followed by a semantic version. Agents repeatedly forget the exact pattern. The always-loaded policy is already long.",
+      "expected_behavior": [
+        "Proposes a deterministic validator for the release input instead of duplicating long prose in always-loaded instructions.",
+        "Keeps one authoritative owner and states an observable failure diagnostic."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Proposes a deterministic validator for the release input instead of duplicating long prose in always-loaded instructions."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Keeps one authoritative owner and states an observable failure diagnostic."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Propose where to enforce this deterministic requirement.",
+      "expected_skill": "an-dr-ai-write-instruction",
+      "context": "Every release name must match v followed by a semantic version. Agents repeatedly forget the exact pattern. The always-loaded policy is already long.",
+      "expected_behavior": [
+        "Proposes a deterministic validator for the release input instead of duplicating long prose in always-loaded instructions.",
+        "Keeps one authoritative owner and states an observable failure diagnostic."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Proposes a deterministic validator for the release input instead of duplicating long prose in always-loaded instructions."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Keeps one authoritative owner and states an observable failure diagnostic."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Write a short customer-facing release note for a fixed search bug. This is not an agent instruction.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 5
+    }
+  ]
+}

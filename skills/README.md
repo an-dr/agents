@@ -1,6 +1,6 @@
 # Skills
 
-Reusable skills in the [Agent Skills](https://agentskills.io/specification) format. Each skill has `SKILL.md` and `tests/cases.json`; deterministic mechanical work may also use PowerShell 7 scripts under `scripts/`. Script tests live in `tests/test-*.ps1` and run through the skill's `scripts/run-tests.ps1`. A skill sits one level below its category folder, and the category says how the agent uses it.
+Reusable skills in the [Agent Skills](https://agentskills.io/specification) format. Each skill has `SKILL.md` and `evals/evals.json`; deterministic mechanical work may also use PowerShell 7 scripts under `scripts/`. Script tests live in `scripts/tests/test-*.ps1` and run through the skill's `scripts/tests/run.ps1`. A skill sits one level below its category folder, and the category says how the agent uses it.
 
 ## Actions
 
@@ -55,6 +55,7 @@ Passive. The format rules for an artifact, with the checkers and generators that
 | --- | --- |
 | [`an-dr-convention-adr`](conventions/an-dr-convention-adr/SKILL.md) | Write ADRs in one format: location, numbering, template, and when a decision is immutable. |
 | [`an-dr-convention-agent-skill`](conventions/an-dr-convention-agent-skill/SKILL.md) | Shape and write every skill alike: layout, kinds, description, sections, declared dependencies, registration. |
+| [`an-dr-convention-agent-skill-testing`](conventions/an-dr-convention-agent-skill-testing/SKILL.md) | Evaluation contracts, isolated environments, fixtures, grading, and script test layout |
 | [`an-dr-convention-artifact-layout`](conventions/an-dr-convention-artifact-layout/SKILL.md) | Locate generated artifacts: one run directory per day and letter, one subdirectory per kind. |
 | [`an-dr-convention-code`](conventions/an-dr-convention-code/SKILL.md) | Write code to shared defaults: small changes, clear names, newcomer comments, reviewable commits. |
 | [`an-dr-convention-commit-message`](conventions/an-dr-convention-commit-message/SKILL.md) | Write commit messages in the unified Conventional Commits format with no attribution. |

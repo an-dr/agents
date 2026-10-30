@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-concept-ai-slop",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-concept-ai-slop. Apply the slop concept to this sentence without rewriting the whole document.",
+      "expected_skill": "an-dr-concept-ai-slop",
+      "context": "Text: We leverage a seamless world-class workflow. The command writes CSV. There is no evidence for the promotional claims.",
+      "expected_behavior": [
+        "Identifies reader cost in the vague promotional text and preserves the concrete CSV fact.",
+        "Does not infer machine authorship or manufacture additional product specifics."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": [
+            ".artifacts"
+          ]
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Identifies reader cost in the vague promotional text and preserves the concrete CSV fact."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not infer machine authorship or manufacture additional product specifics."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Apply the slop concept to this sentence without rewriting the whole document.",
+      "expected_skill": "an-dr-concept-ai-slop",
+      "context": "Text: We leverage a seamless world-class workflow. The command writes CSV. There is no evidence for the promotional claims.",
+      "expected_behavior": [
+        "Identifies reader cost in the vague promotional text and preserves the concrete CSV fact.",
+        "Does not infer machine authorship or manufacture additional product specifics."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": [
+            ".artifacts"
+          ]
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Identifies reader cost in the vague promotional text and preserves the concrete CSV fact."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not infer machine authorship or manufacture additional product specifics."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Apply the slop concept to this sentence without rewriting the whole document.",
+      "expected_skill": "an-dr-concept-ai-slop",
+      "context": "Text: We leverage a seamless world-class workflow. The command writes CSV. There is no evidence for the promotional claims.",
+      "expected_behavior": [
+        "Identifies reader cost in the vague promotional text and preserves the concrete CSV fact.",
+        "Does not infer machine authorship or manufacture additional product specifics."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": [
+            ".artifacts"
+          ]
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Identifies reader cost in the vague promotional text and preserves the concrete CSV fact."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not infer machine authorship or manufacture additional product specifics."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Translate the single word hello into Czech and return only the translation. No analysis, design, report, or source assessment is requested.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 5
+    }
+  ]
+}

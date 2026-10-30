@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-dev-implement-adversarial-ut",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-dev-implement-adversarial-ut. Design regression tests before fixing this boundary defect.",
+      "expected_skill": "an-dr-dev-implement-adversarial-ut",
+      "context": "A limit is inclusive at 10. The implementation accepts 9 and rejects 10. No fix has been applied.",
+      "expected_behavior": [
+        "Includes the failing inclusive-boundary case and nearby accepted/rejected cases with evidence-based expectations.",
+        "Does not change the implementation before capturing the defect or weaken the expected limit to match the bug."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Includes the failing inclusive-boundary case and nearby accepted/rejected cases with evidence-based expectations."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not change the implementation before capturing the defect or weaken the expected limit to match the bug."
+        }
+      ],
+      "runs": 5,
+      "fixtures": [
+        "fixtures/task.zip"
+      ]
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Design regression tests before fixing this boundary defect.",
+      "expected_skill": "an-dr-dev-implement-adversarial-ut",
+      "context": "A limit is inclusive at 10. The implementation accepts 9 and rejects 10. No fix has been applied.",
+      "expected_behavior": [
+        "Includes the failing inclusive-boundary case and nearby accepted/rejected cases with evidence-based expectations.",
+        "Does not change the implementation before capturing the defect or weaken the expected limit to match the bug."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Includes the failing inclusive-boundary case and nearby accepted/rejected cases with evidence-based expectations."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not change the implementation before capturing the defect or weaken the expected limit to match the bug."
+        }
+      ],
+      "runs": 5,
+      "fixtures": [
+        "fixtures/task.zip"
+      ]
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Design regression tests before fixing this boundary defect.",
+      "expected_skill": "an-dr-dev-implement-adversarial-ut",
+      "context": "A limit is inclusive at 10. The implementation accepts 9 and rejects 10. No fix has been applied.",
+      "expected_behavior": [
+        "Includes the failing inclusive-boundary case and nearby accepted/rejected cases with evidence-based expectations.",
+        "Does not change the implementation before capturing the defect or weaken the expected limit to match the bug."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Includes the failing inclusive-boundary case and nearby accepted/rejected cases with evidence-based expectations."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not change the implementation before capturing the defect or weaken the expected limit to match the bug."
+        }
+      ],
+      "runs": 5,
+      "fixtures": [
+        "fixtures/task.zip"
+      ]
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Explain the existing assertion assert 2 + 2 == 4. Do not design or write tests.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 5
+    }
+  ]
+}

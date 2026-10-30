@@ -4,7 +4,7 @@
     Exits non-zero on any error, including hard-wrapped paragraphs.
 #>
 [CmdletBinding()]
-param([Parameter(Mandatory, Position = 0)][string]$Path)
+param([Parameter(Mandatory, Position = 0)][string[]]$Path)
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -181,14 +181,17 @@ function Get-MarkdownViolation {
 }
 
 $files = @(
-    if (Test-Path -LiteralPath $Path -PathType Container) {
-        Get-ChildItem -LiteralPath $Path -Recurse -File -Filter '*.md' |
-            Where-Object { $_.FullName -notmatch '\\(\.git|node_modules)\\' }
-    }
-    else {
-        Get-Item -LiteralPath $Path
+    foreach ($targetPath in $Path) {
+        if (Test-Path -LiteralPath $targetPath -PathType Container) {
+            Get-ChildItem -LiteralPath $targetPath -Recurse -File -Filter '*.md' |
+                Where-Object { $_.FullName -notmatch '\\(\.git|node_modules)\\' }
+        }
+        else {
+            Get-Item -LiteralPath $targetPath
+        }
     }
 )
+$files = @($files | Sort-Object FullName -Unique)
 if ($files.Count -eq 0) { throw "No Markdown files found at '$Path'." }
 
 $errorTotal = 0

@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-convention-script",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-convention-script. Review this test packaging and execution plan.",
+      "expected_skill": "an-dr-convention-script",
+      "context": "The skill stores production scripts in scripts/, script tests in tests/, and behavior cases in evals/evals.json. Its scripts/tests/run.ps1 recursively runs every fixture and sends prompts to a paid agent.",
+      "expected_behavior": [
+        "Requires the runner to execute top-level script tests without discovering nested fixture scripts as test entry points.",
+        "Rejects model calls in routine script testing and keeps behavioral execution explicitly requested."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Requires the runner to execute top-level script tests without discovering nested fixture scripts as test entry points."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Rejects model calls in routine script testing and keeps behavioral execution explicitly requested."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Review this test packaging and execution plan.",
+      "expected_skill": "an-dr-convention-script",
+      "context": "The skill stores production scripts in scripts/, script tests in tests/, and behavior cases in evals/evals.json. Its scripts/tests/run.ps1 recursively runs every fixture and sends prompts to a paid agent.",
+      "expected_behavior": [
+        "Requires the runner to execute top-level script tests without discovering nested fixture scripts as test entry points.",
+        "Rejects model calls in routine script testing and keeps behavioral execution explicitly requested."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Requires the runner to execute top-level script tests without discovering nested fixture scripts as test entry points."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Rejects model calls in routine script testing and keeps behavioral execution explicitly requested."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Review this test packaging and execution plan.",
+      "expected_skill": "an-dr-convention-script",
+      "context": "The skill stores production scripts in scripts/, script tests in tests/, and behavior cases in evals/evals.json. Its scripts/tests/run.ps1 recursively runs every fixture and sends prompts to a paid agent.",
+      "expected_behavior": [
+        "Requires the runner to execute top-level script tests without discovering nested fixture scripts as test entry points.",
+        "Rejects model calls in routine script testing and keeps behavioral execution explicitly requested."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Requires the runner to execute top-level script tests without discovering nested fixture scripts as test entry points."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Rejects model calls in routine script testing and keeps behavioral execution explicitly requested."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Explain what a shell is without writing or reviewing a script.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 5
+    }
+  ]
+}

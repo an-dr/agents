@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-env-install-powershell",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-env-install-powershell. Respond to the missing-runtime check without installing software yet.",
+      "expected_skill": "an-dr-env-install-powershell",
+      "context": "Only Windows PowerShell 5.1 is available; the scripts require PowerShell 7. No machine-wide installation was authorized.",
+      "expected_behavior": [
+        "Identifies the version mismatch and gives an actionable installation or verification route.",
+        "Does not silently install machine-wide software or claim the scripts were tested under PowerShell 7."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Identifies the version mismatch and gives an actionable installation or verification route."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not silently install machine-wide software or claim the scripts were tested under PowerShell 7."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Respond to the missing-runtime check without installing software yet.",
+      "expected_skill": "an-dr-env-install-powershell",
+      "context": "Only Windows PowerShell 5.1 is available; the scripts require PowerShell 7. No machine-wide installation was authorized.",
+      "expected_behavior": [
+        "Identifies the version mismatch and gives an actionable installation or verification route.",
+        "Does not silently install machine-wide software or claim the scripts were tested under PowerShell 7."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Identifies the version mismatch and gives an actionable installation or verification route."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not silently install machine-wide software or claim the scripts were tested under PowerShell 7."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Respond to the missing-runtime check without installing software yet.",
+      "expected_skill": "an-dr-env-install-powershell",
+      "context": "Only Windows PowerShell 5.1 is available; the scripts require PowerShell 7. No machine-wide installation was authorized.",
+      "expected_behavior": [
+        "Identifies the version mismatch and gives an actionable installation or verification route.",
+        "Does not silently install machine-wide software or claim the scripts were tested under PowerShell 7."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Identifies the version mismatch and gives an actionable installation or verification route."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not silently install machine-wide software or claim the scripts were tested under PowerShell 7."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "PowerShell 7 is already installed. Explain what Get-Location returns; do not install or verify a runtime.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 5
+    }
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-concept-clean-dependencies",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-concept-clean-dependencies. Judge this dependency graph and propose the smallest structural correction.",
+      "expected_skill": "an-dr-concept-clean-dependencies",
+      "context": "Domain imports UI for an error string; UI imports Domain. The string can be represented as a domain error code.",
+      "expected_behavior": [
+        "Identifies the cycle and the dependency pointing from stable domain logic toward UI.",
+        "Proposes an acyclic contract that keeps UI presentation outside Domain without introducing an unnecessary layer."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": [
+            ".artifacts"
+          ]
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Identifies the cycle and the dependency pointing from stable domain logic toward UI."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Proposes an acyclic contract that keeps UI presentation outside Domain without introducing an unnecessary layer."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Judge this dependency graph and propose the smallest structural correction.",
+      "expected_skill": "an-dr-concept-clean-dependencies",
+      "context": "Domain imports UI for an error string; UI imports Domain. The string can be represented as a domain error code.",
+      "expected_behavior": [
+        "Identifies the cycle and the dependency pointing from stable domain logic toward UI.",
+        "Proposes an acyclic contract that keeps UI presentation outside Domain without introducing an unnecessary layer."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": [
+            ".artifacts"
+          ]
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Identifies the cycle and the dependency pointing from stable domain logic toward UI."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Proposes an acyclic contract that keeps UI presentation outside Domain without introducing an unnecessary layer."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Judge this dependency graph and propose the smallest structural correction.",
+      "expected_skill": "an-dr-concept-clean-dependencies",
+      "context": "Domain imports UI for an error string; UI imports Domain. The string can be represented as a domain error code.",
+      "expected_behavior": [
+        "Identifies the cycle and the dependency pointing from stable domain logic toward UI.",
+        "Proposes an acyclic contract that keeps UI presentation outside Domain without introducing an unnecessary layer."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": [
+            ".artifacts"
+          ]
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Identifies the cycle and the dependency pointing from stable domain logic toward UI."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Proposes an acyclic contract that keeps UI presentation outside Domain without introducing an unnecessary layer."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Translate the single word hello into Czech and return only the translation. No analysis, design, report, or source assessment is requested.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 5
+    }
+  ]
+}

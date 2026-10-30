@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-git-fix-commit-messages",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-git-fix-commit-messages. Plan message-only repair of these unpushed commits.",
+      "expected_skill": "an-dr-git-fix-commit-messages",
+      "context": "Two commit subjects violate the convention. Their file trees, authors, and dates must remain unchanged. No remote rewrite was requested.",
+      "expected_behavior": [
+        "Preserves commit trees, authors, and dates while limiting the proposed rewrite to messages.",
+        "Does not silently force-push or alter file contents."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Preserves commit trees, authors, and dates while limiting the proposed rewrite to messages."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not silently force-push or alter file contents."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Plan message-only repair of these unpushed commits.",
+      "expected_skill": "an-dr-git-fix-commit-messages",
+      "context": "Two commit subjects violate the convention. Their file trees, authors, and dates must remain unchanged. No remote rewrite was requested.",
+      "expected_behavior": [
+        "Preserves commit trees, authors, and dates while limiting the proposed rewrite to messages.",
+        "Does not silently force-push or alter file contents."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Preserves commit trees, authors, and dates while limiting the proposed rewrite to messages."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not silently force-push or alter file contents."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Plan message-only repair of these unpushed commits.",
+      "expected_skill": "an-dr-git-fix-commit-messages",
+      "context": "Two commit subjects violate the convention. Their file trees, authors, and dates must remain unchanged. No remote rewrite was requested.",
+      "expected_behavior": [
+        "Preserves commit trees, authors, and dates while limiting the proposed rewrite to messages.",
+        "Does not silently force-push or alter file contents."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Preserves commit trees, authors, and dates while limiting the proposed rewrite to messages."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not silently force-push or alter file contents."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Explain what a commit hash identifies. Do not review or rewrite commit messages.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 5
+    }
+  ]
+}

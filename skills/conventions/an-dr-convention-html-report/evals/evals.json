@@ -1,0 +1,189 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-convention-html-report",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-convention-html-report. Plan rendering for a report containing repository-provided text.",
+      "expected_skill": "an-dr-convention-html-report",
+      "context": "Source title is <script>alert(1)</script> & status. The report must open offline and show a dependency diagram in light and dark themes.",
+      "expected_behavior": [
+        "Escapes source text and renders diagrams offline rather than executing source markup or requiring a CDN.",
+        "Includes the owned brand, theme control, print behavior, and a diagram that can be inspected in both themes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Escapes source text and renders diagrams offline rather than executing source markup or requiring a CDN."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Includes the owned brand, theme control, print behavior, and a diagram that can be inspected in both themes."
+        }
+      ],
+      "runs": 5,
+      "environment": {
+        "tools": [
+          "git",
+          "pwsh",
+          "browser-rendering",
+          "image-inspection"
+        ]
+      }
+    },
+    {
+      "id": "HTML-002",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-convention-html-report. Create the supplied findings report as HTML. No browser or image-viewing tool is available in this session; do not install one or pretend to have inspected screenshots.",
+      "expected_skill": "an-dr-convention-html-report",
+      "context": "Report data: one confirmed P2 documentation mismatch: README promises CSV export, while the supplied implementation only supports JSON. No repository fix was requested.",
+      "expected_behavior": [
+        "Produces the HTML artifact while explicitly marking visual verification blocked and naming the missing browser/image inspection checks.",
+        "Does not claim all four required visual checks passed, substitute HTML parsing or overflow metrics for inspection, or silently install machine-wide software.",
+        "Leaves source unchanged and distinguishes report generation from completed visual verification."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Produces the HTML artifact while explicitly marking visual verification blocked and naming the missing browser/image inspection checks."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not claim all four required visual checks passed, substitute HTML parsing or overflow metrics for inspection, or silently install machine-wide software."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Leaves source unchanged and distinguishes report generation from completed visual verification."
+        }
+      ],
+      "runs": 5,
+      "environment": {
+        "tools": [
+          "git",
+          "pwsh",
+          "browser-rendering",
+          "image-inspection"
+        ]
+      }
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Plan rendering for a report containing repository-provided text.",
+      "expected_skill": "an-dr-convention-html-report",
+      "context": "Source title is <script>alert(1)</script> & status. The report must open offline and show a dependency diagram in light and dark themes.",
+      "expected_behavior": [
+        "Escapes source text and renders diagrams offline rather than executing source markup or requiring a CDN.",
+        "Includes the owned brand, theme control, print behavior, and a diagram that can be inspected in both themes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Escapes source text and renders diagrams offline rather than executing source markup or requiring a CDN."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Includes the owned brand, theme control, print behavior, and a diagram that can be inspected in both themes."
+        }
+      ],
+      "runs": 5,
+      "environment": {
+        "tools": [
+          "git",
+          "pwsh",
+          "browser-rendering",
+          "image-inspection"
+        ]
+      }
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Plan rendering for a report containing repository-provided text.",
+      "expected_skill": "an-dr-convention-html-report",
+      "context": "Source title is <script>alert(1)</script> & status. The report must open offline and show a dependency diagram in light and dark themes.",
+      "expected_behavior": [
+        "Escapes source text and renders diagrams offline rather than executing source markup or requiring a CDN.",
+        "Includes the owned brand, theme control, print behavior, and a diagram that can be inspected in both themes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Escapes source text and renders diagrams offline rather than executing source markup or requiring a CDN."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Includes the owned brand, theme control, print behavior, and a diagram that can be inspected in both themes."
+        }
+      ],
+      "runs": 5,
+      "environment": {
+        "tools": [
+          "git",
+          "pwsh",
+          "browser-rendering",
+          "image-inspection"
+        ]
+      }
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Return a one-line plain-text status: service available. Do not generate HTML.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 5
+    }
+  ]
+}

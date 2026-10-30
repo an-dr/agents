@@ -4,9 +4,9 @@ description: How the skills of this repository are named - the an-dr namespace, 
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "1.2.0"
   an-dr.type: convention
-  an-dr.dependencies: an-dr-ai-skill-implement-test an-dr-ai-skill-test an-dr-convention-agent-skill an-dr-dev-test an-dr-dev-write-documentation an-dr-git-commit
+  an-dr.dependencies: an-dr-ai-skill-implement-test an-dr-ai-skill-test an-dr-convention-agent-skill an-dr-dev-test an-dr-dev-write-documentation an-dr-git-commit an-dr-convention-agent-skill-testing
 ---
 
 # Convention: this repository's skills
@@ -60,11 +60,7 @@ Every skill carries `license: MIT` as a standard frontmatter field, and `author`
 
 ## Tests
 
-Every skill, including a concept or convention, has a tracked `tests/` folder containing `cases.json` with observable behavior cases. Implement cases and script tests through `an-dr-ai-skill-implement-test`. Keep executable script tests as `tests/test-*.ps1`, fixtures beneath `tests/fixtures/`, and production code in `scripts/`.
-
-Every `scripts/` folder contains `run-tests.ps1`, a non-interactive entry point that runs the skill's top-level script tests in fresh PowerShell processes, preserves failures, and exits non-zero if any test fails or no script tests exist. It never runs `cases.json` or agent evaluations. A runner is local to its skill; it must not import another skill's test implementation.
-
-Run cheap tests through `an-dr-ai-skill-test` after modifications. The repository's root test command discovers these local runners instead of searching for individual test scripts. It validates case structure separately; behavioral execution remains on demand. Syntax checks may establish a baseline for a legacy script but do not establish runtime behavior or replace regression tests for changed logic.
+Follow `an-dr-convention-agent-skill-testing` for evaluation suites, fixtures, environment requirements, and deterministic test layout. Use `an-dr-ai-skill-implement-test` to author coverage and `an-dr-ai-skill-test` to run checks or explicitly requested evaluations. The root check command discovers local script runners and validates evaluation data without invoking models.
 
 ## Check
 
@@ -72,4 +68,4 @@ Run cheap tests through `an-dr-ai-skill-test` after modifications. The repositor
 pwsh <skill>/scripts/check-names.ps1 [-Root <repository>]
 ```
 
-The script reads the verbs from the table above. It reports every skill that breaks the naming table and exits non-zero on any. `tests/test-check-names.ps1` breaks a copy one way at a time and expects each break to be named. Run it through `pwsh <skill>/scripts/run-tests.ps1`. The root test command also checks the required test layout.
+The script reads the verbs from the table above. It reports every skill that breaks the naming table and exits non-zero on any. `scripts/tests/test-check-names.ps1` breaks a copy one way at a time and expects each break to be named. Run it through `pwsh <skill>/scripts/tests/run.ps1`. The root test command also checks the required test layout.

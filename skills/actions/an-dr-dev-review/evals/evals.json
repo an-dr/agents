@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-dev-review",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-dev-review. Review only this changed behavior for defects.",
+      "expected_skill": "an-dr-dev-review",
+      "context": "Before, a negative count raised ValueError. The diff removes the negative check. The public contract still requires non-negative counts. No test was run.",
+      "expected_behavior": [
+        "Finds the introduced contract violation with the triggering negative input and concrete impact.",
+        "Does not claim tests passed or broaden the review into unrelated repository-wide findings."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": [
+            ".artifacts"
+          ]
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Finds the introduced contract violation with the triggering negative input and concrete impact."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not claim tests passed or broaden the review into unrelated repository-wide findings."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Review only this changed behavior for defects.",
+      "expected_skill": "an-dr-dev-review",
+      "context": "Before, a negative count raised ValueError. The diff removes the negative check. The public contract still requires non-negative counts. No test was run.",
+      "expected_behavior": [
+        "Finds the introduced contract violation with the triggering negative input and concrete impact.",
+        "Does not claim tests passed or broaden the review into unrelated repository-wide findings."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": [
+            ".artifacts"
+          ]
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Finds the introduced contract violation with the triggering negative input and concrete impact."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not claim tests passed or broaden the review into unrelated repository-wide findings."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Review only this changed behavior for defects.",
+      "expected_skill": "an-dr-dev-review",
+      "context": "Before, a negative count raised ValueError. The diff removes the negative check. The public contract still requires non-negative counts. No test was run.",
+      "expected_behavior": [
+        "Finds the introduced contract violation with the triggering negative input and concrete impact.",
+        "Does not claim tests passed or broaden the review into unrelated repository-wide findings."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": [
+            ".artifacts"
+          ]
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Finds the introduced contract violation with the triggering negative input and concrete impact."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not claim tests passed or broaden the review into unrelated repository-wide findings."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Summarize this function for a newcomer: def identity(x): return x. No code review was requested.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 5
+    }
+  ]
+}

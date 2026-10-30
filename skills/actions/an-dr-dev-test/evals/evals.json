@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-dev-test",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-dev-test. Report verification for this change using the supplied results.",
+      "expected_skill": "an-dr-dev-test",
+      "context": "The normal-input check passed. The empty-input check failed with IndexError. The full suite was not run.",
+      "expected_behavior": [
+        "Reports the failed boundary case before positive checks and does not claim the change is verified.",
+        "Distinguishes executed results from the unrun full suite and proposes the next relevant check or fix."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": [
+            ".artifacts"
+          ]
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Reports the failed boundary case before positive checks and does not claim the change is verified."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Distinguishes executed results from the unrun full suite and proposes the next relevant check or fix."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Report verification for this change using the supplied results.",
+      "expected_skill": "an-dr-dev-test",
+      "context": "The normal-input check passed. The empty-input check failed with IndexError. The full suite was not run.",
+      "expected_behavior": [
+        "Reports the failed boundary case before positive checks and does not claim the change is verified.",
+        "Distinguishes executed results from the unrun full suite and proposes the next relevant check or fix."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": [
+            ".artifacts"
+          ]
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Reports the failed boundary case before positive checks and does not claim the change is verified."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Distinguishes executed results from the unrun full suite and proposes the next relevant check or fix."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Report verification for this change using the supplied results.",
+      "expected_skill": "an-dr-dev-test",
+      "context": "The normal-input check passed. The empty-input check failed with IndexError. The full suite was not run.",
+      "expected_behavior": [
+        "Reports the failed boundary case before positive checks and does not claim the change is verified.",
+        "Distinguishes executed results from the unrun full suite and proposes the next relevant check or fix."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": [
+            ".artifacts"
+          ]
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Reports the failed boundary case before positive checks and does not claim the change is verified."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Distinguishes executed results from the unrun full suite and proposes the next relevant check or fix."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Explain the term regression test without running or assessing tests.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 5
+    }
+  ]
+}

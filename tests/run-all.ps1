@@ -1,11 +1,5 @@
 #Requires -Version 7
-<#
-    Runs every check this repository has: each skill's scripts/run-tests.ps1, the
-    registration check, the dependency diagram, the script, skill-text, and skill-name checks, the Agent Skills
-    reference validator, the reference check,
-    and the Markdown format check.
-    Prints one Markdown table and exits 1 when any step fails.
-#>
+<# Discover conventional skill test runners; each suite owns its checks and fixtures. #>
 [CmdletBinding()]
 param()
 
@@ -16,29 +10,24 @@ $root = (Resolve-Path (Join-Path $PSScriptRoot '..')).ProviderPath
 $skills = Join-Path $root 'skills'
 
 $steps = [System.Collections.Generic.List[object]]::new()
-foreach ($runner in Get-ChildItem -Path (Join-Path $skills '*/*/scripts/run-tests.ps1') -File | Sort-Object FullName) {
-    $steps.Add(@{ Name = ($runner.FullName.Substring($root.Length + 1) -replace '\\', '/'); Script = $runner.FullName; Arguments = @() })
+# Discover skills by their conventional manifest, then only their local runner.
+# Searching recursively for arbitrary scripts would execute fixture programs as tests.
+foreach ($manifest in Get-ChildItem -Path (Join-Path $skills '*/*/SKILL.md') -File | Sort-Object FullName) {
+    $runner = Join-Path $manifest.DirectoryName 'scripts/tests/run.ps1'
+    if ((Test-Path -LiteralPath $runner -PathType Leaf) -or (Test-Path -LiteralPath (Join-Path $manifest.DirectoryName 'scripts') -PathType Container)) {
+        $steps.Add(@{ Name = ($runner.Substring($root.Length + 1) -replace '\\', '/'); Script = $runner; Arguments = @() })
+    }
 }
-# Validate case data only. Agent execution is explicitly requested and never part of this runner.
-foreach ($suite in Get-ChildItem -Path (Join-Path $skills '*/*/tests/cases.json') -File | Sort-Object FullName) {
-    $steps.Add(@{ Name = ($suite.FullName.Substring($root.Length + 1) -replace '\\', '/'); Script = Join-Path $skills 'actions/an-dr-ai-skill-implement-test/scripts/check-test-cases.ps1'; Arguments = @('-Path', $suite.FullName) })
-}
-$steps.Add(@{ Name = 'registration'; Script = Join-Path $skills 'conventions/an-dr-convention-agent-skill/scripts/check-registration.ps1'; Arguments = @('-Root', $root, '-FailOnCycle', '-RequireTests') })
-$steps.Add(@{ Name = 'scripts'; Script = Join-Path $skills 'conventions/an-dr-convention-script/scripts/check-scripts.ps1'; Arguments = @('-Root', $root) })
-$steps.Add(@{ Name = 'skills'; Script = Join-Path $skills 'conventions/an-dr-convention-agent-skill/scripts/check-skills.ps1'; Arguments = @('-Root', $root) })
-$steps.Add(@{ Name = 'dependency-diagram'; Script = Join-Path $skills '_repository/an-dr-agents-repo-build-dependencies/scripts/build-dependencies.ps1'; Arguments = @('-Root', $root, '-Markdown', (Join-Path $root 'README.md'), '-Check') })
-$steps.Add(@{ Name = 'names'; Script = Join-Path $skills '_repository/an-dr-agents-repo-convention-skills/scripts/check-names.ps1'; Arguments = @('-Root', $root) })
-$steps.Add(@{ Name = 'skills-ref'; Script = Join-Path $skills 'conventions/an-dr-convention-agent-skill/scripts/check-skills-ref.ps1'; Arguments = @('-Root', $root) })
-$steps.Add(@{ Name = 'references'; Script = Join-Path $skills 'actions/an-dr-ai-review-instruction/scripts/check-references.ps1'; Arguments = @('-Path', $root) })
-# The repository's own Markdown only; ignored local artifacts are not checked.
-foreach ($target in @('AGENTS.md', 'README.md', 'skills')) {
-    $steps.Add(@{ Name = "markdown $target"; Script = Join-Path $skills 'conventions/an-dr-convention-markdown/scripts/check-markdown.ps1'; Arguments = @((Join-Path $root $target)) })
-}
+if ($steps.Count -eq 0) { throw "No conventional skill test runners found under '$skills'." }
 
 $results = [System.Collections.Generic.List[object]]::new()
 foreach ($step in $steps) {
+    if (-not (Test-Path -LiteralPath $step.Script -PathType Leaf)) {
+        $results.Add([pscustomobject]@{ Name = $step.Name; Exit = 1; Output = @("Missing conventional runner: $($step.Script)") })
+        continue
+    }
     $arguments = $step.Arguments
-    $output = @(& pwsh -NoProfile -File $step.Script @arguments 2>&1)
+    $output = @(& pwsh -NoProfile -NonInteractive -File $step.Script @arguments 2>&1)
     $results.Add([pscustomobject]@{ Name = $step.Name; Exit = $LASTEXITCODE; Output = $output })
 }
 

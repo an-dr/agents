@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-agents-repo-modify",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-agents-repo-modify. Prepare a policy amendment proposal from this failure; do not edit or commit yet.",
+      "expected_skill": "an-dr-agents-repo-modify",
+      "context": "A host agent treated approval to commit as permission to push. A host project has unrelated uncommitted work. The user requested a proposal only.",
+      "expected_behavior": [
+        "Identifies the observed authorization failure and proposes wording against its authoritative policy owner.",
+        "Leaves host work, process files, commits, and remote state unchanged."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Identifies the observed authorization failure and proposes wording against its authoritative policy owner."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Leaves host work, process files, commits, and remote state unchanged."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Prepare a policy amendment proposal from this failure; do not edit or commit yet.",
+      "expected_skill": "an-dr-agents-repo-modify",
+      "context": "A host agent treated approval to commit as permission to push. A host project has unrelated uncommitted work. The user requested a proposal only.",
+      "expected_behavior": [
+        "Identifies the observed authorization failure and proposes wording against its authoritative policy owner.",
+        "Leaves host work, process files, commits, and remote state unchanged."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Identifies the observed authorization failure and proposes wording against its authoritative policy owner."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Leaves host work, process files, commits, and remote state unchanged."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Prepare a policy amendment proposal from this failure; do not edit or commit yet.",
+      "expected_skill": "an-dr-agents-repo-modify",
+      "context": "A host agent treated approval to commit as permission to push. A host project has unrelated uncommitted work. The user requested a proposal only.",
+      "expected_behavior": [
+        "Identifies the observed authorization failure and proposes wording against its authoritative policy owner.",
+        "Leaves host work, process files, commits, and remote state unchanged."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Identifies the observed authorization failure and proposes wording against its authoritative policy owner."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Leaves host work, process files, commits, and remote state unchanged."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Explain this host application function: def add(a,b): return a+b. No process repository change is requested.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 5
+    }
+  ]
+}

@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-agents-repo-convention-skills",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-agents-repo-convention-skills. Review proposed new skill names and packaging against this repository's convention.",
+      "expected_skill": "an-dr-agents-repo-convention-skills",
+      "context": "Proposals: an-dr-ai-skill-test is an action with evals/evals.json and scripts/tests/run.ps1; an-dr-dev-ship is an action whose verb has not been registered.",
+      "expected_behavior": [
+        "Accepts the registered ai-skill group and test verb without treating skill as the verb.",
+        "Flags ship as an unregistered verb and requires evaluations under evals/ and deterministic tests with scripts/tests/run.ps1."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Accepts the registered ai-skill group and test verb without treating skill as the verb."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Flags ship as an unregistered verb and requires evaluations under evals/ and deterministic tests with scripts/tests/run.ps1."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Review proposed new skill names and packaging against this repository's convention.",
+      "expected_skill": "an-dr-agents-repo-convention-skills",
+      "context": "Proposals: an-dr-ai-skill-test is an action with evals/evals.json and scripts/tests/run.ps1; an-dr-dev-ship is an action whose verb has not been registered.",
+      "expected_behavior": [
+        "Accepts the registered ai-skill group and test verb without treating skill as the verb.",
+        "Flags ship as an unregistered verb and requires evaluations under evals/ and deterministic tests with scripts/tests/run.ps1."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Accepts the registered ai-skill group and test verb without treating skill as the verb."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Flags ship as an unregistered verb and requires evaluations under evals/ and deterministic tests with scripts/tests/run.ps1."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Review proposed new skill names and packaging against this repository's convention.",
+      "expected_skill": "an-dr-agents-repo-convention-skills",
+      "context": "Proposals: an-dr-ai-skill-test is an action with evals/evals.json and scripts/tests/run.ps1; an-dr-dev-ship is an action whose verb has not been registered.",
+      "expected_behavior": [
+        "Accepts the registered ai-skill group and test verb without treating skill as the verb.",
+        "Flags ship as an unregistered verb and requires evaluations under evals/ and deterministic tests with scripts/tests/run.ps1."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Accepts the registered ai-skill group and test verb without treating skill as the verb."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Flags ship as an unregistered verb and requires evaluations under evals/ and deterministic tests with scripts/tests/run.ps1."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Suggest a name for a pet cat. This is not a skill name.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 5
+    }
+  ]
+}

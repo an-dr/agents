@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-convention-readme",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-convention-readme. Assess whether this README section is supported.",
+      "expected_skill": "an-dr-convention-readme",
+      "context": "README advertises a plugin API, cloud sync, and a CLI. Repository evidence contains only a CLI entry point and local configuration.",
+      "expected_behavior": [
+        "Keeps the evidenced CLI path and removes or qualifies unsupported plugin and sync claims.",
+        "Organizes the newcomer path around observed commands and prerequisites rather than invented modules."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Keeps the evidenced CLI path and removes or qualifies unsupported plugin and sync claims."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Organizes the newcomer path around observed commands and prerequisites rather than invented modules."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Assess whether this README section is supported.",
+      "expected_skill": "an-dr-convention-readme",
+      "context": "README advertises a plugin API, cloud sync, and a CLI. Repository evidence contains only a CLI entry point and local configuration.",
+      "expected_behavior": [
+        "Keeps the evidenced CLI path and removes or qualifies unsupported plugin and sync claims.",
+        "Organizes the newcomer path around observed commands and prerequisites rather than invented modules."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Keeps the evidenced CLI path and removes or qualifies unsupported plugin and sync claims."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Organizes the newcomer path around observed commands and prerequisites rather than invented modules."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Assess whether this README section is supported.",
+      "expected_skill": "an-dr-convention-readme",
+      "context": "README advertises a plugin API, cloud sync, and a CLI. Repository evidence contains only a CLI entry point and local configuration.",
+      "expected_behavior": [
+        "Keeps the evidenced CLI path and removes or qualifies unsupported plugin and sync claims.",
+        "Organizes the newcomer path around observed commands and prerequisites rather than invented modules."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Keeps the evidenced CLI path and removes or qualifies unsupported plugin and sync claims."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Organizes the newcomer path around observed commands and prerequisites rather than invented modules."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Explain the word repository without writing or assessing a README.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 5
+    }
+  ]
+}

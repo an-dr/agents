@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-dev-debug",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-dev-debug. Investigate this failure and describe a discriminating experiment.",
+      "expected_skill": "an-dr-dev-debug",
+      "context": "A counter sometimes loses increments with two workers but never failed in a single-worker run. No concurrent trace or synchronization evidence is available.",
+      "expected_behavior": [
+        "Separates the observed lost increments from the unproven race hypothesis.",
+        "Proposes or performs a controlled experiment that can distinguish concurrency effects, without claiming an unrun experiment passed."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Separates the observed lost increments from the unproven race hypothesis."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Proposes or performs a controlled experiment that can distinguish concurrency effects, without claiming an unrun experiment passed."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Investigate this failure and describe a discriminating experiment.",
+      "expected_skill": "an-dr-dev-debug",
+      "context": "A counter sometimes loses increments with two workers but never failed in a single-worker run. No concurrent trace or synchronization evidence is available.",
+      "expected_behavior": [
+        "Separates the observed lost increments from the unproven race hypothesis.",
+        "Proposes or performs a controlled experiment that can distinguish concurrency effects, without claiming an unrun experiment passed."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Separates the observed lost increments from the unproven race hypothesis."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Proposes or performs a controlled experiment that can distinguish concurrency effects, without claiming an unrun experiment passed."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Investigate this failure and describe a discriminating experiment.",
+      "expected_skill": "an-dr-dev-debug",
+      "context": "A counter sometimes loses increments with two workers but never failed in a single-worker run. No concurrent trace or synchronization evidence is available.",
+      "expected_behavior": [
+        "Separates the observed lost increments from the unproven race hypothesis.",
+        "Proposes or performs a controlled experiment that can distinguish concurrency effects, without claiming an unrun experiment passed."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Separates the observed lost increments from the unproven race hypothesis."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Proposes or performs a controlled experiment that can distinguish concurrency effects, without claiming an unrun experiment passed."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Explain what a timeout means in one sentence. No failing application is being investigated.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 5
+    }
+  ]
+}

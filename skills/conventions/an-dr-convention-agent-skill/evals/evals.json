@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-convention-agent-skill",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-convention-agent-skill. Review the proposed skill structure.",
+      "expected_skill": "an-dr-convention-agent-skill",
+      "context": "A general concept skill has SKILL.md, evals/evals.json, and production scripts/modify-source.ps1. Its metadata type is concept.",
+      "expected_behavior": [
+        "Allows the evals folder but rejects production scripts in the passive concept.",
+        "Explains the type boundary without requiring tests to be deleted."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Allows the evals folder but rejects production scripts in the passive concept."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Explains the type boundary without requiring tests to be deleted."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Review the proposed skill structure.",
+      "expected_skill": "an-dr-convention-agent-skill",
+      "context": "A general concept skill has SKILL.md, evals/evals.json, and production scripts/modify-source.ps1. Its metadata type is concept.",
+      "expected_behavior": [
+        "Allows the evals folder but rejects production scripts in the passive concept.",
+        "Explains the type boundary without requiring tests to be deleted."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Allows the evals folder but rejects production scripts in the passive concept."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Explains the type boundary without requiring tests to be deleted."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Review the proposed skill structure.",
+      "expected_skill": "an-dr-convention-agent-skill",
+      "context": "A general concept skill has SKILL.md, evals/evals.json, and production scripts/modify-source.ps1. Its metadata type is concept.",
+      "expected_behavior": [
+        "Allows the evals folder but rejects production scripts in the passive concept.",
+        "Explains the type boundary without requiring tests to be deleted."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Allows the evals folder but rejects production scripts in the passive concept."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Explains the type boundary without requiring tests to be deleted."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Explain what a keyboard shortcut is. No skill is being authored or reviewed.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 5
+    }
+  ]
+}

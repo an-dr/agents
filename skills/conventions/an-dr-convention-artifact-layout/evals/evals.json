@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-convention-artifact-layout",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-convention-artifact-layout. Choose paths for a review report and a README deliverable.",
+      "expected_skill": "an-dr-convention-artifact-layout",
+      "context": "A run directory has already been allocated for this session. The report is temporary; README.md is repository content.",
+      "expected_behavior": [
+        "Reuses the existing run's report directory instead of allocating a new run per file.",
+        "Keeps the README deliverable in repository content rather than placing it under ignored artifacts."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Reuses the existing run's report directory instead of allocating a new run per file."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Keeps the README deliverable in repository content rather than placing it under ignored artifacts."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Choose paths for a review report and a README deliverable.",
+      "expected_skill": "an-dr-convention-artifact-layout",
+      "context": "A run directory has already been allocated for this session. The report is temporary; README.md is repository content.",
+      "expected_behavior": [
+        "Reuses the existing run's report directory instead of allocating a new run per file.",
+        "Keeps the README deliverable in repository content rather than placing it under ignored artifacts."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Reuses the existing run's report directory instead of allocating a new run per file."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Keeps the README deliverable in repository content rather than placing it under ignored artifacts."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Choose paths for a review report and a README deliverable.",
+      "expected_skill": "an-dr-convention-artifact-layout",
+      "context": "A run directory has already been allocated for this session. The report is temporary; README.md is repository content.",
+      "expected_behavior": [
+        "Reuses the existing run's report directory instead of allocating a new run per file.",
+        "Keeps the README deliverable in repository content rather than placing it under ignored artifacts."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Reuses the existing run's report directory instead of allocating a new run per file."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Keeps the README deliverable in repository content rather than placing it under ignored artifacts."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Return 2 + 2 as a number. No files or artifact paths are needed.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 5
+    }
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-agents-analyze-session",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-agents-analyze-session. Review this session for process improvements; propose changes only.",
+      "expected_skill": "an-dr-agents-analyze-session",
+      "context": "The agent asked twice for a flow already selected by the user. No instruction change or commit was authorized.",
+      "expected_behavior": [
+        "Connects the repeated question to the flow-selection instruction with a concrete proposal.",
+        "Leaves policy and history unchanged until the user approves an amendment."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": [
+            ".artifacts"
+          ]
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Connects the repeated question to the flow-selection instruction with a concrete proposal."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Leaves policy and history unchanged until the user approves an amendment."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Review this session for process improvements; propose changes only.",
+      "expected_skill": "an-dr-agents-analyze-session",
+      "context": "The agent asked twice for a flow already selected by the user. No instruction change or commit was authorized.",
+      "expected_behavior": [
+        "Connects the repeated question to the flow-selection instruction with a concrete proposal.",
+        "Leaves policy and history unchanged until the user approves an amendment."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": [
+            ".artifacts"
+          ]
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Connects the repeated question to the flow-selection instruction with a concrete proposal."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Leaves policy and history unchanged until the user approves an amendment."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Review this session for process improvements; propose changes only.",
+      "expected_skill": "an-dr-agents-analyze-session",
+      "context": "The agent asked twice for a flow already selected by the user. No instruction change or commit was authorized.",
+      "expected_behavior": [
+        "Connects the repeated question to the flow-selection instruction with a concrete proposal.",
+        "Leaves policy and history unchanged until the user approves an amendment."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": [
+            ".artifacts"
+          ]
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Connects the repeated question to the flow-selection instruction with a concrete proposal."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Leaves policy and history unchanged until the user approves an amendment."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Explain the word retrospective. Do not analyze this session or propose policy changes.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 5
+    }
+  ]
+}

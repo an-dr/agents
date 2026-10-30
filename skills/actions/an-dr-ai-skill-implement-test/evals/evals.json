@@ -1,0 +1,273 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-ai-skill-implement-test",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "AUTHOR-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-ai-skill-implement-test. Implement behavioral tests for the supplied skill. Do not run agent evaluations.",
+      "expected_skill": "an-dr-ai-skill-implement-test",
+      "context": "The target skill summarizes a supplied incident log. It must distinguish observed events from hypotheses, name missing evidence, and leave source files unchanged. A prior failure reported a guessed cause as confirmed. Log: '09:00 request timed out. 09:02 retry succeeded.' No root cause was observed.",
+      "expected_behavior": [
+        "Creates a structurally valid evals/evals.json suite with stable IDs and observable expectations.",
+        "Includes a regression case distinguishing the observed timeout and successful retry from an unproven root cause.",
+        "Includes a boundary such as missing evidence or unchanged source without requiring particular generated wording.",
+        "Runs only free structural validation; starts no tested-agent or grading sessions and does not report behavioral passes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Creates a structurally valid evals/evals.json suite with stable IDs and observable expectations."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Includes a regression case distinguishing the observed timeout and successful retry from an unproven root cause."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Includes a boundary such as missing evidence or unchanged source without requiring particular generated wording."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Runs only free structural validation; starts no tested-agent or grading sessions and does not report behavioral passes."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "AUTHOR-002",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-ai-skill-implement-test. Add a case for this observed scope failure, preserving the existing case. Do not evaluate the cases yet.",
+      "expected_skill": "an-dr-ai-skill-implement-test",
+      "context": "The supplied target skill analyzes selected text without changing it. The observed failure was an unsolicited whole-document rewrite when asked to analyze one paragraph.",
+      "fixtures": [
+        "fixtures/AUTHOR-002.zip"
+      ],
+      "expected_behavior": [
+        "Preserves PARA-001 and its meaning, assigning a new ID to the new scope regression case.",
+        "Supplies selected and surrounding text so the new case can detect an unwanted broader rewrite.",
+        "Keeps the correct answer and rubric separate from the tested agent's prompt and context.",
+        "Leaves the target skill's behavior unchanged and does not execute evaluations."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Preserves PARA-001 and its meaning, assigning a new ID to the new scope regression case."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Supplies selected and surrounding text so the new case can detect an unwanted broader rewrite."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Keeps the correct answer and rubric separate from the tested agent's prompt and context."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Leaves the target skill's behavior unchanged and does not execute evaluations."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "AUTHOR-003",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-ai-skill-implement-test. Add a deletion-only diff case for a skill that reviews a change without modifying it. Validate the suite without invoking an agent.",
+      "expected_skill": "an-dr-ai-skill-implement-test",
+      "context": "The reviewer must identify the deletion of the only documented startup command. Before: README.md contains 'Run app --serve'. After: README.md is absent. There are no other changed files.",
+      "expected_behavior": [
+        "Packages the deleted README under baseline/ in a ZIP and omits it from working/, preserving the deletion rather than replacing it with an empty file.",
+        "Includes expectations for the lost startup instruction and source preservation.",
+        "Uses the structural checker and distinguishes validation success from a behavioral test verdict."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Packages the deleted README under baseline/ in a ZIP and omits it from working/, preserving the deletion rather than replacing it with an empty file."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Includes expectations for the lost startup instruction and source preservation."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Uses the structural checker and distinguishes validation success from a behavioral test verdict."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "AUTHOR-004",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-ai-skill-implement-test. Implement script tests for the supplied normalize skill. Capture the reported trailing-whitespace defect and run the tests, but do not fix the implementation or start agent evaluations.",
+      "expected_skill": "an-dr-ai-skill-implement-test",
+      "context": "normalize.ps1 must remove whitespace at both ends and preserve interior spaces. The observed failure: input '  alpha beta  ' returns 'alpha beta  '.",
+      "follow_up": [
+        "Now fix the script to trim both ends and run its script tests again against the edited implementation. Do not start behavior evaluations."
+      ],
+      "fixtures": [
+        "fixtures/AUTHOR-004.zip"
+      ],
+      "expected_behavior": [
+        "Creates scripts/tests/test-normalize.ps1 that executes the real normalize script and asserts boundary trimming and preservation of interior spaces.",
+        "Actually runs the test and records the trailing-whitespace regression as failed before the follow-up, without weakening assertions or changing the implementation prematurely.",
+        "After the follow-up edit, reruns the script tests against the final version and bases its final verdict on that run rather than the earlier result.",
+        "Starts no behavioral evaluation or paid grader and keeps script results distinct from case-structure checks.",
+        "Creates scripts/tests/run.ps1 and uses that entry point to execute tests from scripts/tests/ after the implementation change."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Creates scripts/tests/test-normalize.ps1 that executes the real normalize script and asserts boundary trimming and preservation of interior spaces."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Actually runs the test and records the trailing-whitespace regression as failed before the follow-up, without weakening assertions or changing the implementation prematurely."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "After the follow-up edit, reruns the script tests against the final version and bases its final verdict on that run rather than the earlier result."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Starts no behavioral evaluation or paid grader and keeps script results distinct from case-structure checks."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Creates scripts/tests/run.ps1 and uses that entry point to execute tests from scripts/tests/ after the implementation change."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Implement behavioral tests for the supplied skill. Do not run agent evaluations.",
+      "expected_skill": "an-dr-ai-skill-implement-test",
+      "context": "The target skill summarizes a supplied incident log. It must distinguish observed events from hypotheses, name missing evidence, and leave source files unchanged. A prior failure reported a guessed cause as confirmed. Log: '09:00 request timed out. 09:02 retry succeeded.' No root cause was observed.",
+      "expected_behavior": [
+        "Creates a structurally valid evals/evals.json suite with stable IDs and observable expectations.",
+        "Includes a regression case distinguishing the observed timeout and successful retry from an unproven root cause.",
+        "Includes a boundary such as missing evidence or unchanged source without requiring particular generated wording.",
+        "Runs only free structural validation; starts no tested-agent or grading sessions and does not report behavioral passes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Creates a structurally valid evals/evals.json suite with stable IDs and observable expectations."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Includes a regression case distinguishing the observed timeout and successful retry from an unproven root cause."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Includes a boundary such as missing evidence or unchanged source without requiring particular generated wording."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Runs only free structural validation; starts no tested-agent or grading sessions and does not report behavioral passes."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Implement behavioral tests for the supplied skill. Do not run agent evaluations.",
+      "expected_skill": "an-dr-ai-skill-implement-test",
+      "context": "The target skill summarizes a supplied incident log. It must distinguish observed events from hypotheses, name missing evidence, and leave source files unchanged. A prior failure reported a guessed cause as confirmed. Log: '09:00 request timed out. 09:02 retry succeeded.' No root cause was observed.",
+      "expected_behavior": [
+        "Creates a structurally valid evals/evals.json suite with stable IDs and observable expectations.",
+        "Includes a regression case distinguishing the observed timeout and successful retry from an unproven root cause.",
+        "Includes a boundary such as missing evidence or unchanged source without requiring particular generated wording.",
+        "Runs only free structural validation; starts no tested-agent or grading sessions and does not report behavioral passes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Creates a structurally valid evals/evals.json suite with stable IDs and observable expectations."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Includes a regression case distinguishing the observed timeout and successful retry from an unproven root cause."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Includes a boundary such as missing evidence or unchanged source without requiring particular generated wording."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Runs only free structural validation; starts no tested-agent or grading sessions and does not report behavioral passes."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Explain the difference between a unit test and an integration test in one sentence. Do not create skill tests.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 5
+    }
+  ]
+}

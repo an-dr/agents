@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-dev-write-documentation",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-dev-write-documentation. Update the prose to describe only the delivered behavior.",
+      "expected_skill": "an-dr-dev-write-documentation",
+      "context": "The tool now exports CSV to stdout. File output, JSON, and streaming were not implemented. The draft says it exports every popular format to any destination.",
+      "expected_behavior": [
+        "Replaces the unsupported broad claim with the specific CSV-to-stdout behavior.",
+        "Does not invent unimplemented options or present planned features as available."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Replaces the unsupported broad claim with the specific CSV-to-stdout behavior."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not invent unimplemented options or present planned features as available."
+        }
+      ],
+      "runs": 5,
+      "fixtures": [
+        "fixtures/task.zip"
+      ],
+      "environment": {
+        "tools": [
+          "git",
+          "pwsh",
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Update the prose to describe only the delivered behavior.",
+      "expected_skill": "an-dr-dev-write-documentation",
+      "context": "The tool now exports CSV to stdout. File output, JSON, and streaming were not implemented. The draft says it exports every popular format to any destination.",
+      "expected_behavior": [
+        "Replaces the unsupported broad claim with the specific CSV-to-stdout behavior.",
+        "Does not invent unimplemented options or present planned features as available."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Replaces the unsupported broad claim with the specific CSV-to-stdout behavior."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not invent unimplemented options or present planned features as available."
+        }
+      ],
+      "runs": 5,
+      "fixtures": [
+        "fixtures/task.zip"
+      ],
+      "environment": {
+        "tools": [
+          "git",
+          "pwsh",
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Update the prose to describe only the delivered behavior.",
+      "expected_skill": "an-dr-dev-write-documentation",
+      "context": "The tool now exports CSV to stdout. File output, JSON, and streaming were not implemented. The draft says it exports every popular format to any destination.",
+      "expected_behavior": [
+        "Replaces the unsupported broad claim with the specific CSV-to-stdout behavior.",
+        "Does not invent unimplemented options or present planned features as available."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Replaces the unsupported broad claim with the specific CSV-to-stdout behavior."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not invent unimplemented options or present planned features as available."
+        }
+      ],
+      "runs": 5,
+      "fixtures": [
+        "fixtures/task.zip"
+      ],
+      "environment": {
+        "tools": [
+          "git",
+          "pwsh",
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Fix this Python expression by returning a suggested expression only: total = price * count. No documentation changes.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 5
+    }
+  ]
+}

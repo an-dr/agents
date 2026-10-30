@@ -1,0 +1,171 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-dev-implement-code",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-dev-implement-code. Make the smallest implementation change for this requirement.",
+      "expected_skill": "an-dr-dev-implement-code",
+      "context": "Direct work is selected. A formatter returns the requested name but drops its trailing newline. The public signature must remain stable; a new formatting framework is excluded.",
+      "expected_behavior": [
+        "Keeps the existing public interface and limits the change to the trailing-newline requirement.",
+        "Verifies the changed result and does not introduce the excluded framework or unrelated refactoring."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "file_check",
+          "path": "formatter.py",
+          "contains": "\\n"
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Keeps the existing public interface and limits the change to the trailing-newline requirement."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Verifies the changed result and does not introduce the excluded framework or unrelated refactoring."
+        }
+      ],
+      "runs": 5,
+      "fixtures": [
+        "fixtures/task.zip"
+      ],
+      "environment": {
+        "tools": [
+          "git",
+          "pwsh",
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Make the smallest implementation change for this requirement.",
+      "expected_skill": "an-dr-dev-implement-code",
+      "context": "Direct work is selected. A formatter returns the requested name but drops its trailing newline. The public signature must remain stable; a new formatting framework is excluded.",
+      "expected_behavior": [
+        "Keeps the existing public interface and limits the change to the trailing-newline requirement.",
+        "Verifies the changed result and does not introduce the excluded framework or unrelated refactoring."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "file_check",
+          "path": "formatter.py",
+          "contains": "\\n"
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Keeps the existing public interface and limits the change to the trailing-newline requirement."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Verifies the changed result and does not introduce the excluded framework or unrelated refactoring."
+        }
+      ],
+      "runs": 5,
+      "fixtures": [
+        "fixtures/task.zip"
+      ],
+      "environment": {
+        "tools": [
+          "git",
+          "pwsh",
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Make the smallest implementation change for this requirement.",
+      "expected_skill": "an-dr-dev-implement-code",
+      "context": "Direct work is selected. A formatter returns the requested name but drops its trailing newline. The public signature must remain stable; a new formatting framework is excluded.",
+      "expected_behavior": [
+        "Keeps the existing public interface and limits the change to the trailing-newline requirement.",
+        "Verifies the changed result and does not introduce the excluded framework or unrelated refactoring."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "file_check",
+          "path": "formatter.py",
+          "contains": "\\n"
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Keeps the existing public interface and limits the change to the trailing-newline requirement."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Verifies the changed result and does not introduce the excluded framework or unrelated refactoring."
+        }
+      ],
+      "runs": 5,
+      "fixtures": [
+        "fixtures/task.zip"
+      ],
+      "environment": {
+        "tools": [
+          "git",
+          "pwsh",
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Explain the existing expression count + 1. Do not change code.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 5
+    }
+  ]
+}
