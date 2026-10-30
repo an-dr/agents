@@ -96,7 +96,7 @@ Each skill runs from its own folder, so it works whether it is installed with th
 
 ## Skill dependencies
 
-This diagram is built from the `an-dr.dependencies` each skill declares in its [instructions](skills/README.md) by `an-dr-architecture-build-dependencies`, which marks any skill that declares none. A skill declares every skill it names, and `check-registration.ps1` fails on a skill that names an undeclared one, declares one it never names, or sits on a dependency cycle. `PROHIBITED` marks a stable skill, such as a concept, that must name no other skill.
+This diagram is built from the `an-dr.dependencies` each skill declares in its [instructions](skills/README.md) by `an-dr-agents-repo-build-dependencies`, which marks any skill that declares none. A skill declares every skill it names, and `check-registration.ps1` fails on a skill that names an undeclared one, declares one it never names, or sits on a dependency cycle. `PROHIBITED` marks a stable skill, such as a concept, that must name no other skill.
 
 Arrows point from a skill to a skill it names. Groups are the category folders under `skills/`; no skill outside the agents repository's group depends on one inside it. Skills that name no skill and are named by none are omitted, and transitive dependencies are reached by following arrows.
 
@@ -106,6 +106,7 @@ Arrows point from a skill to a skill it names. Groups are the category folders u
 flowchart LR
     subgraph g_repository["Repository"]
         an-dr-agents-analyze-session
+        an-dr-agents-repo-build-dependencies
         an-dr-agents-repo-convention-skills
         an-dr-agents-repo-install
         an-dr-agents-repo-modify
@@ -115,7 +116,6 @@ flowchart LR
         an-dr-ai-review-instruction
         an-dr-ai-send-message
         an-dr-ai-write-instruction
-        an-dr-architecture-build-dependencies
         an-dr-architecture-fix-dependencies
         an-dr-dev-analyze-changes
         an-dr-dev-analyze-slop
@@ -157,13 +157,13 @@ flowchart LR
         an-dr-convention-script
     end
     an-dr-agents-analyze-session --> an-dr-agents-repo-modify
+    an-dr-agents-repo-build-dependencies --> an-dr-ai-send-message & an-dr-convention-agent-skill
     an-dr-agents-repo-convention-skills --> an-dr-convention-agent-skill & an-dr-dev-test & an-dr-dev-write-documentation & an-dr-git-commit
     an-dr-agents-repo-modify --> an-dr-agents-repo-convention-skills & an-dr-agents-repo-install & an-dr-agents-repo-verify-installation & an-dr-ai-review-instruction & an-dr-ai-send-message & an-dr-ai-write-instruction & an-dr-convention-agent-skill & an-dr-convention-markdown & an-dr-convention-script & an-dr-git-commit
     an-dr-agents-repo-verify-installation --> an-dr-agents-repo-install & an-dr-convention-commit-message
     an-dr-ai-review-instruction --> an-dr-ai-send-message
     an-dr-ai-send-message --> an-dr-concept-dark-cockpit & an-dr-convention-artifact-layout
     an-dr-ai-write-instruction --> an-dr-ai-review-instruction & an-dr-concept-ai-slop & an-dr-convention-markdown
-    an-dr-architecture-build-dependencies --> an-dr-ai-send-message & an-dr-convention-agent-skill
     an-dr-architecture-fix-dependencies --> an-dr-ai-send-message & an-dr-concept-clean-dependencies & an-dr-convention-artifact-layout & an-dr-convention-html-report
     an-dr-dev-analyze-changes --> an-dr-ai-send-message & an-dr-concept-ai-slop & an-dr-convention-adr & an-dr-convention-artifact-layout & an-dr-convention-html-report & an-dr-dev-review & an-dr-dev-write-documentation
     an-dr-dev-analyze-slop --> an-dr-ai-review-instruction & an-dr-ai-send-message & an-dr-concept-ai-slop & an-dr-convention-artifact-layout & an-dr-convention-html-report

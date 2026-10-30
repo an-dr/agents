@@ -1,5 +1,5 @@
 ---
-name: an-dr-architecture-build-dependencies
+name: an-dr-agents-repo-build-dependencies
 description: Build the dependency graph of a repository's skills from their an-dr.dependencies declarations as a Mermaid diagram, mark every skill that declares none, and keep a Markdown block current. Use after adding, renaming, or re-declaring a skill, when a dependency diagram needs refreshing, or when you need to see what depends on what.
 license: MIT
 metadata:

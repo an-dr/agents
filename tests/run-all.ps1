@@ -22,7 +22,7 @@ foreach ($test in Get-ChildItem -LiteralPath $skills -Recurse -File -Filter 'tes
 $steps.Add(@{ Name = 'registration'; Script = Join-Path $skills 'conventions/an-dr-convention-agent-skill/scripts/check-registration.ps1'; Arguments = @('-Root', $root, '-FailOnCycle') })
 $steps.Add(@{ Name = 'scripts'; Script = Join-Path $skills 'conventions/an-dr-convention-script/scripts/check-scripts.ps1'; Arguments = @('-Root', $root) })
 $steps.Add(@{ Name = 'skills'; Script = Join-Path $skills 'conventions/an-dr-convention-agent-skill/scripts/check-skills.ps1'; Arguments = @('-Root', $root) })
-$steps.Add(@{ Name = 'dependency-diagram'; Script = Join-Path $skills 'actions/an-dr-architecture-build-dependencies/scripts/build-dependencies.ps1'; Arguments = @('-Root', $root, '-Markdown', (Join-Path $root 'README.md'), '-Check') })
+$steps.Add(@{ Name = 'dependency-diagram'; Script = Join-Path $skills '_repository/an-dr-agents-repo-build-dependencies/scripts/build-dependencies.ps1'; Arguments = @('-Root', $root, '-Markdown', (Join-Path $root 'README.md'), '-Check') })
 $steps.Add(@{ Name = 'names'; Script = Join-Path $skills '_repository/an-dr-agents-repo-convention-skills/scripts/check-names.ps1'; Arguments = @('-Root', $root) })
 $steps.Add(@{ Name = 'skills-ref'; Script = Join-Path $skills 'conventions/an-dr-convention-agent-skill/scripts/check-skills-ref.ps1'; Arguments = @('-Root', $root) })
 $steps.Add(@{ Name = 'references'; Script = Join-Path $skills 'actions/an-dr-ai-review-instruction/scripts/check-references.ps1'; Arguments = @('-Path', $root) })

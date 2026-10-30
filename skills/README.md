@@ -11,7 +11,6 @@ Procedures the agent runs. They produce a result, use scripts where the work is 
 | [`an-dr-ai-review-instruction`](actions/an-dr-ai-review-instruction/SKILL.md) | Review agent instructions for contradictions, weak rules, and wasted context. |
 | [`an-dr-ai-send-message`](actions/an-dr-ai-send-message/SKILL.md) | Ask questions and confirmations through the host's UI, fall back to text, and render tables that work everywhere. |
 | [`an-dr-ai-write-instruction`](actions/an-dr-ai-write-instruction/SKILL.md) | Create or change agent-loaded instructions. |
-| [`an-dr-architecture-build-dependencies`](actions/an-dr-architecture-build-dependencies/SKILL.md) | Build the skill dependency diagram from the declarations and mark skills that declare none. |
 | [`an-dr-architecture-fix-dependencies`](actions/an-dr-architecture-fix-dependencies/SKILL.md) | Remove needless dependencies and break cycles by moving shared parts into common components. |
 | [`an-dr-dev-analyze-changes`](actions/an-dr-dev-analyze-changes/SKILL.md) | Explain a finished change in one HTML page, and prepare the full-branch integration handoff. |
 | [`an-dr-dev-analyze-slop`](actions/an-dr-dev-analyze-slop/SKILL.md) | Analyse code and docs for illogical or questionable artifacts, with prioritized findings and proposed changes in HTML. |
@@ -69,6 +68,7 @@ Skills that exist for maintaining and installing this repository itself. No skil
 | Skill | When to use |
 | --- | --- |
 | [`an-dr-agents-analyze-session`](_repository/an-dr-agents-analyze-session/SKILL.md) | Propose process improvements after integration or on request. |
+| [`an-dr-agents-repo-build-dependencies`](_repository/an-dr-agents-repo-build-dependencies/SKILL.md) | Build the skill dependency diagram from the declarations and mark skills that declare none. |
 | [`an-dr-agents-repo-convention-skills`](_repository/an-dr-agents-repo-convention-skills/SKILL.md) | Name this repository's skills <group>-<verb>[-<noun>] with a verb from its own list. |
 | [`an-dr-agents-repo-install`](_repository/an-dr-agents-repo-install/SKILL.md) | Install this clone globally for local AI tools instead of per repository. |
 | [`an-dr-agents-repo-modify`](_repository/an-dr-agents-repo-modify/SKILL.md) | Change this repository's own instructions and land them after approval. |
