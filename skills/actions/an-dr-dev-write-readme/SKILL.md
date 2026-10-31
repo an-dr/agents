@@ -65,4 +65,4 @@ Run it before writing to see the evidence and the existing file's faults, and ag
 
 ## Output
 
-Deliver the finished `README.md`, or a diff first when the user wants to review before it lands. Follow it with the open questions as one `an-dr-ai-send-message` round, each naming what could not be established from the repository.
+Deliver the finished `README.md`, or a diff or plan first when the user wants to review before it lands; a plan names the same command the README would. Either form gives the newcomer the exact command to run — `python exporter.py` or the installed console script — with the input it expects, and marks a command you could not run as unverified. "Add a quickstart" without that command is not a deliverable. Follow it with the open questions as one `an-dr-ai-send-message` round, each naming what could not be established from the repository.

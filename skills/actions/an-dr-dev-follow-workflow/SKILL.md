@@ -11,7 +11,7 @@ metadata:
 
 # Workflow controller
 
-Use `scripts/workflow.ps1` as the authority for phase transitions and approval gates in Quick, Detailed, and Detailed Auto. Direct has no controller state. Do not reconstruct workflow state from chat when `.progress/workflow.json` exists.
+Use `scripts/workflow.ps1` as the authority for phase transitions and approval gates in Quick, Detailed, and Detailed Auto. Direct has no controller state. While `.progress/workflow.json` exists, the first command of every response is `status`. Its emitted table — not the JSON file and not the conversation — is the authority for the phase, the gates, and the open questions. If the command fails, quote the command and its error and stop; never reconstruct the state from the file instead.
 
 ## Start or resume
 
@@ -107,7 +107,7 @@ A request recorded after the `intake` approval drops it: the approval said the l
 
 The controller refuses `approve -Gate implement` while any question is open and lists the offenders. This is the mechanism behind "explore first, build on command" — an unanswered question cannot be lost, because it holds the gate shut.
 
-Run `status` before every response while state exists. Present the controller's Markdown status table to the user verbatim, as its emitted agent instruction requires. `advance` rejects missing approvals, missing increments, wrong branches, uncommitted increments, and illegal transitions. `return-to-build` records a failed verification, invalidates the increment's verification approval, and resumes BUILD without changing increment identity.
+Run `status` before every response while state exists; its table, not the JSON file or the conversation, decides what the workflow allows. Present the controller's Markdown status table to the user verbatim, as its emitted agent instruction requires. `advance` rejects missing approvals, missing increments, wrong branches, uncommitted increments, and illegal transitions. `return-to-build` records a failed verification, invalidates the increment's verification approval, and resumes BUILD without changing increment identity.
 
 Only planned increments can be inserted or reordered with `move-increment`. Completed increments retain immutable IDs and fixed positions; renumbering never changes which increment is active.
 

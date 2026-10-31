@@ -16,7 +16,7 @@ Disclosing AI usage is the owner's choice, so this skill asks first and assigns 
 
 ## Ask
 
-Ask through `an-dr-ai-send-message` whether the user wants an ai-level.dev level assigned to this repository, with the options yes and no. Look in the README for an existing AI Level badge first and, when one exists, ask whether to keep or reassess it. On no, change nothing and do not ask again in the same session.
+Ask through `an-dr-ai-send-message` whether the user wants an ai-level.dev level assigned to this repository, as a direct question with the options yes and no; saying that the offer is ready is not the question. Look in the README for an existing AI Level badge first and, when one exists, ask whether to keep or reassess it. On no, change nothing and do not ask again in the same session.
 
 ## Assess
 

@@ -27,7 +27,13 @@
       "bucket": "explicit",
       "prompt": "Use an-dr-dev-assign-ai-level. Offer to assign an AI usage level to this repository.",
       "expected_skill": "an-dr-dev-assign-ai-level",
-      "context": "A small repository whose commits and instruction files show an AI agent wrote its functional modules, and a human reviewed them in small commits. Its README has badges but no AI Level badge.",
+      "context": "A small repository whose AGENTS.md and tests show an AI agent wrote its functional modules, with a human reviewing in small commits. Its README has badges but no AI Level badge.",
+      "fixtures": [
+        "fixtures/task.zip"
+      ],
+      "follow_up": [
+        "Yes, assign a level."
+      ],
       "expected_behavior": [
         "Asks whether the user wants a level assigned before changing any file.",
         "After a yes, proposes a level with cited evidence and asks the user to confirm it before adding the badge."
@@ -53,7 +59,13 @@
       "bucket": "implicit",
       "prompt": "Offer to assign an AI usage level to this repository.",
       "expected_skill": "an-dr-dev-assign-ai-level",
-      "context": "A small repository whose commits and instruction files show an AI agent wrote its functional modules, and a human reviewed them in small commits. Its README has badges but no AI Level badge.",
+      "context": "A small repository whose AGENTS.md and tests show an AI agent wrote its functional modules, with a human reviewing in small commits. Its README has badges but no AI Level badge.",
+      "fixtures": [
+        "fixtures/task.zip"
+      ],
+      "follow_up": [
+        "Yes, assign a level."
+      ],
       "expected_behavior": [
         "Asks whether the user wants a level assigned before changing any file.",
         "After a yes, proposes a level with cited evidence and asks the user to confirm it before adding the badge."
@@ -79,7 +91,13 @@
       "bucket": "contextual",
       "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Offer to assign an AI usage level to this repository.",
       "expected_skill": "an-dr-dev-assign-ai-level",
-      "context": "A small repository whose commits and instruction files show an AI agent wrote its functional modules, and a human reviewed them in small commits. Its README has badges but no AI Level badge.",
+      "context": "A small repository whose AGENTS.md and tests show an AI agent wrote its functional modules, with a human reviewing in small commits. Its README has badges but no AI Level badge.",
+      "fixtures": [
+        "fixtures/task.zip"
+      ],
+      "follow_up": [
+        "Yes, assign a level."
+      ],
       "expected_behavior": [
         "Asks whether the user wants a level assigned before changing any file.",
         "After a yes, proposes a level with cited evidence and asks the user to confirm it before adding the badge."

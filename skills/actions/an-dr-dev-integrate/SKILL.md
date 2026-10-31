@@ -16,7 +16,7 @@ Integration always rebases first, so the default branch never gains a merge comm
 
 ## The mode question
 
-Ask it every time, before any mode-specific step, and never answer it yourself. Approval to integrate is not a choice of mode, and the mode used last time is not a default. `integrate-4-finish.ps1` makes `-Mode` mandatory so no run can skip the question.
+Ask it every time as the first step of integration, before progress cleanup, rebase, or any other history change, and never answer it yourself. Approval to integrate is not a choice of mode, and the mode used last time is not a default. `integrate-4-finish.ps1` makes `-Mode` mandatory so no run can skip the question.
 
 | Mode | What it does | Choose it when |
 | --- | --- | --- |
@@ -32,7 +32,7 @@ The message for `Squash` and `Request` is validated by `an-dr-convention-commit-
 
 ## Remove workflow progress
 
-Run this after the workflow's `finish` operation and committing the resulting deletion, before anything else. `remove-progress.ps1` rewrites only commits after the merge base with the repository's default branch; default-branch history is never changed. The feature branch must be linear and the working tree clean. The script:
+Run this after the workflow's `finish` operation and committing the resulting deletion, after the mode question and before any other integration step. `remove-progress.ps1` rewrites only commits after the merge base with the repository's default branch; default-branch history is never changed. The feature branch must be linear and the working tree clean. The script:
 
 1. removes `.progress/` from every feature-branch commit;
 2. preserves each remaining commit's message, author, committer, and dates;
@@ -43,7 +43,7 @@ Run the relevant tests again if rewritten commits have not already been verified
 
 ## For AI agents — use the step scripts (non-interactive)
 
-Run the progress cleanup first, then the step scripts from `<skill>/scripts/`. Each script exits non-zero on failure. `<an-dr-convention-commit-message>` is that convention's folder, wherever the agent loaded it from; the scripts take it as a parameter instead of guessing where it is installed.
+Ask for the mode first; then run the progress cleanup and the step scripts from `<skill>/scripts/`. Each script exits non-zero on failure. `<an-dr-convention-commit-message>` is that convention's folder, wherever the agent loaded it from; the scripts take it as a parameter instead of guessing where it is installed.
 
 | Step | Command |
 | --- | --- |
@@ -57,12 +57,12 @@ Run the progress cleanup first, then the step scripts from `<skill>/scripts/`. E
 
 **Procedure:**
 
-1. Run **step 0** after the workflow's `finish` operation and its deletion commit. It removes `.progress/` from every feature-branch commit and prunes progress-only commits.
-2. Run **step 1**. Read the output: look at the recent log for WIP commits and the base-to-HEAD log for topic commits. It rejects any remaining progress history.
-3. If WIP commits exist at the tip, run **step 2** with `<hash>` set to the commit just before the first WIP and a clean message.
-4. Run **step 3** (fetch + rebase). Fix any conflicts; rebase pauses on them.
-5. Run **step 1** again, then ask for the mode as one `an-dr-ai-send-message` question with the five modes as its options, no recommendation, and wait for the answer. When the host's question UI holds fewer than five options, ask first whether to land locally (`Commits`, `Regroup`, `Squash`) or through a pull request (`Request`, `RebaseMerge`), then which mode within that group.
-6. Run **step 4** with the chosen `-Mode`, adding `-Message` for `Squash` and `Request`. It performs the collapse itself; step 2 is not run again. For `Regroup`, first rebuild the branch as described below, then run step 4 with `-Mode Commits`. For `RebaseMerge`, continue as described in its section.
+1. Ask for the mode as one `an-dr-ai-send-message` question with the five modes as its options, no recommendation, and wait for the answer. When the host's question UI holds fewer than five options, ask first whether to land locally (`Commits`, `Regroup`, `Squash`) or through a pull request (`Request`, `RebaseMerge`), then which mode within that group. Ask before any step below, so nothing in the branch or its history changes before the choice.
+2. Run **step 0** after the workflow's `finish` operation and its deletion commit. It removes `.progress/` from every feature-branch commit and prunes progress-only commits.
+3. Run **step 1**. Read the output: look at the recent log for WIP commits and the base-to-HEAD log for topic commits. It rejects any remaining progress history.
+4. If WIP commits exist at the tip, run **step 2** with `<hash>` set to the commit just before the first WIP and a clean message.
+5. Run **step 3** (fetch + rebase). Fix any conflicts; rebase pauses on them.
+6. Run **step 1** again, then run **step 4** with the chosen `-Mode`, adding `-Message` for `Squash` and `Request`. It performs the collapse itself; step 2 is not run again. For `Regroup`, first rebuild the branch as described below, then run step 4 with `-Mode Commits`. For `RebaseMerge`, continue as described in its section.
 
 ## Regroup
 

@@ -46,7 +46,7 @@ A table of 15 findings or fewer goes in the reply, by `an-dr-ai-send-message`'s 
 - build it through `an-dr-convention-html-report`, with each finding's level on its row;
 - run `an-dr-convention-html-report`'s render scripts.
 
-Report the page's path, and put only the opening lines and the `high` findings in the reply. End with the share of the text the proposals would remove, so the reader sees the size of the problem.
+Report the page's path, and put only the opening lines and the `high` findings in the reply. End with the share of the text the proposals would remove, as a percentage or a word count — `31 of 37 words, 84%` — so the reader sees the size of the problem; the number of findings or cut clauses is not a share.
 
 ## Rules
 

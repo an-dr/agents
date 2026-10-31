@@ -1,6 +1,6 @@
 ---
 name: an-dr-dev-implement-adversarial-ut
-description: Build a bug-finding unit test suite before fixing anything. Use at the start of a debug or cleanup iteration to capture bugs as passing regression tests.
+description: Build a bug-finding unit test suite before fixing anything. Use at the start of a debug or cleanup iteration to capture found bugs as passing tests and a known defect as the failing test its fix must satisfy.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
@@ -11,7 +11,7 @@ metadata:
 
 # Adversarial unit tests
 
-Goal: find bugs, not verify that the code works. Bugs are captured as *passing* tests asserting the buggy behaviour — the suite stays green, every bug is anchored as a regression test, and the test names double as bug reports.
+Goal: find bugs, not verify that the code works. A bug found during the hunt is captured as a *passing* test asserting the buggy behaviour, so the suite stays green and the test name doubles as the bug report. A known defect whose fix comes next is captured as the test that fix must satisfy: it asserts the documented or intended behaviour and fails against the current code.
 
 ## Process
 
@@ -34,7 +34,8 @@ Goal: find bugs, not verify that the code works. Bugs are captured as *passing* 
 
 ## Output
 
-- A test that confirms a bug must PASS (assert the buggy behaviour) and carry `BUG:` in its name; it becomes the regression anchor once the fix lands.
+- A test for a bug found during the hunt asserts the buggy behaviour, passes, and carries `BUG:` in its name; it becomes the regression anchor once the fix lands.
+- A regression test for a known defect asserts the intended contract — an inclusive limit accepts `10` — and fails against the current code; the buggy result never becomes the expected limit.
 - Tests confirming correct behaviour are named normally.
 - Record every bug found in the host's `docs/techdebt.md` table (create on first use): ID | Bug description | Source file | Test file.
 
