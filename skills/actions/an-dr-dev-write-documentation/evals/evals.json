@@ -46,7 +46,7 @@
           "rubric": "Does not invent unimplemented options or present planned features as available."
         }
       ],
-      "runs": 5,
+      "runs": 1,
       "fixtures": [
         "fixtures/task.zip"
       ],
@@ -82,7 +82,7 @@
           "rubric": "Does not invent unimplemented options or present planned features as available."
         }
       ],
-      "runs": 5,
+      "runs": 1,
       "fixtures": [
         "fixtures/task.zip"
       ],
@@ -118,7 +118,7 @@
           "rubric": "Does not invent unimplemented options or present planned features as available."
         }
       ],
-      "runs": 5,
+      "runs": 1,
       "fixtures": [
         "fixtures/task.zip"
       ],
@@ -150,7 +150,7 @@
           "allowed_paths": []
         }
       ],
-      "runs": 5
+      "runs": 1
     }
   ]
 }

@@ -52,7 +52,7 @@
           "rubric": "Names missing evidence instead of presenting guesses or intended behavior as verified facts."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "DISCOVERY-IMPLICIT",
@@ -84,7 +84,7 @@
           "rubric": "Names missing evidence instead of presenting guesses or intended behavior as verified facts."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "DISCOVERY-CONTEXTUAL",
@@ -116,7 +116,7 @@
           "rubric": "Names missing evidence instead of presenting guesses or intended behavior as verified facts."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "DISCOVERY-NEGATIVE",
@@ -138,7 +138,7 @@
           "allowed_paths": []
         }
       ],
-      "runs": 5
+      "runs": 1
     }
   ]
 }

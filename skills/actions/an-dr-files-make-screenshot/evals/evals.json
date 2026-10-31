@@ -46,7 +46,7 @@
           "rubric": "Stores and reports a usable documentation image path and checks the captured content."
         }
       ],
-      "runs": 5,
+      "runs": 1,
       "environment": {
         "tools": [
           "git",
@@ -80,7 +80,7 @@
           "rubric": "Stores and reports a usable documentation image path and checks the captured content."
         }
       ],
-      "runs": 5,
+      "runs": 1,
       "environment": {
         "tools": [
           "git",
@@ -114,7 +114,7 @@
           "rubric": "Stores and reports a usable documentation image path and checks the captured content."
         }
       ],
-      "runs": 5,
+      "runs": 1,
       "environment": {
         "tools": [
           "git",
@@ -144,7 +144,7 @@
           "allowed_paths": []
         }
       ],
-      "runs": 5
+      "runs": 1
     }
   ]
 }

@@ -51,7 +51,7 @@
           "rubric": "Verifies the changed result and does not introduce the excluded framework or unrelated refactoring."
         }
       ],
-      "runs": 5,
+      "runs": 1,
       "fixtures": [
         "fixtures/task.zip"
       ],
@@ -92,7 +92,7 @@
           "rubric": "Verifies the changed result and does not introduce the excluded framework or unrelated refactoring."
         }
       ],
-      "runs": 5,
+      "runs": 1,
       "fixtures": [
         "fixtures/task.zip"
       ],
@@ -133,7 +133,7 @@
           "rubric": "Verifies the changed result and does not introduce the excluded framework or unrelated refactoring."
         }
       ],
-      "runs": 5,
+      "runs": 1,
       "fixtures": [
         "fixtures/task.zip"
       ],
@@ -165,7 +165,7 @@
           "allowed_paths": []
         }
       ],
-      "runs": 5
+      "runs": 1
     }
   ]
 }

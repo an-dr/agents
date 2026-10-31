@@ -46,7 +46,7 @@
           "rubric": "Does not change the implementation before capturing the defect or weaken the expected limit to match the bug."
         }
       ],
-      "runs": 5,
+      "runs": 1,
       "fixtures": [
         "fixtures/task.zip"
       ]
@@ -75,7 +75,7 @@
           "rubric": "Does not change the implementation before capturing the defect or weaken the expected limit to match the bug."
         }
       ],
-      "runs": 5,
+      "runs": 1,
       "fixtures": [
         "fixtures/task.zip"
       ]
@@ -104,7 +104,7 @@
           "rubric": "Does not change the implementation before capturing the defect or weaken the expected limit to match the bug."
         }
       ],
-      "runs": 5,
+      "runs": 1,
       "fixtures": [
         "fixtures/task.zip"
       ]
@@ -129,7 +129,7 @@
           "allowed_paths": []
         }
       ],
-      "runs": 5
+      "runs": 1
     }
   ]
 }

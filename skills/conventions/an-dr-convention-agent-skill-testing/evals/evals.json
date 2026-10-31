@@ -30,9 +30,9 @@
       "context": "The plan stores behavior cases in evals/evals.json, embeds a grading rubric in the tested prompt, extracts a repository ZIP without inspecting entries, uses one shared agent session, and reports a single successful run as reliable. Its script runner recurses through fixtures.",
       "expected_behavior": [
         "Places evaluations in evals/evals.json and deterministic tests under scripts/tests/ with run.ps1.",
-        "Keeps the rubric private, requires fresh isolated trials and declares and checks the host environment.",
+        "Keeps the rubric private, requires fresh sessions, records actual host controls, and permits best-effort behavior grading when only isolation controls are unavailable.",
         "Rejects unsafe ZIP extraction and requires baseline and working snapshots inside the sandbox.",
-        "Separates invocation from behavior results, uses bounded repeated comparisons, and runs no model evaluation without an explicit request."
+        "Separates activation, behavior, and security results; defaults to one trial and one arm; and runs no model evaluation without an explicit request."
       ],
       "assertions": [
         {
@@ -45,7 +45,7 @@
         },
         {
           "type": "llm_judge",
-          "rubric": "Keeps the rubric private, requires fresh isolated trials and declares and checks the host environment."
+          "rubric": "Keeps the rubric private, requires fresh sessions, records actual host controls, and permits best-effort behavior grading when only isolation controls are unavailable."
         },
         {
           "type": "llm_judge",
@@ -53,10 +53,10 @@
         },
         {
           "type": "llm_judge",
-          "rubric": "Separates invocation from behavior results, uses bounded repeated comparisons, and runs no model evaluation without an explicit request."
+          "rubric": "Separates activation, behavior, and security results; defaults to one trial and one arm; and runs no model evaluation without an explicit request."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "DISCOVERY-IMPLICIT",
@@ -66,9 +66,9 @@
       "context": "The plan stores behavior cases in evals/evals.json, embeds a grading rubric in the tested prompt, extracts a repository ZIP without inspecting entries, uses one shared agent session, and reports a single successful run as reliable. Its script runner recurses through fixtures.",
       "expected_behavior": [
         "Places evaluations in evals/evals.json and deterministic tests under scripts/tests/ with run.ps1.",
-        "Keeps the rubric private, requires fresh isolated trials and declares and checks the host environment.",
+        "Keeps the rubric private, requires fresh sessions, records actual host controls, and permits best-effort behavior grading when only isolation controls are unavailable.",
         "Rejects unsafe ZIP extraction and requires baseline and working snapshots inside the sandbox.",
-        "Separates invocation from behavior results, uses bounded repeated comparisons, and runs no model evaluation without an explicit request."
+        "Separates activation, behavior, and security results; defaults to one trial and one arm; and runs no model evaluation without an explicit request."
       ],
       "assertions": [
         {
@@ -81,7 +81,7 @@
         },
         {
           "type": "llm_judge",
-          "rubric": "Keeps the rubric private, requires fresh isolated trials and declares and checks the host environment."
+          "rubric": "Keeps the rubric private, requires fresh sessions, records actual host controls, and permits best-effort behavior grading when only isolation controls are unavailable."
         },
         {
           "type": "llm_judge",
@@ -89,10 +89,10 @@
         },
         {
           "type": "llm_judge",
-          "rubric": "Separates invocation from behavior results, uses bounded repeated comparisons, and runs no model evaluation without an explicit request."
+          "rubric": "Separates activation, behavior, and security results; defaults to one trial and one arm; and runs no model evaluation without an explicit request."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "DISCOVERY-CONTEXTUAL",
@@ -102,9 +102,9 @@
       "context": "The plan stores behavior cases in evals/evals.json, embeds a grading rubric in the tested prompt, extracts a repository ZIP without inspecting entries, uses one shared agent session, and reports a single successful run as reliable. Its script runner recurses through fixtures.",
       "expected_behavior": [
         "Places evaluations in evals/evals.json and deterministic tests under scripts/tests/ with run.ps1.",
-        "Keeps the rubric private, requires fresh isolated trials and declares and checks the host environment.",
+        "Keeps the rubric private, requires fresh sessions, records actual host controls, and permits best-effort behavior grading when only isolation controls are unavailable.",
         "Rejects unsafe ZIP extraction and requires baseline and working snapshots inside the sandbox.",
-        "Separates invocation from behavior results, uses bounded repeated comparisons, and runs no model evaluation without an explicit request."
+        "Separates activation, behavior, and security results; defaults to one trial and one arm; and runs no model evaluation without an explicit request."
       ],
       "assertions": [
         {
@@ -117,7 +117,7 @@
         },
         {
           "type": "llm_judge",
-          "rubric": "Keeps the rubric private, requires fresh isolated trials and declares and checks the host environment."
+          "rubric": "Keeps the rubric private, requires fresh sessions, records actual host controls, and permits best-effort behavior grading when only isolation controls are unavailable."
         },
         {
           "type": "llm_judge",
@@ -125,10 +125,10 @@
         },
         {
           "type": "llm_judge",
-          "rubric": "Separates invocation from behavior results, uses bounded repeated comparisons, and runs no model evaluation without an explicit request."
+          "rubric": "Separates activation, behavior, and security results; defaults to one trial and one arm; and runs no model evaluation without an explicit request."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "DISCOVERY-NEGATIVE",
@@ -150,7 +150,7 @@
           "allowed_paths": []
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "TESTING-002",
@@ -176,7 +176,7 @@
           "rubric": "Proposes conventional discovery and suite-owned checks without executing nested fixture programs or models."
         }
       ],
-      "runs": 5
+      "runs": 1
     }
   ]
 }

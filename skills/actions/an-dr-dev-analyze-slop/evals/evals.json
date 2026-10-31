@@ -69,7 +69,7 @@
           "rubric": "Leaves the source and documentation unchanged."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "DS-002",
@@ -119,7 +119,7 @@
           "rubric": "After the final render, the tested agent captures and opens all four required views (desktop and actual 390 CSS-pixel phone width, light and dark), and records the final HTML hash, screenshot paths and inspection outcomes. Saved-but-unopened images or later grader inspection do not satisfy this expectation; unavailable tools are blocked coverage."
         }
       ],
-      "runs": 5,
+      "runs": 1,
       "environment": {
         "tools": [
           "git",
@@ -169,7 +169,7 @@
           "rubric": "Separates checks actually performed from suggested verification."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "DS-004",
@@ -211,7 +211,7 @@
           "rubric": "Produces readable findings in both themes and at phone width."
         }
       ],
-      "runs": 5,
+      "runs": 1,
       "environment": {
         "tools": [
           "git",
@@ -264,7 +264,7 @@
           "rubric": "Keeps table rows and detail sections consistent after revision, with no duplicate IDs or stale active runtime finding."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "DISCOVERY-IMPLICIT",
@@ -313,7 +313,7 @@
           "rubric": "Leaves the source and documentation unchanged."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "DISCOVERY-CONTEXTUAL",
@@ -362,7 +362,7 @@
           "rubric": "Leaves the source and documentation unchanged."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "DISCOVERY-NEGATIVE",
@@ -384,7 +384,7 @@
           "allowed_paths": []
         }
       ],
-      "runs": 5
+      "runs": 1
     }
   ]
 }

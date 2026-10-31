@@ -46,7 +46,7 @@
           "rubric": "Explains the type boundary without requiring tests to be deleted."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "DISCOVERY-IMPLICIT",
@@ -72,7 +72,7 @@
           "rubric": "Explains the type boundary without requiring tests to be deleted."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "DISCOVERY-CONTEXTUAL",
@@ -98,7 +98,7 @@
           "rubric": "Explains the type boundary without requiring tests to be deleted."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "DISCOVERY-NEGATIVE",
@@ -120,7 +120,7 @@
           "allowed_paths": []
         }
       ],
-      "runs": 5
+      "runs": 1
     }
   ]
 }

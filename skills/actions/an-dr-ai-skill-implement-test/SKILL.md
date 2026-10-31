@@ -23,11 +23,11 @@ Keep reusable script fixtures in `scripts/tests/fixtures/` and isolate generated
 
 Read the target skill and the observed request or failure. Select decisions with observable consequences: a normal result, a boundary or no-op, missing evidence, and relevant scope or side-effect limits. Add adversarial input only when it tests a real boundary of that skill.
 
-Give each case the minimum raw evidence needed to complete the task. Keep the expected answer out of the prompt and context. Grade behavior and artifacts rather than exact wording, heading names, or matches against the skill's prose. Preserve legitimate alternative answers and existing consumer constraints.
+Give each case the minimum raw evidence needed to complete the task. Keep the expected answer out of the prompt and context. Grade behavior and artifacts rather than exact wording, heading names, or matches against the skill's prose. Preserve legitimate alternative answers and existing consumer constraints. Set `runs` to one for new cases; add repeated trials only when the case needs reliability evidence. Keep existing IDs and regression evidence when adjusting older cases.
 
 ## Write cases
 
-Store the suite at `evals/evals.json` inside the target skill. Use the contract owned by `an-dr-convention-agent-skill-testing`. Keep prompts and fixtures reproducible and free of live accounts or secrets. Never require a live project to run a case.
+Store the suite at `evals/evals.json` inside the target skill. Use the contract owned by `an-dr-convention-agent-skill-testing`. Keep prompts and fixtures reproducible and free of live accounts or secrets. Never require a live project to run a case. Declare the preferred controlled environment in the suite; write cases that can also run under the testing convention's best-effort protocol, with security and discovery limitations reported separately.
 
 Keep existing IDs attached to their cases. Add a regression case for an observed failure without rewriting its evidence to match the current answer. Do not change expected behavior merely to make a failing evaluation pass.
 

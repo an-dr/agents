@@ -32,6 +32,7 @@
         "Creates a structurally valid evals/evals.json suite with stable IDs and observable expectations.",
         "Includes a regression case distinguishing the observed timeout and successful retry from an unproven root cause.",
         "Includes a boundary such as missing evidence or unchanged source without requiring particular generated wording.",
+        "Defaults new cases to one trial and declares the preferred controlled environment while keeping inputs usable in a best-effort host.",
         "Runs only free structural validation; starts no tested-agent or grading sessions and does not report behavioral passes."
       ],
       "assertions": [
@@ -53,10 +54,14 @@
         },
         {
           "type": "llm_judge",
+          "rubric": "Defaults new cases to one trial and declares the preferred controlled environment while keeping inputs usable in a best-effort host."
+        },
+        {
+          "type": "llm_judge",
           "rubric": "Runs only free structural validation; starts no tested-agent or grading sessions and does not report behavioral passes."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "AUTHOR-002",
@@ -95,7 +100,7 @@
           "rubric": "Leaves the target skill's behavior unchanged and does not execute evaluations."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "AUTHOR-003",
@@ -126,7 +131,7 @@
           "rubric": "Uses the structural checker and distinguishes validation success from a behavioral test verdict."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "AUTHOR-004",
@@ -173,7 +178,7 @@
           "rubric": "Creates scripts/tests/run.ps1 and uses that entry point to execute tests from scripts/tests/ after the implementation change."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "DISCOVERY-IMPLICIT",
@@ -209,7 +214,7 @@
           "rubric": "Runs only free structural validation; starts no tested-agent or grading sessions and does not report behavioral passes."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "DISCOVERY-CONTEXTUAL",
@@ -245,7 +250,7 @@
           "rubric": "Runs only free structural validation; starts no tested-agent or grading sessions and does not report behavioral passes."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "DISCOVERY-NEGATIVE",
@@ -267,7 +272,7 @@
           "allowed_paths": []
         }
       ],
-      "runs": 5
+      "runs": 1
     }
   ]
 }

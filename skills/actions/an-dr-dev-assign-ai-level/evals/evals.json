@@ -46,7 +46,7 @@
           "rubric": "After a yes, proposes a level with cited evidence and asks the user to confirm it before adding the badge."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "DISCOVERY-IMPLICIT",
@@ -72,7 +72,7 @@
           "rubric": "After a yes, proposes a level with cited evidence and asks the user to confirm it before adding the badge."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "DISCOVERY-CONTEXTUAL",
@@ -98,7 +98,7 @@
           "rubric": "After a yes, proposes a level with cited evidence and asks the user to confirm it before adding the badge."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "DISCOVERY-NEGATIVE",
@@ -120,7 +120,7 @@
           "allowed_paths": []
         }
       ],
-      "runs": 5
+      "runs": 1
     }
   ]
 }

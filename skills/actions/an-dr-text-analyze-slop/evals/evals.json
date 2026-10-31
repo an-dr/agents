@@ -67,7 +67,7 @@
           "rubric": "Does not replace the whole document or claim it was written by AI."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "TS-002",
@@ -109,7 +109,7 @@
           "rubric": "Does not infer machine authorship from the wording."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "TS-003",
@@ -151,7 +151,7 @@
           "rubric": "Does not expand the task into external fact checking or a repository audit."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "TS-004",
@@ -193,7 +193,7 @@
           "rubric": "Does not claim to have verified the command's implementation."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "TS-005",
@@ -240,7 +240,7 @@
           "rubric": "Reports the proposed removal share and produces a readable page in both themes and at phone width."
         }
       ],
-      "runs": 5,
+      "runs": 1,
       "environment": {
         "tools": [
           "git",
@@ -295,7 +295,7 @@
           "rubric": "Does not replace the whole document or claim it was written by AI."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "DISCOVERY-CONTEXTUAL",
@@ -342,7 +342,7 @@
           "rubric": "Does not replace the whole document or claim it was written by AI."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "DISCOVERY-NEGATIVE",
@@ -364,7 +364,7 @@
           "allowed_paths": []
         }
       ],
-      "runs": 5
+      "runs": 1
     }
   ]
 }

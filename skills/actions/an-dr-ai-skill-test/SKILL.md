@@ -25,17 +25,17 @@ When no behavioral execution was explicitly requested, return the script results
 
 Continue into this section only when the user explicitly requests behavioral execution. Naming this skill for script testing, a dependency reference, a request to implement tests, routine verification, and approval to edit a skill do not authorize agent evaluations. Apply this boundary in every host.
 
-Resolve the target, selected case IDs, model, and run limit from the request. Use the declared trial counts and comparison protocol unless the user specifies an override; when the user selects a suite without case IDs, select all cases in that suite. State cases, comparison arms, trials, grader sessions, and the total attempt limit before execution. Honor any token or spending cap, and ask only when scope or the cap cannot be resolved safely. Never silently multiply attempts, compare models, or rerun failures.
+Resolve the target, selected case IDs, model, and run limit from the request. Use one arm and the declared trial counts unless the user requests comparison or another trial count; when the user selects a suite without case IDs, select all cases in that suite. State cases, arms, trials, grader sessions, and the total attempt limit before execution. Honor any token or spending cap, and ask only when scope or the cap cannot be resolved safely. A full repository run means every suite at the stated one-arm, one-trial defaults; calculate its attempt count before execution. Never silently multiply attempts, compare models, or rerun failures.
 
 Validate the suite through `an-dr-convention-agent-skill-testing`'s public validator before starting any agent. If no suite exists, report that prerequisite and use the authoring skill only when creating tests is also requested. Do not fabricate a passing test from an improvised prompt.
 
-## Execute in isolation
+## Execute the requested cases
 
-Preflight and record the declared environment using `an-dr-convention-agent-skill-testing`. Install the tested revision and dependencies in the isolated host's normal discovery path; do not force-load the target for discovery cases. Start a fresh agent session for each trial and comparison arm with the target skill and its declared dependencies available. This skill authorizes independent evaluator agents only for the explicitly requested cases. Do not fork the author's conversation, conclusions, or grading rubric into those sessions. Give the tested agent only the prompt, input evidence, and necessary skill instructions.
+Preflight and record the declared environment using `an-dr-convention-agent-skill-testing`. Install and verify the tested revision and dependencies in the host's normal discovery path; do not force-load the target for discovery cases. Start a fresh agent session for each trial and arm with the target skill and its declared dependencies available. This skill authorizes independent evaluator agents only for the explicitly requested cases. Do not fork the author's conversation, conclusions, or grading rubric into those sessions. Give the tested agent only the prompt, input evidence, and necessary skill instructions.
 
 Validate fixture ZIPs and materialize their baseline and working trees in a separate scratch repository per trial according to the convention. Resolve every write inside that scratch root, reject symlink or reparse-point ancestors, and exclude live credentials and services. Use the scratch repository as the agent's working directory. Preserve baseline file hashes and git state so unauthorized changes can be checked afterward. Never materialize fixtures into the user's working repository.
 
-Send follow-ups in order within the same case session. Capture the transcript, tool results, generated artifacts, and final repository diff. Preserve artifacts before cleanup. Stop at the attempt or spending limit; record interrupted work as blocked. If the host cannot provide fresh sessions, the requested model, isolation, or usage controls needed by a stated cap, report blocked coverage rather than pretending a normal response was an independent run.
+Send follow-ups in order within the same case session. Capture the transcript, tool results, generated artifacts, and final repository diff. Preserve artifacts before cleanup. Stop at the attempt or spending limit; record interrupted work as blocked. If enforced network, filesystem, or discovery isolation is unavailable, use the convention's best-effort protocol and mark unsupported security or activation claims blocked. If the host cannot provide fresh sessions, scratch containment, rubric separation, the requested model, or usage controls needed by a stated cap, report blocked coverage rather than pretending a normal response was an independent run.
 
 ## Grade the result
 
@@ -47,7 +47,7 @@ Write the result record defined by the case contract. Do not fix the target skil
 
 ## Output
 
-Always provide script test results and coverage gaps. For behavioral evaluations, also provide suite and case IDs, model and skill revision, attempt count, passed/failed/blocked counts, unrun cases, actual usage or its availability, and links to results and artifacts. Surface consequential failures before passing totals. Distinguish script execution and structural validation from behavioral verdicts and disclose any grading or tool limitations.
+Always provide script test results and coverage gaps. For behavioral evaluations, also provide suite and case IDs, model and skill revision, attempt count, passed/failed/blocked behavior counts, separate security and isolation verdicts, unrun cases, actual usage or its availability, and links to results and artifacts. Surface consequential failures before passing totals. Distinguish script execution and structural validation from behavioral verdicts and disclose any grading or tool limitations. Label one-trial results as diagnostics, not reliability estimates.
 
 ## Rules
 

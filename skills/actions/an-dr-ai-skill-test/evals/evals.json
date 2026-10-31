@@ -59,7 +59,7 @@
           "rubric": "Reports only checks actually performed and makes no behavioral pass claim."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "RUN-002",
@@ -98,7 +98,7 @@
           "rubric": "Preserves a result record with model, skill identity, attempts, verdict evidence, and usage or explicit unavailability."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "RUN-003",
@@ -129,7 +129,7 @@
           "rubric": "Does not silently substitute a different budget, model, or normal coordinating response for the requested controlled run."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "RUN-004",
@@ -165,7 +165,7 @@
           "rubric": "Does not retry, edit the target, or weaken the expectations."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "RUN-005",
@@ -204,7 +204,41 @@
           "rubric": "Does not edit the script, weaken the test, or silently retry."
         }
       ],
-      "runs": 5
+      "runs": 1
+    },
+    {
+      "id": "RUN-006",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-ai-skill-test. Run only ISO-001 and ISO-002 once each with the current model. No comparison or repeat trials. Use yourself to grade; do not start a paid grader.",
+      "expected_skill": "an-dr-ai-skill-test",
+      "context": "The host can start fresh tested-agent sessions and create scratch repositories, but cannot enforce network or filesystem isolation or exclude globally installed skills from discovery. Inputs are synthetic, no live service action is needed, and no token cap was stated. Record actual host capabilities and keep the rubric out of tested sessions.",
+      "fixtures": [
+        "fixtures/RUN-002.zip"
+      ],
+      "expected_behavior": [
+        "States a two-session limit for one arm and one trial of each case, then runs only those sessions in separate scratch repositories.",
+        "Records the unenforced network, filesystem, and discovery boundaries while grading observed behavior separately from security and discovery claims.",
+        "Does not report the behavioral run as wholly blocked merely because the preferred isolation controls are unavailable."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "States a two-session limit for one arm and one trial of each case, then runs only those sessions in separate scratch repositories."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Records the unenforced network, filesystem, and discovery boundaries while grading observed behavior separately from security and discovery claims."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not report the behavioral run as wholly blocked merely because the preferred isolation controls are unavailable."
+        }
+      ],
+      "runs": 1
     },
     {
       "id": "DISCOVERY-IMPLICIT",
@@ -243,7 +277,7 @@
           "rubric": "Reports only checks actually performed and makes no behavioral pass claim."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "DISCOVERY-CONTEXTUAL",
@@ -282,7 +316,7 @@
           "rubric": "Reports only checks actually performed and makes no behavioral pass claim."
         }
       ],
-      "runs": 5
+      "runs": 1
     },
     {
       "id": "DISCOVERY-NEGATIVE",
@@ -304,7 +338,7 @@
           "allowed_paths": []
         }
       ],
-      "runs": 5
+      "runs": 1
     }
   ]
 }
