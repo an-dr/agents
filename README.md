@@ -77,7 +77,7 @@ Generated reports and scratch output live under `.artifacts/` according to the [
 - [Skill catalog](skills/README.md): actions, concepts, conventions, and repository maintenance skills.
 - [Testing guide](tests/README.md): local checks, evaluation requests, fixtures, and coverage limits.
 - [Skill testing convention](skills/conventions/an-dr-convention-agent-skill-testing/SKILL.md): the evaluation contract and execution environment.
-- [ADR-001](docs/an-dr-convention-adr/ADR-001-keep-skill-testing-contracts-independent-of-evaluation-runners.md): ownership of testing contracts independently of evaluation runners.
+- Decisions: this repository keeps no ADRs. Every decision is stated in the skill or policy that owns it, so the skills and [AGENTS.md](AGENTS.md) are the record.
 
 ### 📁 Repository layout
 
@@ -89,7 +89,6 @@ Generated reports and scratch output live under `.artifacts/` according to the [
 | `skills/conventions/` | Artifact formats and their mechanical checks |
 | `skills/_repository/` | Maintenance and installation of this repository |
 | `tests/run-all.ps1` | Discovery of conventional skill test runners |
-| `docs/an-dr-convention-adr/` | Architecture decisions |
 | `.artifacts/` | Ignored generated reports and scratch output |
 
 ### 🔗 Skill dependencies
