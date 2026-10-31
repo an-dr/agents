@@ -64,6 +64,14 @@ function Get-AgentsToolTarget {
             SupportsImport = $false
         }
         [pscustomobject]@{
+            Id             = 'deepseek'
+            Name           = 'DeepSeek Harness'
+            Home           = Join-Path $profileDir '.dsh'
+            Instructions   = Join-Path $profileDir '.dsh\AGENTS.md'
+            SkillsDir      = Join-Path $profileDir '.dsh\skills'
+            SupportsImport = $false
+        }
+        [pscustomobject]@{
             Id             = 'gemini'
             Name           = 'Gemini CLI'
             Home           = Join-Path $profileDir '.gemini'

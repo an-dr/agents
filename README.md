@@ -1,10 +1,24 @@
+<div align="center">
+
 # 🤖 agents
 
-[![Checks](https://github.com/an-dr/agents/actions/workflows/checks.yml/badge.svg)](https://github.com/an-dr/agents/actions/workflows/checks.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE) [![AI Level 3](https://ai-level.dev/badge/standard/3.svg)](https://ai-level.dev/level-3) [![Agent Skills](https://img.shields.io/badge/format-Agent%20Skills-blueviolet)](https://agentskills.io/specification) [![Works with](https://img.shields.io/badge/works%20with-Claude%20Code%20%7C%20Codex%20%7C%20Copilot%20CLI%20%7C%20Gemini%20CLI%20%7C%20opencode-informational)](#-installation)
+[![Checks](https://github.com/an-dr/agents/actions/workflows/checks.yml/badge.svg)](https://github.com/an-dr/agents/actions/workflows/checks.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE) [![AI Level 3](https://ai-level.dev/badge/standard/3.svg)](https://ai-level.dev/level-3) [![Agent Skills](https://img.shields.io/badge/format-Agent%20Skills-blueviolet)](https://agentskills.io/specification)
 
 **Transparent, human-controlled AI development. Not vibe coding.**
 
+</div>
+
 Agent instructions, reusable skills, and a deterministic workflow controller that expose the agent's decisions, so you can understand and steer the development instead of reviewing a finished diff you never saw coming.
+
+---
+
+<div align="center">
+
+Supported platforms:
+
+[![Claude Code](https://img.shields.io/static/v1?label=&message=Claude%20Code&color=D97757)](#-installation) [![Codex](https://img.shields.io/static/v1?label=&message=Codex&color=10A37F)](#-installation) [![Copilot CLI](https://img.shields.io/static/v1?label=&message=Copilot%20CLI&color=6E40C9)](#-installation) [![DeepSeek](https://img.shields.io/static/v1?label=&message=DeepSeek&color=4D6BFE)](#-installation) [![Gemini CLI](https://img.shields.io/static/v1?label=&message=Gemini%20CLI&color=4285F4)](#-installation) [![opencode](https://img.shields.io/static/v1?label=&message=opencode&color=B45309)](#-installation)
+
+</div>
 
 ## 🎯 Why
 
@@ -12,16 +26,21 @@ Vibe coding hides the decisions. This repository makes them visible and puts you
 
 ## 📑 Contents
 
-- [📦 Installation](#-installation)
-- [🚀 Quickstart](#-quickstart)
-- [✨ Features](#-features)
-- [🔧 Configuration](#-configuration)
-- [📚 Documentation](#-documentation)
-- [🧰 Development](#-development)
-- [🔍 AI disclosure](#-ai-disclosure)
-- [🤝 Contributing](#-contributing)
-- [📄 License](#-license)
-- [📈 Status](#-status)
+- [🤖 agents](#-agents)
+    - [🎯 Why](#-why)
+    - [📑 Contents](#-contents)
+    - [📦 Installation](#-installation)
+    - [🚀 Quickstart](#-quickstart)
+    - [✨ Features](#-features)
+    - [🔧 Configuration](#-configuration)
+    - [📚 Documentation](#-documentation)
+        - [📁 Repository layout](#-repository-layout)
+        - [🔗 Skill dependencies](#-skill-dependencies)
+    - [🧰 Development](#-development)
+    - [🔍 AI disclosure](#-ai-disclosure)
+    - [🤝 Contributing](#-contributing)
+    - [📄 License](#-license)
+    - [📈 Status](#-status)
 
 ## 📦 Installation
 
@@ -34,7 +53,7 @@ pwsh skills/_repository/an-dr-agents-repo-install/scripts/install-agents.ps1
 pwsh skills/_repository/an-dr-agents-repo-install/scripts/verify-agents.ps1
 ```
 
-The installer adds a managed policy reference and links the skills into supported tools' user configuration. It handles Claude Code, Codex, GitHub Copilot CLI, Gemini CLI, and opencode; its current skill-link support covers the first three, while Gemini CLI and opencode receive policy references. See the [installation skill](skills/_repository/an-dr-agents-repo-install/SKILL.md) for tool selection, updates, conflicts, and removal.
+The installer adds a managed policy reference and links the skills into supported tools' user configuration. It handles Claude Code, Codex, GitHub Copilot CLI, DeepSeek Harness, Gemini CLI, and opencode; its current skill-link support covers the first four, while Gemini CLI and opencode receive policy references. See the [installation skill](skills/_repository/an-dr-agents-repo-install/SKILL.md) for tool selection, updates, conflicts, and removal.
 
 ## 🚀 Quickstart
 
