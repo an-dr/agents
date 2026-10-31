@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-convention-ai-level",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-convention-ai-level. What does level 2 of the ai-level.dev scale claim, and does this repository fit it?",
+      "expected_skill": "an-dr-convention-ai-level",
+      "context": "Tests and configuration files were written with an AI assistant; every functional module was written by hand and commit messages say so.",
+      "expected_behavior": [
+        "States that level 2 covers AI use for tests, configs, or assets but not functional code.",
+        "Judges the repository against that definition and cites the evidence given instead of asserting a level without support."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "States that level 2 covers AI use for tests, configs, or assets but not functional code."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Judges the repository against that definition and cites the evidence given instead of asserting a level without support."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "What does level 2 of the ai-level.dev scale claim, and does this repository fit it?",
+      "expected_skill": "an-dr-convention-ai-level",
+      "context": "Tests and configuration files were written with an AI assistant; every functional module was written by hand and commit messages say so.",
+      "expected_behavior": [
+        "States that level 2 covers AI use for tests, configs, or assets but not functional code.",
+        "Judges the repository against that definition and cites the evidence given instead of asserting a level without support."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "States that level 2 covers AI use for tests, configs, or assets but not functional code."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Judges the repository against that definition and cites the evidence given instead of asserting a level without support."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: What does level 2 of the ai-level.dev scale claim, and does this repository fit it?",
+      "expected_skill": "an-dr-convention-ai-level",
+      "context": "Tests and configuration files were written with an AI assistant; every functional module was written by hand and commit messages say so.",
+      "expected_behavior": [
+        "States that level 2 covers AI use for tests, configs, or assets but not functional code.",
+        "Judges the repository against that definition and cites the evidence given instead of asserting a level without support."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "States that level 2 covers AI use for tests, configs, or assets but not functional code."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Judges the repository against that definition and cites the evidence given instead of asserting a level without support."
+        }
+      ],
+      "runs": 5
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Explain the word repository without assessing any AI usage.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 5
+    }
+  ]
+}

@@ -5,9 +5,9 @@ license: MIT
 allowed-tools: Read Grep Glob Write Edit PowerShell
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "1.1.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-send-message an-dr-convention-markdown an-dr-convention-readme an-dr-dev-write-documentation an-dr-files-make-screengif an-dr-files-make-screenshot
+  an-dr.dependencies: an-dr-ai-send-message an-dr-dev-assign-ai-level an-dr-convention-markdown an-dr-convention-readme an-dr-dev-write-documentation an-dr-files-make-screengif an-dr-files-make-screenshot
 ---
 
 # README
@@ -50,6 +50,10 @@ Relocating is the one that goes wrong quietly. A README that restates a specific
 ## Write to the convention
 
 Shape the README by `an-dr-convention-readme`: its baseline order, conditional modules, and truth rules decide what stays, moves, or is added. Never fabricate; a missing fact becomes an open question. Capture screenshots with `an-dr-files-make-screenshot` and a GIF with `an-dr-files-make-screengif` only when the user asks. A screenshot must show the project as it is now: recapture an outdated one, and when the project cannot be launched here, list the screenshot as an open question instead of skipping it silently.
+
+## Disclose AI usage
+
+After the README is written, run `an-dr-dev-assign-ai-level`, which asks the user whether to assign an ai-level.dev level and places the badge with the others. Skip it when the user declined earlier in the session.
 
 ## Check
 

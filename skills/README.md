@@ -16,6 +16,7 @@ Procedures the agent runs. They produce a result, use scripts where the work is 
 | [`an-dr-architecture-fix-dependencies`](actions/an-dr-architecture-fix-dependencies/SKILL.md) | Remove needless dependencies and break cycles by moving shared parts into common components. |
 | [`an-dr-dev-analyze-changes`](actions/an-dr-dev-analyze-changes/SKILL.md) | Explain a finished change in one HTML page, and prepare the full-branch integration handoff. |
 | [`an-dr-dev-analyze-slop`](actions/an-dr-dev-analyze-slop/SKILL.md) | Analyse code and docs for illogical or questionable artifacts, with prioritized findings and proposed changes in HTML. |
+| [`an-dr-dev-assign-ai-level`](actions/an-dr-dev-assign-ai-level/SKILL.md) | Ask whether to disclose AI usage, assess an ai-level.dev level from the evidence, and add the badge. |
 | [`an-dr-dev-debug`](actions/an-dr-dev-debug/SKILL.md) | Reproduce and instrument a resistant failure. |
 | [`an-dr-dev-design`](actions/an-dr-dev-design/SKILL.md) | Explore a deeper decision with options, steelman, and pre-mortem. |
 | [`an-dr-dev-follow-workflow`](actions/an-dr-dev-follow-workflow/SKILL.md) | Start, resume, advance, approve, reshape, or finish a workflow. |
@@ -56,6 +57,7 @@ Passive. The format rules for an artifact, with the checkers and generators that
 | [`an-dr-convention-adr`](conventions/an-dr-convention-adr/SKILL.md) | Write ADRs in one format: location, numbering, template, and when a decision is immutable. |
 | [`an-dr-convention-agent-skill`](conventions/an-dr-convention-agent-skill/SKILL.md) | Shape and write every skill alike: layout, kinds, description, sections, declared dependencies, registration. |
 | [`an-dr-convention-agent-skill-testing`](conventions/an-dr-convention-agent-skill-testing/SKILL.md) | Evaluation contracts, isolated environments, fixtures, grading, and script test layout |
+| [`an-dr-convention-ai-level`](conventions/an-dr-convention-ai-level/SKILL.md) | Name the ai-level.dev levels that disclose how much AI built a project. |
 | [`an-dr-convention-artifact-layout`](conventions/an-dr-convention-artifact-layout/SKILL.md) | Locate generated artifacts: one run directory per day and letter, one subdirectory per kind. |
 | [`an-dr-convention-code`](conventions/an-dr-convention-code/SKILL.md) | Write code to shared defaults: small changes, clear names, newcomer comments, reviewable commits. |
 | [`an-dr-convention-commit-message`](conventions/an-dr-convention-commit-message/SKILL.md) | Write commit messages in the unified Conventional Commits format with no attribution. |

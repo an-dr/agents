@@ -4,7 +4,7 @@ description: How the skills of this repository are named - the an-dr namespace, 
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.2.0"
+  version: "1.3.0"
   an-dr.type: convention
   an-dr.dependencies: an-dr-ai-skill-implement-test an-dr-ai-skill-test an-dr-convention-agent-skill an-dr-dev-test an-dr-dev-write-documentation an-dr-git-commit an-dr-convention-agent-skill-testing
 ---
@@ -35,6 +35,7 @@ The verbs are this repository's own, so each name says exactly what the action d
 | Verb | Means |
 | --- | --- |
 | `analyze` | examine a scope and report findings and proposals, changing nothing |
+| `assign` | settle a value for a subject with the user and record it where it belongs |
 | `build` | assemble a derived artifact from its sources |
 | `commit` | record work in repository history |
 | `debug` | find the cause of a concrete failure |

@@ -1,6 +1,6 @@
 # 🤖 agents
 
-[![Checks](https://github.com/an-dr/agents/actions/workflows/checks.yml/badge.svg)](https://github.com/an-dr/agents/actions/workflows/checks.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE) [![Agent Skills](https://img.shields.io/badge/format-Agent%20Skills-blueviolet)](https://agentskills.io/specification) [![Works with](https://img.shields.io/badge/works%20with-Claude%20Code%20%7C%20Codex%20%7C%20Copilot%20CLI%20%7C%20Gemini%20CLI%20%7C%20opencode-informational)](#-installation)
+[![Checks](https://github.com/an-dr/agents/actions/workflows/checks.yml/badge.svg)](https://github.com/an-dr/agents/actions/workflows/checks.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE) [![AI Level 3](https://ai-level.dev/badge/standard/3.svg)](https://ai-level.dev/level-3) [![Agent Skills](https://img.shields.io/badge/format-Agent%20Skills-blueviolet)](https://agentskills.io/specification) [![Works with](https://img.shields.io/badge/works%20with-Claude%20Code%20%7C%20Codex%20%7C%20Copilot%20CLI%20%7C%20Gemini%20CLI%20%7C%20opencode-informational)](#-installation)
 
 **Transparent, human-controlled AI development. Not vibe coding.**
 
@@ -18,6 +18,7 @@ Vibe coding hides the decisions. This repository makes them visible and puts you
 - [🔧 Configuration](#-configuration)
 - [📚 Documentation](#-documentation)
 - [🧰 Development](#-development)
+- [🔍 AI disclosure](#-ai-disclosure)
 - [🤝 Contributing](#-contributing)
 - [📄 License](#-license)
 - [📈 Status](#-status)
@@ -120,6 +121,7 @@ flowchart LR
         an-dr-architecture-fix-dependencies
         an-dr-dev-analyze-changes
         an-dr-dev-analyze-slop
+        an-dr-dev-assign-ai-level
         an-dr-dev-debug
         an-dr-dev-design
         an-dr-dev-follow-workflow
@@ -150,6 +152,7 @@ flowchart LR
         an-dr-convention-adr
         an-dr-convention-agent-skill-testing
         an-dr-convention-agent-skill
+        an-dr-convention-ai-level
         an-dr-convention-artifact-layout
         an-dr-convention-code
         an-dr-convention-commit-message
@@ -172,6 +175,7 @@ flowchart LR
     an-dr-architecture-fix-dependencies --> an-dr-ai-send-message & an-dr-concept-clean-dependencies & an-dr-convention-artifact-layout & an-dr-convention-html-report
     an-dr-dev-analyze-changes --> an-dr-ai-send-message & an-dr-concept-ai-slop & an-dr-convention-adr & an-dr-convention-artifact-layout & an-dr-convention-html-report & an-dr-dev-review & an-dr-dev-write-documentation
     an-dr-dev-analyze-slop --> an-dr-ai-review-instruction & an-dr-ai-send-message & an-dr-concept-ai-slop & an-dr-convention-artifact-layout & an-dr-convention-html-report
+    an-dr-dev-assign-ai-level --> an-dr-ai-send-message & an-dr-convention-ai-level
     an-dr-dev-design --> an-dr-ai-send-message & an-dr-convention-adr
     an-dr-dev-follow-workflow --> an-dr-ai-send-message & an-dr-convention-adr & an-dr-dev-analyze-changes & an-dr-dev-design & an-dr-dev-implement-code & an-dr-dev-integrate & an-dr-dev-review & an-dr-dev-test & an-dr-dev-write-documentation & an-dr-git-commit
     an-dr-dev-implement-code --> an-dr-convention-adr & an-dr-convention-code & an-dr-dev-write-documentation
@@ -179,7 +183,7 @@ flowchart LR
     an-dr-dev-review --> an-dr-ai-send-message & an-dr-concept-ai-slop & an-dr-concept-clean-dependencies & an-dr-concept-evidence-grounding & an-dr-convention-artifact-layout & an-dr-convention-code & an-dr-convention-html-report
     an-dr-dev-test --> an-dr-ai-send-message & an-dr-dev-implement-adversarial-ut
     an-dr-dev-write-documentation --> an-dr-ai-send-message & an-dr-concept-ai-slop & an-dr-convention-markdown
-    an-dr-dev-write-readme --> an-dr-ai-send-message & an-dr-convention-markdown & an-dr-convention-readme & an-dr-dev-write-documentation & an-dr-files-make-screengif & an-dr-files-make-screenshot
+    an-dr-dev-write-readme --> an-dr-ai-send-message & an-dr-dev-assign-ai-level & an-dr-convention-markdown & an-dr-convention-readme & an-dr-dev-write-documentation & an-dr-files-make-screengif & an-dr-files-make-screenshot
     an-dr-env-install-powershell --> an-dr-ai-send-message
     an-dr-files-make-screengif --> an-dr-files-make-screenshot
     an-dr-files-make-screenshot --> an-dr-convention-artifact-layout
@@ -212,6 +216,10 @@ The runner discovers skill manifests and invokes each conventional `scripts/test
 Skills with scripts keep deterministic tests in `scripts/tests/`. Every skill has behavioral cases in `evals/evals.json` and evaluation intent in `evals/EVAL.md`; repository fixtures, when needed, are ZIP archives under `evals/fixtures/`. See the [testing guide](tests/README.md) for commands and run limits. Syntax-only checks establish parsing coverage, and successful structural checks do not establish that an agent follows a skill.
 
 [GitHub Actions](.github/workflows/checks.yml) runs free checks on pushes and pull requests. CI installs the Agent Skills reference validator, `skills-ref`; local checks report its installation command when it is missing. Agent evaluations consume model usage and run only on explicit request, with declared environments and bounded attempts.
+
+## 🔍 AI disclosure
+
+This repository values transparency about how software is made, and it encourages everyone to disclose AI usage in their repositories. Its own level is 3 (`ASSISTED`) on the [ai-level.dev](https://ai-level.dev) scale: AI wrote functional modules, and a human reviews every change before it enters history. The [AI level convention](skills/conventions/an-dr-convention-ai-level/SKILL.md) defines the levels, and the [assign skill](skills/actions/an-dr-dev-assign-ai-level/SKILL.md) assigns one to any repository, offered whenever a README is written.
 
 ## 🤝 Contributing
 
