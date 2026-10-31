@@ -77,7 +77,6 @@ Generated reports and scratch output live under `.artifacts/` according to the [
 - [Skill catalog](skills/README.md): actions, concepts, conventions, and repository maintenance skills.
 - [Testing guide](tests/README.md): local checks, evaluation requests, fixtures, and coverage limits.
 - [Skill testing convention](skills/conventions/an-dr-convention-agent-skill-testing/SKILL.md): the evaluation contract and execution environment.
-- Decisions: this repository keeps no ADRs. Every decision is stated in the skill or policy that owns it, so the skills and [AGENTS.md](AGENTS.md) are the record.
 
 ### 📁 Repository layout
 
@@ -222,7 +221,7 @@ This repository values transparency about how software is made, and it encourage
 
 ## 🤝 Contributing
 
-Follow [AGENTS.md](AGENTS.md) for changes to this repository, use the [skill convention](skills/conventions/an-dr-convention-agent-skill/SKILL.md) when changing skills, and run the repository checks before proposing a change. Keep generated artifacts out of commits.
+Follow [AGENTS.md](AGENTS.md) for changes to this repository, use the [skill convention](skills/conventions/an-dr-convention-agent-skill/SKILL.md) when changing skills, and run the repository checks before proposing a change. Keep generated artifacts out of commits. This repository keeps no ADRs: state every decision in the skill or policy that owns it, so the skills and [AGENTS.md](AGENTS.md) are the record.
 
 ## 📄 License
 
