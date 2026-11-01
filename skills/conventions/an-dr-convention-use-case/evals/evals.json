@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-convention-use-case",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-convention-use-case. Write the use case for this new command.",
+      "expected_skill": "an-dr-convention-use-case",
+      "context": "The repository has docs/use-cases/index.md and docs/use-cases/cli.md with UC-CLI-01 to UC-CLI-07; UC-CLI-04 was removed last month. A new 'export' command writes the current project to a zip file the user chooses.",
+      "expected_behavior": [
+        "Adds a use case with the next unused identifier, UC-CLI-08, not the removed UC-CLI-04.",
+        "Writes actor, goal, flow, and success, with a success the user can observe and no internal module names."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Adds a use case with the next unused identifier, UC-CLI-08, not the removed UC-CLI-04."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Writes actor, goal, flow, and success, with a success the user can observe and no internal module names."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Write the use case for this new command.",
+      "expected_skill": "an-dr-convention-use-case",
+      "context": "The repository has docs/use-cases/index.md and docs/use-cases/cli.md with UC-CLI-01 to UC-CLI-07; UC-CLI-04 was removed last month. A new 'export' command writes the current project to a zip file the user chooses.",
+      "expected_behavior": [
+        "Adds a use case with the next unused identifier, UC-CLI-08, not the removed UC-CLI-04.",
+        "Writes actor, goal, flow, and success, with a success the user can observe and no internal module names."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Adds a use case with the next unused identifier, UC-CLI-08, not the removed UC-CLI-04."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Writes actor, goal, flow, and success, with a success the user can observe and no internal module names."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Write the use case for this new command.",
+      "expected_skill": "an-dr-convention-use-case",
+      "context": "The repository has docs/use-cases/index.md and docs/use-cases/cli.md with UC-CLI-01 to UC-CLI-07; UC-CLI-04 was removed last month. A new 'export' command writes the current project to a zip file the user chooses.",
+      "expected_behavior": [
+        "Adds a use case with the next unused identifier, UC-CLI-08, not the removed UC-CLI-04.",
+        "Writes actor, goal, flow, and success, with a success the user can observe and no internal module names."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Adds a use case with the next unused identifier, UC-CLI-08, not the removed UC-CLI-04."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Writes actor, goal, flow, and success, with a success the user can observe and no internal module names."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Explain the word scenario in one sentence. Do not write or assess a use case.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 1
+    }
+  ]
+}

@@ -4,21 +4,22 @@ description: Write or update human-facing project documentation during Direct wo
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "1.1.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-send-message an-dr-concept-ai-slop an-dr-convention-markdown
+  an-dr.dependencies: an-dr-ai-send-message an-dr-concept-ai-slop an-dr-convention-markdown an-dr-convention-use-case
 ---
 
 # Documentation writing
 
 Human-facing documentation includes `docs/`, README files, and project guides. Agent-loaded instructions are out of scope. Read the target, its index, and the existing source of authority before editing. Write only what a reader acts on: before delivering, apply `an-dr-concept-ai-slop`'s cut test to every sentence, section, and example, and remove restatement, padding, decoration, and unverified specifics. A README rewrite has its own entry skill and is not covered here. Write what the system does now: what it is, how to use it, then why it works that way. Register a new document where readers will look for it.
 
-In gated DOCS, document the increment before code exists and leave the change for the increment's commit. In Direct, update needed documentation before the behavior change and deliver both together. Cover what is missing or wrong; leave an already-correct document alone. Changes to public interfaces, architecture, or observable behavior require documentation in the same delivery.
+In gated DOCS, document the increment before code exists and leave the change for the increment's commit. In Direct, update needed documentation before the behavior change and deliver both together. Cover what is missing or wrong; leave an already-correct document alone. Changes to public interfaces, architecture, or observable behavior require documentation in the same delivery; in a repository with `docs/use-cases/`, a new or changed capability updates its use case.
 
 ## Place each fact
 
 | Layer | Holds |
 | --- | --- |
+| Use cases | who reaches which goal, and what they observe: what must keep working (`an-dr-convention-use-case`) |
 | Architecture | concepts, boundaries, and guarantees |
 | Design | behavior contracts for one subsystem |
 | Code doc comments | implementation reasons and local constraints |

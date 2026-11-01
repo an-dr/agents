@@ -65,6 +65,7 @@ Passive. The format rules for an artifact, with the checkers and generators that
 | [`an-dr-convention-markdown`](conventions/an-dr-convention-markdown/SKILL.md) | Format Markdown: one line per paragraph, heading, list, fence, link, and table rules. |
 | [`an-dr-convention-readme`](conventions/an-dr-convention-readme/SKILL.md) | Write READMEs to a fixed baseline order, with modules the evidence supports and nothing invented. |
 | [`an-dr-convention-script`](conventions/an-dr-convention-script/SKILL.md) | Write skill scripts: PowerShell 7, non-interactive, tested, relayable output, folders passed in. |
+| [`an-dr-convention-use-case`](conventions/an-dr-convention-use-case/SKILL.md) | Write use cases in one format: the layer above architecture, stable IDs, actor, goal, flow, success. |
 
 ## The repository itself
 

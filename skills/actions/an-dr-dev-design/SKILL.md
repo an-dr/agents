@@ -4,9 +4,9 @@ description: Structure the DESIGN phase for a decision deeper than a quick pick 
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "1.1.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-send-message an-dr-convention-adr
+  an-dr.dependencies: an-dr-ai-send-message an-dr-convention-adr an-dr-convention-use-case
 ---
 
 # Design
@@ -15,7 +15,7 @@ Produces the material the DESIGN phase needs: a small, honest option space with 
 
 ## Process
 
-1. **Frame the problem** — one paragraph: what is being decided, which constraints and existing ADRs bound the space, what "done" looks like.
+1. **Frame the problem** — one paragraph: what is being decided, which constraints and existing ADRs bound the space, which use cases it serves or could break (`an-dr-convention-use-case`), what "done" looks like.
 2. **Build the options table** — 2–4 real options (no strawmen), scored over explicit axes (see below).
 3. **Steelman the loser** — before recommending, argue the strongest case for the option you would reject. If the steelman wins, change the recommendation.
 4. **Pre-mortem the favourite** — "this shipped and failed six months later — why?" List the top 2–3 failure stories and what would detect each early.
