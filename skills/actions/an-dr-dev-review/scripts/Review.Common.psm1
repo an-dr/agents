@@ -10,43 +10,33 @@ function Get-ReviewRepositoryRoot {
     return $root.Trim()
 }
 
-function Get-ArtifactDirectoryScript {
-    <# Resolves artifact-layout's script, the one implementation of the layout. #>
-    param([Parameter(Mandatory)][string]$ArtifactLayoutSkill)
+function Get-ArtifactLayoutScript {
+    <# Resolves one of artifact-layout's scripts, the one implementation of the layout. #>
+    param(
+        [Parameter(Mandatory)][string]$ArtifactLayoutSkill,
+        [Parameter(Mandatory)][string]$Name
+    )
 
-    $path = Join-Path $ArtifactLayoutSkill 'scripts/new-artifact-dir.ps1'
+    $path = Join-Path $ArtifactLayoutSkill "scripts/$Name"
     if (-not (Test-Path -LiteralPath $path)) {
-        throw 'artifact-layout must sit beside an-dr-dev-review; its new-artifact-dir.ps1 owns the run directory.'
+        throw "-ArtifactLayoutSkill has no scripts/$Name; pass an-dr-convention-artifact-layout's folder."
     }
     return (Resolve-Path -LiteralPath $path).Path
 }
 
-function Initialize-ReviewDirectory {
-    <# Takes this run's code-review directory from artifact-layout. #>
+function New-ReviewPath {
+    <# Takes a new code-review JSON path from artifact-layout. #>
     param(
         [Parameter(Mandatory)][string]$RepositoryRoot,
-        [Parameter(Mandatory)][string]$ArtifactLayoutSkill,
-        [string]$Run
+        [Parameter(Mandatory)][string]$ArtifactLayoutSkill
     )
 
-    $arguments = @{ Kind = 'code-review'; RepositoryRoot = $RepositoryRoot }
-    if ($Run) { $arguments['Run'] = $Run }
-    $directory = & (Get-ArtifactDirectoryScript -ArtifactLayoutSkill $ArtifactLayoutSkill) @arguments | Select-Object -Last 1
-    if (-not $directory) {
-        throw 'artifact-layout returned no directory for this review.'
+    $script = Get-ArtifactLayoutScript -ArtifactLayoutSkill $ArtifactLayoutSkill -Name 'new-artifact-path.ps1'
+    $path = & $script -Kind code-review -Extension json -RepositoryRoot $RepositoryRoot | Select-Object -Last 1
+    if (-not $path) {
+        throw 'artifact-layout returned no path for this review.'
     }
-    return $directory
-}
-
-function ConvertTo-ReviewSlug {
-    <# Converts a Git reference into a filesystem-safe review identifier. #>
-    param([Parameter(Mandatory)][string]$Value)
-
-    $slug = ($Value.ToLowerInvariant() -replace '[^a-z0-9]+', '-').Trim('-')
-    if (-not $slug) {
-        throw "Cannot create a review identifier from '$Value'."
-    }
-    return $slug
+    return $path
 }
 
 function Enter-ReviewLock {
@@ -231,7 +221,7 @@ function Read-ReviewJson {
         $review.sections | Add-Member -NotePropertyName slop -NotePropertyValue @()
     }
     Assert-ReviewJson -Review $review
-    $expectedName = "$($review.reviewId).review.json"
+    $expectedName = "$($review.reviewId).json"
     if ((Split-Path -Leaf $Path) -ne $expectedName) {
         throw "Review filename must match reviewId: $expectedName"
     }
@@ -244,19 +234,13 @@ function Resolve-ReviewPath {
 
     $repositoryRoot = Get-ReviewRepositoryRoot
     $resolvedPath = (Resolve-Path -LiteralPath $Path).Path
-    # The run directory is read from the path, never reallocated: a review keeps its
-    # findings and its rendered page together across midnight and across later runs.
-    $reviewDirectory = Split-Path -Parent $resolvedPath
-    $expectedRoot = [IO.Path]::GetFullPath((Join-Path $repositoryRoot '.artifacts'))
     # The shape artifact-layout creates; that skill, not this guard, owns the layout.
-    $runDirectory = Split-Path -Parent $reviewDirectory
-    if ((Split-Path -Leaf $reviewDirectory) -ne 'code-review' -or
-        (Split-Path -Parent $runDirectory) -ne $expectedRoot -or
-        (Split-Path -Leaf $runDirectory) -cnotmatch '^ai-\d{4}-\d{2}-\d{2}-[A-Z]+$') {
-        throw 'Review JSON must be directly inside REPO/.artifacts/ai-<run>/code-review/.'
+    $expectedDirectory = [IO.Path]::GetFullPath((Join-Path $repositoryRoot '.artifacts-temp/ai/code-review'))
+    if ((Split-Path -Parent $resolvedPath) -ne $expectedDirectory) {
+        throw 'Review JSON must be directly inside REPO/.artifacts-temp/ai/code-review/.'
     }
-    if (-not $resolvedPath.EndsWith('.review.json', [StringComparison]::OrdinalIgnoreCase)) {
-        throw 'Canonical review files must end with .review.json.'
+    if ((Split-Path -Leaf $resolvedPath) -cnotmatch '^code-review-\d{4}-\d{2}-\d{2}_\d{2}-\d{2}(-\d+)?\.json$') {
+        throw 'Canonical review files are named code-review-<YYYY-MM-DD_hh-mm>.json.'
     }
     return $resolvedPath
 }
@@ -293,8 +277,8 @@ function Write-ReviewText {
     }
 }
 
-Export-ModuleMember -Function Assert-ReviewJson, ConvertTo-ReviewSlug,
+Export-ModuleMember -Function Assert-ReviewJson,
     Enter-ReviewLock, Exit-ReviewLock, Get-ArtifactDirectoryScript,
     Get-ReviewRepositoryRoot,
-    Initialize-ReviewDirectory, Read-ReviewJson, Resolve-ReviewPath,
+    Get-ArtifactLayoutScript, New-ReviewPath, Read-ReviewJson, Resolve-ReviewPath,
     Write-ReviewJson, Write-ReviewText

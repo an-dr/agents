@@ -118,6 +118,6 @@ The failure mode of a generated overview is a confident, plausible, wrong archit
 
 ## Output
 
-Write `project-overview.html` to the `overview` directory `an-dr-convention-artifact-layout` gives you in the scanned repository, then run `an-dr-convention-html-report`'s render scripts on it. Offer to publish it as an Artifact when the user wants a link rather than a file.
+Take a `project-overview` path with extension `html` from `an-dr-convention-artifact-layout` in the scanned repository, write the page there, run `an-dr-convention-html-report`'s render scripts on it, and publish it as the latest. Offer to publish it as an Artifact when the user wants a link rather than a file.
 
 In the chat, report the count of drift rows and the top three problems with their severities, so the user learns the headline without opening the page.

@@ -40,9 +40,7 @@ From the repository being reviewed, run:
 pwsh <skill>/scripts/review-start.ps1 -Reference '<branch-or-ref>' -Scope <direct|verify|summary|requested> -ArtifactLayoutSkill <an-dr-convention-artifact-layout>
 ```
 
-This takes a `code-review` directory from `an-dr-convention-artifact-layout` and writes a schema-versioned JSON record into it from `assets/review-template.json`. Review state and rendered reports stay local there unless the user explicitly requests otherwise.
-
-Pass `-Run <YYYY-MM-DD>-<N>` to put the review in a run directory this run already has, so its review, change report, and overview sit together instead of taking a second letter. Every later step reads the run directory from the JSON path it is given, so findings and the rendered page stay together across midnight and across later runs.
+This takes a `code-review` path from `an-dr-convention-artifact-layout` and writes a schema-versioned JSON record there from `assets/review-template.json`. Review state and rendered reports stay local there unless the user explicitly requests otherwise.
 
 ## Judge for slop
 
@@ -71,9 +69,9 @@ A finding may carry one Mermaid diagram through `-Diagram '<source>'` or `-Diagr
 ## Render and report
 
 ```powershell
-pwsh <skill>/scripts/review-render.ps1 -ReviewPath <json> -HtmlReportSkill <an-dr-convention-html-report>
+pwsh <skill>/scripts/review-render.ps1 -ReviewPath <json> -HtmlReportSkill <an-dr-convention-html-report> -ArtifactLayoutSkill <an-dr-convention-artifact-layout>
 ```
 
-The renderer writes one self-contained `.html` page beside the JSON, in a fixed section order: verdict, summary, critical, high, slop, improvements, positives, and renders diagrams offline through `an-dr-convention-html-report`'s embed script. HTML is the only rendered format; do not produce a Markdown review. `an-dr-convention-html-report` styles the levels: critical findings stand out, positives are dimmed and collapsed. Summarize critical findings and the verdict in chat by `an-dr-ai-send-message`'s text levels, and give the path of the HTML file; keep it as a local inspection artifact.
+The renderer writes one self-contained `.html` page beside the JSON, copies both to `code-review-latest.*`, in a fixed section order: verdict, summary, critical, high, slop, improvements, positives, and renders diagrams offline through `an-dr-convention-html-report`'s embed script. HTML is the only rendered format; do not produce a Markdown review. `an-dr-convention-html-report` styles the levels: critical findings stand out, positives are dimmed and collapsed. Summarize critical findings and the verdict in chat by `an-dr-ai-send-message`'s text levels, and give the paths of the HTML file and its latest copy; keep it as a local inspection artifact.
 
 Review only. Return fixes to BUILD in gated flows or to Direct implementation, and never weaken tests or expand scope to make the review pass.

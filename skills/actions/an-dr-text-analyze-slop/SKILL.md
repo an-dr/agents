@@ -42,7 +42,7 @@ Order findings by level, then by how much reader time they cost. An unflawed tex
 
 A table of 15 findings or fewer goes in the reply, by `an-dr-ai-send-message`'s finding levels. A longer analysis becomes an HTML page:
 
-- write it as `text-slop.html` in the `text-slop` directory that `an-dr-convention-artifact-layout` gives you;
+- write it to a `text-slop` path with extension `html` from `an-dr-convention-artifact-layout`, and publish it as the latest once it is complete;
 - build it through `an-dr-convention-html-report`, with each finding's level on its row;
 - run `an-dr-convention-html-report`'s render scripts.
 

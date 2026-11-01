@@ -46,7 +46,7 @@ Keep unconfirmed questions at P2 or P3 and state any potentially larger conseque
 
 ## HTML report
 
-Use `an-dr-convention-artifact-layout` to take a `deslop` directory in this run and write `deslop.html` there. Build one self-contained page through `an-dr-convention-html-report`, and give findings and counts their priority level; that skill decides how levels look. Use `an-dr-ai-send-message` for tables and any questions to the user.
+Take a `deslop` path with extension `html` from `an-dr-convention-artifact-layout`, write the page there, and publish it as the latest once it is complete. Build one self-contained page through `an-dr-convention-html-report`, and give findings and counts their priority level; that skill decides how levels look. Use `an-dr-ai-send-message` for tables and any questions to the user.
 
 Include, in order:
 

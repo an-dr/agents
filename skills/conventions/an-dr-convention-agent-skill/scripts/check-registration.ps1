@@ -193,7 +193,7 @@ $cycles = @(Find-DependencyCycle $graph)
 # ---- paths and layout ------------------------------------------------------
 
 foreach ($file in Get-ChildItem -LiteralPath $Root -Recurse -File -Include '*.md' |
-        Where-Object { $_.FullName.Substring($Root.Length + 1) -notmatch '^(\.git|\.artifacts|node_modules)[\\/]' }) {
+        Where-Object { $_.FullName.Substring($Root.Length + 1) -notmatch '^(\.git|\.artifacts-temp|node_modules)[\\/]' }) {
     $relative = $file.FullName.Substring($Root.Length + 1) -replace '\\', '/'
     $text = [IO.File]::ReadAllText($file.FullName)
     if ($text -match '(?<![<\w])agents/skills/' -or $text -match '<clone>/skills/') {
@@ -202,7 +202,7 @@ foreach ($file in Get-ChildItem -LiteralPath $Root -Recurse -File -Include '*.md
 }
 
 foreach ($file in Get-ChildItem -LiteralPath $Root -Recurse -File -Include '*.ps1', '*.psm1' |
-        Where-Object { $_.FullName.Substring($Root.Length + 1) -notmatch '^(\.git|\.artifacts)[\\/]' }) {
+        Where-Object { $_.FullName.Substring($Root.Length + 1) -notmatch '^(\.git|\.artifacts-temp)[\\/]' }) {
     $relative = $file.FullName.Substring($Root.Length + 1) -replace '\\', '/'
     if ($relative -notlike 'skills/*' -and $relative -ne 'tests/run-all.ps1') {
         Add-Problem $relative 'code outside skills/; skills must stay self-contained'

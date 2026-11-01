@@ -11,7 +11,7 @@ metadata:
 
 # Screenshot
 
-A screenshot is repository content: it lands in the host repository next to the document that shows it and is committed with it. Scratch captures taken only to check something go to the `screenshots` directory `an-dr-convention-artifact-layout` gives you instead.
+A screenshot is repository content: it lands in the host repository next to the document that shows it and is committed with it. Scratch captures taken only to check something go to a `screenshots` path with extension `png` from `an-dr-convention-artifact-layout` instead.
 
 ## Where the image goes
 

@@ -5,12 +5,12 @@ $ErrorActionPreference = 'Stop'
 
 $repositoryRoot = (Resolve-Path (Join-Path $PSScriptRoot '../../../../..')).ProviderPath
 $script = Join-Path $PSScriptRoot '../build-dependencies.ps1'
-$fixtureRoot = Join-Path $repositoryRoot '.artifacts/test-build-dependencies'
+$fixtureRoot = Join-Path ([IO.Path]::GetTempPath()) 'an-dr-test-build-dependencies'
 
 function Remove-Fixture {
-    $allowedRoot = [IO.Path]::GetFullPath((Join-Path $repositoryRoot '.artifacts')) + [IO.Path]::DirectorySeparatorChar
+    $allowedRoot = [IO.Path]::GetFullPath([IO.Path]::GetTempPath())
     if (-not ([IO.Path]::GetFullPath($fixtureRoot)).StartsWith($allowedRoot, [StringComparison]::OrdinalIgnoreCase)) {
-        throw "Fixture removal escaped the artifact root: $fixtureRoot"
+        throw "Fixture removal escaped the temp directory: $fixtureRoot"
     }
     # Windows indexers and scanners can briefly hold a freshly written file, so retry.
     for ($attempt = 1; $attempt -le 8; $attempt++) {

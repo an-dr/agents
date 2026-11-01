@@ -5,7 +5,7 @@ param()
 
 $ErrorActionPreference = 'Stop'
 $repositoryRoot = Resolve-Path (Join-Path $PSScriptRoot '../../../../..')
-$fixtureDirectory = Join-Path $repositoryRoot '.artifacts/markdown-tests'
+$fixtureDirectory = Join-Path ([IO.Path]::GetTempPath()) 'an-dr-markdown-tests'
 New-Item -ItemType Directory -Path $fixtureDirectory -Force | Out-Null
 $checker = Join-Path $PSScriptRoot '../check-markdown.ps1'
 $cases = @(

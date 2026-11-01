@@ -43,7 +43,7 @@
         {
           "type": "diff_scope",
           "allowed_paths": [
-            ".artifacts"
+            ".artifacts-temp"
           ]
         },
         {
@@ -89,7 +89,7 @@
         {
           "type": "diff_scope",
           "allowed_paths": [
-            ".artifacts"
+            ".artifacts-temp"
           ]
         },
         {
@@ -131,7 +131,7 @@
         {
           "type": "diff_scope",
           "allowed_paths": [
-            ".artifacts"
+            ".artifacts-temp"
           ]
         },
         {
@@ -173,7 +173,7 @@
         {
           "type": "diff_scope",
           "allowed_paths": [
-            ".artifacts"
+            ".artifacts-temp"
           ]
         },
         {
@@ -216,7 +216,7 @@
         {
           "type": "diff_scope",
           "allowed_paths": [
-            ".artifacts"
+            ".artifacts-temp"
           ]
         },
         {
@@ -271,7 +271,7 @@
         {
           "type": "diff_scope",
           "allowed_paths": [
-            ".artifacts"
+            ".artifacts-temp"
           ]
         },
         {
@@ -318,7 +318,7 @@
         {
           "type": "diff_scope",
           "allowed_paths": [
-            ".artifacts"
+            ".artifacts-temp"
           ]
         },
         {

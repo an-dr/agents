@@ -41,7 +41,7 @@ Choose the cheapest move that removes the arrow, in this order:
 
 ## Analysis report
 
-Change nothing yet. Take an `untangle` directory for this run from `an-dr-convention-artifact-layout` and write `untangle.html` there. Build one self-contained page through `an-dr-convention-html-report`, and give each finding a level by consequence: a cycle through stable components is `critical`, a cycle among task components `high`, a needless or misplaced arrow `notice`, and a genuine arrow `ok`. That skill decides how levels look.
+Change nothing yet. Take an `untangle` path with extension `html` from `an-dr-convention-artifact-layout`, write the page there, and publish it as the latest once it is complete. Build one self-contained page through `an-dr-convention-html-report`, and give each finding a level by consequence: a cycle through stable components is `critical`, a cycle among task components `high`, a needless or misplaced arrow `notice`, and a genuine arrow `ok`. That skill decides how levels look.
 
 Include, in order:
 

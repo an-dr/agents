@@ -15,7 +15,7 @@ One file a reader can open from disk, in an editor preview, or as a published pa
 
 ## Where the page goes
 
-A generated page is not repository content: take its directory from `an-dr-convention-artifact-layout`, which owns where artifacts live, and report the path it prints to the reader.
+A generated page is not repository content: take its path from `an-dr-convention-artifact-layout`, which owns where artifacts live, publish it as the latest of its kind once complete, and report both paths to the reader.
 
 ## The page
 

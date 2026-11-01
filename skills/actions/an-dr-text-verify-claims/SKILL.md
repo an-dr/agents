@@ -95,7 +95,7 @@ Give every audit finding levels, which `an-dr-ai-send-message` renders in chat a
 Sort the ledger by level, then by consequence. Put the `ok` rows in a collapsed group.
 
 A ledger of 15 rows or fewer goes in the reply, by `an-dr-ai-send-message`'s text levels. A longer audit becomes an HTML page:
-- write it as `claim-audit.html` in the `claim-audit` directory that `an-dr-convention-artifact-layout` gives you;
+- write it to a `claim-audit` path with extension `html` from `an-dr-convention-artifact-layout`, and publish it as the latest once it is complete;
 - build it through `an-dr-convention-html-report`;
 - give each claim's ledger row its level, and show its verdict and kind as labels;
 - run `an-dr-convention-html-report`'s render scripts.

@@ -112,7 +112,7 @@ Skip the repeat when the native UI already showed the chosen labels and there wa
 
 ## Answers as JSON
 
-When a decision must outlive the conversation, or another script or agent acts on it, keep the round as JSON in the `ui` directory `an-dr-convention-artifact-layout` gives you. Write the round to `questions.json` before asking:
+When a decision must outlive the conversation, or another script or agent acts on it, keep the round as JSON at a `ui` path with extension `questions.json` from `an-dr-convention-artifact-layout`. Write the round there before asking:
 
 ```json
 { "questions": [
@@ -127,7 +127,7 @@ When a decision must outlive the conversation, or another script or agent acts o
 Options take the keys `a`, `b`, … in order unless they set `key`. `multiSelect: true` allows several choices. `kind: "confirm"` also accepts `y`/`n`. Then pass the reply through the reader. A typed reply goes in as typed. A native widget's result goes in as `N: <chosen label>` per question.
 
 ```powershell
-pwsh <skill>/scripts/read-answers.ps1 -Questions <dir>/questions.json -Reply '1a 2: only on Mondays'
+pwsh <skill>/scripts/read-answers.ps1 -Questions <ui-stamp>.questions.json -Reply '1a 2: only on Mondays'
 ```
 
-It writes `answers.json` beside the questions file and prints the echo lines. Each answer has a `status`: `answered` with `choices` and `labels`, `custom` with `text`, `ambiguous` (ask again), or `open`. Act only on `answered` and `custom` answers.
+It writes `<ui-stamp>.answers.json` beside the questions file and prints the echo lines. Each answer has a `status`: `answered` with `choices` and `labels`, `custom` with `text`, `ambiguous` (ask again), or `open`. Act only on `answered` and `custom` answers.

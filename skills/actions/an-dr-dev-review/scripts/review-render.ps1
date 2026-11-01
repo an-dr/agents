@@ -5,6 +5,7 @@ param(
     [Parameter(Mandatory)][string]$ReviewPath,
     # Both skills' folders, passed by the agent because skills need not sit side by side.
     [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$HtmlReportSkill,
+    [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$ArtifactLayoutSkill,
     [string]$OutputPath
 )
 
@@ -61,7 +62,7 @@ elseif (-not [IO.Path]::IsPathRooted($OutputPath)) {
 }
 $OutputPath = [IO.Path]::GetFullPath($OutputPath)
 if ((Split-Path -Parent $OutputPath) -ne (Split-Path -Parent $resolvedPath)) {
-    throw 'The rendered review must remain beside its JSON, in the same run directory.'
+    throw 'The rendered review must remain beside its JSON.'
 }
 if ([IO.Path]::GetExtension($OutputPath) -ne '.html') {
     throw 'The rendered review is HTML; -OutputPath must end in .html.'
@@ -164,3 +165,5 @@ foreach ($step in @(
     & $script -Path $OutputPath | Out-Null
 }
 Write-Output $OutputPath
+# The newest review is also copied to code-review-latest.* for the reader who opens it by name.
+& (Get-ArtifactLayoutScript -ArtifactLayoutSkill $ArtifactLayoutSkill -Name 'publish-latest.ps1') -Path $resolvedPath

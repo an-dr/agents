@@ -23,7 +23,12 @@ if (-not $list.Count) { throw "No questions in $Questions." }
 foreach ($q in $list) {
     if (-not $q.id -or @($q.options).Count -lt 2) { throw "Question '$($q.id)' needs an id and at least 2 options." }
 }
-if (-not $Out) { $Out = Join-Path (Split-Path -Parent (Resolve-Path $Questions)) 'answers.json' }
+# <stamp>.questions.json pairs with <stamp>.answers.json; any other name gets answers.json beside it.
+if (-not $Out) {
+    $questionsPath = (Resolve-Path $Questions).Path
+    $Out = if ($questionsPath -match '\.questions\.json$') { $questionsPath -replace '\.questions\.json$', '.answers.json' }
+        else { Join-Path (Split-Path -Parent $questionsPath) 'answers.json' }
+}
 
 function Get-PlainLabel([string] $label) {
     ($label -replace '\s*\(Recommended\)\s*$', '').Trim().ToLowerInvariant()

@@ -5,7 +5,7 @@ param()
 
 $ErrorActionPreference = 'Stop'
 $repositoryRoot = Resolve-Path (Join-Path $PSScriptRoot '../../../../..')
-$fixtureDirectory = Join-Path $repositoryRoot '.artifacts/ai-user-interaction-tests'
+$fixtureDirectory = Join-Path ([IO.Path]::GetTempPath()) 'an-dr-user-interaction-tests'
 New-Item -ItemType Directory -Path $fixtureDirectory -Force | Out-Null
 $reader = Join-Path $PSScriptRoot '../read-answers.ps1'
 
