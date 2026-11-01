@@ -4,7 +4,7 @@ description: Run, resume, and enforce the repository's gated Quick, Detailed, or
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "1.1.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-send-message an-dr-convention-adr an-dr-dev-analyze-changes an-dr-dev-design an-dr-dev-implement-code an-dr-dev-integrate an-dr-dev-review an-dr-dev-test an-dr-dev-write-documentation an-dr-git-commit
 ---
@@ -107,7 +107,7 @@ A request recorded after the `intake` approval drops it: the approval said the l
 
 The controller refuses `approve -Gate implement` while any question is open and lists the offenders. This is the mechanism behind "explore first, build on command" — an unanswered question cannot be lost, because it holds the gate shut.
 
-Run `status` before every response while state exists; its table, not the JSON file or the conversation, decides what the workflow allows. Present the controller's Markdown status table to the user verbatim, as its emitted agent instruction requires. `advance` rejects missing approvals, missing increments, wrong branches, uncommitted increments, and illegal transitions. `return-to-build` records a failed verification, invalidates the increment's verification approval, and resumes BUILD without changing increment identity.
+Run `status` before every response while state exists; its table, not the JSON file or the conversation, decides what the workflow allows. Present the controller's Markdown status table to the user verbatim, as its `user-output: verbatim` markers require. `advance` rejects missing approvals, missing increments, wrong branches, uncommitted increments, and illegal transitions. `return-to-build` records a failed verification, invalidates the increment's verification approval, and resumes BUILD without changing increment identity.
 
 Only planned increments can be inserted or reordered with `move-increment`. Completed increments retain immutable IDs and fixed positions; renumbering never changes which increment is active.
 

@@ -4,7 +4,7 @@ description: Rules for the PowerShell scripts a skill ships — PowerShell 7, no
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.2.0"
+  version: "1.3.0"
   an-dr.type: convention
   an-dr.dependencies: an-dr-ai-send-message an-dr-convention-agent-skill-testing
 ---
@@ -17,6 +17,7 @@ A skill adds a script only for repeated, mechanical work. The skill's `SKILL.md`
 - **Tests:** follow `an-dr-convention-agent-skill-testing` for `scripts/tests/`, fixtures, the local `scripts/tests/run.ps1` entry point, and the boundary between free checks and agent evaluations.
 - **After modifications:** run a skill's script tests after every change to that skill, its scripts, or its tests. Test the final edited scripts before delivery; a passing run from before the edit does not verify it. Report missing tests or failed assertions instead of claiming success. Script tests run without model calls or separate approval; paid behavioral evaluations require an explicit user request.
 - **Output:** a script's result is printed for the user. Write it in `an-dr-ai-send-message`'s safe Markdown (pipe tables, short status lines, a report's path) with progress noise kept off stdout, so the agent can relay it as `an-dr-ai-send-message` requires without reshaping it. SKILL.md says what the output shows and that the agent relays it.
+- **User-output blocks:** wrap the part of stdout the user must see between `<!-- user-output: verbatim -->` or `<!-- user-output: summarize -->` and `<!-- /user-output -->`, each marker on its own line. Use `verbatim` for output the user reads exactly as printed, such as a status table, and `summarize` for output the agent condenses, such as findings or a long list. Everything outside the markers is detail the agent may leave out. Emit the markers with plain `Write-Output`; they need no shared helper.
 - **Own files:** reach the skill's own files through `$PSScriptRoot`. Never use an absolute path, a path through the repository's layout such as `skills/<name>`, or a submodule folder name.
 - **Other skills:** call only a public script of another skill, through a folder the caller passes. Skills need not be installed side by side, so a script never guesses another skill's location, whether through `$PSScriptRoot/../..`, a registry, or a fixed path. It takes the folder as a mandatory parameter named after the skill, such as `-<Name>Skill`, and SKILL.md passes `<that-skill-name>` in the command. The script checks that the public script exists in that folder and throws naming the parameter when it does not. It never imports another skill's `.psm1` module. When a caller needs more than a public script offers, extend that script's parameters instead.
 - **Vendored helpers:** a few generic functions that two skills need are copied into each one, and each copy is owned by its skill and marked as a copy. Sharing them is not worth the coupling.

@@ -4,7 +4,7 @@ description: Talk to the user in a form that works in every host — terminal CL
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "1.1.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-concept-dark-cockpit an-dr-convention-artifact-layout
 ---
@@ -36,6 +36,7 @@ Use only: paragraphs, `#`–`###` headings, bold, inline code, fenced code block
 
 The user does not see tool results: hosts collapse them, cut them short, or hide them. A script's output reaches the user only through the agent's reply.
 
+- **User-output blocks are mandatory.** Every block between `<!-- user-output: … -->` and `<!-- /user-output -->` in a tool result appears in the next reply, never deferred to a later one, and without the markers. Show a `verbatim` block exactly as printed. Rewrite a `summarize` block under the rules below, keeping every fact.
 - **Relay what the user would act on.** When a skill script prints a result, such as a table, a status, a report path, a set of findings, or a failure, put it in the reply. The script having printed it does not count as the user having seen it.
 - **Present it, don't paste it.** Rewrite the output in the safe Markdown above: tables follow the table rules, findings follow the text levels below, and file paths become clickable links where the host supports them. Keep a Markdown table the script already shaped for the user as it is. Wrap raw text whose layout carries meaning, such as a diff or an error trace, in a fenced block.
 - **Keep every fact, drop the noise.** Show every row and number a decision depends on. Leave out progress lines, banners, and repeated boilerplate, and say when you shortened something long.

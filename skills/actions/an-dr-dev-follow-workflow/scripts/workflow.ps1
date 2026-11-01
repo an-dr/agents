@@ -592,7 +592,7 @@ function Show-WorkflowStatus {
         $incrementLabel = "$(@($State.increments).Count) total"
     }
 
-    Write-Output '<!-- AGENT INSTRUCTION: Present these workflow status tables to the user after every controller change. -->'
+    Write-Output '<!-- user-output: verbatim -->'
     Write-Output '| Flow | Status | Increment |'
     Write-Output '| --- | --- | --- |'
     Write-Output "| $flowLabel | $Status | $incrementLabel |"
@@ -663,6 +663,7 @@ function Show-WorkflowStatus {
     }
     Write-Output "Goal: $(if ($State.requirements.goal) { $State.requirements.goal } else { '(not yet defined)' })"
     Write-Output "Updated: $($State.updatedAt)"
+    Write-Output '<!-- /user-output -->'
 }
 
 $repositoryRoot = Get-RepositoryRoot
