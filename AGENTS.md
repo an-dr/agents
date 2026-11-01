@@ -9,8 +9,9 @@ You are a developer on this project. The user is the team lead. Follow these ins
 1. Read the host `README.md` and `docs/index.md` when it exists.
 2. Resolve this file's directory; skill paths are relative to it.
 3. If `.progress/workflow.json` exists, run the `an-dr-dev-follow-workflow` skill's `status` command and resume exactly that state.
-4. If no files will change, use no workflow or branch. Say so and answer.
-5. If files will change and no workflow is active, use the workflow the user selected for this task. If the user has not selected one, present the numbered list below and ask which workflow to use. Do not choose, start a workflow, branch, or change files until the user selects one. Read-only exploration may continue while waiting. Direct starts without the controller; start a gated flow through the `an-dr-dev-follow-workflow` skill. The four requirement facts — problem, constraints, definition of done, and exclusions — are what its INTAKE produces, not what it needs to begin. Never invent a missing fact.
+4. If `.progress/handoff.md` exists, read it and continue from it; see Handoff.
+5. If no files will change, use no workflow or branch. Say so and answer.
+6. If files will change and no workflow is active, use the workflow the user selected for this task. If the user has not selected one, present the numbered list below and ask which workflow to use. Do not choose, start a workflow, branch, or change files until the user selects one. Read-only exploration may continue while waiting. Direct starts without the controller; start a gated flow through the `an-dr-dev-follow-workflow` skill. The four requirement facts — problem, constraints, definition of done, and exclusions — are what its INTAKE produces, not what it needs to begin. Never invent a missing fact.
 
 1. **Direct** — complete and deliver the requested result without workflow approval gates.
 1. **Quick** — one small, self-contained pass with user implementation and verification gates.
@@ -21,11 +22,20 @@ Present all four numbered choices in this order when asking. A workflow named by
 
 ## Direct
 
-Work on the current branch without `.progress/`, phase transitions, or approval gates. Read the request and repository context, make the smallest sound design choice, use `an-dr-dev-write-documentation` for needed documentation, `an-dr-dev-implement-code` for code, `an-dr-dev-test` for changed code, and `an-dr-dev-review` for the diff. Fix findings and deliver the usable result in the same request. Ask only when essential information is missing or an action requires permission for a reason outside this workflow; continue independent work while waiting.
+Work on the current branch without workflow state, phase transitions, or approval gates. Read the request and repository context, make the smallest sound design choice, use `an-dr-dev-write-documentation` for needed documentation, `an-dr-dev-implement-code` for code, `an-dr-dev-test` for changed code, and `an-dr-dev-review` for the diff. Fix findings and deliver the usable result in the same request. Ask only when essential information is missing or an action requires permission for a reason outside this workflow; continue independent work while waiting.
 
 Commit verified work through `an-dr-git-commit` on the current branch. Do not push unless the user requests it. When this process repository itself is the target, its Scope rule takes precedence: leave the change uncommitted for review. A request that grows stays Direct unless the user asks to switch to a gated flow; break larger work into coherent internal passes without adding user gates.
 
 Within a gated flow, exploration can prove the chosen flow wrong — most often when the user adds requests a Quick pass was never sized for. Propose the change with its one-sentence reason, obtain confirmation, and make it through the `an-dr-dev-follow-workflow` skill's `switch-flow` operation, which keeps the requests, questions, answers, and requirements already collected. Never delete `.progress/` to start over. The switch is only available before anything is built; past `BRANCH` the branch is finished or abandoned on its own terms instead. Direct has no state to switch; a user request for a gated flow starts a new workflow only when the working tree is clean.
+
+## Handoff
+
+Work moves between machines, tools, and sessions that run out of context, and a new session that rebuilds the state from the code pays far more than one that reads a page. Any task that changes files and spans more than one reply keeps `.progress/handoff.md`, in every flow:
+
+- Rewrite it whole at each checkpoint — a decision made, an increment or pass done, a commit, before a long-running step, and when the user stops — never after every reply. Do not append; it holds only the current state.
+- Keep it under 40 lines with these headings: Goal, Done, Next, Open questions, Decisions and why, Files in play. Name commits and paths instead of copying content, and leave out anything the code or `.progress/workflow.json` already records.
+- Commit it only when the user asks to move the work elsewhere, and push only on that request; otherwise it stays in the working tree.
+- Delete it, and commit the deletion if it was committed, when the task is delivered. Integration removes `.progress/` from feature branches; on the current branch the deletion is the cleanup.
 
 ## Executable workflow authority
 
