@@ -1,5 +1,5 @@
 #Requires -Version 7
-<# Creates a canonical JSON review in REPO/.artifacts-temp/ai/code-review/. #>
+<# Creates a canonical JSON review in REPO/.tmp-ai-gen/code-review/. #>
 [CmdletBinding()]
 param(
     [Parameter(Mandatory)][string]$Reference,
@@ -32,4 +32,4 @@ $review.updatedAt = $now
 Write-ReviewJson -Review $review -Path $reviewPath
 
 Write-Output $reviewPath
-Write-Output "Commit '$repositoryRoot/.artifacts-temp/.gitignore'; JSON and HTML artifacts remain local."
+Write-Output 'JSON and HTML artifacts remain local; .tmp-ai-gen ignores itself.'

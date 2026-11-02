@@ -4,8 +4,8 @@
     Copies a finished artifact to <kind>-latest beside the kind folders, and prints the copies.
 
 .DESCRIPTION
-    Given REPO/.artifacts-temp/ai/<kind>/<kind>-<stamp>.<extension>, every file of that
-    stamp is copied to REPO/.artifacts-temp/ai/<kind>-latest.<extension>, after the previous
+    Given REPO/.tmp-ai-gen/<kind>/<kind>-<stamp>.<extension>, every file of that
+    stamp is copied to REPO/.tmp-ai-gen/<kind>-latest.<extension>, after the previous
     <kind>-latest.* files are removed. Copies, not links: links need extra rights on Windows.
 #>
 [CmdletBinding()]
@@ -17,7 +17,7 @@ $ErrorActionPreference = 'Stop'
 $file = Get-Item -LiteralPath $Path
 $kind = $file.Directory.Name
 $aiRoot = $file.Directory.Parent
-if ($aiRoot.Name -cne 'ai' -or $aiRoot.Parent.Name -cne '.artifacts-temp' -or
+if ($aiRoot.Name -cne '.tmp-ai-gen' -or
     $file.Name -cnotmatch "^$([regex]::Escape($kind))-(\d{4}-\d{2}-\d{2}_\d{2}-\d{2}(-\d+)?)\.") {
     throw "Not an artifact from new-artifact-path.ps1: $Path"
 }

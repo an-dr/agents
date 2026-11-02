@@ -4,16 +4,17 @@
     Prints the path a generated artifact is written to, creating its kind directory.
 
 .DESCRIPTION
-    Every artifact lands at REPO/.artifacts-temp/ai/<kind>/<kind>-<YYYY-MM-DD_hh-mm>.<extension>,
+    Every artifact lands at REPO/.tmp-ai-gen/<kind>/<kind>-<YYYY-MM-DD_hh-mm>.<extension>,
     so one kind's history sorts by time in one folder. publish-latest.ps1 then copies the
-    newest to REPO/.artifacts-temp/ai/<kind>-latest.<extension>.
+    newest to REPO/.tmp-ai-gen/<kind>-latest.<extension>.
 
     - Only kinds listed in assets/kinds.txt are accepted: the folder holds skill outputs,
       not scratch files.
     - Without -Stamp the current minute is taken, with -2, -3, ... when that minute is used.
       Pass the printed stamp back as -Stamp for every other file of the same artifact,
       such as the HTML rendered from a review's JSON.
-    - REPO/.artifacts-temp/.gitignore ignores everything beneath it.
+    - REPO/.tmp-ai-gen/.gitignore holds *, so git ignores the folder, itself included,
+      and nothing needs a commit or a rule in the repository's own .gitignore.
 #>
 [CmdletBinding()]
 param(
@@ -42,15 +43,15 @@ if (-not $RepositoryRoot) {
     $RepositoryRoot = $RepositoryRoot.Trim()
 }
 
-$tempRoot = Join-Path $RepositoryRoot '.artifacts-temp'
-$directory = Join-Path $tempRoot "ai/$Kind"
+$tempRoot = Join-Path $RepositoryRoot '.tmp-ai-gen'
+$directory = Join-Path $tempRoot $Kind
 New-Item -ItemType Directory -Force -Path $directory | Out-Null
 
 $ignorePath = Join-Path $tempRoot '.gitignore'
 if (-not (Test-Path -LiteralPath $ignorePath)) {
     [IO.File]::WriteAllText(
         $ignorePath,
-        (@('# Generated AI artifacts', '*', '!.gitignore', '') -join "`n"),
+        (@('# Generated AI artifacts; nothing here is committed', '*', '') -join "`n"),
         [Text.UTF8Encoding]::new($false)
     )
 }

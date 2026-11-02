@@ -10,8 +10,8 @@ $publish = Join-Path $PSScriptRoot '../publish-latest.ps1'
 function Assert([bool]$Condition, [string]$Message) { if (-not $Condition) { throw $Message } }
 try {
     $first = & $new -Kind code-review -Extension json -Stamp 2026-11-01_14-32 -RepositoryRoot $root
-    Assert ($first -eq (Join-Path $root '.artifacts-temp/ai/code-review/code-review-2026-11-01_14-32.json')) "Unexpected path: $first"
-    Assert (Test-Path (Join-Path $root '.artifacts-temp/.gitignore')) 'The .gitignore was not created.'
+    Assert ($first -eq (Join-Path $root '.tmp-ai-gen/code-review/code-review-2026-11-01_14-32.json')) "Unexpected path: $first"
+    Assert (Test-Path (Join-Path $root '.tmp-ai-gen/.gitignore')) 'The .gitignore was not created.'
     Set-Content -LiteralPath $first -Value '{}'
     $html = & $new code-review html -Stamp 2026-11-01_14-32 -RepositoryRoot $root
     Set-Content -LiteralPath $html -Value '<html></html>'
@@ -23,7 +23,7 @@ try {
 
     $copies = @(& $publish $first)
     Assert ($copies.Count -eq 2) "Expected two latest copies, got $($copies.Count)."
-    Assert (Test-Path (Join-Path $root '.artifacts-temp/ai/code-review-latest.html')) 'The latest HTML is missing.'
+    Assert (Test-Path (Join-Path $root '.tmp-ai-gen/code-review-latest.html')) 'The latest HTML is missing.'
 
     foreach ($bad in @(
             { & $new scratch html -RepositoryRoot $root },

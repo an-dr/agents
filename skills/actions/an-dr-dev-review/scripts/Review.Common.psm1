@@ -235,9 +235,9 @@ function Resolve-ReviewPath {
     $repositoryRoot = Get-ReviewRepositoryRoot
     $resolvedPath = (Resolve-Path -LiteralPath $Path).Path
     # The shape artifact-layout creates; that skill, not this guard, owns the layout.
-    $expectedDirectory = [IO.Path]::GetFullPath((Join-Path $repositoryRoot '.artifacts-temp/ai/code-review'))
+    $expectedDirectory = [IO.Path]::GetFullPath((Join-Path $repositoryRoot '.tmp-ai-gen/code-review'))
     if ((Split-Path -Parent $resolvedPath) -ne $expectedDirectory) {
-        throw 'Review JSON must be directly inside REPO/.artifacts-temp/ai/code-review/.'
+        throw 'Review JSON must be directly inside REPO/.tmp-ai-gen/code-review/.'
     }
     if ((Split-Path -Leaf $resolvedPath) -cnotmatch '^code-review-\d{4}-\d{2}-\d{2}_\d{2}-\d{2}(-\d+)?\.json$') {
         throw 'Canonical review files are named code-review-<YYYY-MM-DD_hh-mm>.json.'

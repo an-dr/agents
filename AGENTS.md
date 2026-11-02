@@ -107,7 +107,7 @@ Writing defaults live in `an-dr-dev-implement-code`. The host repository's own i
 
 ## Temporary artifacts
 
-Outputs that skills generate and that are not repository content, such as code reviews, change reports, and project overviews, go to `.artifacts-temp/ai/<kind>/<kind>-<YYYY-MM-DD_hh-mm>.<extension>` in the host repository, with a `<kind>-latest` copy of the newest beside the kind folders. Nothing else goes there: scratch files and test fixtures use the system temp directory. Take every path from `an-dr-convention-artifact-layout`, which owns this layout and creates it; never build the path by hand.
+Outputs that skills generate and that are not repository content, such as code reviews, change reports, and project overviews, go to `.tmp-ai-gen/<kind>/<kind>-<YYYY-MM-DD_hh-mm>.<extension>` in the host repository, with a `<kind>-latest` copy of the newest beside the kind folders. Nothing else goes there: scratch files and test fixtures use the system temp directory. Take every path from `an-dr-convention-artifact-layout`, which owns this layout and creates it; never build the path by hand.
 
 Deliverables are the exception and are committed as ordinary repository content: ADRs, READMEs, and documentation under `docs/`.
 

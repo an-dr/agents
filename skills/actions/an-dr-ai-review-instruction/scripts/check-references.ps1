@@ -32,7 +32,7 @@ function Get-FrontmatterName {
     return ''
 }
 
-$excluded = '\\(\.git|\.artifacts-temp|node_modules)\\'
+$excluded = '\\(\.git|\.tmp-ai-gen|node_modules)\\'
 $skillFiles = @(Get-ChildItem $root -Recurse -File -Filter 'SKILL.md' | Where-Object { $_.FullName -notmatch $excluded })
 $policyPath = Join-Path $root 'AGENTS.md'
 

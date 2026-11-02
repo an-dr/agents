@@ -88,7 +88,7 @@ A global installation engages the workflow policy when the host project's root `
 
 The installer's `-Tools` parameter limits which tools are configured. Re-run the installer after adding skills or moving the clone. [Installation verification](skills/_repository/an-dr-agents-repo-verify-installation/SKILL.md) distinguishes broken links, missing project opt-in, and a running tool failing to load the policy.
 
-Generated skill outputs live under `.artifacts-temp/ai/` according to the [artifact layout convention](skills/conventions/an-dr-convention-artifact-layout/SKILL.md). HTML diagram rendering requires a local Chromium-based browser; the [HTML report convention](skills/conventions/an-dr-convention-html-report/SKILL.md) describes rendering and visual verification.
+Generated skill outputs live under `.tmp-ai-gen/` according to the [artifact layout convention](skills/conventions/an-dr-convention-artifact-layout/SKILL.md). HTML diagram rendering requires a local Chromium-based browser; the [HTML report convention](skills/conventions/an-dr-convention-html-report/SKILL.md) describes rendering and visual verification.
 
 ## 📚 Documentation
 
@@ -107,7 +107,7 @@ Generated skill outputs live under `.artifacts-temp/ai/` according to the [artif
 | `skills/conventions/` | Artifact formats and their mechanical checks |
 | `skills/_repository/` | Maintenance and installation of this repository |
 | `tests/run-all.ps1` | Discovery of conventional skill test runners |
-| `.artifacts-temp/ai/` | Ignored generated skill outputs, with a `<kind>-latest` copy of each |
+| `.tmp-ai-gen/` | Ignored generated skill outputs, with a `<kind>-latest` copy of each |
 
 ### 🔗 Skill dependencies
 

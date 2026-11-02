@@ -43,7 +43,7 @@
         {
           "type": "diff_scope",
           "allowed_paths": [
-            ".artifacts-temp"
+            ".tmp-ai-gen"
           ]
         },
         {
@@ -89,7 +89,7 @@
         {
           "type": "diff_scope",
           "allowed_paths": [
-            ".artifacts-temp"
+            ".tmp-ai-gen"
           ]
         },
         {
@@ -131,7 +131,7 @@
         {
           "type": "diff_scope",
           "allowed_paths": [
-            ".artifacts-temp"
+            ".tmp-ai-gen"
           ]
         },
         {
@@ -173,7 +173,7 @@
         {
           "type": "diff_scope",
           "allowed_paths": [
-            ".artifacts-temp"
+            ".tmp-ai-gen"
           ]
         },
         {
@@ -216,7 +216,7 @@
         {
           "type": "diff_scope",
           "allowed_paths": [
-            ".artifacts-temp"
+            ".tmp-ai-gen"
           ]
         },
         {
@@ -271,7 +271,7 @@
         {
           "type": "diff_scope",
           "allowed_paths": [
-            ".artifacts-temp"
+            ".tmp-ai-gen"
           ]
         },
         {
@@ -318,7 +318,7 @@
         {
           "type": "diff_scope",
           "allowed_paths": [
-            ".artifacts-temp"
+            ".tmp-ai-gen"
           ]
         },
         {
