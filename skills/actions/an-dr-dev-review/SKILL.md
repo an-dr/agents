@@ -74,4 +74,4 @@ pwsh <skill>/scripts/review-render.ps1 -ReviewPath <json> -HtmlReportSkill <an-d
 
 The renderer writes one self-contained `.html` page beside the JSON, copies both to `code-review-latest.*`, in a fixed section order: verdict, summary, critical, high, slop, improvements, positives, and renders diagrams offline through `an-dr-convention-html-report`'s embed script. HTML is the only rendered format; do not produce a Markdown review. `an-dr-convention-html-report` styles the levels: critical findings stand out, positives are dimmed and collapsed. Summarize critical findings and the verdict in chat by `an-dr-ai-send-message`'s text levels, and give the paths of the HTML file and its latest copy; keep it as a local inspection artifact.
 
-Review only. Return fixes to BUILD in gated flows or to Direct implementation, and never weaken tests or expand scope to make the review pass.
+Review only: judge by reading the diff. Do not build the project or run its tests unless the user asks; report missing coverage as a finding. Return fixes to BUILD in gated flows or to Direct implementation, and never weaken tests or expand scope to make the review pass.
