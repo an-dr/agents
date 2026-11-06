@@ -9,6 +9,8 @@ param([Parameter(Mandatory, Position = 0)][string[]]$Path)
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
+. (Join-Path $PSScriptRoot 'markdown-table.ps1')
+
 function Get-MarkdownViolation {
     <# Returns the rule violations found in one Markdown file. #>
     param([Parameter(Mandatory)][string]$File)
@@ -37,6 +39,7 @@ function Get-MarkdownViolation {
     $previousLevel = 0
     $paragraphStart = -1
     $paragraphLines = 0
+    $tableEnd = 0
 
     # YAML frontmatter is not Markdown; skip past its closing fence.
     $start = 0
@@ -139,8 +142,13 @@ function Get-MarkdownViolation {
         }
 
         if ($line -match '^\s*\|.*\|\s*$') {
-            if ($line -match '\S\s{2,}\|') {
-                Add-Violation error 'table.padding' $number 'The table pads columns to align them.'
+            if ($index -ge $tableEnd) {
+                $tableEnd = $index
+                while ($tableEnd -lt $lines.Count -and $lines[$tableEnd] -match '^\s*\|.*\|\s*$') { $tableEnd++ }
+                $rows = @($lines[$index..($tableEnd - 1)])
+                if ((@(Format-MarkdownTable -Rows $rows) -join "`n") -cne ($rows -join "`n")) {
+                    Add-Violation error 'table.align' $number 'The table columns are not aligned; run format-markdown.ps1.'
+                }
             }
             $paragraphStart = -1; $paragraphLines = 0
             continue

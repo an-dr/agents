@@ -24,7 +24,7 @@ $verbs = @()
 $inVerbs = $false
 foreach ($line in [IO.File]::ReadAllLines($skillFile)) {
     if ($line -match '^## ') { $inVerbs = $line -ceq '## Verbs'; continue }
-    if ($inVerbs -and $line -match '^\| `(?<verb>[a-z]+)` \|') { $verbs += $Matches['verb'] }
+    if ($inVerbs -and $line -match '^\|\s*`(?<verb>[a-z]+)`\s*\|') { $verbs += $Matches['verb'] }
 }
 if ($verbs.Count -eq 0) { throw "No verbs found in the Verbs table of $skillFile." }
 $problems = [System.Collections.Generic.List[object]]::new()
