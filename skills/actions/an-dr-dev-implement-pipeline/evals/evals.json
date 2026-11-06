@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-dev-implement-pipeline",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-dev-implement-pipeline. Set up CI and a tagged release pipeline for this project.",
+      "expected_skill": "an-dr-dev-implement-pipeline",
+      "context": "A Rust command-line tool hosted on GitHub, with cargo tests, documented in its README, and no workflow files yet.",
+      "expected_behavior": [
+        "Derives the CI steps from the commands the repository actually uses, runs them on pushes and pull requests, and does not invent extra stages.",
+        "Does not push a tag, publish a release, or add a secret, and states that the pipeline has not been proven until it runs on the platform."
+      ],
+      "assertions": [
+        {
+          "expected": true,
+          "type": "invocation_check"
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Derives the CI steps from the commands the repository actually uses, runs them on pushes and pull requests, and does not invent extra stages."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not push a tag, publish a release, or add a secret, and states that the pipeline has not been proven until it runs on the platform."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Set up CI and a tagged release pipeline for this project.",
+      "expected_skill": "an-dr-dev-implement-pipeline",
+      "context": "A Rust command-line tool hosted on GitHub, with cargo tests, documented in its README, and no workflow files yet.",
+      "expected_behavior": [
+        "Derives the CI steps from the commands the repository actually uses, runs them on pushes and pull requests, and does not invent extra stages.",
+        "Does not push a tag, publish a release, or add a secret, and states that the pipeline has not been proven until it runs on the platform."
+      ],
+      "assertions": [
+        {
+          "expected": true,
+          "type": "invocation_check"
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Derives the CI steps from the commands the repository actually uses, runs them on pushes and pull requests, and does not invent extra stages."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not push a tag, publish a release, or add a secret, and states that the pipeline has not been proven until it runs on the platform."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Set up CI and a tagged release pipeline for this project.",
+      "expected_skill": "an-dr-dev-implement-pipeline",
+      "context": "A Rust command-line tool hosted on GitHub, with cargo tests, documented in its README, and no workflow files yet.",
+      "expected_behavior": [
+        "Derives the CI steps from the commands the repository actually uses, runs them on pushes and pull requests, and does not invent extra stages.",
+        "Does not push a tag, publish a release, or add a secret, and states that the pipeline has not been proven until it runs on the platform."
+      ],
+      "assertions": [
+        {
+          "expected": true,
+          "type": "invocation_check"
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Derives the CI steps from the commands the repository actually uses, runs them on pushes and pull requests, and does not invent extra stages."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not push a tag, publish a release, or add a secret, and states that the pipeline has not been proven until it runs on the platform."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "What does a CI pipeline do? Answer in one sentence.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "expected": false,
+          "type": "invocation_check"
+        },
+        {
+          "allowed_paths": [],
+          "type": "diff_scope"
+        }
+      ],
+      "runs": 1
+    }
+  ]
+}

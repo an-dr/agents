@@ -144,6 +144,7 @@ flowchart LR
         an-dr-dev-follow-workflow
         an-dr-dev-implement-adversarial-ut
         an-dr-dev-implement-code
+        an-dr-dev-implement-pipeline
         an-dr-dev-integrate
         an-dr-dev-review
         an-dr-dev-test
@@ -196,8 +197,9 @@ flowchart LR
     an-dr-dev-analyze-slop --> an-dr-ai-review-instruction & an-dr-ai-send-message & an-dr-concept-ai-slop & an-dr-convention-artifact-layout & an-dr-convention-html-report
     an-dr-dev-assign-ai-level --> an-dr-ai-send-message & an-dr-convention-ai-level
     an-dr-dev-design --> an-dr-ai-send-message & an-dr-convention-adr & an-dr-convention-use-case
-    an-dr-dev-follow-workflow --> an-dr-ai-send-message & an-dr-convention-adr & an-dr-dev-analyze-changes & an-dr-dev-debug & an-dr-dev-design & an-dr-dev-implement-code & an-dr-dev-integrate & an-dr-dev-review & an-dr-dev-test & an-dr-dev-write-documentation & an-dr-dev-write-readme & an-dr-dev-write-specification & an-dr-git-commit
+    an-dr-dev-follow-workflow --> an-dr-ai-send-message & an-dr-convention-adr & an-dr-dev-analyze-changes & an-dr-dev-debug & an-dr-dev-design & an-dr-dev-implement-code & an-dr-dev-implement-pipeline & an-dr-dev-integrate & an-dr-dev-review & an-dr-dev-test & an-dr-dev-write-documentation & an-dr-dev-write-readme & an-dr-dev-write-specification & an-dr-git-commit
     an-dr-dev-implement-code --> an-dr-convention-adr & an-dr-convention-code & an-dr-dev-write-documentation
+    an-dr-dev-implement-pipeline --> an-dr-ai-send-message
     an-dr-dev-integrate --> an-dr-ai-send-message & an-dr-convention-commit-message & an-dr-git-commit
     an-dr-dev-review --> an-dr-ai-send-message & an-dr-concept-ai-slop & an-dr-concept-clean-dependencies & an-dr-concept-evidence-grounding & an-dr-convention-artifact-layout & an-dr-convention-code & an-dr-convention-html-report
     an-dr-dev-test --> an-dr-ai-send-message & an-dr-dev-implement-adversarial-ut
