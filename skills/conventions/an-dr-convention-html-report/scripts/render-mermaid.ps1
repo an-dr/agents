@@ -128,7 +128,7 @@ function Invoke-MermaidRender([string[]]$Sources) {
 
         $arguments = @('--headless=new',
             "--user-data-dir=$(Join-Path $work 'profile')", '--allow-file-access-from-files',
-            '--virtual-time-budget=60000', '--dump-dom', ([Uri]$page).AbsoluteUri)
+            '--virtual-time-budget=60000', '--dump-dom', ([Uri]::new($page, [UriKind]::Absolute)).AbsoluteUri)
         # Redirected to a file: Chrome's large dump arrives empty through a PowerShell pipe.
         $output = Join-Path $work 'dom.html'
         Start-Process -FilePath (Find-Browser) -ArgumentList $arguments -Wait -NoNewWindow `
