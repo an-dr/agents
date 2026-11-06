@@ -16,11 +16,11 @@ Answers one question: **why is the agent not behaving as the policy says it shou
 
 Installation is only the first of three layers, and a passing install proves the least interesting one. Diagnose in order — the first broken layer explains the symptom, and fixing a later layer while an earlier one is broken changes nothing.
 
-| Layer | Question | Owner |
-| --- | --- | --- |
-| Machine | Is the policy installed for this tool at all? | `check-agents-health.ps1`, delegating to `an-dr-agents-repo-install` |
-| Repository | Does *this* repository opt in, and does its reference resolve? | `check-agents-health.ps1` |
-| Pickup | Did the bot actually load and act on what is wired? | this skill, below — no script can see it |
+| Layer      | Question                                                       | Owner                                                                |
+| ---------- | -------------------------------------------------------------- | -------------------------------------------------------------------- |
+| Machine    | Is the policy installed for this tool at all?                  | `check-agents-health.ps1`, delegating to `an-dr-agents-repo-install` |
+| Repository | Does *this* repository opt in, and does its reference resolve? | `check-agents-health.ps1`                                            |
+| Pickup     | Did the bot actually load and act on what is wired?            | this skill, below — no script can see it                             |
 
 ## Run
 
@@ -28,12 +28,12 @@ Installation is only the first of three layers, and a passing install proves the
 pwsh <skill>/scripts/check-agents-health.ps1
 ```
 
-| Parameter | Effect |
-| --- | --- |
+| Parameter                | Effect                                                                                              |
+| ------------------------ | --------------------------------------------------------------------------------------------------- |
 | `-RepositoryPath <path>` | Repository to diagnose. Defaults to the current directory; a subdirectory resolves to its git root. |
-| `-AgentsRoot <path>` | Clone the global install should point at. Passed through to the install verifier. |
-| `-Tools <ids>` | Limit the install layer to `claude`, `codex`, `copilot`, `deepseek`, `gemini`, `opencode`. |
-| `-SkipInstallCheck` | Repository layer only, when the machine install is known good. |
+| `-AgentsRoot <path>`     | Clone the global install should point at. Passed through to the install verifier.                   |
+| `-Tools <ids>`           | Limit the install layer to `claude`, `codex`, `copilot`, `deepseek`, `gemini`, `opencode`.          |
+| `-SkipInstallCheck`      | Repository layer only, when the machine install is known good.                                      |
 
 The script prints one Markdown table covering the machine and repository layers and exits non-zero on any failure. Report that table to the user as-is, then continue with the pickup layer yourself — a `pass` verdict is precisely the case where the answer lies there.
 
@@ -50,15 +50,15 @@ Only the running session can observe this layer, so check it from inside the ses
 
 Name the layer, the cause, and one command or edit. Do not propose a fix for a layer that is not the first broken one.
 
-| Finding | Fix |
-| --- | --- |
-| Install rows fail | Re-run `an-dr-agents-repo-install`'s `install-agents.ps1`; its SKILL.md owns conflicts, `unsupported` rows, and unknown tools. |
+| Finding                                                              | Fix                                                                                                                                                                                                                                   |
+| -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Install rows fail                                                    | Re-run `an-dr-agents-repo-install`'s `install-agents.ps1`; its SKILL.md owns conflicts, `unsupported` rows, and unknown tools.                                                                                                        |
 | No root `AGENTS.md`/`CLAUDE.md`, or it does not reference the policy | Add a root instruction file referencing `agents/AGENTS.md` — but only if this repository should be governed. The `verdict` row reports this as `info`, not a failure, because silence in an un-wired repository is the guard working. |
-| `AGENTS.md` without `CLAUDE.md`, or the reverse | Add the missing one; Claude Code reads `CLAUDE.md`; Codex, Copilot, opencode, and DeepSeek Harness read `AGENTS.md`. A repository wired for one tool is invisible to the other. |
-| `agents/` present but empty | `git submodule update --init --recursive`. |
-| No `## Commit scopes` section | Add one to the root `AGENTS.md`; `an-dr-convention-commit-message`'s checker rejects every scoped subject without it. |
-| Everything wired, policy not in context | A tool-side loading problem: instruction file too large, an `@` import the tool does not expand, a cached session. Restart the session, then reduce what the block asks the tool to load. |
-| Everything wired and loaded, but the agent still skipped the flow | The instructions are ambiguous or too weak for that tool. This is a process defect, not an installation one — report it as a process defect, with the concrete task that went wrong. |
+| `AGENTS.md` without `CLAUDE.md`, or the reverse                      | Add the missing one; Claude Code reads `CLAUDE.md`; Codex, Copilot, opencode, and DeepSeek Harness read `AGENTS.md`. A repository wired for one tool is invisible to the other.                                                       |
+| `agents/` present but empty                                          | `git submodule update --init --recursive`.                                                                                                                                                                                            |
+| No `## Commit scopes` section                                        | Add one to the root `AGENTS.md`; `an-dr-convention-commit-message`'s checker rejects every scoped subject without it.                                                                                                                 |
+| Everything wired, policy not in context                              | A tool-side loading problem: instruction file too large, an `@` import the tool does not expand, a cached session. Restart the session, then reduce what the block asks the tool to load.                                             |
+| Everything wired and loaded, but the agent still skipped the flow    | The instructions are ambiguous or too weak for that tool. This is a process defect, not an installation one — report it as a process defect, with the concrete task that went wrong.                                                  |
 
 The last row is the boundary of this skill. A rule that one tool follows and another ignores is evidence about the wording, and belongs in a process proposal against `AGENTS.md` or a skill; a proposal needs evidence from real work, so carry the concrete task that went wrong rather than the observation alone.
 

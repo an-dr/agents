@@ -22,13 +22,13 @@ Apply `an-dr-concept-clean-dependencies` to one scope in two stages: analyse and
 
 Take arrows one at a time, starting with those on a cycle, and put each in one bucket.
 
-| Bucket | Meaning | Move |
-| --- | --- | --- |
-| Needless | A mention or use that serves nothing: a "see also", an example, a restated rule, a courtesy reference | Delete it |
-| Misplaced | The consumer needs a rule or part that another component owns, but names the wrong owner or restates it | Point to the owner, and delete the restatement |
-| Reversed | A stable component names its consumer | Delete the reverse arrow; the consumer already points at it, and a result returns to the caller |
-| Shared | Two components need the same part | Extract it into a common component both depend on |
-| Genuine | The consumer cannot do its job without the other | Keep it, declared |
+| Bucket    | Meaning                                                                                                 | Move                                                                                            |
+| --------- | ------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Needless  | A mention or use that serves nothing: a "see also", an example, a restated rule, a courtesy reference   | Delete it                                                                                       |
+| Misplaced | The consumer needs a rule or part that another component owns, but names the wrong owner or restates it | Point to the owner, and delete the restatement                                                  |
+| Reversed  | A stable component names its consumer                                                                   | Delete the reverse arrow; the consumer already points at it, and a result returns to the caller |
+| Shared    | Two components need the same part                                                                       | Extract it into a common component both depend on                                               |
+| Genuine   | The consumer cannot do its job without the other                                                        | Keep it, declared                                                                               |
 
 Choose the cheapest move that removes the arrow, in this order:
 

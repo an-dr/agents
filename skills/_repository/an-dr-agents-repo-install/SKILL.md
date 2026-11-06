@@ -27,13 +27,13 @@ From anywhere:
 pwsh <skill>/scripts/install-agents.ps1
 ```
 
-| Parameter | Effect |
-| --- | --- |
-| `-AgentsRoot <path>` | Clone to install from. Defaults to the clone holding this script. |
-| `-Tools <ids>` | Limit to `claude`, `codex`, `copilot`, `deepseek`, `gemini`, `opencode`. Default: every tool whose home directory exists. |
-| `-SkipSkills` | Write instruction blocks only, no junctions. |
-| `-Force` | Replace a real directory occupying a skill link path. |
-| `-Uninstall` | Remove the managed blocks and the junctions. |
+| Parameter            | Effect                                                                                                                    |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `-AgentsRoot <path>` | Clone to install from. Defaults to the clone holding this script.                                                         |
+| `-Tools <ids>`       | Limit to `claude`, `codex`, `copilot`, `deepseek`, `gemini`, `opencode`. Default: every tool whose home directory exists. |
+| `-SkipSkills`        | Write instruction blocks only, no junctions.                                                                              |
+| `-Force`             | Replace a real directory occupying a skill link path.                                                                     |
+| `-Uninstall`         | Remove the managed blocks and the junctions.                                                                              |
 
 The script is idempotent. It edits only between its `agents-install` markers, never other content in those files, and only ever replaces links it recognises. Junctions need no administrator rights or developer mode on Windows; symbolic links need no elevation on Linux/macOS either.
 

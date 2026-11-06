@@ -24,11 +24,11 @@ So documentation is read as a hypothesis and then tested against the code. Never
 
 Every statement on the page carries its provenance, and the page renders it as a badge:
 
-| Badge | Means | Allowed source |
-| --- | --- | --- |
-| verified | Read in the code, with a path that exists | source files, manifests, CI definitions, lockfiles |
+| Badge    | Means                                                | Allowed source                                              |
+| -------- | ---------------------------------------------------- | ----------------------------------------------------------- |
+| verified | Read in the code, with a path that exists            | source files, manifests, CI definitions, lockfiles          |
 | inferred | A strong pattern the code implies but does not state | naming, directory shape, import graph, framework convention |
-| claimed | Asserted by documentation and not confirmed | README, `docs/`, ADRs, comments, commit messages |
+| claimed  | Asserted by documentation and not confirmed          | README, `docs/`, ADRs, comments, commit messages            |
 
 An inferred claim is never presented as verified, and a claimed one is never presented at all outside the drift table unless the reader is told it is unconfirmed.
 
@@ -48,10 +48,10 @@ Then read, in this order: the manifests, the entry points, the configuration and
 
 Draw levels 1 to 3. Level 4 is the code itself and the reader already has it.
 
-| Level | Answers | Derived from |
-| --- | --- | --- |
-| 1 — Context | What is this system, who uses it, what does it talk to that it does not own | outbound calls, SDK and client dependencies, credentials and endpoints in configuration, webhooks, schedulers |
-| 2 — Container | What separately runs or deploys, in what language, talking over what | entry points, `Dockerfile` and compose files, deployment manifests, CI jobs, process definitions, workspace members, ports and queues |
+| Level         | Answers                                                                     | Derived from                                                                                                                          |
+| ------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| 1 — Context   | What is this system, who uses it, what does it talk to that it does not own | outbound calls, SDK and client dependencies, credentials and endpoints in configuration, webhooks, schedulers                         |
+| 2 — Container | What separately runs or deploys, in what language, talking over what        | entry points, `Dockerfile` and compose files, deployment manifests, CI jobs, process definitions, workspace members, ports and queues |
 
 A desktop application, a CLI, or a library deploys nothing, and its container level is not empty — it is the declared binaries, the compiled guest artifacts, the packaging scripts, and the helper processes the main one spawns. The scan reports those separately for that reason.
 | 3 — Component | Inside the container the reader will actually work in, what are the major groupings and how do they depend on each other | directory structure confirmed by the import graph, not by the directory names alone |
@@ -64,20 +64,20 @@ Choose the level 3 container by where the work happens — the one with the most
 
 This is the part a newcomer cannot produce for themselves and the part the project's own documentation will never contain. Hunt for it deliberately rather than reporting whatever the scan happened to surface.
 
-| Problem | Evidence that proves it |
-| --- | --- |
-| Circular dependencies | a concrete import cycle, named module by module |
-| Layering violation | an inner layer importing an outer one — domain reaching into transport, business logic importing the database driver, UI holding SQL |
-| God module | one file or class with disproportionate size and fan-in, named with both numbers |
-| Duplicated logic | the same rule implemented in two places that can now disagree |
-| Hidden coupling | modules that always change together in the churn history without importing each other |
-| Dead code | exports, flags, or whole directories nothing reaches |
-| Untested critical path | the primary flow's modules absent from the test evidence |
-| Silent failure | swallowed exceptions, ignored return values, bare catches on the main path |
-| Configuration and secrets | committed credentials, hardcoded hosts, defaults that only work on one machine |
-| Dependency risk | unpinned, duplicated, abandoned, or a lockfile that disagrees with its manifest |
-| Build and CI gaps | a build or test command in the documentation that CI does not run, or that fails on a clean checkout |
-| Documentation drift | the whole intent-versus-reality table, summarised as one ranked entry |
+| Problem                   | Evidence that proves it                                                                                                              |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Circular dependencies     | a concrete import cycle, named module by module                                                                                      |
+| Layering violation        | an inner layer importing an outer one — domain reaching into transport, business logic importing the database driver, UI holding SQL |
+| God module                | one file or class with disproportionate size and fan-in, named with both numbers                                                     |
+| Duplicated logic          | the same rule implemented in two places that can now disagree                                                                        |
+| Hidden coupling           | modules that always change together in the churn history without importing each other                                                |
+| Dead code                 | exports, flags, or whole directories nothing reaches                                                                                 |
+| Untested critical path    | the primary flow's modules absent from the test evidence                                                                             |
+| Silent failure            | swallowed exceptions, ignored return values, bare catches on the main path                                                           |
+| Configuration and secrets | committed credentials, hardcoded hosts, defaults that only work on one machine                                                       |
+| Dependency risk           | unpinned, duplicated, abandoned, or a lockfile that disagrees with its manifest                                                      |
+| Build and CI gaps         | a build or test command in the documentation that CI does not run, or that fails on a clean checkout                                 |
+| Documentation drift       | the whole intent-versus-reality table, summarised as one ranked entry                                                                |
 
 Each finding needs a severity, a path that exists, what it costs the reader in practice, and the cheapest honest fix. Rank by cost and cut below the top ten — an unranked list of thirty reads as noise and gets ignored entirely. Symptoms are grouped under their cause; the same architectural fault listed eleven times is one finding.
 

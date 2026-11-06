@@ -64,12 +64,12 @@ Use Direct to fix the parser's handling of empty input. Preserve its public
 API and run the existing tests before committing the change. Do not push.
 ```
 
-| Flow | Use it for | User decisions |
-| --- | --- | --- |
-| Direct | Work completed on the current branch | No workflow approval gates |
-| Quick | One self-contained pass on the current branch | Implementation and verification |
-| Detailed | Planned increments on a feature branch | Intake, implementation, each increment's verification, and integration |
-| Detailed Auto | Planned increments with agent verification | Intake, implementation, and final integration |
+| Flow          | Use it for                                    | User decisions                                                         |
+| ------------- | --------------------------------------------- | ---------------------------------------------------------------------- |
+| Direct        | Work completed on the current branch          | No workflow approval gates                                             |
+| Quick         | One self-contained pass on the current branch | Implementation and verification                                        |
+| Detailed      | Planned increments on a feature branch        | Intake, implementation, each increment's verification, and integration |
+| Detailed Auto | Planned increments with agent verification    | Intake, implementation, and final integration                          |
 
 For gated work, the [workflow controller skill](skills/actions/an-dr-dev-follow-workflow/SKILL.md) owns the commands and transitions. The agent resumes existing state instead of reconstructing it from conversation history. [AGENTS.md](AGENTS.md) defines the policy, including the separate review rule for changes to this process repository.
 
@@ -99,15 +99,15 @@ Generated skill outputs live under `.tmp-ai-gen/` according to the [artifact lay
 
 ### 📁 Repository layout
 
-| Path | Purpose |
-| --- | --- |
-| `AGENTS.md` | Policy entry point |
-| `skills/actions/` | Procedures the agent performs |
-| `skills/concepts/` | Principles applied when their subject is in play |
-| `skills/conventions/` | Artifact formats and their mechanical checks |
-| `skills/_repository/` | Maintenance and installation of this repository |
-| `tests/run-all.ps1` | Discovery of conventional skill test runners |
-| `.tmp-ai-gen/` | Ignored generated skill outputs, with a `<kind>-latest` copy of each |
+| Path                  | Purpose                                                              |
+| --------------------- | -------------------------------------------------------------------- |
+| `AGENTS.md`           | Policy entry point                                                   |
+| `skills/actions/`     | Procedures the agent performs                                        |
+| `skills/concepts/`    | Principles applied when their subject is in play                     |
+| `skills/conventions/` | Artifact formats and their mechanical checks                         |
+| `skills/_repository/` | Maintenance and installation of this repository                      |
+| `tests/run-all.ps1`   | Discovery of conventional skill test runners                         |
+| `.tmp-ai-gen/`        | Ignored generated skill outputs, with a `<kind>-latest` copy of each |
 
 ### 🔗 Skill dependencies
 

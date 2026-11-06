@@ -15,12 +15,12 @@ Says what a new project or feature must do and what shape it takes: its use case
 
 ## Decide whether it applies
 
-| The work is | Do |
-| --- | --- |
-| a new project | apply this skill |
-| a capability the system does not have yet, with its own actors or goals | apply this skill |
-| a change to an existing feature, a fix, or a refactoring | skip it, unless the user asked for a specification |
-| anything you cannot place in one of these rows | ask the user |
+| The work is                                                             | Do                                                 |
+| ----------------------------------------------------------------------- | -------------------------------------------------- |
+| a new project                                                           | apply this skill                                   |
+| a capability the system does not have yet, with its own actors or goals | apply this skill                                   |
+| a change to an existing feature, a fix, or a refactoring                | skip it, unless the user asked for a specification |
+| anything you cannot place in one of these rows                          | ask the user                                       |
 
 Ask as an `an-dr-ai-send-message` question, naming the work and why it is unclear. In a gated flow, record it as a controller question first. Never guess in either direction.
 
@@ -53,11 +53,11 @@ Draw a diagram when the structure is not obvious from one short list. Leave out 
 
 ## Output
 
-| Part | Location |
-| --- | --- |
-| Use cases | `docs/use-cases/`, as `an-dr-convention-use-case` lays out |
-| Architecture | `docs/architecture.md`, or the host's existing architecture document, extended rather than duplicated |
-| Lasting decisions | ADRs |
+| Part              | Location                                                                                              |
+| ----------------- | ----------------------------------------------------------------------------------------------------- |
+| Use cases         | `docs/use-cases/`, as `an-dr-convention-use-case` lays out                                            |
+| Architecture      | `docs/architecture.md`, or the host's existing architecture document, extended rather than duplicated |
+| Lasting decisions | ADRs                                                                                                  |
 
 - **Gated flow:** keep the draft in `.progress/specification.md` during the read-only phases and show it to the user before the `implement` gate. Write the final documents with `an-dr-dev-write-documentation` in the first DOCS phase, then delete the draft.
 - **Direct:** write the final documents with `an-dr-dev-write-documentation` before the code, and name them in the delivery.

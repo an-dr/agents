@@ -21,13 +21,13 @@ An implementor renders the levels for each medium and owns its palette, classes,
 
 Map every item to exactly one level.
 
-| Level | For | Loudness |
-| --- | --- | --- |
+| Level      | For                                                                                                          | Loudness                                                             |
+| ---------- | ------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------- |
 | `critical` | Wrong result, data loss, security exposure, a false claim the conclusion rests on: blocks use or integration | the loudest signal the medium has, and the only one that may use red |
-| `high` | A real problem that must be fixed, but does not by itself invalidate the result | clearly lit, never red |
-| `notice` | Worth a look and a decision: minor issue, partial support, unconfirmed claim, warning | lit by weight and edge, no alarm hue |
-| `info` | Neutral context the reader may need: scope, kind labels, what was not checked | secondary, unlit |
-| `ok` | Passed, supported, verified, positive | dimmest, grouped, unlit |
+| `high`     | A real problem that must be fixed, but does not by itself invalidate the result                              | clearly lit, never red                                               |
+| `notice`   | Worth a look and a decision: minor issue, partial support, unconfirmed claim, warning                        | lit by weight and edge, no alarm hue                                 |
+| `info`     | Neutral context the reader may need: scope, kind labels, what was not checked                                | secondary, unlit                                                     |
+| `ok`       | Passed, supported, verified, positive                                                                        | dimmest, grouped, unlit                                              |
 
 ## Rules
 

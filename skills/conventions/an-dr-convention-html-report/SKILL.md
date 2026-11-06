@@ -31,13 +31,13 @@ A generated page is not repository content: take its path from `an-dr-convention
 
 This skill is the HTML implementor of `an-dr-concept-dark-cockpit`, which owns the ladder and its rules. Mark each finding with one level class on its badge (`ck-badge`), its block (`ck-item`), or its table row. `embed-cockpit.ps1` then inlines the stylesheet, and does nothing when the page carries no `ck-` class, so the render step below is the same for every page.
 
-| Level | Class | Look |
-| --- | --- | --- |
+| Level      | Class         | Look                                      |
+| ---------- | ------------- | ----------------------------------------- |
 | `critical` | `ck-critical` | red, filled badge, tinted background, `✖` |
-| `high` | `ck-high` | amber, solid edge, `▲` |
-| `notice` | `ck-notice` | full ink, no hue, dashed edge, `◆` |
-| `info` | `ck-info` | secondary ink, no edge |
-| `ok` | `ck-ok` | low-contrast grey, no hue, no edge |
+| `high`     | `ck-high`     | amber, solid edge, `▲`                    |
+| `notice`   | `ck-notice`   | full ink, no hue, dashed edge, `◆`        |
+| `info`     | `ck-info`     | secondary ink, no edge                    |
+| `ok`       | `ck-ok`       | low-contrast grey, no hue, no edge        |
 
 - Collapse `ok` items into a closed `<details class="ck-quiet">`.
 - Normal content sits on an off-white page, never pure white; only lit `notice` and `high` items lift to the white `--ck-lift` surface, and `critical` keeps its red tint. In dark themes the lift is the lightest panel.
@@ -57,12 +57,12 @@ To brand a page, define `--brand-ok`, `--brand-info`, and `--brand-notice`; the 
 
 Use a diagram when structure or flow is the point: dependencies and layers, a request or handshake, a lifecycle, a decision. Do not draw what one sentence says.
 
-| Shows | Mermaid type |
-| --- | --- |
+| Shows                                                             | Mermaid type                           |
+| ----------------------------------------------------------------- | -------------------------------------- |
 | Layers, dependencies, C4 context, container, and component levels | `flowchart` with `subgraph` boundaries |
-| Request flows, handshakes, message order | `sequenceDiagram` |
-| Lifecycles and explicit states | `stateDiagram-v2` |
-| Branching behaviour | `flowchart` with decision nodes |
+| Request flows, handshakes, message order                          | `sequenceDiagram`                      |
+| Lifecycles and explicit states                                    | `stateDiagram-v2`                      |
+| Branching behaviour                                               | `flowchart` with decision nodes        |
 
 - Write each diagram as a `<pre class="mermaid">` block holding the Mermaid source. Escape `<`, `>`, and `&` in that source as HTML entities; quote node labels that contain punctuation.
 - Mark meaning with shape, line style, and `classDef` stroke settings rather than fixed fill colours, so diagrams stay readable in both themes. Explain any styling in a legend or caption.

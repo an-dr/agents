@@ -20,28 +20,28 @@ Load `an-dr-convention-markdown` before writing a line: its rules govern line br
 
 Never open the README first — read the evidence, then judge what the README says about it.
 
-| Look at | Tells you |
-| --- | --- |
+| Look at                                                                         | Tells you                                                                            |
+| ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
 | `package.json`, `Cargo.toml`, `pyproject.toml`, `go.mod`, `*.csproj`, `pom.xml` | name, version, entry points, dependencies, whether it is a library or an application |
-| `bin/`, `main.*`, `cmd/`, `[project.scripts]`, `"bin"` | it is a CLI, and what the command is called |
-| `packages/`, `apps/`, workspace declarations | it is a monorepo and needs a repository map |
-| `tests/`, `spec/`, `*_test.*` | a development section is honest |
-| `.github/workflows/`, `.gitlab-ci.yml` | badges can be real, and how the project is built |
-| `LICENSE`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md` | which of those sections may exist at all |
-| `docs/`, `docs/an-dr-convention-adr/` | link out instead of inlining |
-| commit count and recency, CI presence | experimental or maintained — the status line is evidence, not a guess |
+| `bin/`, `main.*`, `cmd/`, `[project.scripts]`, `"bin"`                          | it is a CLI, and what the command is called                                          |
+| `packages/`, `apps/`, workspace declarations                                    | it is a monorepo and needs a repository map                                          |
+| `tests/`, `spec/`, `*_test.*`                                                   | a development section is honest                                                      |
+| `.github/workflows/`, `.gitlab-ci.yml`                                          | badges can be real, and how the project is built                                     |
+| `LICENSE`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`                              | which of those sections may exist at all                                             |
+| `docs/`, `docs/an-dr-convention-adr/`                                           | link out instead of inlining                                                         |
+| commit count and recency, CI presence                                           | experimental or maintained — the status line is evidence, not a guess                |
 
 ## Classify what is already there
 
 A chaotic README usually suffers from redundancy, dead links, and bad order more than from missing content. Before writing, put every existing section in one bucket:
 
-| Bucket | Meaning |
-| --- | --- |
-| keep | true, useful, already in the right place — carry it across unchanged, including its wording |
-| rewrite | true but buried, bloated, or out of order |
-| cut | false, duplicated elsewhere in the file, or dead |
+| Bucket   | Meaning                                                                                                                                                                                                                 |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| keep     | true, useful, already in the right place — carry it across unchanged, including its wording                                                                                                                             |
+| rewrite  | true but buried, bloated, or out of order                                                                                                                                                                               |
+| cut      | false, duplicated elsewhere in the file, or dead                                                                                                                                                                        |
 | relocate | true and worth keeping, but at the wrong altitude — a specification belongs in the document that owns it, design detail in `design/`, implementation notes in the code's own doc comments. Move it and link, never both |
-| missing | the baseline or a conditional module the evidence supports |
+| missing  | the baseline or a conditional module the evidence supports                                                                                                                                                              |
 
 Cutting is work. A section removed for redundancy improves the README as much as one added.
 

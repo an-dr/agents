@@ -18,12 +18,12 @@ Integration always rebases first, so the default branch never gains a merge comm
 
 Ask it every time as the first step of integration, before progress cleanup, rebase, or any other history change, and never answer it yourself. Approval to integrate is not a choice of mode, and the mode used last time is not a default. `integrate-4-finish.ps1` makes `-Mode` mandatory so no run can skip the question.
 
-| Mode | What it does | Choose it when |
-| --- | --- | --- |
-| `Commits` | Rebases and fast-forwards the base, keeping every branch commit | each commit is a meaningful step worth keeping in the base history |
-| `Regroup` | Rebuilds the branch as the few logical commits the user asks for, then fast-forwards the base like `Commits` | the increments were too many to keep, but the change has parts worth separating |
-| `Squash` | Collapses the branch into one commit, then fast-forwards the base | the branch is one logical change and the increments were the route, not the result |
-| `Request` | Collapses the branch into one commit, pushes it, and opens a pull request | the change needs review or CI on the platform before it reaches the base |
+| Mode          | What it does                                                                                                                                                | Choose it when                                                                                    |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `Commits`     | Rebases and fast-forwards the base, keeping every branch commit                                                                                             | each commit is a meaningful step worth keeping in the base history                                |
+| `Regroup`     | Rebuilds the branch as the few logical commits the user asks for, then fast-forwards the base like `Commits`                                                | the increments were too many to keep, but the change has parts worth separating                   |
+| `Squash`      | Collapses the branch into one commit, then fast-forwards the base                                                                                           | the branch is one logical change and the increments were the route, not the result                |
+| `Request`     | Collapses the branch into one commit, pushes it, and opens a pull request                                                                                   | the change needs review or CI on the platform before it reaches the base                          |
 | `RebaseMerge` | Regroups the branch into at most five logical commits, pushes them, opens a pull request, fixes CI on it, and lands it with the platform's rebase and merge | the change needs CI on the platform, and its parts belong in the base history as separate commits |
 
 `Commits`, `Regroup`, and `Squash` push the base and delete the feature branch. `Request` leaves the base untouched and the branch alive — the platform merges it. `RebaseMerge` lands through the platform too, but the agent drives it there, as described below. `gh` opens the request when it is installed; otherwise the script pushes and prints where to open it by hand.
@@ -45,15 +45,15 @@ Run the relevant tests again if rewritten commits have not already been verified
 
 Ask for the mode first; then run the progress cleanup and the step scripts from `<skill>/scripts/`. Each script exits non-zero on failure. `<an-dr-convention-commit-message>` is that convention's folder, wherever the agent loaded it from; the scripts take it as a parameter instead of guessing where it is installed.
 
-| Step | Command |
-| --- | --- |
-| 0 — remove progress | `pwsh remove-progress.ps1 [-BaseBranch <name>]` |
-| 1 — check state | `pwsh integrate-1-check.ps1 [-BaseBranch <name>]` |
-| 2 — squash commits (optional) | `pwsh integrate-2-squash.ps1 -Hash <hash> -Message '<msg>' -CommitMessageSkill <an-dr-convention-commit-message> [-BaseBranch <name>]` |
-| 2 — regroup commits (`Regroup` only) | `pwsh integrate-2-regroup.ps1 -Plan <plan.json> -CommitMessageSkill <an-dr-convention-commit-message> [-BaseBranch <name>]` |
-| 3 — rebase | `pwsh integrate-3-rebase.ps1 [-BaseBranch <name>]` |
-| 4 — finish | `pwsh integrate-4-finish.ps1 -Mode <Commits\|Squash\|Request\|RebaseMerge> [-Message '<msg>' -CommitMessageSkill <an-dr-convention-commit-message>] [-BaseBranch <name>]` |
-| 5 — rebase-merge (`RebaseMerge` only) | `pwsh integrate-5-rebase-merge.ps1 -TestedCommit <sha> [-BaseBranch <name>]` |
+| Step                                  | Command                                                                                                                                                                   |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0 — remove progress                   | `pwsh remove-progress.ps1 [-BaseBranch <name>]`                                                                                                                           |
+| 1 — check state                       | `pwsh integrate-1-check.ps1 [-BaseBranch <name>]`                                                                                                                         |
+| 2 — squash commits (optional)         | `pwsh integrate-2-squash.ps1 -Hash <hash> -Message '<msg>' -CommitMessageSkill <an-dr-convention-commit-message> [-BaseBranch <name>]`                                    |
+| 2 — regroup commits (`Regroup` only)  | `pwsh integrate-2-regroup.ps1 -Plan <plan.json> -CommitMessageSkill <an-dr-convention-commit-message> [-BaseBranch <name>]`                                               |
+| 3 — rebase                            | `pwsh integrate-3-rebase.ps1 [-BaseBranch <name>]`                                                                                                                        |
+| 4 — finish                            | `pwsh integrate-4-finish.ps1 -Mode <Commits\|Squash\|Request\|RebaseMerge> [-Message '<msg>' -CommitMessageSkill <an-dr-convention-commit-message>] [-BaseBranch <name>]` |
+| 5 — rebase-merge (`RebaseMerge` only) | `pwsh integrate-5-rebase-merge.ps1 -TestedCommit <sha> [-BaseBranch <name>]`                                                                                              |
 
 **Procedure:**
 

@@ -19,22 +19,22 @@ Every skill is valid [Agent Skills](https://agentskills.io/specification) format
 
 The extensions live in `metadata`. `author` and `version` are plain keys, and the keys that carry meaning for this convention use the `an-dr.` prefix that keeps them clear of other tools' keys:
 
-| Key | Value |
-| --- | --- |
-| `author` | who wrote the skill |
-| `version` | the skill's version, a quoted semantic version |
-| `an-dr.type` | `action`, `concept`, or `convention` |
+| Key                  | Value                                                                    |
+| -------------------- | ------------------------------------------------------------------------ |
+| `author`             | who wrote the skill                                                      |
+| `version`            | the skill's version, a quoted semantic version                           |
+| `an-dr.type`         | `action`, `concept`, or `convention`                                     |
 | `an-dr.dependencies` | the skills this skill names, space-separated, or `none`, or `PROHIBITED` |
 
 The extensions are conventions of the project, not of the format. A tool that ignores them still loads every skill; the rule for passive skills below is also stated in `AGENTS.md`, which every tool reads.
 
 ## Types
 
-| Type | Holds | Agent uses it by | Contains |
-| --- | --- | --- | --- |
-| Action | A procedure that produces a result | running it | `SKILL.md`, scripts, assets, tests |
-| Concept | A principle: what it requires, where its boundary is, how to recognise a violation | reading it when its subject is in play | `SKILL.md` and evals; no production scripts |
-| Convention | The format rules for an artifact: what a correct one looks like | reading it when writing or reviewing that artifact | `SKILL.md`, tests, and the scripts that check or generate it |
+| Type       | Holds                                                                              | Agent uses it by                                   | Contains                                                     |
+| ---------- | ---------------------------------------------------------------------------------- | -------------------------------------------------- | ------------------------------------------------------------ |
+| Action     | A procedure that produces a result                                                 | running it                                         | `SKILL.md`, scripts, assets, tests                           |
+| Concept    | A principle: what it requires, where its boundary is, how to recognise a violation | reading it when its subject is in play             | `SKILL.md` and evals; no production scripts                  |
+| Convention | The format rules for an artifact: what a correct one looks like                    | reading it when writing or reviewing that artifact | `SKILL.md`, tests, and the scripts that check or generate it |
 
 Concepts and conventions are passive: the agent reads them, never runs them as a procedure. A concept has no production scripts and calls no action; its tests assess application of the principle. A convention reinforces its rules with scripts that call no action, and actions reach them like any public script, through a passed folder. Colours, glyphs, and other presentation details belong to an implementor, not to a concept.
 
@@ -62,11 +62,11 @@ Concepts and conventions are passive: the agent reads them, never runs them as a
 
 Sections are `##` headings in sentence case, named for what the reader does or finds there. Use these, in this order, omitting any that do not apply.
 
-| Kind | Sections |
-| --- | --- |
-| Action | procedure sections named for their action (`## Select the diff`, `## Capture`), then `## Check` or `## Verify` when the skill verifies its work, then `## Output` for what it hands back, then `## Rules` for invariants, last |
-| Concept | the principle's sections, then `## Violations`; an optional review procedure may follow |
-| Convention | the rule sections, then `## Check` when a script enforces them, then `## Examples`, last |
+| Kind       | Sections                                                                                                                                                                                                                       |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Action     | procedure sections named for their action (`## Select the diff`, `## Capture`), then `## Check` or `## Verify` when the skill verifies its work, then `## Output` for what it hands back, then `## Rules` for invariants, last |
+| Concept    | the principle's sections, then `## Violations`; an optional review procedure may follow                                                                                                                                        |
+| Convention | the rule sections, then `## Check` when a script enforces them, then `## Examples`, last                                                                                                                                       |
 
 - A rule that applies everywhere in the skill goes in `## Rules`; a rule that applies to one step stays beside that step.
 - Reference material that only a branch of the skill needs is a table or a section at the end of its group, not a preamble.

@@ -17,12 +17,12 @@ Use JSON as the canonical review record. Never hand-edit the JSON or the generat
 
 ## Select the diff
 
-| Situation | Diff |
-| --- | --- |
-| Direct | Uncommitted changes for the request |
-| VERIFY | Uncommitted increment changes, or the last commit when clean |
-| SUMMARY | Full feature branch against its base |
-| Requested | Range or codebase named by the user |
+| Situation | Diff                                                         |
+| --------- | ------------------------------------------------------------ |
+| Direct    | Uncommitted changes for the request                          |
+| VERIFY    | Uncommitted increment changes, or the last commit when clean |
+| SUMMARY   | Full feature branch against its base                         |
+| Requested | Range or codebase named by the user                          |
 
 Review defects, security, structure, ergonomics, the host repository's stated conventions, and modernization, in that order. Every finding needs a tight file location and concrete recommendation. Writing preferences are not findings.
 

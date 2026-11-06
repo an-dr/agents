@@ -24,11 +24,11 @@ pwsh <skill>/scripts/find-agents-root.ps1 [-Path <start-directory>] [-AgentsRoot
 
 It looks for the clone providing this skill (following the junction of a global install), the repository being worked in, an `agents` submodule inside it, and the policy path in each tool's `an-dr-agents-repo-install` block. It prints a candidate table, then the resolved root's branch, working tree, upstream, and whether it is nested in the host repository.
 
-| Exit | Meaning | Do |
-| --- | --- | --- |
-| `0` | one clone resolved | work in the printed root |
-| `1` | no clone found | ask the user where their clone is through `an-dr-ai-send-message`, then re-run with `-AgentsRoot` |
-| `2` | several different clones | show the table and ask which one as an `an-dr-ai-send-message` question with one option per clone, then re-run with `-AgentsRoot` |
+| Exit | Meaning                  | Do                                                                                                                                |
+| ---- | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| `0`  | one clone resolved       | work in the printed root                                                                                                          |
+| `1`  | no clone found           | ask the user where their clone is through `an-dr-ai-send-message`, then re-run with `-AgentsRoot`                                 |
+| `2`  | several different clones | show the table and ask which one as an `an-dr-ai-send-message` question with one option per clone, then re-run with `-AgentsRoot` |
 
 Report every note the script prints — a detached HEAD, a dirty tree, a missing upstream, and a nested clone each change what happens at the commit. Use the resolved root for every path afterwards, including the git calls; a globally installed skill path reaches the same files through a junction, but git must run in the clone itself.
 

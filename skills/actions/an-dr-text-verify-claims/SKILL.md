@@ -32,24 +32,24 @@ The sources are the only evidence. Your own background knowledge is not evidence
    - every number, including rounded ones.
 1. **Label each claim's kind.**
 
-   | Kind | Means |
-   | --- | --- |
-   | `observed` | Stated directly by a source: a value, a quote, a line of code. |
-   | `derived` | Computed from sources: a total, a ratio, a trend, a count. |
-   | `inference` | Interpretation beyond the data: cause, intent, explanation, generalization. |
-   | `assumption` | An unstated premise that another claim depends on. Write it out explicitly. |
-   | `opinion` | A value judgment: *good*, *risky*, *should*, *the best*. |
-   | `speculation` | A prediction or hypothetical: *will*, *likely*, *could*. |
+   | Kind          | Means                                                                       |
+   | ------------- | --------------------------------------------------------------------------- |
+   | `observed`    | Stated directly by a source: a value, a quote, a line of code.              |
+   | `derived`     | Computed from sources: a total, a ratio, a trend, a count.                  |
+   | `inference`   | Interpretation beyond the data: cause, intent, explanation, generalization. |
+   | `assumption`  | An unstated premise that another claim depends on. Write it out explicitly. |
+   | `opinion`     | A value judgment: *good*, *risky*, *should*, *the best*.                    |
+   | `speculation` | A prediction or hypothetical: *will*, *likely*, *could*.                    |
 
 1. **Check each claim against the evidence set.**
 
-   | Verdict | Means |
-   | --- | --- |
-   | `supported` | The cited evidence states or entails it. |
-   | `partial` | True only with a qualification the text drops: a narrower scope, a different period, a softer degree. |
-   | `contradicted` | The evidence says otherwise. |
-   | `not-found` | The evidence set has nothing on it. |
-   | `unverifiable` | The claim cannot be settled by evidence at all, as with opinion and speculation. |
+   | Verdict        | Means                                                                                                 |
+   | -------------- | ----------------------------------------------------------------------------------------------------- |
+   | `supported`    | The cited evidence states or entails it.                                                              |
+   | `partial`      | True only with a qualification the text drops: a narrower scope, a different period, a softer degree. |
+   | `contradicted` | The evidence says otherwise.                                                                          |
+   | `not-found`    | The evidence set has nothing on it.                                                                   |
+   | `unverifiable` | The claim cannot be settled by evidence at all, as with opinion and speculation.                      |
 
    - Recompute every `derived` figure yourself, and show the computation when it differs.
    - For an `inference`, check the premises first. Then check the step: name the alternative explanation the data equally allows, or the test that would rule it out.
@@ -67,8 +67,8 @@ Open with three lines:
 
 Then the claim ledger, one row per claim:
 
-| # | Claim | Where | Kind | Verdict | Evidence | Note |
-| --- | --- | --- | --- | --- | --- | --- |
+| #   | Claim | Where | Kind | Verdict | Evidence | Note |
+| --- | ----- | ----- | ---- | ------- | -------- | ---- |
 
 - **Claim:** the shortest exact quote that carries the claim.
 - **Evidence:** a precise locator, such as `file:line`, a sheet and cell, a quoted passage, or a computation. Without a locator the verdict is `not-found`, never `supported`.
@@ -84,13 +84,13 @@ Close by sorting the claims into three groups for the user's next step:
 
 Give every audit finding levels, which `an-dr-ai-send-message` renders in chat and `an-dr-convention-html-report` in HTML. A grounded claim is normal state, so it stays dark, and the reader's eye lands on the claims that need work. Give each claim one level from its verdict:
 
-| Level | Claims |
-| --- | --- |
-| `critical` | `contradicted`, when the conclusion or recommendation depends on it |
-| `high` | any other `contradicted`, and `not-found` when the conclusion depends on it |
-| `notice` | `partial`, any other `not-found`, and the assumptions the text leaves unstated |
-| `info` | `unverifiable` opinion and speculation, shown with their kind so they stay easy to find |
-| `ok` | `supported` |
+| Level      | Claims                                                                                  |
+| ---------- | --------------------------------------------------------------------------------------- |
+| `critical` | `contradicted`, when the conclusion or recommendation depends on it                     |
+| `high`     | any other `contradicted`, and `not-found` when the conclusion depends on it             |
+| `notice`   | `partial`, any other `not-found`, and the assumptions the text leaves unstated          |
+| `info`     | `unverifiable` opinion and speculation, shown with their kind so they stay easy to find |
+| `ok`       | `supported`                                                                             |
 
 Sort the ledger by level, then by consequence. Put the `ok` rows in a collapsed group.
 

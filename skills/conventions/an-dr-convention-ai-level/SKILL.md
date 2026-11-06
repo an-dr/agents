@@ -15,13 +15,13 @@ metadata:
 
 ## Levels
 
-| Level | Tag | Meaning |
-| --- | --- | --- |
-| 0 | `AI-FREE` | No AI was used in any capacity: no code, no docs, no assets. |
-| 1 | `DOCS` | AI was used only for documentation, error checking, or architectural consultation. |
-| 2 | `ASSETS / TOOLING` | AI was used for non-functional code, such as tests and configs, or for creative assets only. |
-| 3 | `ASSISTED` | AI wrote individual functional modules under strict human review. |
-| 4 | `HEAVY AI` | A significant portion of the codebase was AI-generated with limited review. |
+| Level | Tag                | Meaning                                                                                      |
+| ----- | ------------------ | -------------------------------------------------------------------------------------------- |
+| 0     | `AI-FREE`          | No AI was used in any capacity: no code, no docs, no assets.                                 |
+| 1     | `DOCS`             | AI was used only for documentation, error checking, or architectural consultation.           |
+| 2     | `ASSETS / TOOLING` | AI was used for non-functional code, such as tests and configs, or for creative assets only. |
+| 3     | `ASSISTED`         | AI wrote individual functional modules under strict human review.                            |
+| 4     | `HEAVY AI`         | A significant portion of the codebase was AI-generated with limited review.                  |
 
 ## Rules
 

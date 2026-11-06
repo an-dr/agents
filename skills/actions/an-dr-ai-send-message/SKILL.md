@@ -46,13 +46,13 @@ The user does not see tool results: hosts collapse them, cut them short, or hide
 
 Text has no colour, so order and weight carry the signal; this section renders the levels of `an-dr-concept-dark-cockpit`, which owns what each means. Put lit rows first, bold only `critical` and `high`, prefix lit levels with their glyph, and end with the `ok` items as one line, such as `ok: 14 checks passed`.
 
-| Level | Text |
-| --- | --- |
+| Level      | Text             |
+| ---------- | ---------------- |
 | `critical` | `✖ **CRITICAL**` |
-| `high` | `▲ **high**` |
-| `notice` | `◆ notice` |
-| `info` | plain |
-| `ok` | plain, grouped |
+| `high`     | `▲ **high**`     |
+| `notice`   | `◆ notice`       |
+| `info`     | plain            |
+| `ok`       | plain, grouped   |
 
 ## Questions
 

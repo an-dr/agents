@@ -30,11 +30,11 @@ Finds the sentences, sections, and structures in a text that cost the reader mor
 
 Give each finding a stable ID `TS-001`, `TS-002`, and so on, and these parts: the quoted location, the signal, the cost to the reader, and the proposal.
 
-| Level | Finding |
-| --- | --- |
-| `high` | slop that misleads: a claim stronger than its support, a specific nobody checked, a conclusion no section backs |
-| `notice` | slop that costs time: restating, padding, decoration, a section that says nothing new |
-| `info` | a judgement call, shown with the reason it may be intentional |
+| Level    | Finding                                                                                                         |
+| -------- | --------------------------------------------------------------------------------------------------------------- |
+| `high`   | slop that misleads: a claim stronger than its support, a specific nobody checked, a conclusion no section backs |
+| `notice` | slop that costs time: restating, padding, decoration, a section that says nothing new                           |
+| `info`   | a judgement call, shown with the reason it may be intentional                                                   |
 
 Order findings by level, then by how much reader time they cost. An unflawed text gets one line saying so, never invented rows.
 

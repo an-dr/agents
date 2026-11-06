@@ -88,12 +88,12 @@ pwsh <script> finish
 
 Four gate names exist, and the controller names the one it expects for the current phase.
 
-| Gate | Where | Meaning |
-| --- | --- | --- |
-| `intake` | `INTAKE` in both Detailed flows | the user says the request list is complete |
-| `implement` | Quick `DESIGN`, `SPLIT` in both Detailed flows | the user has seen the plan and says build it |
-| `verify` | `VERIFY`, once per increment | the user accepts that increment's verification |
-| `integrate` | Detailed `SUMMARY`, Detailed Auto `FINAL_REVIEW` | the user says land the branch |
+| Gate        | Where                                            | Meaning                                        |
+| ----------- | ------------------------------------------------ | ---------------------------------------------- |
+| `intake`    | `INTAKE` in both Detailed flows                  | the user says the request list is complete     |
+| `implement` | Quick `DESIGN`, `SPLIT` in both Detailed flows   | the user has seen the plan and says build it   |
+| `verify`    | `VERIFY`, once per increment                     | the user accepts that increment's verification |
+| `integrate` | Detailed `SUMMARY`, Detailed Auto `FINAL_REVIEW` | the user says land the branch                  |
 
 Detailed Auto refuses only `verify`, which it records itself; it takes `intake`, `implement`, and `integrate` from the user like any Detailed flow. Quick `INTAKE` and Detailed `DESIGN` have no gate at all — they advance freely, because nothing there touches a file and no list is being closed.
 

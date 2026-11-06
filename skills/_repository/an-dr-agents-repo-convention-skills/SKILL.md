@@ -17,11 +17,11 @@ Every skill here follows `an-dr-convention-agent-skill`, the general convention 
 
 Every name starts with `an-dr-`, the namespace of this repository's author, because tools install skills side by side in one folder. Hyphens only: the Agent Skills format does not allow underscores in a name. After the namespace:
 
-| Skill | Name | Example |
-| --- | --- | --- |
-| Action | `<group>-<verb>`, or `<group>-<verb>-<noun>` | `an-dr-dev-test`, `an-dr-dev-verify-widget` |
-| Concept | `concept-<name>` | `an-dr-concept-resilience` |
-| Convention | `convention-<name>` | `an-dr-convention-changelog` |
+| Skill                    | Name                                                                                                                                                                                                                       | Example                                                                                              |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Action                   | `<group>-<verb>`, or `<group>-<verb>-<noun>`                                                                                                                                                                               | `an-dr-dev-test`, `an-dr-dev-verify-widget`                                                          |
+| Concept                  | `concept-<name>`                                                                                                                                                                                                           | `an-dr-concept-resilience`                                                                           |
+| Convention               | `convention-<name>`                                                                                                                                                                                                        | `an-dr-convention-changelog`                                                                         |
 | Of the repository itself | `agents-repo-<verb>[-<noun>]` for an action on the repository, `agents-<verb>[-<noun>]` for an action on the agents' own work, `agents-repo-concept-<name>` or `agents-repo-convention-<name>` for a concept or convention | `an-dr-agents-repo-install-tool`, `an-dr-agents-analyze-plan`, `an-dr-agents-repo-convention-layout` |
 
 - **Group:** the area an action works in: `ai` for agent instructions and the conversation with the user, `ai-skill` for implementing and executing skill behavior tests, `dev` for developing software, `architecture` for the structure of components, `project` for understanding a whole project, `text` for texts the user brings in, `git` for repository history, `files` for media and other files, `env` for the machine. Match the longest registered group before reading the verb.
@@ -32,26 +32,26 @@ Every name starts with `an-dr-`, the namespace of this repository's author, beca
 
 The verbs are this repository's own, so each name says exactly what the action does. Add a verb here before using it, and keep the meanings distinct: `check-names.ps1` reads this table, so the list has one owner.
 
-| Verb | Means |
-| --- | --- |
-| `analyze` | examine a scope and report findings and proposals, changing nothing |
-| `assign` | settle a value for a subject with the user and record it where it belongs |
-| `build` | assemble a derived artifact from its sources |
-| `commit` | record work in repository history |
-| `debug` | find the cause of a concrete failure |
-| `design` | explore a decision and its options before it is made |
-| `fix` | correct a defect that is known |
-| `follow` | run a controller or process and keep to its rules |
-| `implement` | build working code or tests from a design |
-| `install` | put something on a machine |
-| `integrate` | land an approved branch in the default branch |
-| `make` | create a media file or other artifact |
-| `modify` | change something that exists, in place |
-| `review` | judge a change or a text and give a verdict |
-| `send` | communicate with the user |
-| `test` | exercise code or agent behavior against test expectations |
-| `verify` | check a result against criteria or sources |
-| `write` | produce a document or a report |
+| Verb        | Means                                                                     |
+| ----------- | ------------------------------------------------------------------------- |
+| `analyze`   | examine a scope and report findings and proposals, changing nothing       |
+| `assign`    | settle a value for a subject with the user and record it where it belongs |
+| `build`     | assemble a derived artifact from its sources                              |
+| `commit`    | record work in repository history                                         |
+| `debug`     | find the cause of a concrete failure                                      |
+| `design`    | explore a decision and its options before it is made                      |
+| `fix`       | correct a defect that is known                                            |
+| `follow`    | run a controller or process and keep to its rules                         |
+| `implement` | build working code or tests from a design                                 |
+| `install`   | put something on a machine                                                |
+| `integrate` | land an approved branch in the default branch                             |
+| `make`      | create a media file or other artifact                                     |
+| `modify`    | change something that exists, in place                                    |
+| `review`    | judge a change or a text and give a verdict                               |
+| `send`      | communicate with the user                                                 |
+| `test`      | exercise code or agent behavior against test expectations                 |
+| `verify`    | check a result against criteria or sources                                |
+| `write`     | produce a document or a report                                            |
 
 A skill sits in the folder of its type, and the skills of the repository itself sit in the underscore folder `_repository/`.
 

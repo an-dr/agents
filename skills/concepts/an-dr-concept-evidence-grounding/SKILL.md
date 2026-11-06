@@ -17,12 +17,12 @@ A report is worth what its claims can be traced back to. This concept owns the p
 
 Know which kind each statement is, and let the reader know too wherever it could be mistaken for another.
 
-| Kind | Basis |
-| --- | --- |
-| Observed | Read or run in this session: a file, a command's output, a test result |
-| Derived | Calculated from observed values; the inputs are named |
-| Inferred | A conclusion reasoned from observations; the reasoning is visible |
-| Assumed | Taken as true without checking; says so |
+| Kind     | Basis                                                                          |
+| -------- | ------------------------------------------------------------------------------ |
+| Observed | Read or run in this session: a file, a command's output, a test result         |
+| Derived  | Calculated from observed values; the inputs are named                          |
+| Inferred | A conclusion reasoned from observations; the reasoning is visible              |
+| Assumed  | Taken as true without checking; says so                                        |
 | Intended | What a requirement, doc, or author claims should be true; not proof that it is |
 
 ## Rules
