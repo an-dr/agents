@@ -27,6 +27,7 @@ Procedures the agent runs. They produce a result, use scripts where the work is 
 | [`an-dr-dev-test`](actions/an-dr-dev-test/SKILL.md) | Verify changed code and report meaningful test coverage. |
 | [`an-dr-dev-write-documentation`](actions/an-dr-dev-write-documentation/SKILL.md) | Write human-facing documentation and check its claims. |
 | [`an-dr-dev-write-readme`](actions/an-dr-dev-write-readme/SKILL.md) | Rewrite a README from what the repository actually contains. |
+| [`an-dr-dev-write-specification`](actions/an-dr-dev-write-specification/SKILL.md) | Define the use cases and architecture of a new project or a completely new feature. |
 | [`an-dr-env-install-powershell`](actions/an-dr-env-install-powershell/SKILL.md) | Install or verify PowerShell 7 before running scripts. |
 | [`an-dr-files-make-screengif`](actions/an-dr-files-make-screengif/SKILL.md) | Record an animated GIF of a website, application, or game, only on request. |
 | [`an-dr-files-make-screenshot`](actions/an-dr-files-make-screenshot/SKILL.md) | Capture a website, GUI application, or game as documentation media. |

@@ -77,7 +77,7 @@ For gated work, the [workflow controller skill](skills/actions/an-dr-dev-follow-
 
 - Shared engineering instructions available across projects through one global installation.
 - Explicit workflow gates and resumable state for Quick, Detailed, and Detailed Auto.
-- Self-contained skills for implementation, debugging, testing, review, documentation, and Git operations.
+- Self-contained skills for specification, implementation, debugging, testing, review, documentation, and Git operations.
 - HTML reports for code reviews, project overviews, and completed changes.
 - Deterministic script checks and separate, explicitly requested agent evaluations.
 - Integration choices that rebase before landing and remove workflow state from delivered history.
@@ -149,6 +149,7 @@ flowchart LR
         an-dr-dev-test
         an-dr-dev-write-documentation
         an-dr-dev-write-readme
+        an-dr-dev-write-specification
         an-dr-env-install-powershell
         an-dr-files-make-screengif
         an-dr-files-make-screenshot
@@ -195,13 +196,14 @@ flowchart LR
     an-dr-dev-analyze-slop --> an-dr-ai-review-instruction & an-dr-ai-send-message & an-dr-concept-ai-slop & an-dr-convention-artifact-layout & an-dr-convention-html-report
     an-dr-dev-assign-ai-level --> an-dr-ai-send-message & an-dr-convention-ai-level
     an-dr-dev-design --> an-dr-ai-send-message & an-dr-convention-adr & an-dr-convention-use-case
-    an-dr-dev-follow-workflow --> an-dr-ai-send-message & an-dr-convention-adr & an-dr-dev-analyze-changes & an-dr-dev-design & an-dr-dev-implement-code & an-dr-dev-integrate & an-dr-dev-review & an-dr-dev-test & an-dr-dev-write-documentation & an-dr-git-commit
+    an-dr-dev-follow-workflow --> an-dr-ai-send-message & an-dr-convention-adr & an-dr-dev-analyze-changes & an-dr-dev-debug & an-dr-dev-design & an-dr-dev-implement-code & an-dr-dev-integrate & an-dr-dev-review & an-dr-dev-test & an-dr-dev-write-documentation & an-dr-dev-write-readme & an-dr-dev-write-specification & an-dr-git-commit
     an-dr-dev-implement-code --> an-dr-convention-adr & an-dr-convention-code & an-dr-dev-write-documentation
     an-dr-dev-integrate --> an-dr-ai-send-message & an-dr-convention-commit-message & an-dr-git-commit
     an-dr-dev-review --> an-dr-ai-send-message & an-dr-concept-ai-slop & an-dr-concept-clean-dependencies & an-dr-concept-evidence-grounding & an-dr-convention-artifact-layout & an-dr-convention-code & an-dr-convention-html-report
     an-dr-dev-test --> an-dr-ai-send-message & an-dr-dev-implement-adversarial-ut
     an-dr-dev-write-documentation --> an-dr-ai-send-message & an-dr-concept-ai-slop & an-dr-convention-markdown & an-dr-convention-use-case
     an-dr-dev-write-readme --> an-dr-ai-send-message & an-dr-dev-assign-ai-level & an-dr-convention-markdown & an-dr-convention-readme & an-dr-dev-write-documentation & an-dr-files-make-screengif & an-dr-files-make-screenshot
+    an-dr-dev-write-specification --> an-dr-ai-send-message & an-dr-concept-clean-dependencies & an-dr-convention-adr & an-dr-convention-use-case & an-dr-dev-write-documentation
     an-dr-env-install-powershell --> an-dr-ai-send-message
     an-dr-files-make-screengif --> an-dr-files-make-screenshot
     an-dr-files-make-screenshot --> an-dr-convention-artifact-layout

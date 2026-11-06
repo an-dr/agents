@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-dev-write-specification",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-dev-write-specification. Specify a new command-line tool that keeps a personal reading list and syncs it between two laptops.",
+      "expected_skill": "an-dr-dev-write-specification",
+      "context": "An empty repository with no documentation. The user wants to agree on what to build before any code exists.",
+      "expected_behavior": [
+        "Writes use cases with stable UC-AREA-NN identifiers and the actor, goal, flow, and success fields, naming observable behaviour only.",
+        "Derives an architecture of context, components, boundaries, and decisions from those use cases, and leaves out schemas, function signatures, and a task plan."
+      ],
+      "assertions": [
+        {
+          "expected": true,
+          "type": "invocation_check"
+        },
+        {
+          "rubric": "Writes use cases with stable UC-AREA-NN identifiers and the actor, goal, flow, and success fields, naming observable behaviour only.",
+          "type": "llm_judge"
+        },
+        {
+          "rubric": "Derives an architecture of context, components, boundaries, and decisions from those use cases, and leaves out schemas, function signatures, and a task plan.",
+          "type": "llm_judge"
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Specify a new command-line tool that keeps a personal reading list and syncs it between two laptops.",
+      "expected_skill": "an-dr-dev-write-specification",
+      "context": "An empty repository with no documentation. The user wants to agree on what to build before any code exists.",
+      "expected_behavior": [
+        "Writes use cases with stable UC-AREA-NN identifiers and the actor, goal, flow, and success fields, naming observable behaviour only.",
+        "Derives an architecture of context, components, boundaries, and decisions from those use cases, and leaves out schemas, function signatures, and a task plan."
+      ],
+      "assertions": [
+        {
+          "expected": true,
+          "type": "invocation_check"
+        },
+        {
+          "rubric": "Writes use cases with stable UC-AREA-NN identifiers and the actor, goal, flow, and success fields, naming observable behaviour only.",
+          "type": "llm_judge"
+        },
+        {
+          "rubric": "Derives an architecture of context, components, boundaries, and decisions from those use cases, and leaves out schemas, function signatures, and a task plan.",
+          "type": "llm_judge"
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Specify a new command-line tool that keeps a personal reading list and syncs it between two laptops.",
+      "expected_skill": "an-dr-dev-write-specification",
+      "context": "An empty repository with no documentation. The user wants to agree on what to build before any code exists.",
+      "expected_behavior": [
+        "Writes use cases with stable UC-AREA-NN identifiers and the actor, goal, flow, and success fields, naming observable behaviour only.",
+        "Derives an architecture of context, components, boundaries, and decisions from those use cases, and leaves out schemas, function signatures, and a task plan."
+      ],
+      "assertions": [
+        {
+          "expected": true,
+          "type": "invocation_check"
+        },
+        {
+          "rubric": "Writes use cases with stable UC-AREA-NN identifiers and the actor, goal, flow, and success fields, naming observable behaviour only.",
+          "type": "llm_judge"
+        },
+        {
+          "rubric": "Derives an architecture of context, components, boundaries, and decisions from those use cases, and leaves out schemas, function signatures, and a task plan.",
+          "type": "llm_judge"
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "SCOPE-UNCLEAR",
+      "bucket": "contextual",
+      "prompt": "Add import from a shared feed to the reading list tool.",
+      "expected_skill": "an-dr-dev-write-specification",
+      "context": "The tool has an import command. Whether a sync service is a new capability or an extension of the import command is not clear from the repository.",
+      "expected_behavior": [
+        "Asks the user whether this work is new enough to need a specification, instead of deciding silently."
+      ],
+      "assertions": [
+        {
+          "expected": true,
+          "type": "invocation_check"
+        },
+        {
+          "rubric": "Asks the user whether this work is new enough to need a specification, instead of deciding silently.",
+          "type": "llm_judge"
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "SCOPE-EXISTING",
+      "bucket": "negative",
+      "prompt": "Rename the --out flag of the existing export command to --output.",
+      "expected_skill": null,
+      "context": "An established tool with documented use cases. The request changes one flag of an existing feature.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Does not write a specification."
+      ],
+      "assertions": [
+        {
+          "expected": false,
+          "type": "invocation_check"
+        }
+      ],
+      "runs": 1
+    }
+  ]
+}

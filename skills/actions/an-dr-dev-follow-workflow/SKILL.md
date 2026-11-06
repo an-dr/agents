@@ -4,9 +4,9 @@ description: Run, resume, and enforce the repository's gated Quick, Detailed, or
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "1.2.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-send-message an-dr-convention-adr an-dr-dev-analyze-changes an-dr-dev-design an-dr-dev-implement-code an-dr-dev-integrate an-dr-dev-review an-dr-dev-test an-dr-dev-write-documentation an-dr-git-commit
+  an-dr.dependencies: an-dr-ai-send-message an-dr-convention-adr an-dr-dev-analyze-changes an-dr-dev-debug an-dr-dev-design an-dr-dev-implement-code an-dr-dev-integrate an-dr-dev-review an-dr-dev-test an-dr-dev-write-documentation an-dr-dev-write-readme an-dr-dev-write-specification an-dr-git-commit
 ---
 
 # Workflow controller
@@ -37,15 +37,15 @@ Use Detailed Auto only when the user selects it; never infer it from a request f
 
 ## Plan the gated work
 
-During INTAKE, DESIGN, and SPLIT, read the host `README.md`, `docs/index.md`, architecture docs, and existing ADRs. Record each request as it arrives, identify invariants and existing patterns, and map every touch-point, including docs, schemas, and tests. Keep these phases read-only. Record unresolved choices with `add-question`. In DESIGN, present 2–4 real options with their tradeoffs for Quick and Detailed; record the reasoned choice in Detailed Auto. Use `an-dr-dev-design` when a decision needs deeper analysis, and `an-dr-convention-adr` for a lasting architectural decision.
+During INTAKE, DESIGN, and SPLIT, read the host `README.md`, `docs/index.md`, architecture docs, and existing ADRs. Record each request as it arrives, identify invariants and existing patterns, and map every touch-point, including docs, schemas, and tests. Keep these phases read-only. Record unresolved choices with `add-question`. At the start of DESIGN, decide whether `an-dr-dev-write-specification` applies; when it does, draft the specification first, so the options below are chosen within it. In DESIGN, present 2–4 real options with their tradeoffs for Quick and Detailed; record the reasoned choice in Detailed Auto. Use `an-dr-dev-design` when a decision needs deeper analysis, and `an-dr-convention-adr` for a lasting architectural decision.
 
 Before leaving SPLIT, check that every request is covered, every question is answered or dismissed, and each increment names its documentation work. Detailed increments should be about 300 changed lines or less. Present the numbered plan with estimated lines and answered questions before the user's `implement` approval. In Detailed Auto, record the agent's reasoned design choice for final review.
 
 ## Work by phase
 
-- **DOCS:** load `an-dr-dev-write-documentation` and write needed documentation before implementation. Leave it uncommitted for the increment's COMMIT.
+- **DOCS:** load `an-dr-dev-write-documentation` and write needed documentation before implementation, starting with any specification drafted in DESIGN. A new project also gets its README through `an-dr-dev-write-readme`. Leave it uncommitted for the increment's COMMIT.
 - **BUILD:** load `an-dr-dev-implement-code` and implement only the selected Quick option or active increment.
-- **VERIFY:** load `an-dr-dev-test` for changed code and `an-dr-dev-review` for the diff. Per increment, run only the fast checks: build, lint, and test what the increment touched. For documentation-only changes, verify sources, links, and consistency through `an-dr-dev-write-documentation`. Report failure cases, untested edges, doc gaps, scope, and consistency; issues return to BUILD.
+- **VERIFY:** load `an-dr-dev-test` for changed code and `an-dr-dev-review` for the diff. Per increment, run only the fast checks: build, lint, and test what the increment touched. For documentation-only changes, verify sources, links, and consistency through `an-dr-dev-write-documentation`. Report failure cases, untested edges, doc gaps, scope, and consistency; issues return to BUILD, after `an-dr-dev-debug` when a failure's cause is not evident.
 - **Full suite:** run the project's full test suite once, after the last known increment is committed and before `SUMMARY`, not after each increment. Fix each failure in the commit of the increment that introduced it, folded in with a fixup, so every increment stays one reviewable commit. An increment added later reopens this step: the suite runs again once that work is committed.
 - **COMMIT:** commit verified work with `an-dr-git-commit`, including current progress state.
 - **SUMMARY:** use `an-dr-dev-analyze-changes` for the full branch: it runs the review, reconciles the branch with the intake requests, and hands over the summary.

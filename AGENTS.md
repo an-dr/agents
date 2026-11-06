@@ -22,7 +22,7 @@ Present all four numbered choices in this order when asking. A workflow named by
 
 ## Direct
 
-Work on the current branch without workflow state, phase transitions, or approval gates. Read the request and repository context, make the smallest sound design choice, use `an-dr-dev-write-documentation` for needed documentation, `an-dr-dev-implement-code` for code, `an-dr-dev-test` for changed code, and `an-dr-dev-review` for the diff. Fix findings and deliver the usable result in the same request. Ask only when essential information is missing or an action requires permission for a reason outside this workflow; continue independent work while waiting.
+Work on the current branch without workflow state, phase transitions, or approval gates. Read the request and repository context, make the smallest sound design choice, use `an-dr-dev-write-specification` first when it applies, use `an-dr-dev-write-documentation` for needed documentation, `an-dr-dev-implement-code` for code, `an-dr-dev-test` for changed code, and `an-dr-dev-review` for the diff. Fix findings and deliver the usable result in the same request. Ask only when essential information is missing, it is unclear whether a specification applies, or an action requires permission for a reason outside this workflow; continue independent work while waiting.
 
 Commit verified work through `an-dr-git-commit` on the current branch. Do not push unless the user requests it. When this process repository itself is the target, its Scope rule takes precedence: leave the change uncommitted for review. A request that grows stays Direct unless the user asks to switch to a gated flow; break larger work into coherent internal passes without adding user gates.
 
