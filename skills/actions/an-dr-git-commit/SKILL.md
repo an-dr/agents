@@ -32,7 +32,14 @@ pwsh <skill>/scripts/new-commit.ps1 `
 
 Body entries are the trailing arguments, one quoted string each, written without the `- ` marker. The script assembles the subject, prefixes the entries, appends `-Footer` lines after the single blank line, and commits only when `an-dr-convention-commit-message`'s checker passes every rule; otherwise it prints the violations and commits nothing. `-Breaking` adds `!` and requires a `BREAKING CHANGE:` footer. `-DryRun` prints the message, `-Amend` rewrites the tip.
 
-To validate a message that already exists, use `an-dr-convention-commit-message`'s `check-message.ps1`. Committing never authorizes pushing.
+To validate a message that already exists, run the checker of `an-dr-convention-commit-message` on a file or a commit:
+
+```powershell
+pwsh <an-dr-convention-commit-message>/scripts/check-message.ps1 -Path <file>
+pwsh <an-dr-convention-commit-message>/scripts/check-message.ps1 -Commit HEAD
+```
+
+It exits non-zero on a violation and prints length warnings; relay both to the user. Committing never authorizes pushing.
 
 ## Drafting model
 

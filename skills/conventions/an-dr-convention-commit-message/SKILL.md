@@ -66,12 +66,7 @@ The reason is that a trailer is a record of who is accountable for the change. T
 
 ## Check
 
-```powershell
-pwsh <skill>/scripts/check-message.ps1 -Path <file>
-pwsh <skill>/scripts/check-message.ps1 -Commit HEAD
-```
-
-The checker validates a message file, a string, or a commit, and also works as a `commit-msg` hook. It exits non-zero on any violation and prints entry-length warnings without failing.
+`scripts/check-message.ps1` verifies a message file, a string, or a commit against these rules, and also works as a `commit-msg` hook. It exits non-zero on any violation and prints entry-length warnings without failing.
 
 ## Examples
 
