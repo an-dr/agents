@@ -66,6 +66,10 @@ Add-Content -LiteralPath (Join-Path $fixtureRoot 'skills/actions/an-dr-dev-debug
 Assert-Check 'over the token budget warns' 0 'tokens; the budget is 1500, so move branch material into references/'
 
 New-Fixture
+Add-Content -LiteralPath (Join-Path $fixtureRoot 'skills/concepts/an-dr-concept-single-authority/SKILL.md') -Value "`n``````powershell`npwsh run.ps1`n``````"
+Assert-Check 'command in a concept warns' 0 'a concept contains a command to run'
+
+New-Fixture
 $references = Join-Path $fixtureRoot 'skills/actions/an-dr-dev-debug/references'
 New-Item -ItemType Directory -Path $references | Out-Null
 Set-Content -LiteralPath (Join-Path $references 'bisect.md') -Value 'How to bisect.'

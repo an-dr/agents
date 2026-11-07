@@ -1,32 +1,17 @@
 ---
 name: an-dr-convention-agent-skill
-description: What a skill looks like in any repository that uses it — the Agent Skills format and the an-dr extensions on top of it — category folders, action, concept, and convention types, declared dependencies, description pattern, title, section order, voice, size, and registration. Use when creating, renaming, restructuring, writing, or reviewing any skill; the check scripts in this skill enforce it.
+description: The shape of a skill in any repository that uses it — Agent Skills format with the an-dr extensions, types, layout, text, size and reference files, dependencies, and registration. Use when creating, renaming, restructuring, writing, or reviewing any skill.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.2.0"
+  version: "1.3.0"
   an-dr.type: convention
   an-dr.dependencies: an-dr-concept-clean-dependencies an-dr-convention-script an-dr-convention-agent-skill-testing
 ---
 
 # Convention: agent skill
 
-A reader or an agent that has seen one skill should find every other one in the same places. This convention owns the shape of a skill: the standard format it builds on, the extensions it adds, where a skill lives, what its text says and in what order, and how it is registered. Scripts follow `an-dr-convention-script`; test packaging and execution follow `an-dr-convention-agent-skill-testing`.
-
-## The format and its extensions
-
-Every skill is valid [Agent Skills](https://agentskills.io/specification) format, so any tool that reads it can load it: a folder `<name>/` holding `SKILL.md`, whose frontmatter has only `name`, `description`, `license`, `compatibility`, `metadata`, and `allowed-tools`. `license` names the licence, `allowed-tools` is one space-separated string, and `metadata` holds only string values.
-
-The extensions live in `metadata`. `author` and `version` are plain keys, and the keys that carry meaning for this convention use the `an-dr.` prefix that keeps them clear of other tools' keys:
-
-| Key                  | Value                                                                    |
-| -------------------- | ------------------------------------------------------------------------ |
-| `author`             | who wrote the skill                                                      |
-| `version`            | the skill's version, a quoted semantic version                           |
-| `an-dr.type`         | `action`, `concept`, or `convention`                                     |
-| `an-dr.dependencies` | the skills this skill names, space-separated, or `none`, or `PROHIBITED` |
-
-The extensions are conventions of the project, not of the format. A tool that ignores them still loads every skill; the rule for passive skills below is also stated in `AGENTS.md`, which every tool reads.
+A reader or an agent that has seen one skill finds every other one in the same places. This convention describes the shape of a skill: the standard format it builds on, the extensions it adds, where a skill lives, what its text says and in what order, and how it is registered. Scripts are described by `an-dr-convention-script`; test packaging by `an-dr-convention-agent-skill-testing`.
 
 ## Types
 
@@ -36,91 +21,31 @@ The extensions are conventions of the project, not of the format. A tool that ig
 | Concept    | A principle: what it requires, where its boundary is, how to recognise a violation | reading it when its subject is in play             | `SKILL.md` and evals; no production scripts                  |
 | Convention | The format rules for an artifact: what a correct one looks like                    | reading it when writing or reviewing that artifact | `SKILL.md`, references, tests, and the scripts that check it |
 
-Concepts and conventions are passive: the agent reads them, never runs them as a procedure. A concept has no production scripts and calls no action; its tests assess application of the principle. A convention reinforces its rules with scripts that call no action, and actions reach them like any public script, through a passed folder. Colours, glyphs, and other presentation details belong to an implementor, not to a concept.
+- **Concepts and conventions only describe.** They state what a principle requires or what a correct artifact looks like, in declarative sentences, and hold no steps, no instructions to the agent, and no commands to run. When to apply one, what to run, and what to tell the user are always the responsibility of the action that uses it.
+- **A concept** has no production scripts and names no action; its tests assess application of the principle. Colours, glyphs, and other presentation details belong to an implementor, not to a concept.
+- **A convention** may ship scripts that check or generate its artifact. Its text says what each script verifies; an action runs them, reaching them through a passed folder, and the scripts call no action.
 
-## Layout
+## Reference files of this convention
 
-- **Folders:** a skill is `skills/<category>/<name>/`. `actions/`, `concepts/`, and `conventions/` hold general skills of the matching type, and the folder and `an-dr.type` agree. A folder whose name starts with an underscore, such as `_repository/`, holds skills that exist for the repository itself, of any type.
-- **Name:** kebab-case, identical to the folder and the frontmatter `name`. A concept's name contains `concept-` and a convention's contains `convention-`, so the type shows in a tool's flat skill list. A project may add a namespace prefix and a naming scheme for its actions. Names are unique across all folders, because tools install skills side by side.
-- **Frontmatter order:** `name`, `description`, `license`, `allowed-tools` when the skill restricts its tools, then `metadata`.
-- **Paths:** in SKILL.md commands, write the skill's own scripts as `<skill>/scripts/...` and another skill's folder as `<that-skill-name>`, which is the form `AGENTS.md` defines. Never use an absolute path, a path through this repository's layout, or a submodule folder name.
-- **Self-contained:** everything a skill runs lives in its own folder.
-
-## Description
-
-- One to three sentences in the frontmatter `description`, on one line, at most 300 characters, because every session loads it.
-- An action opens with a verb saying what it does: `Review a diff for defects ...`. A concept or convention opens with what it defines: `The format of ...`.
-- It ends with a trigger sentence beginning `Use `: `Use when ...`, `Use during ...`, or `Use to ...`. The tool matches on this sentence to load the skill, so it names the situations, not the skill's internals.
-- It names no step of the procedure and no file the skill happens to contain.
-
-## Title and opening
-
-- One `#` heading, first in the body. Actions use a short noun phrase: `# Commit`. Concepts use `# Concept: <name>` and conventions use `# Convention: <name>`.
-- The opening paragraph, one to three sentences, says what the skill owns and what it leaves to others, naming each other skill it defers to. A reader can decide from it whether to keep reading.
-
-## Sections
-
-Sections are `##` headings in sentence case, named for what the reader does or finds there. Use these, in this order, omitting any that do not apply.
-
-| Kind       | Sections                                                                                                                                                                                                                       |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Action     | procedure sections named for their action (`## Select the diff`, `## Capture`), then `## Check` or `## Verify` when the skill verifies its work, then `## Output` for what it hands back, then `## Rules` for invariants, last |
-| Concept    | the principle's sections, then `## Violations`; an optional review procedure may follow                                                                                                                                        |
-| Convention | the rule sections, then `## Check` when a script enforces them, then `## Examples`, last                                                                                                                                       |
-
-- A rule that applies everywhere in the skill goes in `## Rules`; a rule that applies to one step stays beside that step.
-- Material that only a branch of the skill needs goes in a reference file, as the size and references section below describes.
-
-## Voice
-
-- Write imperative, present tense, one observable rule per bullet. State what to do; add a reason only where the rule would otherwise seem arbitrary.
-- Describe the skill as it works now. History, comparisons with an older design, and "no longer" belong in commit messages.
-- Lead a list of parallel rules with a bold phrase naming the rule: `- **Trace.** A conclusion names its evidence.`
-- Refer to another skill by its exact name in backticks, and keep one owner for each fact: name the owner instead of restating its rule.
-
-## Commands
-
-- Show each command in a fenced `powershell` block, with the skill's own scripts written `<skill>/scripts/<name>.ps1` and another skill's folder as `<that-skill-name>`.
-- Follow the block with what it prints or returns, which exit codes mean what, and that the agent relays the result to the user.
-- Put a deterministic check in a script, and say in one sentence what it checks. Do not describe it in prose that the script already enforces.
+- [references/placement.md](references/placement.md): folders, names, paths, and registration.
+- [references/frontmatter.md](references/frontmatter.md): the format, the metadata extensions, and the description.
+- [references/body.md](references/body.md): the title, the section order for each type, voice, and commands.
+- [references/dependencies.md](references/dependencies.md): dependencies, which follow `an-dr-concept-clean-dependencies`.
 
 ## Size and references
 
-An agent reads a skill in three layers: the description in every session, `SKILL.md` when it uses the skill, and a reference file only when a step sends it there. Put each fact in the cheapest layer that still reaches the agent when it is needed. Sizes are approximate tokens, characters divided by four.
+An agent reads a skill in three layers: the description in every session, `SKILL.md` when it uses the skill, and a reference file only when it needs that file. Each fact sits in the cheapest layer that still reaches the agent when it is needed. Sizes are approximate tokens, characters divided by four.
 
-- **Core.** `SKILL.md` holds what every use needs: the opening, the steps, the rules on every path, and a pointer for each branch. At most 1,500 tokens; aim for about 1,000.
-- **References.** Material that only some uses need, such as one mode, one case, an output format, a long table, or a host-specific procedure, goes in `references/<topic>.md`. Each file stands alone, has no frontmatter, and stays under 1,500 tokens.
-- **Pointers.** Link a reference from the step that needs it, as an instruction such as "Before asking for the mode, read references/modes.md", with the path as a Markdown link. A list of links at the end gets skipped.
+- **Core.** `SKILL.md` holds what every use needs and a pointer to each reference file. It is at most 1,500 tokens, ideally about 1,000.
+- **References.** Material that only some uses need, such as one mode, one case, an output format, a long table, or a host-specific procedure, is a file `references/<topic>.md`. Each file stands alone, has no frontmatter, and is under 1,500 tokens.
+- **Pointers.** In an action, a pointer is an instruction at the step that needs the file, with the path as a Markdown link, such as "Before asking for the mode, read references/modes.md"; a list of links at the end gets skipped. In a concept or convention, a pointer is an index entry saying what the file describes.
 - **Private.** A reference file belongs to its skill. Another skill names the skill, never its reference files.
-- **Merging.** Two actions that serve one task become one action with a reference file per branch. A concept or convention is never merged into another skill; other skills read it by name.
-
-## Dependencies
-
-Dependencies follow `an-dr-concept-clean-dependencies`. Composing skills is intended; coupling to another skill's internals is not.
-
-- **Prefer the agent as the link.** SKILL.md names the other skill, and the agent runs that skill's documented command. No script holds the other skill's path.
-- **Name a skill only when the agent needs it to do this skill's work.** A skill exists to be run or read here, not to say who owns something this skill leaves out. To exclude work, state the exclusion without naming the skill that does it.
-- **Declare every dependency.** `an-dr.dependencies` lists every skill this skill names, passed folder or not.
-- **Mark stable skills.** `PROHIBITED` marks a skill that must never name another skill, such as a concept or a leaf convention. `none` marks a skill with no dependency today that may gain one.
-- **Layer.** Dependencies point toward more stable skills: concepts, then conventions, then foundation services. A stable skill never names its consumers.
-- **Keep the repository's own skills apart.** A skill outside the underscore folders never depends on one inside them, so every general skill works without the repository's own tooling.
-
-## Registration
-
-Add the skill to the table in `skills/README.md` with a one-line use, and update the root `README.md` where it describes what the skill changes. A rename updates every reference in the repository in the same change; search for the old name until nothing is left.
+- **Merging.** Two actions that serve one task are one action with a reference file per branch. A concept or convention is never merged into another skill; other skills read it by name.
 
 ## Check
 
-```powershell
-pwsh <skill>/scripts/check-registration.ps1 [-Root <repository>] [-FailOnCycle] [-RequireTests]
-pwsh <skill>/scripts/check-skills.ps1 [-Root <repository>]
-pwsh <skill>/scripts/check-skills-ref.ps1 [-Root <repository>] [-Require]
-```
+- `scripts/check-registration.ps1` verifies placement, registration, types against folders, and declared dependencies, and lists dependency cycles, which fail with `-FailOnCycle`; `-RequireTests` requires `evals/` in every skill.
+- `scripts/check-skills.ps1` verifies the frontmatter, description, title, section order, and reference links, and warns on size and on a command block in a concept or convention.
+- `scripts/check-skills-ref.ps1` verifies the format through `skills-ref validate`. Without `skills-ref` it prints the install command and exits 0; with `-Require` or in CI it exits 1.
 
-`check-registration.ps1` fails on a misplaced or unregistered skill, a type that disagrees with its folder, a concept or convention whose name lacks its type, a concept with production files outside `SKILL.md` and `evals/`, a skill that names an undeclared skill or declares one it never names, a `PROHIBITED` skill that names any other, and a general skill that depends on one in an underscore folder. It lists every dependency cycle with its path, and fails on a cycle with `-FailOnCycle`. `-RequireTests` also requires every skill to have `evals/evals.json` and `evals/EVAL.md`.
-
-`check-skills.ps1` fails on frontmatter outside the Agent Skills format, a missing licence, author, version, or extension, a comma-separated `allowed-tools`, a description without a trigger sentence, a title or section order that does not match the type, a reference file that `SKILL.md` does not link, and a link to a file that does not exist. It warns on a `SKILL.md` or reference file over 1,500 tokens and a description over 300 characters.
-
-`check-skills-ref.ps1` runs `skills-ref validate`, the format's reference validator, on every skill. When `skills-ref` is missing it prints the install command and exits 0, and exits 1 with `-Require` or in CI. Installing it is the user's decision.
-
-All three exit non-zero on a problem. Regression scripts live in `scripts/tests/` and run through `pwsh <skill>/scripts/tests/run.ps1`; they break copies to verify diagnostics. Syntax-only checks are identified separately from runtime coverage.
+Each takes `-Root <repository>`, prints what it found, and exits non-zero on a problem. Their regression tests are in `scripts/tests/`.

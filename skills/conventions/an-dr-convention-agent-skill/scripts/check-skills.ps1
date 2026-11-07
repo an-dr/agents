@@ -6,7 +6,8 @@
     extensions, a description that ends in a trigger sentence, one title that matches
     the skill's type, the section order for that type, and that every reference file
     is linked and every linked reference exists. Warns on a SKILL.md or reference file
-    over the token budget and a description over the length budget. Prints Markdown
+    over the token budget, a description over the length budget, and a command block
+    in a concept or convention. Prints Markdown
     tables of warnings and problems, and exits 1 when there are problems.
 #>
 [CmdletBinding()]
@@ -84,6 +85,10 @@ foreach ($file in Get-ChildItem -Path (Join-Path $skillsDir '*/*/SKILL.md') | So
         if ($description -cnotmatch '(^|[.;] )Use [a-z]') { Add-Problem $where "description has no trigger sentence beginning 'Use '" }
     }
     $text = $lines -join "`n"
+    $kindForCommands = if ($metadata.Contains('an-dr.type')) { $metadata['an-dr.type'] } else { 'action' }
+    if ($kindForCommands -in @('concept', 'convention') -and $text -match '(?m)^```powershell') {
+        Add-Warning $where "a $kindForCommands contains a command to run; it only describes, and running belongs to an action"
+    }
     $tokens = Get-Tokens $text
     if ($tokens -gt $maxTokens) { Add-Warning $where "is about $tokens tokens; the budget is $maxTokens, so move branch material into references/" }
 
