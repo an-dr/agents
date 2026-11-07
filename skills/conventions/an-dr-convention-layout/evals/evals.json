@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-convention-layout",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-convention-layout. Tell me what is wrong with the folder layout of this repository and where each misplaced item should go.",
+      "expected_skill": "an-dr-convention-layout",
+      "context": "Tracked files: README.md, Cargo.toml, doc/guide.md, apps/tool/host/Cargo.toml, apps/tool/host/src/main.rs, .artifacts/code-review/review.json, TODO.md. No LICENSE. The repository is published on GitHub.",
+      "expected_behavior": [
+        "Names doc/ to become docs/, apps/tool/host/ to move up into apps/tool/, and .artifacts/ to be removed from version control, and does not flag TODO.md.",
+        "Reports the missing LICENSE for a published repository.",
+        "Runs or cites check-layout.ps1 for the deterministic rules instead of judging them only by eye."
+      ],
+      "assertions": [
+        {
+          "expected": true,
+          "type": "invocation_check"
+        },
+        {
+          "rubric": "Names doc/ to become docs/, apps/tool/host/ to move up into apps/tool/, and .artifacts/ to be removed from version control, and does not flag TODO.md.",
+          "type": "llm_judge"
+        },
+        {
+          "rubric": "Reports the missing LICENSE for a published repository.",
+          "type": "llm_judge"
+        },
+        {
+          "rubric": "Runs or cites check-layout.ps1 for the deterministic rules instead of judging them only by eye.",
+          "type": "llm_judge"
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "BASE-002",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-convention-layout. Lay out a new Rust repository for \"mixer\": a desktop app plus two libraries, core and audio. Show the folder tree with crate names.",
+      "expected_skill": "an-dr-convention-layout",
+      "context": "Empty repository. The app needs build.rs and run-time icons; the project uses an xtask for packaging.",
+      "expected_behavior": [
+        "Uses one virtual workspace with crates/mixer-core/ and crates/mixer-audio/ and the app in apps/mixer/ with Cargo.toml, build.rs, src/, and assets/ directly inside, not in a further subfolder.",
+        "Adds an xtask/ crate with a cargo alias and places unit tests in sibling tests.rs files and integration tests in each crate's tests/."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Uses one virtual workspace with crates/mixer-core/ and crates/mixer-audio/ and the app in apps/mixer/ with Cargo.toml, build.rs, src/, and assets/ directly inside, not in a further subfolder."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Adds an xtask/ crate with a cargo alias and places unit tests in sibling tests.rs files and integration tests in each crate's tests/."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "BASE-003",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-convention-layout. I generated an STM32F4 project with CubeMX for CMake. Where does my application code go, and how do I test it without the board?",
+      "expected_skill": "an-dr-convention-layout",
+      "context": "The repository holds blinky.ioc, Core/, Drivers/, cmake/stm32cubemx/, CMakeLists.txt, and CMakePresets.json as CubeMX wrote them.",
+      "expected_behavior": [
+        "Keeps the generated folders as CubeMX writes them and puts the application in components/ outside them, touching generated files only inside USER CODE blocks with calls into the components.",
+        "Splits hardware access into hal-interface, hal-stm32, and hal-host components so the app component builds and is tested on the development machine from tests/."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Keeps the generated folders as CubeMX writes them and puts the application in components/ outside them, touching generated files only inside USER CODE blocks with calls into the components."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Splits hardware access into hal-interface, hal-stm32, and hal-host components so the app component builds and is tested on the development machine from tests/."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "BASE-004",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-convention-layout. My PlatformIO firmware has to run on an Arduino Uno and an ESP32, and I want to unit-test the control logic on my PC. How should the project be laid out?",
+      "expected_skill": "an-dr-convention-layout",
+      "context": "Existing project: platformio.ini with one env, src/main.cpp, and a copy of a registry library pasted into src/.",
+      "expected_behavior": [
+        "Uses one platformio.ini with an environment per board and a native environment, never a second project copy.",
+        "Moves the control logic into a framework-free library in lib/<name>/ tested from test/, and declares the registry library in lib_deps instead of copying it."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Uses one platformio.ini with an environment per board and a native environment, never a second project copy."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Moves the control logic into a framework-free library in lib/<name>/ tested from test/, and declares the registry library in lib_deps instead of copying it."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "BASE-005",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-convention-layout. Lay out a new Python command-line tool \"sweeper\" with tests. Show the tree and where dependencies are declared.",
+      "expected_skill": "an-dr-convention-layout",
+      "context": "Empty repository. The tool will be installed with pipx.",
+      "expected_behavior": [
+        "Declares the project, dependencies, and the console entry point in pyproject.toml and puts the code in src/sweeper/, with nothing but configuration at the root.",
+        "Puts tests in tests/ as test_<module>.py and configures pytest in pyproject.toml."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Declares the project, dependencies, and the console entry point in pyproject.toml and puts the code in src/sweeper/, with nothing but configuration at the root."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Puts tests in tests/ as test_<module>.py and configures pytest in pyproject.toml."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Tell me what is wrong with the folder layout of this repository and where each misplaced item should go.",
+      "expected_skill": "an-dr-convention-layout",
+      "context": "Tracked files: README.md, Cargo.toml, doc/guide.md, apps/tool/host/Cargo.toml, apps/tool/host/src/main.rs, .artifacts/code-review/review.json, TODO.md. No LICENSE. The repository is published on GitHub.",
+      "expected_behavior": [
+        "Names doc/ to become docs/, apps/tool/host/ to move up into apps/tool/, and .artifacts/ to be removed from version control, and does not flag TODO.md.",
+        "Reports the missing LICENSE for a published repository."
+      ],
+      "assertions": [
+        {
+          "expected": true,
+          "type": "invocation_check"
+        },
+        {
+          "rubric": "Names doc/ to become docs/, apps/tool/host/ to move up into apps/tool/, and .artifacts/ to be removed from version control, and does not flag TODO.md.",
+          "type": "llm_judge"
+        },
+        {
+          "rubric": "Reports the missing LICENSE for a published repository.",
+          "type": "llm_judge"
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "The review meeting moved to Friday and the old drafts folder can be ignored. The actual task is: Tell me what is wrong with the folder layout of this repository and where each misplaced item should go.",
+      "expected_skill": "an-dr-convention-layout",
+      "context": "Tracked files: README.md, Cargo.toml, doc/guide.md, apps/tool/host/Cargo.toml, apps/tool/host/src/main.rs, .artifacts/code-review/review.json, TODO.md. No LICENSE. The repository is published on GitHub.",
+      "expected_behavior": [
+        "Names doc/ to become docs/, apps/tool/host/ to move up into apps/tool/, and .artifacts/ to be removed from version control, and does not flag TODO.md."
+      ],
+      "assertions": [
+        {
+          "expected": true,
+          "type": "invocation_check"
+        },
+        {
+          "rubric": "Names doc/ to become docs/, apps/tool/host/ to move up into apps/tool/, and .artifacts/ to be removed from version control, and does not flag TODO.md.",
+          "type": "llm_judge"
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Explain what a monorepo is. Do not create or change any file.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "expected": false,
+          "type": "invocation_check"
+        },
+        {
+          "allowed_paths": [],
+          "type": "diff_scope"
+        }
+      ],
+      "runs": 1
+    }
+  ]
+}
