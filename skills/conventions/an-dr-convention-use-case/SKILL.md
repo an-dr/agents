@@ -38,6 +38,6 @@ Register the layer in the repository's documentation index, above architecture.
 - **Name things the actor knows.** Define each actor once in `index.md`, by what they do, not by a project's internal role name. Say what is created, run, or captured, never a bare verb such as "start" or "run" without its object.
 - **One goal each.** A use case that serves two actors' different goals is two use cases. Group by activity: creating something new, changing something that exists, and day-to-day work are different headings.
 
-## Review
+## Quality
 
-A use case passes when a newcomer can tell who acts, what they get, and how to check it without reading code. Reject one whose goal restates its command, whose success names no observable result, or that mixes two goals under one title.
+A good use case lets a newcomer tell who acts, what they get, and how to check it without reading code. Its goal does not restate its command, its success names an observable result, and it holds one goal under one title.
