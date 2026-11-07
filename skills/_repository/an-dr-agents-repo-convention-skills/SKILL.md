@@ -65,8 +65,4 @@ Follow `an-dr-convention-agent-skill-testing` for evaluation suites, fixtures, e
 
 ## Check
 
-```powershell
-pwsh <skill>/scripts/check-names.ps1 [-Root <repository>]
-```
-
-The script reads the verbs from the table above. It reports every skill that breaks the naming table and exits non-zero on any. `scripts/tests/test-check-names.ps1` breaks a copy one way at a time and expects each break to be named. Run it through `pwsh <skill>/scripts/tests/run.ps1`. The root test command also checks the required test layout.
+`scripts/check-names.ps1` verifies every skill name against the naming table, reading the verbs from the table above, and exits non-zero on any break. Its regression test breaks a copy one way at a time and expects each break to be named. The repository test run also checks the required test layout.

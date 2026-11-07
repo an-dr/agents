@@ -25,8 +25,4 @@ A skill adds a script only for repeated, mechanical work. The skill's `SKILL.md`
 
 ## Check
 
-```powershell
-pwsh <skill>/scripts/check-scripts.ps1 [-Root <repository>]
-```
-
-It reports missing runtime declarations, nonportable dependencies, missing test runners, and script tests left in production folders, and exits non-zero on any. `scripts/tests/test-check-scripts.ps1` breaks a copy one way at a time and expects each break to be named. Run the tests with `pwsh <skill>/scripts/tests/run.ps1`.
+`scripts/check-scripts.ps1` verifies these rules across a repository: it reports missing runtime declarations, nonportable dependencies, missing test runners, and script tests left in production folders, and exits non-zero on any. Its regression test breaks a copy one way at a time and expects each break to be named.
