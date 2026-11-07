@@ -32,9 +32,9 @@ The extensions are conventions of the project, not of the format. A tool that ig
 
 | Type       | Holds                                                                              | Agent uses it by                                   | Contains                                                     |
 | ---------- | ---------------------------------------------------------------------------------- | -------------------------------------------------- | ------------------------------------------------------------ |
-| Action     | A procedure that produces a result                                                 | running it                                         | `SKILL.md`, scripts, assets, tests                           |
+| Action     | A procedure that produces a result                                                 | running it                                         | `SKILL.md`, references, scripts, assets, tests               |
 | Concept    | A principle: what it requires, where its boundary is, how to recognise a violation | reading it when its subject is in play             | `SKILL.md` and evals; no production scripts                  |
-| Convention | The format rules for an artifact: what a correct one looks like                    | reading it when writing or reviewing that artifact | `SKILL.md`, tests, and the scripts that check or generate it |
+| Convention | The format rules for an artifact: what a correct one looks like                    | reading it when writing or reviewing that artifact | `SKILL.md`, references, tests, and the scripts that check it |
 
 Concepts and conventions are passive: the agent reads them, never runs them as a procedure. A concept has no production scripts and calls no action; its tests assess application of the principle. A convention reinforces its rules with scripts that call no action, and actions reach them like any public script, through a passed folder. Colours, glyphs, and other presentation details belong to an implementor, not to a concept.
 
@@ -48,7 +48,7 @@ Concepts and conventions are passive: the agent reads them, never runs them as a
 
 ## Description
 
-- One to three sentences in the frontmatter `description`, on one line.
+- One to three sentences in the frontmatter `description`, on one line, at most 300 characters, because every session loads it.
 - An action opens with a verb saying what it does: `Review a diff for defects ...`. A concept or convention opens with what it defines: `The format of ...`.
 - It ends with a trigger sentence beginning `Use `: `Use when ...`, `Use during ...`, or `Use to ...`. The tool matches on this sentence to load the skill, so it names the situations, not the skill's internals.
 - It names no step of the procedure and no file the skill happens to contain.
@@ -69,7 +69,7 @@ Sections are `##` headings in sentence case, named for what the reader does or f
 | Convention | the rule sections, then `## Check` when a script enforces them, then `## Examples`, last                                                                                                                                       |
 
 - A rule that applies everywhere in the skill goes in `## Rules`; a rule that applies to one step stays beside that step.
-- Reference material that only a branch of the skill needs is a table or a section at the end of its group, not a preamble.
+- Material that only a branch of the skill needs goes in a reference file, as the size and references section below describes.
 
 ## Voice
 
@@ -84,9 +84,15 @@ Sections are `##` headings in sentence case, named for what the reader does or f
 - Follow the block with what it prints or returns, which exit codes mean what, and that the agent relays the result to the user.
 - Put a deterministic check in a script, and say in one sentence what it checks. Do not describe it in prose that the script already enforces.
 
-## Size
+## Size and references
 
-A skill past about 150 lines is two skills, or it hides logic that belongs in a script. Split it, or move the mechanical part out.
+An agent reads a skill in three layers: the description in every session, `SKILL.md` when it uses the skill, and a reference file only when a step sends it there. Put each fact in the cheapest layer that still reaches the agent when it is needed. Sizes are approximate tokens, characters divided by four.
+
+- **Core.** `SKILL.md` holds what every use needs: the opening, the steps, the rules on every path, and a pointer for each branch. At most 1,500 tokens; aim for about 1,000.
+- **References.** Material that only some uses need, such as one mode, one case, an output format, a long table, or a host-specific procedure, goes in `references/<topic>.md`. Each file stands alone, has no frontmatter, and stays under 1,500 tokens.
+- **Pointers.** Link a reference from the step that needs it, as an instruction such as "Before asking for the mode, read references/modes.md", with the path as a Markdown link. A list of links at the end gets skipped.
+- **Private.** A reference file belongs to its skill. Another skill names the skill, never its reference files.
+- **Merging.** Two actions that serve one task become one action with a reference file per branch. A concept or convention is never merged into another skill; other skills read it by name.
 
 ## Dependencies
 
@@ -113,7 +119,7 @@ pwsh <skill>/scripts/check-skills-ref.ps1 [-Root <repository>] [-Require]
 
 `check-registration.ps1` fails on a misplaced or unregistered skill, a type that disagrees with its folder, a concept or convention whose name lacks its type, a concept with production files outside `SKILL.md` and `evals/`, a skill that names an undeclared skill or declares one it never names, a `PROHIBITED` skill that names any other, and a general skill that depends on one in an underscore folder. It lists every dependency cycle with its path, and fails on a cycle with `-FailOnCycle`. `-RequireTests` also requires every skill to have `evals/evals.json` and `evals/EVAL.md`.
 
-`check-skills.ps1` fails on frontmatter outside the Agent Skills format, a missing licence, author, version, or extension, a comma-separated `allowed-tools`, a description without a trigger sentence, a title or section order that does not match the type, and a skill over the size limit.
+`check-skills.ps1` fails on frontmatter outside the Agent Skills format, a missing licence, author, version, or extension, a comma-separated `allowed-tools`, a description without a trigger sentence, a title or section order that does not match the type, a reference file that `SKILL.md` does not link, and a link to a file that does not exist. It warns on a `SKILL.md` or reference file over 1,500 tokens and a description over 300 characters.
 
 `check-skills-ref.ps1` runs `skills-ref validate`, the format's reference validator, on every skill. When `skills-ref` is missing it prints the install command and exits 0, and exits 1 with `-Require` or in CI. Installing it is the user's decision.
 

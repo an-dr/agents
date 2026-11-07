@@ -4,8 +4,10 @@
     only the standard frontmatter keys, a valid name and description, string-valued
     metadata, a space-separated allowed-tools, the an-dr.type and an-dr.dependencies
     extensions, a description that ends in a trigger sentence, one title that matches
-    the skill's type, the section order for that type, and the size limit.
-    Prints a Markdown table of problems and exits 1 when there are any.
+    the skill's type, the section order for that type, and that every reference file
+    is linked and every linked reference exists. Warns on a SKILL.md or reference file
+    over the token budget and a description over the length budget. Prints Markdown
+    tables of warnings and problems, and exits 1 when there are problems.
 #>
 [CmdletBinding()]
 param([string]$Root = (Join-Path $PSScriptRoot '../../../..'))
@@ -15,12 +17,19 @@ $ErrorActionPreference = 'Stop'
 
 $Root = (Resolve-Path -LiteralPath $Root).ProviderPath
 $skillsDir = Join-Path $Root 'skills'
-$maxLines = 150
+# Approximate tokens are characters / 4, as the Size and references section defines.
+$maxTokens = 1500
+$maxDescription = 300
 $standardKeys = @('name', 'description', 'license', 'compatibility', 'metadata', 'allowed-tools')
 $problems = [System.Collections.Generic.List[object]]::new()
 function Add-Problem([string]$Where, [string]$What) {
     $problems.Add([pscustomobject]@{ Where = $Where; What = $What })
 }
+$warnings = [System.Collections.Generic.List[object]]::new()
+function Add-Warning([string]$Where, [string]$What) {
+    $warnings.Add([pscustomobject]@{ Where = $Where; What = $What })
+}
+function Get-Tokens([string]$Text) { [int][Math]::Round($Text.Length / 4) }
 
 $checked = 0
 foreach ($file in Get-ChildItem -Path (Join-Path $skillsDir '*/*/SKILL.md') | Sort-Object FullName) {
@@ -70,10 +79,31 @@ foreach ($file in Get-ChildItem -Path (Join-Path $skillsDir '*/*/SKILL.md') | So
     else {
         if ($description -match ': | #') { Add-Problem $where "description contains ': ' or ' #', which is invalid in an unquoted YAML value; use a dash or rephrase" }
         if ($description.Length -gt 1024) { Add-Problem $where "description is $($description.Length) characters; the limit is 1024" }
+        elseif ($description.Length -gt $maxDescription) { Add-Warning $where "description is $($description.Length) characters; the budget is $maxDescription" }
         if ($description -cnotmatch '^[A-Z]') { Add-Problem $where 'description does not start with a capital letter' }
         if ($description -cnotmatch '(^|[.;] )Use [a-z]') { Add-Problem $where "description has no trigger sentence beginning 'Use '" }
     }
-    if ($lines.Count -gt $maxLines) { Add-Problem $where "has $($lines.Count) lines; split it or move logic into a script (limit $maxLines)" }
+    $text = $lines -join "`n"
+    $tokens = Get-Tokens $text
+    if ($tokens -gt $maxTokens) { Add-Warning $where "is about $tokens tokens; the budget is $maxTokens, so move branch material into references/" }
+
+    # References: every file under references/ is linked from SKILL.md, and every such link resolves.
+    $skillWhere = 'skills/' + $file.Directory.Parent.Name + "/$name"
+    # A link shown as an example inside inline code is not a link.
+    $prose = $text -replace '`[^`\n]*`', ''
+    foreach ($link in [regex]::Matches($prose, '\]\((?<p>references/[^)#\s]+)')) {
+        $target = Join-Path $file.DirectoryName $link.Groups['p'].Value
+        if (-not (Test-Path -LiteralPath $target -PathType Leaf)) { Add-Problem $where "links $($link.Groups['p'].Value), which does not exist" }
+    }
+    $referenceDir = Join-Path $file.DirectoryName 'references'
+    if (Test-Path -LiteralPath $referenceDir -PathType Container) {
+        foreach ($reference in Get-ChildItem -LiteralPath $referenceDir -Filter '*.md' -File -Recurse) {
+            $relative = 'references/' + ($reference.FullName.Substring($referenceDir.Length + 1) -replace '\\', '/')
+            if (-not $prose.Contains("]($relative")) { Add-Problem "$skillWhere/$relative" 'is not linked from SKILL.md, so no agent reads it' }
+            $referenceTokens = Get-Tokens ([IO.File]::ReadAllText($reference.FullName))
+            if ($referenceTokens -gt $maxTokens) { Add-Warning "$skillWhere/$relative" "is about $referenceTokens tokens; the budget is $maxTokens" }
+        }
+    }
 
     $kind = if ($metadata.Contains('an-dr.type')) { $metadata['an-dr.type'] } else { 'action' }
 
@@ -113,6 +143,14 @@ foreach ($file in Get-ChildItem -Path (Join-Path $skillsDir '*/*/SKILL.md') | So
     }
 }
 
+if ($warnings.Count -gt 0) {
+    Write-Output "Size warnings: $($warnings.Count). They do not fail the check."
+    Write-Output ''
+    Write-Output '| Where | Warning |'
+    Write-Output '| --- | --- |'
+    foreach ($warning in $warnings) { Write-Output "| ``$($warning.Where)`` | $($warning.What) |" }
+    Write-Output ''
+}
 if ($problems.Count -eq 0) {
     Write-Output "Skill check passed: $checked skills follow the Agent Skills format and agent-skill."
     exit 0

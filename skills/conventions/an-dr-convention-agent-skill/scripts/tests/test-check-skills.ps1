@@ -62,8 +62,18 @@ Add-Content -LiteralPath (Join-Path $fixtureRoot 'skills/conventions/an-dr-conve
 Assert-Check 'examples not last' 1 "'## Examples' must be the last section"
 
 New-Fixture
-Add-Content -LiteralPath (Join-Path $fixtureRoot 'skills/actions/an-dr-dev-debug/SKILL.md') -Value (("filler`n") * 160)
-Assert-Check 'too long' 1 'lines; split it or move logic into a script'
+Add-Content -LiteralPath (Join-Path $fixtureRoot 'skills/actions/an-dr-dev-debug/SKILL.md') -Value ('filler ' * 1000)
+Assert-Check 'over the token budget warns' 0 'tokens; the budget is 1500, so move branch material into references/'
+
+New-Fixture
+$references = Join-Path $fixtureRoot 'skills/actions/an-dr-dev-debug/references'
+New-Item -ItemType Directory -Path $references | Out-Null
+Set-Content -LiteralPath (Join-Path $references 'bisect.md') -Value 'How to bisect.'
+Assert-Check 'unlinked reference' 1 'references/bisect.md` | is not linked from SKILL.md'
+Add-Content -LiteralPath (Join-Path $fixtureRoot 'skills/actions/an-dr-dev-debug/SKILL.md') -Value "`nTo bisect, read [references/bisect.md](references/bisect.md)."
+Assert-Check 'linked reference' 0 'Skill check passed'
+Add-Content -LiteralPath (Join-Path $fixtureRoot 'skills/actions/an-dr-dev-debug/SKILL.md') -Value "`nFor logs, read [references/logs.md](references/logs.md)."
+Assert-Check 'broken reference link' 1 'links references/logs.md, which does not exist'
 
 New-Fixture
 Edit-Fixture 'skills/actions/an-dr-git-commit/SKILL.md' 'allowed-tools: PowerShell' "allowed-tools: PowerShell, Read`nuser-invocable: false"
