@@ -25,7 +25,7 @@ When no behavioral execution was explicitly requested, return the script results
 
 Continue into this section only when the user explicitly requests behavioral execution. Naming this skill for script testing, a dependency reference, a request to implement tests, routine verification, and approval to edit a skill do not authorize agent evaluations. Apply this boundary in every host.
 
-Resolve the target, selected case IDs, model, and run limit from the request. Use one arm and the declared trial counts unless the user requests comparison or another trial count; when the user selects a suite without case IDs, select all cases in that suite. State cases, arms, trials, grader sessions, and the total attempt limit before execution. Honor any token or spending cap, and ask only when scope or the cap cannot be resolved safely. A full repository run means every suite at the stated one-arm, one-trial defaults; calculate its attempt count before execution. Never silently multiply attempts, compare models, or rerun failures.
+Before planning the run, read [references/run-protocol.md](references/run-protocol.md). Resolve the target, selected case IDs, model, and run limit from the request. Use one arm and the declared trial counts unless the user requests comparison or another trial count; when the user selects a suite without case IDs, select all cases in that suite. State cases, arms, trials, grader sessions, and the total attempt limit before execution. Honor any token or spending cap, and ask only when scope or the cap cannot be resolved safely. A full repository run means every suite at the stated one-arm, one-trial defaults; calculate its attempt count before execution. Never silently multiply attempts, compare models, or rerun failures.
 
 Validate the suite through `an-dr-convention-agent-skill-testing`'s public validator before starting any agent. If no suite exists, report that prerequisite and use the authoring skill only when creating tests is also requested. Do not fabricate a passing test from an improvised prompt.
 
@@ -39,7 +39,7 @@ Send follow-ups in order within the same case session. Capture the transcript, t
 
 ## Grade the result
 
-After execution, give a separate grader the expectations, raw evidence, transcript, and artifacts. Keep the rubric hidden from the tested agent throughout the case. The grader may be the coordinating agent or another independent agent within the authorized run limit; do not start extra paid grading sessions without including them in that limit.
+Before grading, read [references/grading.md](references/grading.md). After execution, give a separate grader the expectations, raw evidence, transcript, and artifacts. Keep the rubric hidden from the tested agent throughout the case. The grader may be the coordinating agent or another independent agent within the authorized run limit; do not start extra paid grading sessions without including them in that limit.
 
 Run deterministic assertions first, then judge each expected behavior against observable evidence. Apply the convention's security baseline and report activation separately from behavior. Verify source preservation through hashes and the diff, read actual report contents, and inspect rendered output when required. A claimed check without a tool result is not evidence that it ran. Missing tooling is blocked coverage. Preserve valid alternative wording and groupings when the expectation permits them.
 

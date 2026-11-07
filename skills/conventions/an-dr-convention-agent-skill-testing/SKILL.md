@@ -48,28 +48,13 @@ Follow [the evaluation contract](references/eval-contract.md) for fields, enviro
 - **Isolation.** Use a fresh session and fresh scratch repository for every trial and comparison arm. Install skills in the host's normal discovery path when possible. Hide the target name from implicit and contextual prompts; expose only normal skill discovery metadata. Keep author conversation and grading criteria out of the tested session. When the host cannot enforce network, filesystem, or discovery isolation, follow the best-effort protocol and report the affected coverage as blocked.
 - **Fixtures.** Package repository inputs as ZIP files under `evals/fixtures/`, with complete `baseline/` and `working/` trees. Commit the baseline, then apply the working tree including deletions. Never ship `.git`, credentials, symlinks, executable setup hooks, or live-service dependencies. Validate before extraction, reject reparse-point ancestors, and keep all writes inside the scratch root.
 
-## Grading
+## Verdicts
 
-- **Mechanical first.** Prefer tool-invocation checks, artifact existence and content, recorded exit codes, invocation evidence, and diff-scope checks. Match transcript patterns against structured tool invocations, not prose claiming a command ran. Deterministic grader files stay in `evals/graders/` and run inside the sandbox.
-- **Judgment second.** Grade each expected behavior separately from evidence. Use an LLM judge only for outcomes mechanical checks cannot establish; calibrate it against a small set of human-labeled runs and record disagreements. Do not infer hidden reasoning from a transcript.
-- **Security baseline.** Every case also checks for secret leakage, unauthorized destructive operations, and access outside the authorized scratch workspace and read-only runtime/skill mounts. Use synthetic secrets only. Authorized deletion inside a fixture is permitted. Missing controls or access telemetry block the corresponding security verdict, not necessarily the behavioral run; they are never proof of safety.
-- **Verdicts.** Use pass, fail, or blocked per expectation. Any failed behavior expectation makes the behavioral case fail; otherwise any blocked behavior expectation makes it blocked. Report security and isolation verdicts separately, so missing controls do not erase observed behavior. Preserve unrun cases and unavailable evidence explicitly.
-- **Separate signals.** Report activation accuracy separately from behavior correctness. A positive case that never loads the skill is an activation failure and provides no evidence that its instructions were followed. A negative case passes activation only when the target remains unloaded.
-
-## Run protocol
-
-- **Permission.** Script tests and structural checks run in normal development and PR CI. Agent evaluations require an explicit user request; editing tests, changing skills, or CI activity does not authorize paid execution.
-- **Comparison.** Run the requested revision in one arm by default. Compare with-skill against without-skill for a new skill, or old against new for a revision, only when the user requests comparison. Hold model, fixtures, tools, limits, and host settings constant. Label a single-arm run as a diagnostic and make no comparative claim.
-- **Trials.** Cases declare one trial by default. Honor an explicit trial override; use repeated trials when the user asks for reliability evidence. Before running, state cases, arms, trials, grader sessions, and total attempt/spending limits. Never silently multiply attempts, retry failures, or start paid graders outside the authorized total.
-- **Best-effort host.** If enforced network, filesystem, or skill-discovery isolation is unavailable, run only with synthetic inputs, scratch repositories, no live credentials or service actions, and the tested agent's context separated from the rubric and author conversation. Record actual host capabilities, discoverable skills, and any unenforced boundaries. Grade observed behavior and activation from captured evidence, but mark confinement and any discovery-dependent conclusion blocked where controls or telemetry are missing. Stop when fresh sessions, scratch containment, or separation of the rubric cannot be provided; a normal reply is not a trial.
-- **Evidence.** Save the run manifest, transcripts, tool events, artifacts, diffs, assertion verdicts, invocation evidence, timing, and usage/cost or explicit unavailability. Report per-case comparison deltas and variation when multiple arms or trials were requested; a single success does not establish reliability.
-- **CI.** Run free script and suite checks for PRs touching skills or evaluations. Keep model execution outside automatic CI unless the user explicitly authorizes a separately bounded run.
+- **Graders.** Mechanical checks are tool invocations, artifact existence and content, recorded exit codes, invocation evidence, and diff scope. Deterministic grader files live in `evals/graders/`. An LLM judge covers only outcomes mechanical checks cannot establish.
+- **Security baseline.** Every case also covers secret leakage, unauthorized destructive operations, and access outside the authorized scratch workspace and read-only runtime and skill mounts, with synthetic secrets only. Authorized deletion inside a fixture is permitted.
+- **Verdicts.** Each expectation is pass, fail, or blocked. Any failed behavior expectation makes the behavioral case fail; otherwise any blocked behavior expectation makes it blocked. Security and isolation verdicts are separate, so missing controls do not erase observed behavior.
+- **Separate signals.** Activation accuracy is separate from behavior correctness. A positive case that never loads the skill is an activation failure and no evidence that its instructions were followed. A negative case passes activation only when the target remains unloaded.
 
 ## Check
 
-```powershell
-pwsh <skill>/scripts/check-evals.ps1 -Path <target-skill>/evals/evals.json
-pwsh <skill>/scripts/tests/run.ps1
-```
-
-The validator checks fields, bucket coverage, assertion contracts, environment declarations, and ZIP contents without extracting fixtures or invoking agents. It exits nonzero with a diagnostic on invalid data; relay failures and the successful case count. The local runner exercises its rejection cases.
+`scripts/check-evals.ps1` verifies a suite: fields, bucket coverage, assertion contracts, environment declarations, and ZIP contents, without extracting fixtures or invoking agents. It exits non-zero with a diagnostic on invalid data. Its regression tests exercise the rejection cases.
