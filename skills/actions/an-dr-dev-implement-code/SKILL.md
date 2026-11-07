@@ -6,7 +6,7 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.0.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-convention-adr an-dr-convention-code an-dr-dev-write-documentation
+  an-dr.dependencies: an-dr-convention-adr an-dr-convention-code an-dr-convention-layout an-dr-dev-write-documentation
 ---
 
 # Build
@@ -18,6 +18,8 @@ Implement the requested result in Direct, or only the current increment in a gat
 ## Code conventions
 
 Write code by `an-dr-convention-code`: its quality, architecture, naming, and reviewable-change rules are the defaults here, and the host repository's own conventions override them.
+
+Place new files and folders by `an-dr-convention-layout`, using its reference file for the project's type; a new project starts in that layout.
 
 ## Commits and decisions
 

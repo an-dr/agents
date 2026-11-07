@@ -6,7 +6,7 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.0.0"
   an-dr.type: convention
-  an-dr.dependencies: an-dr-concept-ai-slop an-dr-concept-clean-dependencies
+  an-dr.dependencies: an-dr-concept-ai-slop an-dr-concept-clean-dependencies an-dr-convention-layout
 ---
 
 # Convention: code
@@ -30,7 +30,7 @@ These are writing defaults. The host repository's instructions and the edited fi
 - Use the domain's own vocabulary and the ecosystem's standard terms: established pattern names (`Repository`, `Adapter`, `Controller`, `Factory`, `Builder`, `Coordinator`) only for code that is that pattern, and the language's naming, module, and directory conventions.
 - Name each unit after its current responsibility. When a responsibility moves to a new owner, rename the types, messages, functions, and files that describe it in the same change, so no name still describes the old design.
 - Never give two different concepts the same name within one codebase boundary, even in different modules.
-- Lay out files where the ecosystem expects them — entry points, modules, tests, fixtures — and follow the repository's existing layout when it has one.
+- Files sit where `an-dr-convention-layout` places them for the project's type. In a repository whose layout departs from them, a new file sits beside the existing files of its kind, and the departure is reported rather than silently copied.
 
 ## Architecture
 
