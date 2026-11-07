@@ -40,7 +40,7 @@ Run the scan before reading anything, so the reading is aimed:
 pwsh <skill>/scripts/scan-project.ps1 [-Path <repo>] [-Json <file>]
 ```
 
-It reports the languages and their weight, the manifests, entry points, container signals and packaging signals, the test ratio, the CI definitions, every documentation file with the age of its last edit against the repository's own last commit, the churn hotspots of the last year, the largest files, the `TODO`/`FIXME` density, and the author spread. The stale-document list and the churn list are where drift and risk are found; start there.
+It reports the languages and their weight, the manifests, entry points, container signals and packaging signals, the test ratio and the source files carrying inline test modules, the CI definitions, every documentation file with the age of its last edit against the repository's own last commit, the churn hotspots of the last year, the largest files, the `TODO`/`FIXME` density, and the author spread. The stale-document list and the churn list are where drift and risk are found; start there.
 
 Then read, in this order: the manifests, the entry points, the configuration and its defaults, the module the churn list puts first, the tests of the primary flow, and only afterwards the prose documentation.
 

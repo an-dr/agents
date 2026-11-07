@@ -120,6 +120,11 @@ $configFiles = @($paths | Where-Object {
     })
 $sourceFiles = @($paths | Where-Object { $_ -notmatch $binary -and $testFiles -notcontains $_ })
 $testRatio = if ($sourceFiles.Count -gt 0) { [Math]::Round($testFiles.Count / [double]$sourceFiles.Count, 3) } else { 0 }
+# Rust keeps unit tests inside the source file, so a test-file count alone reads as untested.
+$inlineTestFiles = @($sourceFiles | Where-Object { $_ -match '\.rs$' } | Where-Object {
+        $text = Get-Content -LiteralPath (Join-Path $root $_) -Raw -ErrorAction SilentlyContinue
+        $text -and $text -match '#\[(cfg\(test\)|test)\]'
+    })
 
 # ---- documentation and its staleness --------------------------------------
 
@@ -205,6 +210,7 @@ Write-Section 'CI'; if ($ciFiles) { $ciFiles | ForEach-Object { Write-Host "  $_
 Write-Section 'Configuration'; if ($configFiles) { $configFiles | Select-Object -First $Top | ForEach-Object { Write-Host "  $_" } } else { Write-Host '  none found' }
 Write-Section 'Tests'
 Write-Host ("  {0} test files against {1} source files (ratio {2})" -f $testFiles.Count, $sourceFiles.Count, $testRatio)
+if ($inlineTestFiles) { Write-Host ("  {0} source files with inline test modules" -f $inlineTestFiles.Count) }
 
 Write-Section 'Documentation by staleness (days behind the last commit)'
 $documents | Select-Object -First $Top | Format-Table -AutoSize | Out-String -Width 200 | Write-Host
@@ -230,7 +236,7 @@ if ($Json) {
         files = $paths.Count; lines = ($lineCount.Values | Measure-Object -Sum).Sum
         languages = $languageTable; manifests = $manifests; containerSignals = $containerSignals
         entryPoints = $entryPoints; packaging = $packagingSignals; binaries = $declaredBinaries; ci = $ciFiles; configuration = $configFiles
-        tests = [ordered]@{ files = $testFiles.Count; sources = $sourceFiles.Count; ratio = $testRatio }
+        tests = [ordered]@{ files = $testFiles.Count; inline = $inlineTestFiles.Count; sources = $sourceFiles.Count; ratio = $testRatio }
         documents = $documents; churn = $churn; largest = $largest; markers = $markers; authors = $authors
     }
     $report | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $Json -Encoding utf8
