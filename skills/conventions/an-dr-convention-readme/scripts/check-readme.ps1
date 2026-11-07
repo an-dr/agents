@@ -72,7 +72,7 @@ $testEvidence = @($relative | Where-Object {
         $_ -match '(^|/)test_[^/]+\.py$'
     })
 $docsDirectory = Test-AnyPath -Candidate @('docs', 'doc')
-$adrDirectory = Test-AnyPath -Candidate @('docs/an-dr-convention-adr', 'docs/decisions', 'adr')
+$adrDirectory = Test-AnyPath -Candidate @('docs/adr', 'docs/decisions', 'adr')
 $contributing = Test-AnyPath -Candidate @('CONTRIBUTING.md', 'CONTRIBUTING', '.github/CONTRIBUTING.md')
 $codeOfConduct = Test-AnyPath -Candidate @('CODE_OF_CONDUCT.md', '.github/CODE_OF_CONDUCT.md')
 $workspace = @($relative | Where-Object { $_ -match '^(packages|apps|crates|services)/' })

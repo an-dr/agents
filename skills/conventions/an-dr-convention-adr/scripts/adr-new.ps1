@@ -11,7 +11,7 @@ $root = git rev-parse --show-toplevel 2>$null
 if ($LASTEXITCODE -ne 0 -or -not $root) {
     throw 'Run the ADR script inside a Git repository.'
 }
-$directory = Join-Path $root.Trim() 'docs/an-dr-convention-adr'
+$directory = Join-Path $root.Trim() 'docs/adr'
 New-Item -ItemType Directory -Force -Path $directory | Out-Null
 $slug = ($Title.ToLowerInvariant() -replace '[^a-z0-9]+', '-').Trim('-')
 if (-not $slug) {

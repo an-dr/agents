@@ -28,7 +28,7 @@ Never open the README first — read the evidence, then judge what the README sa
 | `tests/`, `spec/`, `*_test.*`                                                   | a development section is honest                                                      |
 | `.github/workflows/`, `.gitlab-ci.yml`                                          | badges can be real, and how the project is built                                     |
 | `LICENSE`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`                              | which of those sections may exist at all                                             |
-| `docs/`, `docs/an-dr-convention-adr/`                                           | link out instead of inlining                                                         |
+| `docs/`, `docs/adr/`                                                            | link out instead of inlining                                                         |
 | commit count and recency, CI presence                                           | experimental or maintained — the status line is evidence, not a guess                |
 
 ## Classify what is already there
