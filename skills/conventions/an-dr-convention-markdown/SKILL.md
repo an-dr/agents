@@ -35,20 +35,10 @@ Break a line only where the break carries meaning: between list items, between t
 - Table columns are aligned, so a table reads as a table in the source as well as when rendered. The formatter below writes the alignment; never pad by hand.
 - Every file ends with exactly one newline.
 
-## Format
-
-```powershell
-pwsh <skill>/scripts/format-markdown.ps1 -Path <file-or-directory> [-WhatIfOnly]
-```
-
-Run it on every `.md` file you write or touch, before the check. It aligns tables, removes trailing whitespace, and ends the file with one newline; frontmatter, code fences, and HTML comments stay untouched. It prints each changed file and refuses to write a file whose text would change. It counts an emoji as one character, so a table with emoji can look slightly off in an editor.
-
 ## Check
 
-```powershell
-pwsh <skill>/scripts/check-markdown.ps1 -Path <file-or-directory>
-```
+- `scripts/format-markdown.ps1` brings a file or directory to this format: it aligns tables, removes trailing whitespace, and ends each file with one newline, leaving frontmatter, code fences, and HTML comments untouched. It refuses to write a file whose text would change, and counts an emoji as one character, so a table with emoji can look slightly off in an editor.
+- `scripts/check-markdown.ps1` verifies these rules, including hard-wrapped paragraphs and unaligned tables, and exits non-zero on any violation. HTML comments are excluded from prose checks; visible text around them is still checked. `-Path` accepts files or directories.
+- `scripts/reflow-markdown.ps1` joins hard-wrapped paragraphs.
 
-The script exits non-zero on any rule violation, including a hard-wrapped paragraph and an unaligned table. HTML comments are excluded from prose checks; visible text around them is still checked. Run it on every `.md` file you write or touch. Its `-Path` parameter also accepts an array of files or directories; the repository test discovers Markdown through Git so ignored artifacts are excluded.
-
-`reflow-markdown.ps1` in the same folder joins hard-wrapped paragraphs. The regressions live in `scripts/tests/test-markdown.ps1` and `scripts/tests/test-format.ps1`; run them with `pwsh <skill>/scripts/tests/run.ps1`.
+Their regression tests are in `scripts/tests/`.

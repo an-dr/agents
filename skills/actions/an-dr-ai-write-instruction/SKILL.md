@@ -6,7 +6,7 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.0.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-review-instruction an-dr-concept-ai-slop an-dr-convention-markdown
+  an-dr.dependencies: an-dr-ai-review-instruction an-dr-concept-ai-slop an-dr-convention-markdown an-dr-dev-write-documentation
 ---
 
 # Agent instruction writing
@@ -17,4 +17,4 @@ Write one imperative, observable rule at a time, and cut any sentence that fails
 
 Change instructions against an observed request, transcript, review finding, or failed run. Do not silently weaken an existing rule. Prefer a failing script to a reminder when inputs and failure are deterministic. Instructions must describe the system as it works now.
 
-Use `an-dr-convention-markdown` for Markdown format and `an-dr-ai-review-instruction` for an instruction audit. Run their checkers, then reread the changed loading path as the receiving agent.
+Write Markdown in the format of `an-dr-convention-markdown`, and format and check it as `an-dr-dev-write-documentation` describes. Audit the instruction with `an-dr-ai-review-instruction` and run its checks, then reread the changed loading path as the receiving agent.
