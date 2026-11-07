@@ -41,6 +41,7 @@ BREAKING CHANGE: what breaks
 - Lowercase, no trailing period.
 - No blank lines between entries. The single blank line in a message means "footers follow", which is how the spec and `git interpret-trailers` find them.
 - Explain cause or motivation. The diff already shows what changed.
+- State only what the commit is or was observed to do. Describe untested behaviour as what the commit adds, not as a result: `adds CI that builds three platforms`, not `built in CI for three platforms` when CI has not run.
 
 ## Markdown
 
