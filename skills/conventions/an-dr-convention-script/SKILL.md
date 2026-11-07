@@ -4,25 +4,32 @@ description: Rules for the PowerShell scripts a skill ships — PowerShell 7, no
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.3.0"
+  version: "1.4.0"
   an-dr.type: convention
   an-dr.dependencies: an-dr-ai-send-message an-dr-convention-agent-skill-testing
 ---
 
 # Convention: script
 
-A skill adds a script only for repeated, mechanical work. The skill's `SKILL.md` says when the agent runs it; the script does the deterministic part.
+Defers: `scripts/tests/`, fixtures, the `scripts/tests/run.ps1` entry point, and free checks versus agent evaluations to `an-dr-convention-agent-skill-testing`; output form to `an-dr-ai-send-message`.
 
-- **Runtime:** PowerShell 7, starting with `#Requires -Version 7`, non-interactive, exiting non-zero on failure.
-- **Tests:** follow `an-dr-convention-agent-skill-testing` for `scripts/tests/`, fixtures, the local `scripts/tests/run.ps1` entry point, and the boundary between free checks and agent evaluations.
-- **After modifications:** run a skill's script tests after every change to that skill, its scripts, or its tests. Test the final edited scripts before delivery; a passing run from before the edit does not verify it. Report missing tests or failed assertions instead of claiming success. Script tests run without model calls or separate approval; paid behavioral evaluations require an explicit user request.
-- **Output:** a script's result is printed for the user. Write it in `an-dr-ai-send-message`'s safe Markdown (pipe tables, short status lines, a report's path) with progress noise kept off stdout, so the agent can relay it as `an-dr-ai-send-message` requires without reshaping it. SKILL.md says what the output shows and that the agent relays it.
-- **User-output blocks:** wrap the part of stdout the user must see between `<!-- user-output: verbatim -->` or `<!-- user-output: summarize -->` and `<!-- /user-output -->`, each marker on its own line. Use `verbatim` for output the user reads exactly as printed, such as a status table, and `summarize` for output the agent condenses, such as findings or a long list. Everything outside the markers is detail the agent may leave out. Emit the markers with plain `Write-Output`; they need no shared helper.
-- **Own files:** reach the skill's own files through `$PSScriptRoot`. Never use an absolute path, a path through the repository's layout such as `skills/<name>`, or a submodule folder name.
-- **Other skills:** call only a public script of another skill, through a folder the caller passes. Skills need not be installed side by side, so a script never guesses another skill's location, whether through `$PSScriptRoot/../..`, a registry, or a fixed path. It takes the folder as a mandatory parameter named after the skill, such as `-<Name>Skill`, and SKILL.md passes `<that-skill-name>` in the command. The script checks that the public script exists in that folder and throws naming the parameter when it does not. It never imports another skill's `.psm1` module. When a caller needs more than a public script offers, extend that script's parameters instead.
-- **Vendored helpers:** a few generic functions that two skills need are copied into each one, and each copy is owned by its skill and marked as a copy. Sharing them is not worth the coupling.
-- **Self-contained:** everything a script runs lives in its skill's folder. No folder at the repository root or elsewhere holds code that skills share, because it would tie every skill to this repository's layout and break a skill installed or published on its own.
+## Rules
+
+- A script exists only for repeated, mechanical work; `SKILL.md` says when it runs.
+- Runtime: PowerShell 7, first line `#Requires -Version 7`, non-interactive, non-zero exit on failure.
+- A skill's script tests run after every change to the skill, its scripts, or its tests, against the final edited scripts; a pre-edit pass verifies nothing.
+- Missing tests or failed assertions are reported, never claimed as success.
+- Script tests need no model calls or separate approval; paid behavioral evaluations need an explicit user request.
+- Output is printed for the user in `an-dr-ai-send-message`'s safe Markdown (pipe tables, short status lines, a report path), progress noise off stdout, so it is relayed without reshaping; `SKILL.md` says what it shows and that it is relayed.
+- User-facing stdout sits between `<!-- user-output: verbatim -->` or `<!-- user-output: summarize -->` and `<!-- /user-output -->`, each marker on its own line, emitted with plain `Write-Output`, no shared helper.
+- `verbatim`: read exactly as printed, such as a status table. `summarize`: condensed by the agent, such as findings or a long list. Outside the markers: detail the agent may omit.
+- Own files are reached through `$PSScriptRoot`; never an absolute path, a repository-layout path such as `skills/<name>`, or a submodule folder name.
+- Another skill is reached only through its public script, in a folder passed as a mandatory parameter named after the skill (`-<Name>Skill`); `SKILL.md` passes `<that-skill-name>`. Skills need not be installed side by side, so no `$PSScriptRoot/../..`, registry, or fixed path.
+- The script checks the public script exists in that folder and throws naming the parameter when not.
+- Another skill's `.psm1` is never imported; a caller needing more extends that public script's parameters.
+- A few generic functions two skills need are copied into each, owned by that skill and marked as a copy; sharing is not worth the coupling.
+- Everything a script runs lives in its skill's folder; no shared code folder at the root or elsewhere, which would break a skill installed or published alone.
 
 ## Check
 
-`scripts/check-scripts.ps1` verifies these rules across a repository: it reports missing runtime declarations, nonportable dependencies, missing test runners, and script tests left in production folders, and exits non-zero on any. Its regression test breaks a copy one way at a time and expects each break to be named.
+`scripts/check-scripts.ps1` reports missing runtime declarations, nonportable dependencies, missing test runners, and script tests left in production folders, and exits non-zero on any. Its regression test breaks a copy one way at a time and expects each break named.

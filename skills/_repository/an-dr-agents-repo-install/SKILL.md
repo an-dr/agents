@@ -1,27 +1,20 @@
 ---
 name: an-dr-agents-repo-install
-description: Install this agents clone globally for local AI tools (Claude Code, Codex, GitHub Copilot CLI, DeepSeek Harness, Gemini CLI, opencode) so every repository can use its policy and skills without a submodule. Use when the user wants the workflow available by default machine-wide, wants to move or update an existing global install, or wants to verify one.
+description: Install this agents clone globally for local AI tools (Claude Code, Codex, Copilot CLI, DeepSeek Harness, Gemini CLI, opencode) so every repository gets its policy and skills. Use when the user wants the workflow machine-wide, or to move, update, or verify a global install.
 license: MIT
 allowed-tools: PowerShell
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "1.2.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-skill-test
 ---
 
 # Install agents globally
 
-Wires one clone of this repository into each tool's **user-level** configuration instead of embedding it per repository:
-
-1. a managed block in each tool's global instruction file, pointing at this clone's `AGENTS.md`;
-2. one directory link per skill in each tool's global skills directory — a junction on Windows, a symbolic link on Linux/macOS.
-
-A repository that carries this clone as its own `agents/` submodule wins over the global install, because its `AGENTS.md` is nearer the work.
+Defers: behavioral verification to `an-dr-ai-skill-test`.
 
 ## Install
-
-From anywhere:
 
 ```powershell
 pwsh <skill>/scripts/install-agents.ps1
@@ -35,13 +28,12 @@ pwsh <skill>/scripts/install-agents.ps1
 | `-Force`             | Replace a real directory occupying a skill link path.                                                                     |
 | `-Uninstall`         | Remove the managed blocks and the junctions.                                                                              |
 
-The script is idempotent. It edits only between its `agents-install` markers, never other content in those files, and only ever replaces links it recognises. Junctions need no administrator rights or developer mode on Windows; symbolic links need no elevation on Linux/macOS either.
-
-Re-run it after adding a skill to the clone, or after moving the clone.
-
-## Opt-in guard
-
-A global install has no submodule to signal intent, so the block it writes makes the policy conditional: a flow starts only when the repository has a root `AGENTS.md`/`CLAUDE.md` referencing it, has `.progress/workflow.json`, or the user names a flow or skill. Without that guard every scratch directory would receive Direct work or gated-flow setup.
+- Writes a managed block in each tool's user-level instruction file, pointing at this clone's `AGENTS.md`.
+- Links each skill into each tool's global skills directory: a junction on Windows, a symbolic link on Linux/macOS; neither needs elevation or developer mode.
+- Idempotent; edits only between its `agents-install` markers and replaces only links it recognises.
+- A repository with this clone as its own `agents/` submodule wins over the global install, because its `AGENTS.md` is nearer the work.
+- Re-run after adding a skill to the clone or moving the clone.
+- The managed block makes the policy conditional: a flow starts only when the repository has a root `AGENTS.md`/`CLAUDE.md` referencing it, has `.progress/workflow.json`, or the user names a flow or skill; otherwise every scratch directory would get Direct work or gated-flow setup.
 
 ## Verify
 
@@ -49,19 +41,17 @@ A global install has no submodule to signal intent, so the block it writes makes
 pwsh <skill>/scripts/verify-agents.ps1
 ```
 
-Checks the clone, each tool's managed block and policy path, and every junction — including that `SKILL.md` is readable *through* the link. Prints a Markdown table and exits non-zero on any failure. Report that table to the user as-is.
+Checks the clone, each tool's managed block and policy path, and every junction, including that `SKILL.md` is readable through the link. Prints a Markdown table; exits non-zero on any failure. Report the table to the user as-is.
 
-## Where the agent takes over
+## Handle what the scripts cannot
 
-The scripts do only what is mechanical and safe. Handle these yourself:
+- Exit `2` (conflict): a real directory sits where a skill link belongs → read it, decide whether it is an unrelated same-name skill or a stale copy, then rename it or re-run with `-Force`. Never `-Force` blindly.
+- `unsupported` skills row: the tool has no known user-level skills directory → check its current documentation; if one exists, add it to `Get-AgentsToolTarget` in `scripts/Install.Common.psm1`, not a hand-made link.
+- Unknown tool → add it to the same function, with its instruction-file path and whether it supports `@` imports.
+- `warn` on the git check: a dirty or non-git clone works but cannot update by `git pull` → tell the user which it is.
+- The scripts prove files and links, not that a tool loaded them → report that coverage limit. `an-dr-ai-skill-test` runs cheap script tests always, behavioral cases only on explicit user request; installing links does not authorize new agent sessions.
+- Anything else the script cannot fix → diagnose from its output; do not re-run with different flags until it passes.
 
-- **Conflict exit (`2`)** — a real directory sits where a skill link belongs. Read it, decide whether it is an unrelated skill of the same name or a stale copy, and either rename it or re-run with `-Force`. Never `-Force` blindly.
-- **`unsupported` skills row** — that tool has no known user-level skills directory. Check its current documentation; if one now exists, add it to `Get-AgentsToolTarget` in `scripts/Install.Common.psm1` rather than linking by hand.
-- **A tool the script does not know** — add it to the same function, with the correct instruction-file path and whether it supports `@` imports.
-- **`warn` on the git check** — a dirty or non-git clone still works but cannot be updated by `git pull`. Tell the user which it is.
-- **Semantic verification** — the script proves the files and links are right, not that a tool loaded them. Report that coverage limit. `an-dr-ai-skill-test` always runs cheap script tests, but its behavioral cases still require an explicit user request; installing links does not authorize new agent sessions.
-- **Anything the script reports that it cannot fix** — diagnose from its output rather than re-running it with different flags until it passes.
+## Move or remove the clone
 
-## Moving or removing the clone
-
-Deleting or moving the clone leaves dangling junctions in every tool. Run `-Uninstall` first, or re-run the install from the new location — it repoints existing links and rewrites the blocks.
+Moving or deleting the clone leaves dangling junctions in every tool. Run `-Uninstall` first, or re-run the install from the new location; it repoints links and rewrites the blocks.

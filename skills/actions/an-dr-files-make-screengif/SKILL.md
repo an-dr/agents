@@ -4,20 +4,27 @@ description: Record a short animated GIF of a website, GUI application, or game 
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "1.1.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-files-make-screenshot
 ---
 
 # GIF
 
-Record a GIF only on the user's request. A GIF costs megabytes in every clone and in every page load, so a screenshot from `an-dr-files-make-screenshot` is the default for showing visible output. When a still image cannot show the point — an interaction, an animation, gameplay — offer a GIF and wait for the user to ask.
+Defers: storage, naming, subject preparation, and personal data to `an-dr-files-make-screenshot`.
 
-Storage, naming, subject preparation, and personal-data rules are those of `an-dr-files-make-screenshot`: the file goes to `docs/media/<name>.gif` and is committed with the document that shows it.
+## Decide
+
+- Record only on the user's request; a GIF costs megabytes in every clone and page load.
+- Default for visible output → screenshot from `an-dr-files-make-screenshot`.
+- Still image cannot show the point (interaction, animation, gameplay) → offer a GIF and wait for the request.
+- Output file: `docs/media/<name>.gif`, committed with the document that shows it.
 
 ## Plan the clip
 
-Write the sequence down before recording: the starting state, each action, and the end state. One clip shows one idea in 3 to 10 seconds. Start and end on a still frame that reads on its own, because many viewers see only the first frame or a loop.
+- Write down the starting state, each action, and the end state before recording.
+- One clip, one idea, 3 to 10 seconds.
+- Start and end on a still frame that reads on its own; many viewers see only the first frame or a loop.
 
 ## Record
 
@@ -26,12 +33,16 @@ pwsh <skill>/scripts/record-gif.ps1 -Window <title> -OutFile docs/media/<name>.g
 pwsh <skill>/scripts/record-gif.ps1 -Video <recording.mp4> -OutFile docs/media/<name>.gif [-Start 2] [-Seconds 8] [-Fps 12] [-Width 800]
 ```
 
-- `-Window` records one window on Windows by its exact title through ffmpeg while you or the user perform the planned actions. The script counts down before it starts.
-- `-Video` converts an existing recording — from a browser, a game's own capture, or the operating system's recorder — and trims it with `-Start` and `-Seconds`.
-- Both use ffmpeg's two-pass palette, which keeps interface colours clean at a fraction of the size. The script stops with the install command when ffmpeg is missing.
-
-For a website, the Claude in Chrome `gif_creator` tool records a browser interaction directly; export its file and pass it through `-Video` only when it needs trimming or resizing.
+- `-Window`: records one window on Windows by exact title through ffmpeg after a countdown, while you or the user perform the planned actions.
+- `-Video`: converts an existing recording (browser, game capture, OS recorder), trimmed with `-Start` and `-Seconds`.
+- Both use ffmpeg's two-pass palette; missing ffmpeg → the script stops with the install command.
+- Website → Claude in Chrome `gif_creator` records directly; pass its export through `-Video` only to trim or resize.
 
 ## Check
 
-Open the GIF and watch it loop. Re-record when it starts mid-action, shows a cursor wandering without purpose, drops frames during the key moment, or exceeds about 5 MB; lower `-Fps` or `-Width` first. Report the path, duration, and size of every file written.
+- Watch the GIF loop.
+- Re-record when it starts mid-action, shows a purposeless wandering cursor, drops frames at the key moment, or exceeds about 5 MB; lower `-Fps` or `-Width` first.
+
+## Output
+
+- Path, duration, and size of every file written.

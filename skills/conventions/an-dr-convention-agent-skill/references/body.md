@@ -1,9 +1,9 @@
 # Body: title, sections, voice, and commands
 
-## Title and opening
+## Title
 
 - One `#` heading, first in the body. Actions use a short noun phrase: `# Commit`. Concepts use `# Concept: <name>` and conventions use `# Convention: <name>`.
-- The opening paragraph, one to three sentences, says what the skill owns and what it leaves to others, naming each other skill it defers to. A reader can decide from it whether to keep reading.
+- No intro paragraph. When the skill defers part of its subject to other skills, one line under the title names them: `Owns: X. Defers: Y to `other-skill`.`
 
 ## Sections
 
@@ -20,11 +20,10 @@ Sections are `##` headings in sentence case, named for what the reader does or f
 
 ## Voice
 
-- **Mood by type.** An action is written in the imperative. A concept or convention is written in declarative sentences about what is true of a correct principle or artifact, and contains nothing addressed to the agent as a task.
-- **One rule per bullet.** Present tense, one observable rule per bullet, with a reason only where the rule would otherwise seem arbitrary.
-- **Current.** The text describes the skill as it works now. History, comparisons with an older design, and "no longer" belong in commit messages.
-- **Named rules.** A list of parallel rules leads each with a bold phrase naming the rule: `- **Trace.** A conclusion names its evidence.`
-- **One owner.** Another skill is referred to by its exact name in backticks, and each fact has one owner: the text names the owner instead of restating its rule.
+- Actions: imperative. Concepts and conventions: declarative statements about a correct principle or artifact, nothing addressed to the agent as a task.
+- Telegraphic wording, one rule per line; [size.md](size.md) owns the wording and size rules.
+- Current behaviour only; history and "no longer" belong in commit messages.
+- Another skill is named exactly, in backticks; each fact has one owner, named instead of restated.
 
 ## Commands
 

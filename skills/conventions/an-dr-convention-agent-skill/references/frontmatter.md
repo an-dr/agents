@@ -21,7 +21,7 @@ The extensions are conventions of the project, not of the format. A tool that ig
 
 ## Description
 
-- One to three sentences in the frontmatter `description`, on one line, at most 300 characters, because every session loads it.
+- One or two sentences in the frontmatter `description`, on one line, at most 300 characters, because every session loads it; [size.md](size.md) owns the wording.
 - An action opens with a verb saying what it does: `Review a diff for defects ...`. A concept or convention opens with what it defines: `The format of ...`.
 - It ends with a trigger sentence beginning `Use `: `Use when ...`, `Use during ...`, or `Use to ...`. The tool matches on this sentence to load the skill, so it names the situations, not the skill's internals.
-- It names no step of the procedure and no file the skill happens to contain.
+- It names no step of the procedure. Of the files the skill contains, it names only the scripts that check or generate the artifact: `check-message.ps1 in this skill enforces it`.

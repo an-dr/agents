@@ -1,28 +1,31 @@
 ---
 name: an-dr-project-write-overview
-description: Produce a single self-contained HTML overview of an unfamiliar repository — what it is, C4 levels 1 to 3 drawn from the code, a reading path, the drift between what the documentation claims and what the code does, and a ranked list of the project's real structural problems. Use when arriving at a codebase, onboarding someone onto it, or auditing its architecture and health.
+description: Produce one self-contained HTML overview of an unfamiliar repository — what it is, C4 levels 1–3 from the code, a reading path, documentation-versus-code drift, and ranked structural problems. Use when arriving at a codebase, onboarding someone, or auditing its architecture and health.
 license: MIT
 allowed-tools: Read Grep Glob Write Edit Bash PowerShell
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "1.1.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-concept-ai-slop an-dr-files-build-report an-dr-convention-html-report an-dr-dev-write-documentation
 ---
 
 # Project overview
 
-One HTML page that takes a competent stranger from nothing to productive, and tells them the truth about the codebase they just inherited.
+Defers: prose to `an-dr-dev-write-documentation`; slop signals to `an-dr-concept-ai-slop`; page format to `an-dr-convention-html-report`; build, render, and publish to `an-dr-files-build-report`.
 
-Use `an-dr-dev-write-documentation` for the prose, and keep the page free of the signals in `an-dr-concept-ai-slop`: every statement is specific and checked against the code. The page reports; it never fixes. Nothing in the scanned repository is edited.
+## Gather the evidence
 
-## Code is the authority, documentation is intent
+1. Run the scan before reading anything:
 
-The README, the architecture guide, the ADRs, and the comments state what someone once intended. The code states what runs. When they disagree the code wins, and the disagreement is itself a finding worth the reader's attention — it is usually where the next bug comes from.
+   ```powershell
+   pwsh <skill>/scripts/scan-project.ps1 [-Path <repo>] [-Json <file>]
+   ```
 
-So documentation is read as a hypothesis and then tested against the code. Never resolve a contradiction silently, never repeat a documented claim the code does not support, and never quietly drop a documented component because it could not be found — record all three as drift.
-
-Every statement on the page carries its provenance, and the page renders it as a badge:
+   It reports languages and weight, manifests, entry points, container and packaging signals, test ratio and files with inline test modules, CI definitions, every documentation file with its last-edit age against the repository's last commit, last year's churn hotspots, largest files, `TODO`/`FIXME` density, and author spread. Start from the stale-document and churn lists; drift and risk are there.
+2. Read in order: manifests, entry points, configuration and its defaults, the top churn module, tests of the primary flow, then prose documentation.
+3. Treat documentation (README, architecture guide, ADRs, comments) as intent and a hypothesis; the code is what runs and wins. Record as drift every contradiction, every documented claim the code does not support, and every documented component not found; never resolve or drop one silently.
+4. Tag every statement with provenance:
 
 | Badge    | Means                                                | Allowed source                                              |
 | -------- | ---------------------------------------------------- | ----------------------------------------------------------- |
@@ -30,94 +33,34 @@ Every statement on the page carries its provenance, and the page renders it as a
 | inferred | A strong pattern the code implies but does not state | naming, directory shape, import graph, framework convention |
 | claimed  | Asserted by documentation and not confirmed          | README, `docs/`, ADRs, comments, commit messages            |
 
-An inferred claim is never presented as verified, and a claimed one is never presented at all outside the drift table unless the reader is told it is unconfirmed.
+- Inferred is never shown as verified; claimed appears only in the drift table unless marked unconfirmed.
 
-## Gather the evidence first
+## Draw C4 levels 1–3
 
-Run the scan before reading anything, so the reading is aimed:
+For what each level derives from and how to pick the level 3 container, read [references/c4.md](references/c4.md).
 
-```powershell
-pwsh <skill>/scripts/scan-project.ps1 [-Path <repo>] [-Json <file>]
-```
+## Hunt the problems
 
-It reports the languages and their weight, the manifests, entry points, container signals and packaging signals, the test ratio and the source files carrying inline test modules, the CI definitions, every documentation file with the age of its last edit against the repository's own last commit, the churn hotspots of the last year, the largest files, the `TODO`/`FIXME` density, and the author spread. The stale-document list and the churn list are where drift and risk are found; start there.
+For the problem categories and their evidence, read [references/problems.md](references/problems.md).
 
-Then read, in this order: the manifests, the entry points, the configuration and its defaults, the module the churn list puts first, the tests of the primary flow, and only afterwards the prose documentation.
+- Each finding: severity, an existing path, its practical cost to the reader, the cheapest honest fix.
+- Rank by cost; cut below the top ten. Group symptoms under their cause; one fault listed eleven times is one finding.
+- State clean categories: "No import cycles found".
 
-## The C4 levels
+## Write the page
 
-Draw levels 1 to 3. Level 4 is the code itself and the reader already has it.
-
-| Level         | Answers                                                                     | Derived from                                                                                                                          |
-| ------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| 1 — Context   | What is this system, who uses it, what does it talk to that it does not own | outbound calls, SDK and client dependencies, credentials and endpoints in configuration, webhooks, schedulers                         |
-| 2 — Container | What separately runs or deploys, in what language, talking over what        | entry points, `Dockerfile` and compose files, deployment manifests, CI jobs, process definitions, workspace members, ports and queues |
-
-A desktop application, a CLI, or a library deploys nothing, and its container level is not empty — it is the declared binaries, the compiled guest artifacts, the packaging scripts, and the helper processes the main one spawns. The scan reports those separately for that reason.
-| 3 — Component | Inside the container the reader will actually work in, what are the major groupings and how do they depend on each other | directory structure confirmed by the import graph, not by the directory names alone |
-
-Draw only what the code confirms. A container the documentation describes but the repository does not contain is a drift row, not a box. A box drawn from an inferred grouping is labelled inferred.
-
-Choose the level 3 container by where the work happens — the one with the most churn — and say why it was chosen. One component diagram is usually enough; a second is worth it only when the reader will genuinely work in both.
-
-## The problems section
-
-This is the part a newcomer cannot produce for themselves and the part the project's own documentation will never contain. Hunt for it deliberately rather than reporting whatever the scan happened to surface.
-
-| Problem                   | Evidence that proves it                                                                                                              |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| Circular dependencies     | a concrete import cycle, named module by module                                                                                      |
-| Layering violation        | an inner layer importing an outer one — domain reaching into transport, business logic importing the database driver, UI holding SQL |
-| God module                | one file or class with disproportionate size and fan-in, named with both numbers                                                     |
-| Duplicated logic          | the same rule implemented in two places that can now disagree                                                                        |
-| Hidden coupling           | modules that always change together in the churn history without importing each other                                                |
-| Dead code                 | exports, flags, or whole directories nothing reaches                                                                                 |
-| Untested critical path    | the primary flow's modules absent from the test evidence                                                                             |
-| Silent failure            | swallowed exceptions, ignored return values, bare catches on the main path                                                           |
-| Configuration and secrets | committed credentials, hardcoded hosts, defaults that only work on one machine                                                       |
-| Dependency risk           | unpinned, duplicated, abandoned, or a lockfile that disagrees with its manifest                                                      |
-| Build and CI gaps         | a build or test command in the documentation that CI does not run, or that fails on a clean checkout                                 |
-| Documentation drift       | the whole intent-versus-reality table, summarised as one ranked entry                                                                |
-
-Each finding needs a severity, a path that exists, what it costs the reader in practice, and the cheapest honest fix. Rank by cost and cut below the top ten — an unranked list of thirty reads as noise and gets ignored entirely. Symptoms are grouped under their cause; the same architectural fault listed eleven times is one finding.
-
-Say plainly when a category came up clean. "No import cycles found" is information; silence is not.
-
-## The page
-
-Write the page in the format of `an-dr-convention-html-report`: one self-contained HTML file that opens correctly from disk with no network access. Draw the C4 levels and the main flow as Mermaid diagrams — a `flowchart` with `subgraph` boundaries for each C4 level, a `sequenceDiagram` when the main flow is easier to follow as messages — which `an-dr-files-build-report` renders. Mark the system in focus, systems the project does not own, and inferred boxes with `classDef` stroke styles, and keep the legend in the caption.
-
-Start from `assets/overview-template.html`, which carries the structure and a light and dark palette. Its provenance badges and severity chips carry a level:
-- a `verified` statement is `ok`;
-- an `inferred` statement is `notice`;
-- a `claimed` statement is `high`;
-- severity `blocker` is `critical`, `major` is `high`, and `minor` is `notice`.
-
-Add no other badge colour. Sections in this order:
-
-1. **What this is** — three sentences, then the one thing to remember if the reader remembers nothing else.
-2. **Facts** — languages, size, containers, test ratio, CI, licence, last activity, and the commit the page was generated from.
-3. **Start here** — five files in reading order, each with one line on why it earns the reader's time.
-4. **Context, container, component** — the three diagrams, each under a short paragraph that says what to notice.
-5. **The main flow** — one primary use case traced end to end through the real call path.
-6. **Repository map** — directory to purpose, marking what is generated, vendored, or dead.
-7. **Glossary** — the domain terms as the code spells them, especially where the code and the documentation use different words for one thing.
-8. **Intent versus reality** — what the documentation says, what the code does, the file that settles it, and the verdict.
-9. **Problems and risks** — the ranked findings.
-10. **Running it** — build, run, and test commands copied from the repository, each verified to exist.
-11. **Open questions** — what could not be established, and what would settle it.
-
-## Never fabricate
-
-The failure mode of a generated overview is a confident, plausible, wrong architecture diagram, and it is worse than no overview because the reader will trust it for weeks.
-
-- Every path, command, port, and environment variable on the page exists in the repository.
-- A component that could not be found is absent from the diagram and present in the drift table.
-- An unanswerable question goes to the open questions section. Three honest gaps beat three invented facts.
-- The page is a snapshot, not a document under maintenance: stamp it with the commit and the date, and regenerate it rather than patching it.
+Before writing, read [references/page.md](references/page.md) for the template, levels, diagrams, and section order.
 
 ## Output
 
-Write the page at a `project-overview` path with extension `html` in the scanned repository, and build, verify, and publish it through `an-dr-files-build-report`. Offer to publish it as an Artifact when the user wants a link rather than a file.
+- Write at a `project-overview` path, extension `html`, in the scanned repository; build, verify, and publish through `an-dr-files-build-report`.
+- Offer to publish as an Artifact when the user wants a link.
+- In chat: the drift row count and the top three problems with severities.
 
-In the chat, report the count of drift rows and the top three problems with their severities, so the user learns the headline without opening the page.
+## Rules
+
+- Report only; edit nothing in the scanned repository.
+- Every path, command, port, and environment variable on the page exists in the repository; a wrong confident diagram is worse than none.
+- A component not found is absent from the diagram and present in the drift table.
+- Unanswerable → open questions; never an invented fact.
+- The page is a snapshot: stamp commit and date; regenerate, never patch.

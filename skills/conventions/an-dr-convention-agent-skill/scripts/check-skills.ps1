@@ -21,6 +21,7 @@ $skillsDir = Join-Path $Root 'skills'
 # Approximate tokens are characters / 4, as the Size and references section defines.
 $maxTokens = 1500
 $maxDescription = 300
+$maxBodyLines = 200
 $standardKeys = @('name', 'description', 'license', 'compatibility', 'metadata', 'allowed-tools')
 $problems = [System.Collections.Generic.List[object]]::new()
 function Add-Problem([string]$Where, [string]$What) {
@@ -83,6 +84,8 @@ foreach ($file in Get-ChildItem -Path (Join-Path $skillsDir '*/*/SKILL.md') | So
         elseif ($description.Length -gt $maxDescription) { Add-Warning $where "description is $($description.Length) characters; the budget is $maxDescription" }
         if ($description -cnotmatch '^[A-Z]') { Add-Problem $where 'description does not start with a capital letter' }
         if ($description -cnotmatch '(^|[.;] )Use [a-z]') { Add-Problem $where "description has no trigger sentence beginning 'Use '" }
+        $sentences = @([regex]::Matches($description, '[.!?](\s|$)')).Count
+        if ($sentences -gt 2) { Add-Warning $where "description has $sentences sentences; size.md allows two" }
     }
     $text = $lines -join "`n"
     $kindForCommands = if ($metadata.Contains('an-dr.type')) { $metadata['an-dr.type'] } else { 'action' }
@@ -91,6 +94,21 @@ foreach ($file in Get-ChildItem -Path (Join-Path $skillsDir '*/*/SKILL.md') | So
     }
     $tokens = Get-Tokens $text
     if ($tokens -gt $maxTokens) { Add-Warning $where "is about $tokens tokens; the budget is $maxTokens, so move branch material into references/" }
+    $bodyLines = $lines.Count - $bodyStart
+    if ($bodyLines -gt $maxBodyLines) { Add-Warning $where "body is $bodyLines lines; size.md keeps it under $maxBodyLines" }
+    # size.md: no intro paragraph and no bold rule-name prefixes, outside code fences.
+    $fenced = $false; $afterTitle = $false
+    for ($i = $bodyStart; $i -lt $lines.Count; $i++) {
+        $line = $lines[$i]
+        if ($line -match '^```') { $fenced = -not $fenced; continue }
+        if ($fenced) { continue }
+        if ($line -match '^# ') { $afterTitle = $true; continue }
+        if ($afterTitle -and $line.Trim()) {
+            if ($line -notmatch '^(#|[-*|>]|\d+\.|[A-Z][\w -]{0,30}: )') { Add-Warning $where "opens with an intro paragraph; size.md allows only rules or a Defers: line under the title" }
+            $afterTitle = $false
+        }
+        if ($line -match '^\s*[-*] \*\*[^*]+\.\*\* ') { Add-Warning $where "line $($i + 1) leads with a bold rule name; size.md asks for plain one-rule lines"; break }
+    }
 
     # References: every file under references/ is linked from SKILL.md, and every such link resolves.
     $skillWhere = 'skills/' + $file.Directory.Parent.Name + "/$name"

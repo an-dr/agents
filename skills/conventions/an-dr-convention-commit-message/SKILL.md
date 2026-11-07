@@ -4,14 +4,14 @@ description: The repository's commit message format — Conventional Commits nar
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "1.1.0"
   an-dr.type: convention
   an-dr.dependencies: PROHIBITED
 ---
 
 # Convention: commit message
 
-The base is [Conventional Commits](https://www.conventionalcommits.org/en/about/). Only the rules below narrow it; anything the spec allows and this file does not mention stays as the spec defines it. `check-message.ps1` in this skill enforces the format for every tool that records, rewrites, or validates a commit message, so the rules live here and nowhere else.
+Base: [Conventional Commits](https://www.conventionalcommits.org/en/about/); anything not narrowed here stays as the spec defines it.
 
 ## Format
 
@@ -26,26 +26,28 @@ BREAKING CHANGE: what breaks
 
 ## Subject
 
-- `type(scope)!: summary`, where `!` marks a breaking change.
-- Type is one of `feat`, `fix`, `docs`, `refactor`, `test`, `style`, `chore`, `build`, `ci`, `perf`, `revert`. Nothing else. Needing two types means the commit does two things and must be split.
-- Scope is required when the change is confined to one component, and omitted when the change is genuinely cross-cutting. Use only a scope listed under `## Commit scopes` in the host's root `AGENTS.md`; the checker rejects anything else. Add a scope to that list before using it, never per commit.
-- Imperative mood, lowercase first word, no trailing period, 72 characters or fewer including the type and scope.
-- A `fix` subject may state the symptom instead of the action when the bug is the point: `fix(webview): dragging a row selects the text under it`.
+- `type(scope)!: summary`; `!` marks a breaking change.
+- Type: `feat`, `fix`, `docs`, `refactor`, `test`, `style`, `chore`, `build`, `ci`, `perf`, `revert`, nothing else. Two types means two commits.
+- Scope required when the change is confined to one component, omitted when genuinely cross-cutting.
+- Only scopes listed under `## Commit scopes` in the host's root `AGENTS.md`; a new scope is added to that list first, never per commit.
+- Imperative mood, lowercase first word, no trailing period, at most 72 characters including type and scope.
+- A `fix` subject may state the symptom when the bug is the point: `fix(webview): dragging a row selects the text under it`.
 
 ## Body
 
-- Omit the body when it would only restate the subject.
-- Otherwise one to five entries, each a `- ` line.
-- One line per entry. Never wrap an entry; keep it near 72 characters so it fits a terminal line instead.
-- Every entry starts with a letter, preferably the verb. Leading `-`, `--`, `.`, `*`, `#`, or a digit and period collides with the list marker or reads as Markdown, so rephrase rather than escape: write `cargo took only env_logger from --features`, not `--features took only …`.
+- Omitted when it would only restate the subject; otherwise one to five `- ` entries.
+- One line per entry, never wrapped, near 72 characters.
+- Each entry starts with a letter, preferably the verb; a leading `-`, `--`, `.`, `*`, `#`, or digit and period reads as Markdown, so it is rephrased, not escaped: `cargo took only env_logger from --features`, not `--features took only …`.
 - Lowercase, no trailing period.
-- No blank lines between entries. The single blank line in a message means "footers follow", which is how the spec and `git interpret-trailers` find them.
-- Explain cause or motivation. The diff already shows what changed.
-- State only what the commit is or was observed to do. Describe untested behaviour as what the commit adds, not as a result: `adds CI that builds three platforms`, not `built in CI for three platforms` when CI has not run.
+- No blank lines between entries; the single blank line means footers follow, which is how the spec and `git interpret-trailers` find them.
+- Cause or motivation; the diff shows what changed.
+- Only what the commit does or was observed to do; untested behaviour is described as added: `adds CI that builds three platforms`, not `built in CI for three platforms` before CI ran.
 
 ## Markdown
 
-None. `git log` and GitHub's commit view render messages as preformatted text, so backticks, bold, headers, and links appear literally to every reader and spend the entry's length budget. Identifiers go bare — the sentence around them is enough context. The `- ` marker is plain text that happens to also be valid Markdown, which is why it is the one exception.
+- None: `git log` and GitHub show messages preformatted, so backticks, bold, headers, and links appear literally and spend length.
+- Identifiers go bare.
+- The `- ` marker is the one exception.
 
 ## Footers
 
@@ -54,19 +56,17 @@ None. `git log` and GitHub's commit view render messages as preformatted text, s
 
 ## Attribution
 
-The commit is authored by the person who ran it. An AI tool that helped write the change is never named as an author, co-author, assistant, or generator — not in a trailer, not in the body, not in the subject.
+The person who ran the commit is its author; a trailer records accountability, and the tooling is no more a co-author than the editor or compiler. No AI tool is named as author, co-author, assistant, or generator anywhere in the message:
 
-- No `Co-Authored-By:`, `Co-Developed-By:`, `Assisted-By:`, `Authored-By:`, `Generated-By:`, or `Created-By:` trailer, whoever it credits.
-- No "generated with", "written by", or "created by" line naming a model, agent, or assistant, and no robot emoji marker.
-- No tool address such as `noreply@anthropic.com`.
+- no `Co-Authored-By:`, `Co-Developed-By:`, `Assisted-By:`, `Authored-By:`, `Generated-By:`, or `Created-By:` trailer, whoever it credits;
+- no "generated with", "written by", or "created by" line naming a model, agent, or assistant, and no robot emoji marker;
+- no tool address such as `noreply@anthropic.com`.
 
-The checker rejects all of it, on every line of the message and whether it arrives through `-Footer`, a body entry, or `-Amend`. Naming a tool as the *subject of the work* stays allowed, because that is what the change is about: `feat(install): link the skills into the Claude Code directory` is fine.
-
-The reason is that a trailer is a record of who is accountable for the change. That is the author, who reviewed the diff and chose to record it; the tooling used to produce it is no more a co-author than the editor or the compiler, and crediting it dilutes the one signal `git log`, `git blame`, and release notes read.
+The checker rejects these on every line, whether from `-Footer`, a body entry, or `-Amend`. A tool as the subject of the work is allowed: `feat(install): link the skills into the Claude Code directory`.
 
 ## Check
 
-`scripts/check-message.ps1` verifies a message file, a string, or a commit against these rules, and also works as a `commit-msg` hook. It exits non-zero on any violation and prints entry-length warnings without failing.
+`scripts/check-message.ps1` verifies a message file, string, or commit against these rules, including the scope list, and works as a `commit-msg` hook; it is the only enforcement point for every tool that records, rewrites, or validates a message. It exits non-zero on any violation and prints entry-length warnings without failing.
 
 ## Examples
 

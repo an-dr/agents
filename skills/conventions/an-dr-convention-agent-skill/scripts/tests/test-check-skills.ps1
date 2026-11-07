@@ -97,7 +97,7 @@ Edit-Fixture 'skills/actions/an-dr-dev-debug/SKILL.md' 'license: MIT' 'license:'
 Assert-Check 'missing license' 1 'has no license'
 
 New-Fixture
-Edit-Fixture 'skills/actions/an-dr-dev-debug/SKILL.md' '  version: "1.0.0"' '  version: latest'
+Edit-Fixture 'skills/actions/an-dr-dev-debug/SKILL.md' '  version: "1.1.0"' '  version: latest'
 Assert-Check 'bad version' 1 'must be a semantic version'
 
 New-Fixture

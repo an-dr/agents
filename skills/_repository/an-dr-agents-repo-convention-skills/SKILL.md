@@ -1,36 +1,42 @@
 ---
 name: an-dr-agents-repo-convention-skills
-description: How the skills of this repository are named - the an-dr namespace, then a group and a verb from this repository's own list, with a noun when the verb alone is not enough, for actions, a type word for concepts and conventions, and the agents-repo prefix for the repository's own skills - on top of the general skill convention. Use when naming, renaming, or reviewing a skill of this repository; check-names.ps1 in this skill enforces the names.
+description: The naming, metadata, and test rules of this repository's skills - the an-dr namespace, groups, verbs, type words, and agents-repo prefix - on top of the general skill convention. Use when naming, renaming, or reviewing a skill of this repository; check-names.ps1 in this skill enforces the names.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.3.0"
+  version: "1.4.0"
   an-dr.type: convention
   an-dr.dependencies: an-dr-ai-skill-implement-test an-dr-ai-skill-test an-dr-convention-agent-skill an-dr-dev-test an-dr-dev-write-documentation an-dr-git-commit an-dr-convention-agent-skill-testing
 ---
 
 # Convention: this repository's skills
 
-Every skill here follows `an-dr-convention-agent-skill`, the general convention for the format, types, text, dependencies, and registration. This convention adds the naming and metadata rules that belong to this repository, so that the names in a tool's skill list read alike, sort by kind, and never collide with another author's skills.
+Defers: format, types, text, dependencies, and registration to `an-dr-convention-agent-skill`.
 
 ## Names
 
-Every name starts with `an-dr-`, the namespace of this repository's author, because tools install skills side by side in one folder. Hyphens only: the Agent Skills format does not allow underscores in a name. After the namespace:
+- Every name starts with `an-dr-`, because tools install skills side by side in one folder.
+- Hyphens only; the Agent Skills format forbids underscores.
 
-| Skill                    | Name                                                                                                                                                                                                                       | Example                                                                                              |
-| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| Action                   | `<group>-<verb>`, or `<group>-<verb>-<noun>`                                                                                                                                                                               | `an-dr-dev-test`, `an-dr-dev-verify-widget`                                                          |
-| Concept                  | `concept-<name>`                                                                                                                                                                                                           | `an-dr-concept-resilience`                                                                           |
-| Convention               | `convention-<name>`                                                                                                                                                                                                        | `an-dr-convention-changelog`                                                                         |
-| Of the repository itself | `agents-repo-<verb>[-<noun>]` for an action on the repository, `agents-<verb>[-<noun>]` for an action on the agents' own work, `agents-repo-concept-<name>` or `agents-repo-convention-<name>` for a concept or convention | `an-dr-agents-repo-install-tool`, `an-dr-agents-analyze-plan`, `an-dr-agents-repo-convention-layout` |
+| Skill                            | Name after `an-dr-`                                           | Example                                     |
+| -------------------------------- | ------------------------------------------------------------- | ------------------------------------------- |
+| Action                           | `<group>-<verb>[-<noun>]`                                     | `an-dr-dev-test`, `an-dr-dev-verify-widget` |
+| Concept                          | `concept-<name>`                                              | `an-dr-concept-resilience`                  |
+| Convention                       | `convention-<name>`                                           | `an-dr-convention-changelog`                |
+| Action on the repository         | `agents-repo-<verb>[-<noun>]`                                 | `an-dr-agents-repo-install-tool`            |
+| Action on the agents' work       | `agents-<verb>[-<noun>]`                                      | `an-dr-agents-analyze-plan`                 |
+| Repository concept or convention | `agents-repo-concept-<name>`, `agents-repo-convention-<name>` | `an-dr-agents-repo-convention-layout`       |
 
-- **Group:** the area an action works in: `ai` for agent instructions and the conversation with the user, `ai-skill` for implementing and executing skill behavior tests, `dev` for developing software, `architecture` for the structure of components, `project` for understanding a whole project, `text` for texts the user brings in, `git` for repository history, `files` for media and other files, `env` for the machine. Match the longest registered group before reading the verb.
-- **Verb:** one word from the list below, in lowercase.
-- **Noun:** what the action acts on, one or more words. Leave it out when the group and verb already say it, as in `an-dr-dev-write-documentation` or `an-dr-git-commit`.
+Groups: `ai` agent instructions and the conversation with the user; `ai-skill` implementing and executing skill behavior tests; `dev` developing software; `architecture` structure of components; `project` understanding a whole project; `text` texts the user brings in; `git` repository history; `files` media and other files; `env` the machine.
+
+- The longest registered group matches before the verb is read.
+- Verb: one lowercase word from the Verbs table.
+- Noun: what the action acts on, one or more words; absent when group and verb already say it (`an-dr-dev-write-documentation`, `an-dr-git-commit`).
+- A skill sits in the folder of its type; the repository's own skills sit in `_repository/`.
 
 ## Verbs
 
-The verbs are this repository's own, so each name says exactly what the action does. Add a verb here before using it, and keep the meanings distinct: `check-names.ps1` reads this table, so the list has one owner.
+A verb is added here before use, with a meaning distinct from the others; `check-names.ps1` reads this table.
 
 | Verb        | Means                                                                     |
 | ----------- | ------------------------------------------------------------------------- |
@@ -53,16 +59,18 @@ The verbs are this repository's own, so each name says exactly what the action d
 | `verify`    | check a result against criteria or sources                                |
 | `write`     | produce a document or a report                                            |
 
-A skill sits in the folder of its type, and the skills of the repository itself sit in the underscore folder `_repository/`.
-
 ## Metadata
 
-Every skill carries `license: MIT` as a standard frontmatter field, and `author` and `version` under `metadata`, next to the `an-dr.` extensions the general convention defines. The version is a quoted semantic version such as `"1.0.0"`; raise it when the skill's behaviour changes.
+- Frontmatter: `license: MIT`; `author` and `version` under `metadata`, beside the `an-dr.` extensions.
+- `version` is a quoted semantic version (`"1.0.0"`), raised when the skill's behaviour changes.
 
 ## Tests
 
-Follow `an-dr-convention-agent-skill-testing` for evaluation suites, fixtures, environment requirements, and deterministic test layout. Use `an-dr-ai-skill-implement-test` to author coverage and `an-dr-ai-skill-test` to run checks or explicitly requested evaluations. The root check command discovers local script runners and validates evaluation data without invoking models.
+- Suites, fixtures, environment requirements, and deterministic test layout follow `an-dr-convention-agent-skill-testing`.
+- Coverage is authored by `an-dr-ai-skill-implement-test`; checks and explicitly requested evaluations are run by `an-dr-ai-skill-test`.
+- The root check command discovers local script runners and validates evaluation data without invoking models.
 
 ## Check
 
-`scripts/check-names.ps1` verifies every skill name against the naming table, reading the verbs from the table above, and exits non-zero on any break. Its regression test breaks a copy one way at a time and expects each break to be named. The repository test run also checks the required test layout.
+- `scripts/check-names.ps1` verifies every skill name against the naming tables, reading verbs from the Verbs table, and exits non-zero on any break.
+- Its regression test breaks a copy one way at a time and expects each break named; the repository test run also checks the required test layout.

@@ -1,59 +1,39 @@
 ---
 name: an-dr-dev-write-readme
-description: Rewrite or update a repository's README from what the code actually contains — read the manifests, entry points, CI, tests, and docs first, then keep, reorder, cut, and add sections against that evidence. Use when a README is missing, stale, or disorganised, when it needs updating after a change, when a project needs one from scratch, or when the user wants the repository to read well to a newcomer.
+description: Rewrite or update a repository's README from the evidence in its code, manifests, CI, tests, and docs. Use when a README is missing, stale, or disorganised, needs updating after a change, or should read well to a newcomer.
 license: MIT
 allowed-tools: Read Grep Glob Write Edit PowerShell
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "1.2.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-send-message an-dr-dev-assign-ai-level an-dr-convention-markdown an-dr-convention-readme an-dr-dev-write-documentation an-dr-files-make-screengif an-dr-files-make-screenshot
 ---
 
 # README
 
-The README is the only document most readers will open. This skill edits it against the repository's own evidence: the code is ground truth, and the existing README is a claim about the code that may already be false.
-
-Load `an-dr-convention-markdown` before writing a line: its rules govern line breaks, lists, tables, and links in the README, including in sections left otherwise unchanged. Human-facing content principles come from `an-dr-dev-write-documentation`. What belongs in `docs/`, an ADR, or a design doc stays there and is linked, never summarised twice.
+Defers: Markdown mechanics to `an-dr-convention-markdown`, content and order to `an-dr-convention-readme`, content principles to `an-dr-dev-write-documentation`, AI disclosure to `an-dr-dev-assign-ai-level`, media to `an-dr-files-make-screenshot` and `an-dr-files-make-screengif`.
 
 ## Read the repository first
 
-Never open the README first — read the evidence, then judge what the README says about it.
-
-| Look at                                                                         | Tells you                                                                            |
-| ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| `package.json`, `Cargo.toml`, `pyproject.toml`, `go.mod`, `*.csproj`, `pom.xml` | name, version, entry points, dependencies, whether it is a library or an application |
-| `bin/`, `main.*`, `cmd/`, `[project.scripts]`, `"bin"`                          | it is a CLI, and what the command is called                                          |
-| `packages/`, `apps/`, workspace declarations                                    | it is a monorepo and needs a repository map                                          |
-| `tests/`, `spec/`, `*_test.*`                                                   | a development section is honest                                                      |
-| `.github/workflows/`, `.gitlab-ci.yml`                                          | badges can be real, and how the project is built                                     |
-| `LICENSE`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`                              | which of those sections may exist at all                                             |
-| `docs/`, `docs/adr/`                                                            | link out instead of inlining                                                         |
-| commit count and recency, CI presence                                           | experimental or maintained — the status line is evidence, not a guess                |
+1. Load `an-dr-convention-markdown` before writing; it governs every section, including unchanged ones.
+1. Run the check below to see the evidence and the existing file's faults.
+1. Read the evidence before the README; the code is ground truth, the README a claim that may be false. For what each file tells you, read [references/evidence.md](references/evidence.md).
 
 ## Classify what is already there
 
-A chaotic README usually suffers from redundancy, dead links, and bad order more than from missing content. Before writing, put every existing section in one bucket:
-
-| Bucket   | Meaning                                                                                                                                                                                                                 |
-| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| keep     | true, useful, already in the right place — carry it across unchanged, including its wording                                                                                                                             |
-| rewrite  | true but buried, bloated, or out of order                                                                                                                                                                               |
-| cut      | false, duplicated elsewhere in the file, or dead                                                                                                                                                                        |
-| relocate | true and worth keeping, but at the wrong altitude — a specification belongs in the document that owns it, design detail in `design/`, implementation notes in the code's own doc comments. Move it and link, never both |
-| missing  | the baseline or a conditional module the evidence supports                                                                                                                                                              |
-
-Cutting is work. A section removed for redundancy improves the README as much as one added.
-
-Relocating is the one that goes wrong quietly. A README that restates a specification kept elsewhere drifts from it, and the copy readers reach first is the one that is wrong: check such a section against its owning document before deciding, because the discrepancy is usually already there.
+Put every existing section in one bucket: keep, rewrite, cut, relocate, or missing. For the buckets and relocation checks, read [references/buckets.md](references/buckets.md).
 
 ## Write to the convention
 
-Shape the README by `an-dr-convention-readme`: its baseline order, conditional modules, and truth rules decide what stays, moves, or is added. Never fabricate; a missing fact becomes an open question. Capture screenshots with `an-dr-files-make-screenshot` and a GIF with `an-dr-files-make-screengif` only when the user asks. A screenshot must show the project as it is now: recapture an outdated one, and when the project cannot be launched here, list the screenshot as an open question instead of skipping it silently.
+- Shape by `an-dr-convention-readme`: baseline order, conditional modules, truth rules.
+- Never fabricate; a missing fact becomes an open question.
+- Content owned by `docs/`, an ADR, or a design doc stays there and is linked, never summarised twice.
+- Screenshot or GIF only when the user asks; a screenshot shows the project as it is now — recapture an outdated one; project cannot launch here → open question, never a silent skip.
 
 ## Disclose AI usage
 
-After the README is written, run `an-dr-dev-assign-ai-level`, which asks the user whether to assign an ai-level.dev level and places the badge with the others. Skip it when the user declined earlier in the session.
+After writing, run `an-dr-dev-assign-ai-level`, unless the user declined earlier in the session.
 
 ## Check
 
@@ -61,8 +41,10 @@ After the README is written, run `an-dr-dev-assign-ai-level`, which asks the use
 pwsh <an-dr-convention-readme>/scripts/check-readme.ps1 -MarkdownSkill <an-dr-convention-markdown> [-Path <repo>] [-Readme <file>]
 ```
 
-Run it before writing to see the evidence and the existing file's faults, and again afterwards; deliver only once it exits zero.
+Run before writing and again after; deliver only once it exits zero.
 
 ## Output
 
-Deliver the finished `README.md`, or a diff or plan first when the user wants to review before it lands; a plan names the same command the README would. Either form gives the newcomer the exact command to run — `python exporter.py` or the installed console script — with the input it expects, and marks a command you could not run as unverified. "Add a quickstart" without that command is not a deliverable. Follow it with the open questions as one `an-dr-ai-send-message` round, each naming what could not be established from the repository.
+- The finished `README.md`, or a diff or plan first when the user wants to review; a plan names the same command the README would.
+- Either form gives the exact command to run — `python exporter.py` or the installed console script — with its expected input; mark a command you could not run as unverified. A quickstart without that command is not a deliverable.
+- Then the open questions as one `an-dr-ai-send-message` round, each naming what the repository could not establish.

@@ -1,43 +1,56 @@
 ---
 name: an-dr-dev-write-documentation
-description: Write or update human-facing project documentation during Direct work or gated DOCS, including design and architecture prose. Use for content and structure; use markdown for Markdown mechanics. A README rewrite has its own entry skill.
+description: Write or update human-facing project documentation, including design and architecture prose, during Direct work or gated DOCS. Use for documentation content and structure; Markdown mechanics and README rewrites have their own skills.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "1.2.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-send-message an-dr-concept-ai-slop an-dr-convention-adr an-dr-convention-markdown an-dr-convention-use-case
 ---
 
 # Documentation writing
 
-Human-facing documentation includes `docs/`, README files, and project guides. Agent-loaded instructions are out of scope. Read the target, its index, and the existing source of authority before editing. Write only what a reader acts on: before delivering, apply `an-dr-concept-ai-slop`'s cut test to every sentence, section, and example, and remove restatement, padding, decoration, and unverified specifics. A README rewrite has its own entry skill and is not covered here. Write what the system does now: what it is, how to use it, then why it works that way. Register a new document where readers will look for it.
+Defers: Markdown format to `an-dr-convention-markdown`, use cases to `an-dr-convention-use-case`, ADR format to `an-dr-convention-adr`, README rewrites to their own entry skill.
 
-In gated DOCS, document the increment before code exists and leave the change for the increment's commit. In Direct, update needed documentation before the behavior change and deliver both together. Cover what is missing or wrong; leave an already-correct document alone. Changes to public interfaces, architecture, or observable behavior require documentation in the same delivery; in a repository with `docs/use-cases/`, a new or changed capability updates its use case.
+## Scope
 
-## Place each fact
+- In scope: `docs/`, README files, project guides. Out: agent-loaded instructions.
+- Gated DOCS → document the increment before code exists; leave the change for the increment's commit.
+- Direct → update documentation before the behaviour change; deliver both together.
+- Public interface, architecture, or observable behaviour changed → document in the same delivery; with `docs/use-cases/`, update the capability's use case.
+- Ordinary refactoring → no documentation update.
+- Already-correct document → leave it alone.
+
+## Write
+
+1. Read the target, its index, and the existing source of authority.
+2. Place each fact in its layer (table below); one home per specification, linked elsewhere.
+3. Write what the system does now: what it is, how to use it, then why. Present tense, no roadmap history, match the file's established style.
+4. Apply `an-dr-concept-ai-slop`'s cut test to every sentence, section, and example; remove restatement, padding, decoration, unverified specifics, and prose repeating a table or example.
+5. Register a new document where readers look for it.
+6. Lasting architectural decision → ADR; first read [references/adr.md](references/adr.md).
 
 | Layer             | Holds                                                                                               |
 | ----------------- | --------------------------------------------------------------------------------------------------- |
 | Use cases         | who reaches which goal, and what they observe: what must keep working (`an-dr-convention-use-case`) |
 | Architecture      | concepts, boundaries, and guarantees                                                                |
-| Design            | behavior contracts for one subsystem                                                                |
+| Design            | behaviour contracts for one subsystem                                                               |
 | Code doc comments | implementation reasons and local constraints                                                        |
 | README            | orientation and links to deeper material                                                            |
 
-An ordinary refactoring should not require a documentation update. Give each specification one home and link to it elsewhere. Use present tense, avoid roadmap history, and do not repeat a table or example in prose. Match the target file's established style.
-
-A lasting architectural decision is an ADR in the format of `an-dr-convention-adr`. Before recording one, read [references/adr.md](references/adr.md).
-
 ## Verify
 
-Write Markdown in the format of `an-dr-convention-markdown`, then format and check every `.md` file you wrote or touched:
+Format and check every `.md` file written or touched:
 
 ```powershell
 pwsh <an-dr-convention-markdown>/scripts/format-markdown.ps1 -Path <file-or-directory>
 pwsh <an-dr-convention-markdown>/scripts/check-markdown.ps1 -Path <file-or-directory>
 ```
 
-The formatter prints each file it changed; the checker exits non-zero on a violation. Fix what it reports and relay the result. Resolve every internal link, including references to a moved page. Check claims against the layer above them: architecture against ADRs and the user's intent, design against architecture, and code against design. Check counts and field layouts rather than trusting them. No two documents should state one fact differently.
+The formatter prints each file it changed; the checker exits non-zero on a violation. Fix what it reports and relay the result.
 
-When an existing behavior contract and code disagree, report the contradiction and evidence for which may be stale. Do not quietly choose either side; ask the user through `an-dr-ai-send-message` when that decision is needed. The written contract normally governs implementation, but abandoned documentation may be stale.
+- Resolve every internal link, including references to moved pages.
+- Check claims against the layer above: architecture against ADRs and user intent, design against architecture, code against design.
+- Check counts and field layouts; no two documents state one fact differently.
+- Behaviour contract and code disagree → report the contradiction with evidence of which may be stale; never silently pick a side; ask the user through `an-dr-ai-send-message` when the decision is needed. The written contract normally governs, but abandoned documentation may be stale.

@@ -1,58 +1,61 @@
 ---
 name: an-dr-convention-code
-description: Writing defaults for source code — small changes, readable names and control flow, comments for newcomers, error handling, naming vocabulary, file layout, and reviewable commits of behaviour versus formatting. Use when writing, changing, or reviewing code; the host repository's own conventions override it.
+description: Writing defaults for source code — small changes, readable names and control flow, newcomer comments, error handling, naming, file layout, and reviewable behaviour-versus-formatting commits. Use when writing, changing, or reviewing code; the host repository's conventions override it.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "1.1.0"
   an-dr.type: convention
   an-dr.dependencies: an-dr-concept-ai-slop an-dr-concept-clean-dependencies an-dr-convention-layout
 ---
 
 # Convention: code
 
-These are writing defaults. The host repository's instructions and the edited file's conventions override them. Review judges defects and reader cost, not preference compliance. Structure and dependencies follow `an-dr-concept-clean-dependencies`.
+Defers: the cut test to `an-dr-concept-ai-slop`; structure and dependencies to `an-dr-concept-clean-dependencies`; file placement to `an-dr-convention-layout`. The host repository's instructions and the edited file's conventions override these defaults; review judges defects and reader cost, not preference compliance.
 
 ## Code quality
 
-- Make the smallest change that solves the stated problem. Avoid speculative options and abstractions.
-- Write no comment, option, abstraction, or defensive branch that fails the cut test of `an-dr-concept-ai-slop`: if removing it loses nothing a reader needs, leave it out.
-- Use names and call sites a new reader can understand, with straight control flow and no hidden state to hold in mind.
-- Give each unit one job. Split a block that needs a paragraph of explanation into named units.
-- Comment intent beside the few lines it explains. Put whole-function explanations in doc comments; never restate obvious code.
-- Write every comment and doc comment for a newcomer who knows nothing of the project's history. Describe what the code is and why, as it stands. Never define it by contrast with an earlier design or the change that produced it ("no longer", "moved out of", "is not here any more"): that reader cannot know what it is contrasted with. History belongs in commit messages, the changelog, and ADRs.
-- Keep one owner for each fact. Fail where the failure occurs, with enough context to act on it. Do not swallow errors.
-- Delete dead or commented-out code. Preserve intentional stubs unless changing them is the task.
-- Start function and method names with an action verb, except idiomatic constructors and builders. Document public interfaces and non-obvious decisions with Doxygen for C/C++, JSDoc for TS/JS, or docstrings for Python. Mark incomplete work with `TODO`.
+- A change is the smallest that solves the stated problem; no speculative options or abstractions.
+- No comment, option, abstraction, or defensive branch whose removal loses nothing a reader needs.
+- Names and call sites read clearly to a new reader; control flow is straight, with no hidden state to hold in mind.
+- Each unit has one job; a block needing a paragraph of explanation is split into named units.
+- Intent comments sit beside the few lines they explain; whole-function explanations are doc comments; obvious code is never restated.
+- Comments describe what the code is and why, as it stands, for a newcomer; never by contrast with an earlier design ("no longer", "moved out of", "is not here any more"). History lives in commit messages, the changelog, and ADRs.
+- Each fact has one owner.
+- Failure is raised where it occurs, with context to act on; errors are never swallowed.
+- Dead and commented-out code is deleted; intentional stubs stay unless changing them is the task.
+- Function and method names start with an action verb, except idiomatic constructors and builders.
+- Public interfaces and non-obvious decisions are documented: Doxygen for C/C++, JSDoc for TS/JS, docstrings for Python.
+- Incomplete work is marked `TODO`.
 
 ## Names and structure
 
-- Use the domain's own vocabulary and the ecosystem's standard terms: established pattern names (`Repository`, `Adapter`, `Controller`, `Factory`, `Builder`, `Coordinator`) only for code that is that pattern, and the language's naming, module, and directory conventions.
-- Name each unit after its current responsibility. When a responsibility moves to a new owner, rename the types, messages, functions, and files that describe it in the same change, so no name still describes the old design.
-- Never give two different concepts the same name within one codebase boundary, even in different modules.
-- Files sit where `an-dr-convention-layout` places them for the project's type. In a repository whose layout departs from them, a new file sits beside the existing files of its kind, and the departure is reported rather than silently copied.
+- Names use the domain's vocabulary and the ecosystem's standard terms and conventions for naming, modules, and directories.
+- Pattern names (`Repository`, `Adapter`, `Controller`, `Factory`, `Builder`, `Coordinator`) only for code that is that pattern.
+- A unit is named for its current responsibility; when a responsibility moves, its types, messages, functions, and files are renamed in the same change.
+- Two different concepts never share a name within one codebase boundary, even in different modules.
+- Files sit where `an-dr-convention-layout` places them; in a repository that departs from it, a new file sits beside existing files of its kind and the departure is reported, not copied silently.
 
 ## Architecture
 
-Structure components by `an-dr-concept-clean-dependencies`: no cycles, dependencies pointing toward stable abstractions, no layer skipping, and use of another component only through its public contract.
+Code takes the shape an experienced developer in the language and domain expects.
 
-Shape the code the way an experienced developer in this language and domain expects to find it, so a reviewer recognises the structure instead of reverse-engineering it.
-
-- Keep dependencies pointing inward, as in Clean Architecture: domain rules and use cases depend on nothing outside them; I/O, frameworks, UI, transport, and persistence depend on them. Inner code reaches outer services through an interface it owns (a port), implemented by an adapter at the edge.
-- Wire concrete implementations together in one composition root. Do not construct or look up outer services from inside domain or use-case code.
-- Keep pure logic — parsing, validation, decisions, state transitions — free of I/O so it can be tested without the host, the network, or the UI.
-- Model a lifecycle that spans several events as one explicit state owned by one unit, with named states and transitions, never as flags spread across methods of a larger class.
-- Give each module one reason to change. When a class or file gains a second responsibility, extract it into a named unit instead of adding fields and branches to the existing one.
-- Extend another component only through its public interface. When it has none, add the extension point to that component; never depend on its private markup, internal fields, or undocumented behaviour.
-- Encode every format that crosses a process, component, or language boundary through the repository's shared codec or schema, with its fixtures. Do not hand-build bytes or ad-hoc JSON at a call site.
-- Make an interface member required when every implementation provides it; optional members are for genuine absence, not convenience.
-- Add structure for boundaries that exist now. This does not license speculative layers: a port with one adapter is justified by a real I/O or ownership boundary, not by a possible future one, and the smallest-change rule above still applies inside each unit.
+- Dependencies point inward: domain rules and use cases depend on nothing outside; I/O, frameworks, UI, transport, and persistence depend on them.
+- Inner code reaches outer services through an interface it owns (a port), implemented by an adapter at the edge.
+- Concrete implementations are wired in one composition root; domain and use-case code never construct or look up outer services.
+- Pure logic (parsing, validation, decisions, state transitions) is free of I/O, testable without host, network, or UI.
+- A lifecycle spanning several events is one explicit state owned by one unit, with named states and transitions, never flags spread across a larger class.
+- Each module has one reason to change; a second responsibility is extracted into a named unit.
+- Another component is extended only through its public interface; lacking one, the extension point is added to that component, never a dependency on private markup, internal fields, or undocumented behaviour.
+- A format crossing a process, component, or language boundary goes through the repository's shared codec or schema, with fixtures; no hand-built bytes or ad-hoc JSON at a call site.
+- An interface member every implementation provides is required; optional means genuine absence.
+- Structure serves boundaries that exist now: a port with one adapter needs a real I/O or ownership boundary, not a possible future one; the smallest-change rule still applies inside each unit.
 
 ## Reviewable changes
 
-A human reviewer must be able to tell which lines change behaviour, and `git bisect` must be able to separate one cause from another.
+A reviewer can tell which lines change behaviour, and `git bisect` can separate causes.
 
-- Keep formatter runs, re-wrapped prose, and other formatting-only edits out of behaviour changes. Do not reformat lines you are not otherwise changing unless the repository enforces a formatter.
-- A new project configures its ecosystem's standard formatter and linter, such as rustfmt and clippy, gofmt and go vet, Prettier and ESLint, or ruff, with its first code, and formats every file it writes from then on. In an existing repository without one, report the gap as follow-up work instead of reformatting it.
-- Do mechanical renames and migrations as their own pass, before any behaviour change that depends on them.
-- After removing or moving a module, file, crate, or type, search for its name across code comments, scripts, documentation, and agent instructions, and update every reference to its new owner.
+- Formatter runs, re-wrapped prose, and other formatting-only edits stay out of behaviour changes; untouched lines are not reformatted unless the repository enforces a formatter.
+- A new project configures its ecosystem's standard formatter and linter (rustfmt and clippy, gofmt and go vet, Prettier and ESLint, ruff) with its first code and formats every file it writes; an existing repository without one gets the gap reported as follow-up, not reformatted.
+- Mechanical renames and migrations are their own pass, before behaviour changes that depend on them.
+- After a module, file, crate, or type is removed or moved, every reference in code comments, scripts, documentation, and agent instructions points to its new owner.

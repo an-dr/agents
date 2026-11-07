@@ -1,21 +1,21 @@
 ---
 name: an-dr-concept-evidence-grounding
-description: Keep every conclusion traceable to evidence — separate what was observed, calculated, inferred, assumed, and intended, and show uncertainty and coverage limits. Use when writing or judging any report, review, overview, README, test result, or diagnosis that states facts about something.
+description: Every conclusion traces to evidence, with observed, calculated, inferred, assumed, and intended statements kept apart and uncertainty and coverage shown. Use when writing or judging any report, review, overview, README, test result, or diagnosis that states facts.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "1.1.0"
   an-dr.type: concept
   an-dr.dependencies: PROHIBITED
 ---
 
 # Concept: evidence grounding
 
-A report is worth what its claims can be traced back to. This concept owns the principle behind every "do not fabricate" rule; each skill keeps its own procedure for gathering evidence.
+Owns: the principle behind every "do not fabricate" rule. Each action keeps its own evidence-gathering procedure.
 
 ## Kinds of statement
 
-Know which kind each statement is, and let the reader know too wherever it could be mistaken for another.
+Each statement has one kind; the reader sees it wherever it could be mistaken for another.
 
 | Kind     | Basis                                                                          |
 | -------- | ------------------------------------------------------------------------------ |
@@ -25,15 +25,15 @@ Know which kind each statement is, and let the reader know too wherever it could
 | Assumed  | Taken as true without checking; says so                                        |
 | Intended | What a requirement, doc, or author claims should be true; not proof that it is |
 
-## Rules
+## Principle
 
-- **Trace.** A conclusion names or links its evidence. A claim with nothing behind it is cut, marked assumed, or turned into a question.
-- **Never present inference as observation.** Plausible is not verified; an unrun check is reported as unrun.
-- **Show coverage.** Say what was examined and what was not, so an empty finding list is not read as a clean bill.
-- **Keep uncertainty at its size.** State a doubt once, where it applies, with what would settle it. Do not hedge everything, and do not drop a doubt that matters.
-- **Intent is not behaviour.** When documentation and code disagree, report the disagreement; do not choose a side silently.
-- **Missing input is a gap, not a blank to fill.** Ask for it or report the limit.
+- A conclusion names or links its evidence; a claim with nothing behind it is cut, marked assumed, or turned into a question.
+- Inference is never presented as observation; plausible is not verified; an unrun check is reported as unrun.
+- Coverage is stated: what was examined and what was not, so an empty finding list is not read as clean.
+- A doubt is stated once, where it applies, with what would settle it; no blanket hedging, no dropped doubt that matters.
+- Documentation and code disagreeing is reported as a disagreement, never silently resolved.
+- Missing input is a gap reported or asked for, never a blank filled.
 
 ## Violations
 
-An invented path, command, or figure; a "tests pass" that was not run; a summary stronger than the findings it summarises; a doc's claim repeated as fact about the code.
+An invented path, command, or figure; a "tests pass" that was not run; a summary stronger than its findings; a doc's claim repeated as fact about the code.

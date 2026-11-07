@@ -173,9 +173,16 @@ foreach ($name in $folders) {
         }
     }
 
-    # Every skill the instructions name, in backticks or as <name>, is a dependency, passed folder or not.
+    # Every skill the instructions name, in SKILL.md or its references, in backticks or as <name>, is a dependency.
+    $instructions = $front.body
+    $referenceDir = Join-Path $skillPaths[$name].Path 'references'
+    if (Test-Path -LiteralPath $referenceDir) {
+        foreach ($reference in Get-ChildItem -LiteralPath $referenceDir -Filter '*.md' -File) {
+            $instructions += "`n" + [IO.File]::ReadAllText($reference.FullName)
+        }
+    }
     $mentioned = @($folders | Where-Object {
-            $_ -ne $name -and $front.body -match ('(`' + [regex]::Escape($_) + '`|<' + [regex]::Escape($_) + '>)')
+            $_ -ne $name -and $instructions -match ('(`' + [regex]::Escape($_) + '`|<' + [regex]::Escape($_) + '>)')
         })
     foreach ($other in $mentioned) {
         if ($raw -ceq 'PROHIBITED') { Add-Problem $where "is PROHIBITED from depending on other skills but names $other" }

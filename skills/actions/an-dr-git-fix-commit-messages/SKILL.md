@@ -5,43 +5,39 @@ license: MIT
 allowed-tools: PowerShell
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "1.1.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-convention-commit-message
 ---
 
 # Fix commit history
 
-Rewrites messages only. `an-dr-convention-commit-message` defines the format and holds the validator both skills call, so read the convention first and never restate its rules here.
-
-Rewriting published history forces every other clone to recover by hand. Run this only where that is agreed: before a first release, or on an unpushed feature branch.
+Defers: format and validator to `an-dr-convention-commit-message`; read it first.
 
 ## Procedure
 
-1. Find what breaks the format. Changes nothing:
+Run only before a first release or on an unpushed feature branch; rewriting published history forces every other clone to recover by hand.
+
+1. Find what breaks the format; changes nothing:
 
 ```powershell
 pwsh <skill>/scripts/check-history.ps1 -CommitMessageSkill <an-dr-convention-commit-message> [-Range <rev>] [-FromRoot] [-FailingOnly]
 ```
 
-Without arguments it checks the merge base with the default branch to `HEAD`, and refuses to guess a range while the default branch is checked out.
+Default range: merge base with the default branch to `HEAD`; refuses to guess a range while the default branch is checked out.
 
-2. For each failing commit, read what it actually did — `git show --stat <sha>` first, the diff when the subject is unclear — and write the replacement to `<directory>/<sha>.txt`. Short hashes are fine. Commits without a file keep their message. Put the directory outside the repository; rewriting requires a clean working tree.
-
+2. For each failing commit, read what it did (`git show --stat <sha>`, the diff when the subject is unclear) and write the replacement to `<directory>/<sha>.txt`. Short hashes work; commits without a file keep their message; the directory is outside the repository, since rewriting requires a clean working tree.
 3. Apply the replacements:
 
 ```powershell
 pwsh <skill>/scripts/rewrite-messages.ps1 -MessageDirectory <directory> -CommitMessageSkill <an-dr-convention-commit-message> [-Range <rev>] [-FromRoot]
 ```
 
-Every replacement is validated before any commit is written, so a rule violation aborts with history untouched. The script records a backup ref under `refs/backup/an-dr-git-fix-commit-messages/`, preserves author and committer identity and dates, and verifies that the rewritten tip has an identical tree to the old one — a content change aborts the run.
+Validates every replacement before writing any commit, so a violation aborts with history untouched. Records a backup ref under `refs/backup/an-dr-git-fix-commit-messages/`, preserves author and committer identity and dates, and aborts when the rewritten tip's tree differs from the old one.
 
-4. Re-run step 1. It must report zero commits needing rewriting.
+4. Re-run step 1; it must report zero commits needing rewriting.
 
-## Squashing
+## Rules
 
-This skill fixes messages; it never combines commits. When history also needs regrouping, combine the commits first, then rewrite the messages of the result.
-
-## Afterwards
-
-The branch has diverged from its remote. Pushing needs `git push --force-with-lease`, which is a user decision and never automatic.
+- Messages only; never combine commits. When history needs regrouping, combine first, then rewrite the result's messages.
+- The branch now diverges from its remote; `git push --force-with-lease` is the user's decision, never automatic.

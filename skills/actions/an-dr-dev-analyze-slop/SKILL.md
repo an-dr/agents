@@ -1,61 +1,54 @@
 ---
 name: an-dr-dev-analyze-slop
-description: Analyse code and documentation for illogical design, contradictions, questionable complexity, misleading prose, and AI-like artifacts that make a human's work harder, on uncommitted changes, a commit or range, a branch diff, selected files or directories, or a whole repository, and deliver an HTML findings table with stable IDs, priorities, evidence, and proposed changes. Use when asked to deslop, audit coherence, or find questionable artifacts in a defined scope.
+description: Analyse code and documentation in a defined scope for illogical design, contradictions, needless complexity, misleading prose, and AI-like artifacts, and deliver an HTML findings report. Use when asked to deslop, audit coherence, or find questionable artifacts in changes, files, or a repository.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "1.2.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-review-instruction an-dr-ai-send-message an-dr-concept-ai-slop an-dr-files-build-report an-dr-convention-html-report
 ---
 
 # Code and documentation coherence analysis
 
-Inspect the requested code and documentation together from the perspective of the next human who must understand, use, or maintain them. Produce recommendations, not automatic fixes. This skill examines coherence within any selected scope, including diffs; a broader defect review is a separate skill, and `an-dr-ai-review-instruction` examines agent instruction correctness.
+Defers: what slop is to `an-dr-concept-ai-slop`, agent instruction correctness to `an-dr-ai-review-instruction`, report format to `an-dr-convention-html-report`, building to `an-dr-files-build-report`, user messages to `an-dr-ai-send-message`.
 
 ## Establish scope
 
-Resolve the scope from the user's request and the active task: uncommitted changes, a commit or range, a branch against its base, selected files or directories, or the whole repository. A request to deslop the current work targets that work's changes. Do not default to the whole repository when the scope is unspecified; ask through `an-dr-ai-send-message` only when the request and context do not identify it. For a branch diff, resolve and record the base and comparison method; ask if the intended base is ambiguous.
+1. Resolve the scope from the request and active task: uncommitted changes, commit or range, branch against base, selected files or directories, or whole repository. "Deslop the current work" → that work's changes.
+1. Unspecified → never default to the whole repository; ask only when request and context do not identify it.
+1. Branch diff → resolve and record the base and comparison method; ask if the base is ambiguous.
+1. Read repository instructions, README, documentation index, and the selected material. Exclude generated output, vendored dependencies, and build artifacts unless explicitly in scope.
+1. Record scope, refs or paths, date, and whether uncommitted changes were inspected.
+1. Large scope → name the areas sampled and not inspected; never call a sample exhaustive.
 
-Read the repository instructions, README, documentation index, and the selected material. Exclude generated output, vendored dependencies, and build artifacts unless explicitly in scope. Record the scope, refs or paths, date, and whether uncommitted changes were inspected. For a large scope, identify the areas sampled and the areas not inspected; never describe a sample as an exhaustive audit.
+## Examine
 
-For changes or branch diffs, focus findings on problems introduced or worsened by those changes. Read surrounding code and docs to understand their effects, but do not turn that context reading into a repository-wide audit or attribute pre-existing issues to the change.
+- Take the next maintainer's or user's view; produce recommendations, not fixes.
+- Changes or branch diffs → report only problems introduced or worsened by them; read context to judge effects, without auditing the repository or blaming the change for pre-existing issues.
+- Trace documented workflows to entry points, implementations, callers, and tests; read context before judging a fragment.
+- Use existing checks or small read-only experiments to resolve uncertainty; distinguish checks run from suggested verification.
+- Apply the cut, defence, and cost tests of `an-dr-concept-ai-slop` to code, text, agent-loaded instructions, and reports.
+- A convention finding quotes the written rule it breaks, from host instructions or the governing convention skill, read first; an unquotable rule is a preference, not a finding.
+- Name each finding's concrete cost to correctness, use, understanding, or maintenance; no taste-only rewrites, no quota filling.
+- Check for a legitimate constraint or consumer before proposing removal.
+- Group repeated instances of one cause into one finding with representative locations.
 
-Trace documented workflows to entry points, implementations, callers, and relevant tests. Read surrounding context before judging a suspicious fragment. Use existing checks or small read-only experiments when they can resolve uncertainty; distinguish checks actually run from suggested verification.
+## Record findings
 
-## What to examine
+- IDs `DS-001`, `DS-002`, …; an ID stays with its issue across revisions and is never reused; resolved or withdrawn IDs stay in a quiet history section.
+- Each finding: evidence with file and line or doc section, why it matters, a concrete proposed change.
+- Basis: **confirmed** or **question**; a question names the missing evidence and how to resolve it, and phrases the change conditionally.
+- For priorities, read [references/priorities.md](references/priorities.md).
 
-Examine the scope for the slop that `an-dr-concept-ai-slop` describes in code, text, agent-loaded instructions, and reports, applying its cut, defence, and cost tests. Name the concrete cost of each finding.
+## Write the report
 
-Judge each item against the project's intent and conventions. A finding that something breaks a convention quotes the written rule it breaks: the host repository's own instructions, or the convention skill that governs that kind of file, read before the finding is recorded. A rule you cannot quote is a preference, not a finding. Explain the concrete cost to correctness, use, understanding, or maintenance. Do not demand rewrites based only on taste, or invent findings to fill a quota. Check for a legitimate constraint or consumer before proposing removal. Group repeated instances of one cause into one finding with representative locations.
+Write one self-contained page in the `an-dr-convention-html-report` format at a `deslop` path with extension `html`, and build and publish it through `an-dr-files-build-report`, giving findings and counts their priority level. For sections and verification, read [references/page.md](references/page.md).
 
-## Findings and priorities
+## Output
 
-Assign IDs `DS-001`, `DS-002`, and so on. Keep an ID attached to the same issue throughout revisions of this report, even if its priority or position changes; never reuse an ID for another issue. Retain resolved or withdrawn IDs in a quiet history section when revising an existing report.
+The HTML link or local path and a short summary of the most consequential findings. HTML only, never a Markdown substitute.
 
-Each finding states the observed evidence with file and line or documentation section, why it matters, and a concrete proposed change. Label its basis as **confirmed** or **question**. For a question, name the missing evidence and how to resolve it; phrase any change conditionally. Do not present an uncertain interpretation as a demonstrated defect.
+## Rules
 
-Use these priorities, ordered by consequence rather than how easy a fix is:
-
-- **P0 — critical:** demonstrated wrong results, data loss, security exposure, or a contradiction that blocks safe use. Map to the `critical` level.
-- **P1 — high:** a confirmed problem with substantial user or maintenance cost that should be fixed soon. Map to `high`.
-- **P2 — normal:** a local inconsistency, avoidable complexity, or documentation defect with a concrete cost. Map to `notice`.
-- **P3 — low:** a small clarity improvement with an explained benefit. Map to `notice`.
-
-Keep unconfirmed questions at P2 or P3 and state any potentially larger consequence separately. Priority measures action urgency; the evidence label measures certainty.
-
-## HTML report
-
-Write one self-contained page in the format of `an-dr-convention-html-report` at a `deslop` path with extension `html`, build and publish it through `an-dr-files-build-report`, and give findings and counts their priority level; that skill decides how levels look. Use `an-dr-ai-send-message` for tables and any questions to the user.
-
-Include, in order:
-
-1. Scope and provenance, including inspected areas, exclusions, and sampling limits.
-1. A short conclusion with finding counts by priority; if none are substantiated, say so without manufacturing rows.
-1. A findings table sorted by priority and consequence, with five columns: **ID**, **Priority / basis**, **Evidence and problem**, **Human impact**, **Proposed change**. Link each ID to a detail section when its evidence or proposal needs more space.
-1. Details keyed by the same IDs, including relevant locations, the reasoning, constraints the fix must preserve, and a way to verify the proposed change. Distinguish observed behavior from inference.
-1. Checks performed, limitations, and unresolved questions. Keep sound areas quiet rather than filling the page with positive findings.
-
-Escape repository text before inserting it into HTML. Build and verify the page through `an-dr-files-build-report`; check that every finding has a unique ID, priority, evidence, and an actionable proposal. Verify that table rows and details agree, and that the table is readable in both themes and at phone width. State whether visual verification is complete or blocked; report generation or an overflow measurement alone does not finish it. Add diagrams only when they explain a structural issue better than prose.
-
-Deliver the HTML link or local path with a short summary of the most consequential findings. HTML is the report format; do not substitute a Markdown report. Leave source changes to a separately requested implementation task under the repository's applicable workflow.
+- Source changes are a separately requested task under the repository's workflow.

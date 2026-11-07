@@ -1,20 +1,43 @@
 ---
 name: an-dr-ai-write-instruction
-description: Create or change instructions an agent loads, including AGENTS.md, CLAUDE.md, skills, prompts, and their scripts. Use to choose the right carrier, write observable rules, and verify that tools can load them.
+description: Create or change instructions an agent loads — AGENTS.md, CLAUDE.md, skills, prompts, and their scripts — in the right carrier with observable rules. Use when writing or amending any agent instruction and verifying that tools can load it.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "1.1.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-review-instruction an-dr-concept-ai-slop an-dr-convention-markdown an-dr-dev-write-documentation
 ---
 
 # Agent instruction writing
 
-Own agent-loaded instructions. Human-facing project prose is out of scope. Before editing, state the observed behavior and the desired behavior, then read every instruction loaded before the rule fires. Place the rule at its loading moment: `AGENTS.md` for always-on policy, a skill for one triggered action, and a script for deterministic checks and transitions. Push detail out of always-loaded context when a later carrier can own it.
+Defers: human-facing project prose to `an-dr-dev-write-documentation`, Markdown format to `an-dr-convention-markdown`, auditing to `an-dr-ai-review-instruction`.
 
-Write one imperative, observable rule at a time, and cut any sentence that fails the cut test of `an-dr-concept-ai-slop`. Remove hedges, give a reason only when a rule otherwise seems arbitrary, and state precedence beside rules that can conflict. Keep one owner for each fact and link to it elsewhere. An example earns its space only when it resolves ambiguity. Write a skill's description to say what the skill does and when to use it, because that is what a tool matches on to load it.
+## Place the rule
 
-Change instructions against an observed request, transcript, review finding, or failed run. Do not silently weaken an existing rule. Prefer a failing script to a reminder when inputs and failure are deterministic. Instructions must describe the system as it works now.
+1. Base the change on an observed request, transcript, review finding, or failed run; state observed and desired behavior.
+2. Read every instruction loaded before the rule fires.
+3. Place it at its loading moment: always-on policy → `AGENTS.md`; one triggered action → a skill; deterministic check or transition → a script.
+4. Move detail out of always-loaded context when a later carrier can own it.
 
-Write Markdown in the format of `an-dr-convention-markdown`, and format and check it as `an-dr-dev-write-documentation` describes. Audit the instruction with `an-dr-ai-review-instruction` and run its checks, then reread the changed loading path as the receiving agent.
+## Write
+
+- One imperative, observable rule at a time.
+- Cut every sentence that fails the cut test of `an-dr-concept-ai-slop`; no hedges.
+- Reason only when a rule otherwise seems arbitrary.
+- Precedence stated beside rules that can conflict.
+- One owner per fact; link to it elsewhere.
+- Example only when it resolves ambiguity.
+- Skill description: what it does and when to use it; tools match on it.
+- Deterministic inputs and failure → a failing script, not a reminder.
+- Describe the system as it works now.
+
+## Verify
+
+1. Format and check Markdown as `an-dr-dev-write-documentation` describes.
+2. Audit with `an-dr-ai-review-instruction` and run its checks.
+3. Reread the changed loading path as the receiving agent.
+
+## Rules
+
+- Never silently weaken an existing rule.

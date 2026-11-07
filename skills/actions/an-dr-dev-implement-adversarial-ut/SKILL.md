@@ -4,42 +4,38 @@ description: Build a bug-finding unit test suite before fixing anything. Use at 
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "1.1.0"
   an-dr.type: action
   an-dr.dependencies: none
 ---
 
 # Adversarial unit tests
 
-Goal: find bugs, not verify that the code works. A bug found during the hunt is captured as a *passing* test asserting the buggy behaviour, so the suite stays green and the test name doubles as the bug report. A known defect whose fix comes next is captured as the test that fix must satisfy: it asserts the documented or intended behaviour and fails against the current code.
+## Write the tests
 
-## Process
+Goal: find bugs, not confirm the code works.
 
-**Pass 1 — Functional coverage.** Standard unit tests per module: happy path, obvious edge cases. Get the suite running green.
-
-**Pass 2 — Adversarial tests.** For each module, ask "what assumption does this code make that could be wrong?" and attack it:
-
-- Boundary values (0, -1, empty string, undefined vs null)
-- Special characters in inputs used as regex or path delimiters
-- Race conditions between async operations (what if A finishes after B?)
-- Multi-call interactions (does call #2 see state left by call #1?)
-- Dead code paths (constants never used, settings read but never consumed)
-
-**Pass 3 — Scenario tests.** Model realistic user workflows end-to-end:
-
-1. Write a short user story ("user pins a symbol, then switches files")
-2. Derive what the code *should* do from the function's intent
-3. Test whether it actually does that
-4. Flag nonsense: settings that configure nothing, output immediately discarded, guards that fire too late
+1. Functional coverage: standard unit tests per module, happy path and obvious edge cases; get the suite green.
+2. Adversarial tests: per module, find an assumption that could be wrong and attack it:
+   - boundary values (0, -1, empty string, undefined vs null);
+   - special characters in inputs used as regex or path delimiters;
+   - races between async operations (A finishes after B);
+   - multi-call interactions (call #2 sees state left by call #1);
+   - dead code paths (unused constants, settings read but never consumed).
+3. Scenario tests: model realistic workflows end to end:
+   1. Write a short user story ("user pins a symbol, then switches files").
+   2. Derive what the code should do from the function's intent.
+   3. Test whether it does.
+   4. Flag nonsense: settings that configure nothing, output immediately discarded, guards that fire too late.
 
 ## Output
 
-- A test for a bug found during the hunt asserts the buggy behaviour, passes, and carries `BUG:` in its name; it becomes the regression anchor once the fix lands.
-- A regression test for a known defect asserts the intended contract — an inclusive limit accepts `10` — and fails against the current code; the buggy result never becomes the expected limit.
+- Bug found during the hunt → test asserts the buggy behaviour, passes, has `BUG:` in its name; it becomes the regression anchor once fixed.
+- Known defect whose fix comes next → test asserts the intended contract (an inclusive limit accepts `10`) and fails against current code; the buggy result never becomes the expectation.
 - Tests confirming correct behaviour are named normally.
 - Record every bug found in the host's `docs/techdebt.md` table (create on first use): ID | Bug description | Source file | Test file.
 
 ## Rules
 
-- Do not fix any production code — fixes are follow-up increments.
+- Do not fix production code; fixes are follow-up increments.
 - Do not commit.

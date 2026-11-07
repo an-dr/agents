@@ -1,49 +1,31 @@
 ---
 name: an-dr-dev-integrate
-description: Integrate an approved feature branch into the default branch in one of five modes — keep the commits, regroup them into a few logical commits, squash into one commit, open a request, or land a regrouped request with rebase and merge. Use after the integration gate; it removes workflow progress, rebases, applies the chosen mode, and cleans up the branch.
+description: Integrate an approved feature branch into the default branch by rebasing, then keeping, regrouping, or squashing its commits, opening a request, or landing a regrouped request with rebase and merge. Use after the integration gate.
 license: MIT
 allowed-tools: PowerShell
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "1.1.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-send-message an-dr-convention-commit-message an-dr-git-commit
 ---
 
 # Integrate
 
-Integration always rebases first, so the default branch never gains a merge commit from this skill. What happens after the rebase is the user's choice between five modes.
+Defers: questions to `an-dr-ai-send-message`; messages to `an-dr-git-commit`, checked by `an-dr-convention-commit-message`.
 
-## The mode question
+## Ask the mode
 
-Ask it every time as the first step of integration, before progress cleanup, rebase, or any other history change, and never answer it yourself. Approval to integrate is not a choice of mode, and the mode used last time is not a default. `integrate-4-finish.ps1` makes `-Mode` mandatory so no run can skip the question.
+Before asking, read [references/modes.md](references/modes.md).
 
-| Mode          | What it does                                                                                                                                                | Choose it when                                                                                    |
-| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| `Commits`     | Rebases and fast-forwards the base, keeping every branch commit                                                                                             | each commit is a meaningful step worth keeping in the base history                                |
-| `Regroup`     | Rebuilds the branch as the few logical commits the user asks for, then fast-forwards the base like `Commits`                                                | the increments were too many to keep, but the change has parts worth separating                   |
-| `Squash`      | Collapses the branch into one commit, then fast-forwards the base                                                                                           | the branch is one logical change and the increments were the route, not the result                |
-| `Request`     | Collapses the branch into one commit, pushes it, and opens a pull request                                                                                   | the change needs review or CI on the platform before it reaches the base                          |
-| `RebaseMerge` | Regroups the branch into at most five logical commits, pushes them, opens a pull request, fixes CI on it, and lands it with the platform's rebase and merge | the change needs CI on the platform, and its parts belong in the base history as separate commits |
+- Ask every time, as the first step, before progress cleanup, rebase, or any history change; never answer it yourself.
+- Approval to integrate is not a mode choice; the last mode used is not a default.
+- One `an-dr-ai-send-message` question, the five modes as options (`Commits`, `Regroup`, `Squash`, `Request`, `RebaseMerge`), no recommendation; wait for the answer.
+- Host question UI holds fewer than five options → first ask local (`Commits`, `Regroup`, `Squash`) or pull request (`Request`, `RebaseMerge`), then the mode within that group.
 
-`Commits`, `Regroup`, and `Squash` push the base and delete the feature branch. `Request` leaves the base untouched and the branch alive — the platform merges it. `RebaseMerge` lands through the platform too, but the agent drives it there, as described below. `gh` opens the request when it is installed; otherwise the script pushes and prints where to open it by hand.
+## Run the steps
 
-The message for `Squash` and `Request` is validated by `an-dr-convention-commit-message`'s checker before anything is rewritten, so compose it with `an-dr-git-commit` rather than inventing one.
-
-## Remove workflow progress
-
-Run this after the workflow's `finish` operation and committing the resulting deletion, after the mode question and before any other integration step. `remove-progress.ps1` rewrites only commits after the merge base with the repository's default branch; default-branch history is never changed. The feature branch must be linear and the working tree clean. The script:
-
-1. removes `.progress/` from every feature-branch commit;
-2. preserves each remaining commit's message, author, committer, and dates;
-3. prunes commits whose only content was workflow progress;
-4. verifies that neither the final tree nor feature-branch history contains `.progress/`.
-
-Run the relevant tests again if rewritten commits have not already been verified at their final content.
-
-## For AI agents — use the step scripts (non-interactive)
-
-Ask for the mode first; then run the progress cleanup and the step scripts from `<skill>/scripts/`. Each script exits non-zero on failure. `<an-dr-convention-commit-message>` is that convention's folder, wherever the agent loaded it from; the scripts take it as a parameter instead of guessing where it is installed.
+Scripts are in `<skill>/scripts/`; each exits non-zero on failure. `<an-dr-convention-commit-message>` is that convention's folder, wherever it was loaded from; scripts take it as a parameter instead of guessing.
 
 | Step                                  | Command                                                                                                                                                                   |
 | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -55,37 +37,21 @@ Ask for the mode first; then run the progress cleanup and the step scripts from 
 | 4 — finish                            | `pwsh integrate-4-finish.ps1 -Mode <Commits\|Squash\|Request\|RebaseMerge> [-Message '<msg>' -CommitMessageSkill <an-dr-convention-commit-message>] [-BaseBranch <name>]` |
 | 5 — rebase-merge (`RebaseMerge` only) | `pwsh integrate-5-rebase-merge.ps1 -TestedCommit <sha> [-BaseBranch <name>]`                                                                                              |
 
-**Procedure:**
+1. Run step 0 after the mode answer and after the workflow's `finish` operation and its deletion commit. The branch must be linear and the tree clean. It rewrites only commits after the merge base with the default branch: removes `.progress/` from each, keeps message, author, committer, and dates, prunes progress-only commits, and verifies neither final tree nor branch history holds `.progress/`. Rerun relevant tests if rewritten commits were not verified at their final content.
+2. Run step 1. Check the recent log for WIP commits and the base-to-HEAD log for topic commits; it rejects remaining progress history.
+3. WIP commits at the tip → step 2 squash, `<hash>` = the commit before the first WIP, with a clean message.
+4. Run step 3 (fetch + rebase); fix conflicts where it pauses.
+5. Run step 1 again, then:
+   - `Commits` → step 4 `-Mode Commits`.
+   - `Squash`, `Request` → step 4 with `-Message`; it collapses itself, step 2 is not rerun. Compose the message with `an-dr-git-commit`; it is validated before anything is rewritten.
+   - `Regroup` → read [references/regroup.md](references/regroup.md), then step 4 `-Mode Commits`.
+   - `RebaseMerge` → read [references/rebase-merge.md](references/rebase-merge.md).
 
-1. Ask for the mode as one `an-dr-ai-send-message` question with the five modes as its options, no recommendation, and wait for the answer. When the host's question UI holds fewer than five options, ask first whether to land locally (`Commits`, `Regroup`, `Squash`) or through a pull request (`Request`, `RebaseMerge`), then which mode within that group. Ask before any step below, so nothing in the branch or its history changes before the choice.
-2. Run **step 0** after the workflow's `finish` operation and its deletion commit. It removes `.progress/` from every feature-branch commit and prunes progress-only commits.
-3. Run **step 1**. Read the output: look at the recent log for WIP commits and the base-to-HEAD log for topic commits. It rejects any remaining progress history.
-4. If WIP commits exist at the tip, run **step 2** with `<hash>` set to the commit just before the first WIP and a clean message.
-5. Run **step 3** (fetch + rebase). Fix any conflicts; rebase pauses on them.
-6. Run **step 1** again, then run **step 4** with the chosen `-Mode`, adding `-Message` for `Squash` and `Request`. It performs the collapse itself; step 2 is not run again. For `Regroup`, first rebuild the branch as described below, then run step 4 with `-Mode Commits`. For `RebaseMerge`, continue as described in its section.
+## Interactive script
 
-## Regroup
+For a human: `pwsh <skill>/scripts/integrate.ps1 -CommitMessageSkill <an-dr-convention-commit-message>`; it asks the mode and refuses to proceed without an answer.
 
-Ask how many commits the user wants when the answer does not say. Then:
+## Rules
 
-1. **Plan the commits** in dependency order, so each builds on the ones before it: typically the contract or library a change rests on, then its users, then tools, then documentation. Write the plan as JSON, `{ "commits": [ { "message": "...", "paths": ["dir", "file"] } ] }`, with each message composed by `an-dr-git-commit` and each path a file or directory whose final state belongs to that commit. A file that a generator or test reads belongs with the code that reads it.
-2. **Run step 2 regroup.** It checks every message first, keeps the branch under a `backup/` ref, commits each group from the final tree, and refuses a plan that leaves a change uncovered or alters the tree. Any failure restores the branch.
-3. **Check each commit on its own** in a separate worktree that reuses the build cache: the host's build at every commit, and the tests of the parts a commit completes. Move paths between groups and re-run step 2 until each commit builds.
-4. **Finish** with step 4 `-Mode Commits`, and tell the user the `backup/` branch is theirs to delete.
-
-## RebaseMerge
-
-The base is never pushed directly and never gains a merge commit; the platform's rebase and merge appends the branch's commits to it. Those are never the commits the branch was built with: they are a work log and can be messy, so the request always carries a regrouped history.
-
-1. **Regroup the commits** before step 4, every time, into at most five logical commits as described above; ask how many only within that limit. Never push the branch's own commits as they are.
-2. **Open the request** with step 4 `-Mode RebaseMerge`.
-3. **Fix CI on the branch** — watch the request's checks, read the failed logs, and push each fix as a new commit, until every check passes. A check that fails once and passes on a re-run of the failed job, with no change, is flaky: report it as follow-up work rather than patching around it.
-4. **Wait for the user's word to merge.** A green request is not permission to land it.
-5. **Fold the fix commits** into the regrouped commits they correct with fixups. This rewrites history without changing the tree.
-6. **Run step 5** with `-TestedCommit` set to the commit CI passed. It refuses a tree that differs from the tested one or a commit whose CI did not pass, force-pushes a rewritten branch and cancels the CI runs that push starts, merges with `gh pr merge --rebase --delete-branch`, and fast-forwards the local base.
-
-The base's own CI still runs after the merge; report it rather than cancelling it.
-
-## For humans — use the interactive script
-
-Run `pwsh <skill>/scripts/integrate.ps1 -CommitMessageSkill <an-dr-convention-commit-message>` and follow its prompts. It asks the mode question and refuses to proceed until it is answered.
+- Always rebase first; the default branch never gains a merge commit from this skill.
+- `integrate-4-finish.ps1` makes `-Mode` mandatory so no run skips the question.

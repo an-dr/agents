@@ -5,64 +5,67 @@ license: MIT
 allowed-tools: PowerShell
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "1.1.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-send-message
 ---
 
 # Agent instruction review
 
-Reviews the instructions themselves, not the code they produce. The subject is every file that reaches an agent's context: `AGENTS.md`, `CLAUDE.md`, every `SKILL.md`, and any prompt or template they load.
+Defers: finding levels to `an-dr-ai-send-message`.
 
-## Method
+## Review
 
-1. Run the reference checker for the mechanical faults.
-2. Map the loading moments — for every rule, name the file that carries it and the moment that file enters context. A rule nothing loads at the right time does not exist.
-3. Read each file as the agent that loads it, in its order, and stop at the first place two files disagree.
-4. Rank findings by what they cost: wrong behavior first, then unenforceable rules, then wasted context.
+Subject: every file that reaches an agent's context — `AGENTS.md`, `CLAUDE.md`, every `SKILL.md`, and any prompt or template they load; not the code they produce.
+
+1. Run the reference checker for mechanical faults.
+2. Map loading moments: for every rule, name the file that carries it and when that file enters context. A rule nothing loads at the right time does not exist.
+3. Read each file as the agent that loads it, in its order; stop at the first place two files disagree.
+4. Rank findings by cost: wrong behaviour, then unenforceable rules, then wasted context.
 
 ```powershell
 pwsh <skill>/scripts/check-references.ps1 [-Path <repo>]
 ```
 
-The script resolves every relative Markdown link and checks every skill `name` against its directory. It reports per-file size and an approximate token cost, and exits non-zero on any broken reference.
+Resolves every relative Markdown link, checks every skill `name` against its directory, reports per-file size and approximate token cost; exits non-zero on any broken reference.
 
 ## Contradictions
 
-- Two files stating the same fact differently. The renamed skill, the moved path, the limit that is 72 in one file and 80 in another.
-- Prose that disagrees with a controller, a script, or a template. The executable artifact wins; the prose is the finding.
-- A rule and its exception separated far enough that either can be read alone.
-- An instruction that the harness cannot honour — an interactive command in a non-interactive shell, a path that does not exist on the target platform.
+- Same fact stated differently in two files: renamed skill, moved path, a limit of 72 in one and 80 in another.
+- Prose disagreeing with a controller, script, or template; the executable wins, the prose is the finding.
+- A rule and its exception far enough apart that either reads alone.
+- An instruction the harness cannot honour: interactive command in a non-interactive shell, path missing on the target platform.
 
 ## Weakened rules
 
-- Hedges that make a rule optional: *try to*, *if possible*, *generally*, *where appropriate*, *consider*. Either the rule holds or it is not a rule.
-- A rule with no observable outcome. If no one can tell from the result whether it was followed, it will not be.
-- Advice with no trigger. A statement of taste in a file loaded at a moment when nothing acts on it.
-- Two rules that can both apply and conflict, with no stated tiebreak.
+- Hedges making a rule optional: *try to*, *if possible*, *generally*, *where appropriate*, *consider*.
+- A rule with no observable outcome.
+- Advice with no trigger: taste in a file loaded when nothing acts on it.
+- Two rules that can both apply and conflict, with no tiebreak.
 - An escape hatch wide enough to swallow the rule, especially *unless you think otherwise*.
-- A rule stated once, deep inside a long file, competing with everything around it.
+- A rule stated once, deep in a long file, competing with everything around it.
 
 ## Wasted context
 
-- Length in an always-loaded file. Every line of `AGENTS.md` and `CLAUDE.md` is paid on every request; a line that is not operative is rent.
+- Length in an always-loaded file; every line of `AGENTS.md` and `CLAUDE.md` is paid on every request.
 - A fact restated across files instead of owned by one and referenced.
-- Prose doing a table's job, or an example that repeats what the rule already said.
-- A skill description broad enough to trigger when it is not needed, or narrow enough to miss when it is.
-- Long inline output, transcripts, or code that a script could produce on demand.
-- A file no trigger reaches, which costs nothing to run and everything to maintain.
+- Prose doing a table's job; an example repeating the rule.
+- A skill description broad enough to trigger when not needed, or narrow enough to miss.
+- Long inline output, transcripts, or code a script could produce on demand.
+- A file no trigger reaches.
 
 ## Logic that belongs in a script
 
-Prose asking for the same deterministic steps every time is a script waiting to be written. Look for numbered procedures with no judgment in them, formats described in words that a checker could assert, invariants stated as reminders, and any rule whose violation has a mechanical signature.
-
-Propose a script when the steps are stable, the inputs are known, and failure is detectable. Keep it in prose when the work needs judgment about the specific repository. A script that exits non-zero converts a rule an agent may forget into a gate it cannot pass.
+- Signals: numbered procedures with no judgment, formats described in words a checker could assert, invariants stated as reminders, rules whose violation has a mechanical signature.
+- Stable steps, known inputs, detectable failure → propose a script that exits non-zero.
+- Needs judgment about the specific repository → keep in prose.
 
 ## Not findings
 
 - Wording, tone, or ordering that costs nothing.
 - A rule that is merely strict.
 
-## Report
+## Output
 
-Return findings ranked, each with the file and line, what breaks, and the concrete edit. State separately what was checked and found sound, so a clean area is not re-reviewed later. Present both by `an-dr-ai-send-message`'s finding levels: findings first with their level, and the sound areas as one quiet closing line.
+- Findings ranked, each with file and line, what breaks, and the concrete edit, shown with its `an-dr-ai-send-message` finding level.
+- Areas checked and found sound, as one quiet closing line, so they are not re-reviewed.

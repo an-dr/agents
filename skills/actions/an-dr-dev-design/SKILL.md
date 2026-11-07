@@ -1,40 +1,43 @@
 ---
 name: an-dr-dev-design
-description: Structure the DESIGN phase for a decision deeper than a quick pick — explore the space with an options table, steelman, and pre-mortem before the user or a Detailed Auto agent decides. Use in a Detailed flow, or when a Quick design question turns out deeper than expected.
+description: Structure a DESIGN decision deeper than a quick pick with an options table, steelman, and pre-mortem before the user or a Detailed Auto agent decides. Use in a Detailed flow, or when a Quick design question turns out deeper than expected.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "1.2.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-send-message an-dr-convention-adr an-dr-convention-use-case an-dr-dev-write-documentation
 ---
 
 # Design
 
-Produces the material the DESIGN phase needs: a small, honest option space with named tradeoffs. The user decides in Quick and Detailed; the agent records its reasoned choice in Detailed Auto. A lasting architectural decision is recorded via `an-dr-convention-adr`; the resulting design lives in `docs/design/<topic>.md`.
+Defers: ADR format to `an-dr-convention-adr`, use cases to `an-dr-convention-use-case`, writing to `an-dr-dev-write-documentation`.
 
 ## Process
 
-1. **Frame the problem** — one paragraph: what is being decided, which constraints and existing ADRs bound the space, which use cases it serves or could break (`an-dr-convention-use-case`), what "done" looks like.
-2. **Build the options table** — 2–4 real options (no strawmen), scored over explicit axes (see below).
-3. **Steelman the loser** — before recommending, argue the strongest case for the option you would reject. If the steelman wins, change the recommendation.
-4. **Pre-mortem the favourite** — "this shipped and failed six months later — why?" List the top 2–3 failure stories and what would detect each early.
-5. **Present** — options with tradeoffs as an `an-dr-ai-send-message` question in Quick and Detailed; the user picks. In Detailed Auto, record the agent's choice and rationale for final review. Never a single "correct" solution. Record each unresolved choice as a controller question first, so exploring the next one does not lose it.
-6. **Record** — a lasting decision is recorded as an ADR in the format of `an-dr-convention-adr` through `an-dr-dev-write-documentation`, and the decision closes its question with `answer-question`; the resulting design goes into the topic's design doc.
+1. Frame in one paragraph: what is decided, which constraints and existing ADRs bound it, which use cases it serves or could break, what done looks like.
+2. Build the options table: 2–4 real options, no strawmen.
+3. Argue the strongest case for the option you would reject; if it wins, change the recommendation.
+4. Pre-mortem the favourite ("shipped, failed six months later — why?"): top 2–3 failure stories and what detects each early.
+5. Record each unresolved choice as a controller question first, so exploring the next does not lose it.
+6. Present: Quick and Detailed → options with tradeoffs as an `an-dr-ai-send-message` question, the user picks; Detailed Auto → record the agent's choice and rationale for final review. Never a single "correct" solution.
+7. Record a lasting decision as an ADR through `an-dr-dev-write-documentation`, close its question with `answer-question`, and put the resulting design in the topic's design doc.
 
 ## Options table
 
 | Option | Complexity | Reversibility | Blast radius | Effort | Main risk |
 | ------ | ---------- | ------------- | ------------ | ------ | --------- |
 
-Reversibility and blast radius weigh most: a cheap, reversible choice needs little analysis; an expensive one-way door deserves the full treatment.
+Reversibility and blast radius weigh most: a cheap reversible choice needs little analysis, an expensive one-way door the full treatment.
 
 ## Design docs
 
-`docs/design/<topic>.md` (create on first use) — a living document per topic, lowercase topic name. It opens with a one-line summary linking the ADRs that decided it, then describes the *current* design (present tense, gaps marked `TODO`). Rejected options don't live here — they belong in the ADR's *Rejected alternatives*.
+- `docs/design/<topic>.md`, lowercase topic, created on first use; one living document per topic.
+- Opens with a one-line summary linking the deciding ADRs, then the current design in present tense, gaps marked `TODO`.
+- Rejected options go in the ADR's *Rejected alternatives*, not here.
 
 ## Rules
 
-- Score axes honestly — no option exists to make the favourite look good.
-- An expensive one-way door with a weak pre-mortem is not ready to present; keep digging.
+- Score axes honestly; no option exists to flatter the favourite.
+- An expensive one-way door with a weak pre-mortem is not ready to present.
 - The user owns the decision in Quick and Detailed; Detailed Auto delegates it through the selected flow.

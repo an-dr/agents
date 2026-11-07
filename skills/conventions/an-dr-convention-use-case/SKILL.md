@@ -1,26 +1,30 @@
 ---
 name: an-dr-convention-use-case
-description: What a use case is and how it is written — the documentation layer above architecture and design, stable UC-AREA-NN identifiers, the actor, goal, flow, and success fields, observable behaviour only, and one file per area with an index. Use when adding a capability, writing or reviewing a use case, or judging whether a change breaks what users rely on.
+description: What a use case is and how it is written — the layer above architecture, stable UC-AREA-NN identifiers, actor, goal, flow, and success fields, observable behaviour only. Use when adding a capability, writing or reviewing a use case, or judging whether a change breaks what users rely on.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "1.1.0"
   an-dr.type: convention
   an-dr.dependencies: PROHIBITED
 ---
 
 # Convention: use case
 
-A use case states one goal someone reaches with the system, and what they observe when it worked. Together the use cases say what must keep working; architecture and design below them say how. A change that breaks a use case is a breaking change, whatever the code looks like, and a new capability arrives with the use case it serves.
+## Layer
+
+- A use case is one goal someone reaches with the system and what they observe when it worked.
+- Use cases say what must keep working; architecture and design below say how.
+- A change that breaks a use case is a breaking change, whatever the code looks like.
+- A new capability arrives with the use case it serves.
 
 ## Location
 
 `docs/use-cases/`, committed as ordinary repository content:
 
-- `index.md` defines the layer for that repository: what a use case is, the fields, the actors it names, and a list of areas.
-- One file per area, `<area>.md`, such as `docs/use-cases/cli.md`, holding that area's use cases under headings that group them by the user's activity.
-
-Register the layer in the repository's documentation index, above architecture.
+- `index.md` defines the layer for that repository: what a use case is, the fields, the actors, and the list of areas.
+- One file per area, `<area>.md` (e.g. `docs/use-cases/cli.md`), use cases grouped under headings by user activity.
+- The layer is registered in the repository's documentation index, above architecture.
 
 ## Format
 
@@ -33,11 +37,17 @@ Register the layer in the repository's documentation index, above architecture.
 - **Success**: what they observe when it worked.
 ```
 
-- **Identifiers are stable.** `<AREA>` is a short uppercase code per area file and `<NN>` a two-digit number. An identifier stays when the use case is reworded or moved to another heading, and is never reused after the use case is removed. Order in the file follows the reader's activity, not the numbers.
-- **Observable behaviour only.** Commands, files the user sees, and results — never a module, a function, or an internal file. An ordinary refactoring must not require a use case to change.
-- **Name things the actor knows.** Define each actor once in `index.md`, by what they do, not by a project's internal role name. Say what is created, run, or captured, never a bare verb such as "start" or "run" without its object.
-- **One goal each.** A use case that serves two actors' different goals is two use cases. Group by activity: creating something new, changing something that exists, and day-to-day work are different headings.
+- `<AREA>`: short uppercase code per area file; `<NN>`: two digits.
+- An identifier stays when the use case is reworded or moved, and is never reused after removal.
+- File order follows the reader's activity, not the numbers.
+- Observable behaviour only: commands, files the user sees, results; never a module, function, or internal file, so an ordinary refactoring changes no use case.
+- Each actor is defined once in `index.md` by what they do, not by an internal role name.
+- Verbs carry their object: what is created, run, or captured, never a bare "start" or "run".
+- One goal each; two actors' different goals are two use cases.
+- Creating something new, changing something existing, and day-to-day work are different headings.
 
 ## Quality
 
-A good use case lets a newcomer tell who acts, what they get, and how to check it without reading code. Its goal does not restate its command, its success names an observable result, and it holds one goal under one title.
+- A newcomer can tell who acts, what they get, and how to check it without reading code.
+- The goal does not restate the command.
+- Success names an observable result.

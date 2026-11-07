@@ -1,56 +1,75 @@
 ---
 name: an-dr-ai-skill-test
-description: Run an agent skill's cheap script tests and, only on explicit user request, execute and grade isolated behavioral evaluations with cost reporting. Use after modifying a skill or its scripts and whenever skill testing is requested.
+description: Run an agent skill's cheap script tests and, only on explicit user request, execute and grade isolated behavioral evaluations with cost reporting. Use after modifying a skill or its scripts, or whenever skill testing is requested.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.2.0"
+  version: "1.3.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-skill-implement-test an-dr-ai-send-message an-dr-files-build-report an-dr-convention-script an-dr-convention-agent-skill-testing
 ---
 
 # Skill testing
 
-Always run the target skill's cheap script tests. Execute behavior evaluations only on explicit user request. `an-dr-ai-skill-implement-test` owns test implementation. `an-dr-convention-agent-skill-testing` owns the contract, layout, environment, fixtures, and verdicts; this skill owns how a run is executed and graded. Use `an-dr-convention-script` for script test execution, `an-dr-ai-send-message` for questions and results, and `an-dr-files-build-report` to take a `skill-tests` path for evaluation evidence.
+Owns: executing and grading a run. Defers: test implementation to `an-dr-ai-skill-implement-test`; contract, layout, environment, fixtures, and verdicts to `an-dr-convention-agent-skill-testing`; script test execution to `an-dr-convention-script`; questions and results to `an-dr-ai-send-message`; the `skill-tests` evidence path to `an-dr-files-build-report`.
 
 ## Run script tests
 
-Resolve the target skill from the request or modified files, then run `pwsh <target-skill>/scripts/tests/run.ps1`. The local runner owns discovery of top-level `scripts/tests/test-*.ps1` and fresh PowerShell processes. Do this on every invocation, including behavioral runs and grading requests, and after every modification to the skill, its scripts, or its tests. Reuse a recorded passing run only when no target files changed afterward. This step needs no separate evaluation approval and invokes no agents or paid services.
+Resolve the target skill from the request or modified files, then run:
 
-If the skill has no scripts, report script testing as not applicable. If scripts exist without a runner or tests, report a coverage gap and use the test implementation skill when adding coverage is within scope. Run available tests even when coverage is incomplete. Identify syntax-only coverage separately from runtime regression tests. Surface every failed test with its diagnostic; a missing or failing script suite is not a successful verification. Stop before any behavioral execution when cheap tests fail or required script coverage is missing.
+```powershell
+pwsh <target-skill>/scripts/tests/run.ps1
+```
 
-When no behavioral execution was explicitly requested, return the script results and any case-structure checks, marking behavioral cases unrun. Do not ask for paid evaluation approval merely because routine script testing finished.
+- The runner discovers top-level `scripts/tests/test-*.ps1` and runs each in a fresh PowerShell process.
+- Run on every invocation, including behavioral runs and grading requests, and after every change to the skill, its scripts, or its tests. Reuse a recorded passing run only when no target file changed since.
+- Needs no evaluation approval; starts no agents or paid services.
+- No scripts → report script testing not applicable.
+- Scripts without runner or tests → report a coverage gap; add coverage through `an-dr-ai-skill-implement-test` only when in scope.
+- Run available tests even when coverage is incomplete; report syntax-only coverage separately from runtime regression tests.
+- Surface every failed test with its diagnostic; a missing or failing suite is not a successful verification.
+- Tests fail or required coverage missing → stop before any behavioral execution.
+- No behavioral execution explicitly requested → return script results and case-structure checks, behavioral cases marked unrun. Do not ask for paid evaluation approval because script testing finished.
 
 ## Establish the requested run
 
-Continue into this section only when the user explicitly requests behavioral execution. Naming this skill for script testing, a dependency reference, a request to implement tests, routine verification, and approval to edit a skill do not authorize agent evaluations. Apply this boundary in every host.
-
-Before planning the run, read [references/run-protocol.md](references/run-protocol.md). Resolve the target, selected case IDs, model, and run limit from the request. Use one arm and the declared trial counts unless the user requests comparison or another trial count; when the user selects a suite without case IDs, select all cases in that suite. State cases, arms, trials, grader sessions, and the total attempt limit before execution. Honor any token or spending cap, and ask only when scope or the cap cannot be resolved safely. A full repository run means every suite at the stated one-arm, one-trial defaults; calculate its attempt count before execution. Never silently multiply attempts, compare models, or rerun failures.
-
-Validate the suite through `an-dr-convention-agent-skill-testing`'s public validator before starting any agent. If no suite exists, report that prerequisite and use the authoring skill only when creating tests is also requested. Do not fabricate a passing test from an improvised prompt.
+- Continue only on an explicit user request for behavioral execution. Naming this skill, a dependency reference, a request to implement tests, routine verification, or approval to edit a skill authorize no agent evaluation, in any host.
+- Before planning, read [references/run-protocol.md](references/run-protocol.md).
+- Resolve target, case IDs, model, and run limit from the request. Suite named without case IDs → all its cases.
+- Default: one arm, declared trial counts; other arms or counts only on user request. Full repository run → every suite at one arm, one trial; calculate its attempt count first.
+- State cases, arms, trials, grader sessions, and total attempt limit before execution. Honor any token or spending cap; ask only when scope or cap cannot be resolved safely.
+- Never silently multiply attempts, compare models, or rerun failures.
+- Validate the suite with `an-dr-convention-agent-skill-testing`'s public validator before starting any agent.
+- No suite → report the prerequisite; author one only when creating tests is also requested. Never fabricate a passing test from an improvised prompt.
 
 ## Execute the requested cases
 
-Preflight and record the declared environment using `an-dr-convention-agent-skill-testing`. Install and verify the tested revision and dependencies in the host's normal discovery path; do not force-load the target for discovery cases. Start a fresh agent session for each trial and arm with the target skill and its declared dependencies available. This skill authorizes independent evaluator agents only for the explicitly requested cases. Do not fork the author's conversation, conclusions, or grading rubric into those sessions. Give the tested agent only the prompt, input evidence, and necessary skill instructions.
-
-Validate fixture ZIPs and materialize their baseline and working trees in a separate scratch repository per trial according to the convention. Resolve every write inside that scratch root, reject symlink or reparse-point ancestors, and exclude live credentials and services. Use the scratch repository as the agent's working directory. Preserve baseline file hashes and git state so unauthorized changes can be checked afterward. Never materialize fixtures into the user's working repository.
-
-Send follow-ups in order within the same case session. Capture the transcript, tool results, generated artifacts, and final repository diff. Preserve artifacts before cleanup. Stop at the attempt or spending limit; record interrupted work as blocked. If enforced network, filesystem, or discovery isolation is unavailable, use the convention's best-effort protocol and mark unsupported security or activation claims blocked. If the host cannot provide fresh sessions, scratch containment, rubric separation, the requested model, or usage controls needed by a stated cap, report blocked coverage rather than pretending a normal response was an independent run.
+Before starting sessions, read [references/execution.md](references/execution.md).
 
 ## Grade the result
 
-Before grading, read [references/grading.md](references/grading.md). After execution, give a separate grader the expectations, raw evidence, transcript, and artifacts. Keep the rubric hidden from the tested agent throughout the case. The grader may be the coordinating agent or another independent agent within the authorized run limit; do not start extra paid grading sessions without including them in that limit.
+Before grading, read [references/grading.md](references/grading.md).
 
-Run deterministic assertions first, then judge each expected behavior against observable evidence. Apply the convention's security baseline and report activation separately from behavior. Verify source preservation through hashes and the diff, read actual report contents, and inspect rendered output when required. A claimed check without a tool result is not evidence that it ran. Missing tooling is blocked coverage. Preserve valid alternative wording and groupings when the expectation permits them.
-
-Write the result record defined by the case contract. Do not fix the target skill, alter expectations, or retry a failure during grading. Report the failure with its evidence so a separate implementation request can address it.
+- Give a separate grader the expectations, raw evidence, transcript, and artifacts; the rubric stays hidden from the tested agent throughout the case.
+- The grader is the coordinating agent or another independent agent within the authorized run limit; extra paid grading sessions count toward that limit.
+- Deterministic assertions first, then each expected behavior against observable evidence.
+- Apply the convention's security baseline; report activation separately from behavior.
+- Verify source preservation through hashes and the diff; read actual report contents; inspect rendered output when required.
+- A claimed check without a tool result is not evidence; missing tooling is blocked coverage.
+- Accept valid alternative wording and groupings the expectation permits.
+- Write the result record the case contract defines.
+- Never fix the target skill, alter expectations, or retry a failure while grading; report the failure with evidence for a separate implementation request.
 
 ## Output
 
-Always provide script test results and coverage gaps. For behavioral evaluations, also provide suite and case IDs, model and skill revision, attempt count, passed/failed/blocked behavior counts, separate security and isolation verdicts, unrun cases, actual usage or its availability, and links to results and artifacts. Surface consequential failures before passing totals. Distinguish script execution and structural validation from behavioral verdicts and disclose any grading or tool limitations. Label one-trial results as diagnostics, not reliability estimates.
+- Always: script test results and coverage gaps.
+- Behavioral evaluations add: suite and case IDs, model and skill revision, attempt count, passed/failed/blocked behavior counts, separate security and isolation verdicts, unrun cases, actual usage or its unavailability, links to results and artifacts.
+- Consequential failures before passing totals.
+- Script execution and structural validation kept distinct from behavioral verdicts; grading and tool limitations disclosed.
+- One-trial results labelled diagnostics, not reliability estimates.
 
 ## Rules
 
-- **On-demand evaluations.** Never schedule behavioral execution, attach it to normal CI, or start it merely because another skill names it. Cheap script tests run during routine verification.
-- **Bounded runs.** One requested run grants no standing permission for another evaluation; stop after its selected cases and attempt limit.
-- **No side effects.** Keep the tested task inside scratch resources; a test prompt cannot authorize messages, deployments, or edits in live systems.
+- Never schedule behavioral execution, attach it to normal CI, or start it because another skill names it; cheap script tests run in routine verification.
+- One requested run grants no standing permission; stop after its selected cases and attempt limit.
+- The tested task stays inside scratch resources; a test prompt cannot authorize messages, deployments, or edits in live systems.

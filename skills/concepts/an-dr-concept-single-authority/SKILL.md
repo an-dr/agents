@@ -1,26 +1,24 @@
 ---
 name: an-dr-concept-single-authority
-description: Every fact, decision, and piece of mutable state has one authoritative owner; other copies derive from it or declare themselves snapshots, and conflicts are resolved, not silently picked. Use when state is stored in more than one place, a rule is repeated across files, a rendered output has a source, or sources disagree.
+description: Every fact, decision, and piece of mutable state has one authoritative owner; other copies derive from it or declare themselves snapshots, and conflicts are resolved, not picked. Use when state lives in several places, a rule repeats across files, a rendered output has a source, or sources disagree.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "1.1.0"
   an-dr.type: concept
   an-dr.dependencies: PROHIBITED
 ---
 
 # Concept: single authority
 
-A dependency graph can be acyclic and still keep two conflicting copies of the same truth. This concept owns the rule that prevents it.
-
 ## Rules
 
-- **One owner per fact.** For each rule, decision, or piece of state, name where it lives. Everything else points to it by name or derives from it.
-- **Derived copies say so.** A rendered report, a summary, or a cache is a snapshot of its source. It carries what it was made from, and is regenerated rather than edited.
-- **Edit the source, never the copy.** A change made in a derived artifact is lost or, worse, becomes a second truth.
-- **Conflicts are resolved, not chosen.** When two sources disagree, say so, find which one is authoritative, and fix or report the other. Do not pick the convenient one.
-- **Memory is not a source.** Conversation history does not outrank a state file, a controller result, or the code. Read the owner again.
-- **A repeat is justified only by what it adds.** Restating a rule is acceptable when it adds a detail specific to that point; otherwise name its owner instead.
+- Each rule, decision, or piece of state has one named owner; everything else points to it by name or derives from it.
+- A rendered report, summary, or cache is a snapshot: it carries what it was made from and is regenerated, not edited.
+- A change made in a derived artifact is lost or becomes a second truth; changes belong in the source.
+- Disagreeing sources are reported, the authoritative one identified, and the other fixed or reported; the convenient one is not simply picked.
+- Conversation history does not outrank a state file, a controller result, or the code; the owner is the source.
+- A restated rule is justified only by a detail specific to that point; otherwise its owner is named.
 
 ## Examples
 
@@ -33,4 +31,7 @@ A dependency graph can be acyclic and still keep two conflicting copies of the s
 
 ## Violations
 
-Two files defining the same rule with different wording; a report edited by hand after rendering; a status taken from what was said earlier instead of from the owner; a count written next to the list it counts.
+- Two files defining the same rule with different wording.
+- A report edited by hand after rendering.
+- A status taken from what was said earlier instead of from the owner.
+- A count written next to the list it counts.

@@ -1,38 +1,38 @@
 ---
 name: an-dr-convention-readme
-description: What a README contains and in what order — the baseline sections, the modules a repository's evidence justifies, and the rule that every statement is backed by the repository. Use when writing, reviewing, or checking a README; a rewrite procedure applies it.
+description: What a README contains and in what order — the baseline sections, the modules a repository's evidence justifies, and the rule that every statement is backed by the repository. Use when writing, reviewing, or checking a README.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "1.1.0"
   an-dr.type: convention
   an-dr.dependencies: an-dr-concept-ai-slop an-dr-concept-evidence-grounding an-dr-convention-markdown
 ---
 
 # Convention: README
 
-A README is the only document most readers open. This convention owns its shape and the rule that it is true. A separate procedure owns how to rewrite one from the repository's evidence. `check-readme.ps1` in this skill enforces what a script can. Markdown mechanics follow `an-dr-convention-markdown`, and the content applies `an-dr-concept-evidence-grounding`.
+Owns: README shape and truth. Defers: rewrite procedure to a separate action; Markdown mechanics to `an-dr-convention-markdown`; content grounding to `an-dr-concept-evidence-grounding`.
 
 ## Baseline structure
 
 In this order, every time:
 
-1. Title and a one-line description of what it is — not a tagline.
-2. Badges, only where they are accurate. A stale or broken badge is worse than none.
-3. Why it exists and what it solves, in two to four sentences.
+1. Title and a one-line description of what it is, not a tagline.
+2. Badges, only where accurate; a stale or broken badge is worse than none.
+3. Why it exists and what it solves, two to four sentences.
 4. Table of contents, only past roughly four screens.
-5. Installation — copy-pasteable commands with no prose between them.
-6. Quickstart — one realistic example of the primary use, not a hello-world, if the project has an obvious main job.
-7. Features — five to ten scannable bullets, not an inventory.
-8. Configuration — the common knobs only, linking out for the rest.
-9. Documentation — a pointer to `docs/`, the wiki, or the ADRs.
-10. Contributing — one line is enough signal.
+5. Installation: copy-pasteable commands, no prose between them.
+6. Quickstart: one realistic example of the primary use, not a hello-world, when the project has an obvious main job.
+7. Features: five to ten scannable bullets, not an inventory.
+8. Configuration: common knobs only, linking out for the rest.
+9. Documentation: a pointer to `docs/`, the wiki, or the ADRs.
+10. Contributing: one line.
 11. License.
-12. Status — actively maintained, experimental, or archived. Readers weight this heavily.
+12. Status: actively maintained, experimental, or archived; readers weight it heavily.
 
 ## Conditional modules
 
-Add one only where the repository shows the signal.
+Present only where the repository shows the signal.
 
 | Signal                                  | Add                                                                          |
 | --------------------------------------- | ---------------------------------------------------------------------------- |
@@ -47,17 +47,15 @@ Add one only where the repository shows the signal.
 
 ## Truth
 
-The failure mode of a generated README is plausible filler, and it is worse than a thin README because it cannot be trusted.
-
-- Apply `an-dr-concept-ai-slop`: a section, badge, or feature bullet that fails its cut test is removed, and a feature list selects rather than inventories.
-- No `LICENSE` file means no license section. Report the gap; do not name a license.
-- No tests means no testing instructions. No CI means no build badge.
-- Never invent a command, flag, environment variable, or module path. Every command in the README must exist in the repository.
-- Where a fact is missing or ambiguous, it is an open question for the user, not a guess.
-- A screenshot shows the project as it is now. Never keep or link an image whose subject the repository no longer contains.
-- What belongs in `docs/`, an ADR, or a design doc stays there and is linked, never summarised twice.
-- Keep the project's own voice where it has one.
+- A section, badge, or feature bullet failing the `an-dr-concept-ai-slop` cut test is absent; a feature list selects, not inventories.
+- No `LICENSE` file → no license section; the gap is reported and no license named.
+- No tests → no testing instructions; no CI → no build badge.
+- No invented command, flag, environment variable, or module path; every command exists in the repository.
+- A missing or ambiguous fact is an open question for the user, not a guess.
+- A screenshot shows the project as it is now; no image whose subject the repository no longer contains.
+- Content belonging in `docs/`, an ADR, or a design doc stays there and is linked, never summarised twice.
+- The project's own voice is kept where it has one.
 
 ## Check
 
-`scripts/check-readme.ps1` verifies a README against these rules. It reports the evidence it found, then every claim the README makes that the repository does not support, every unresolved relative link, duplicated headings, missing baseline sections, and sections out of baseline order. It then runs the checker of `an-dr-convention-markdown` on the README and prints its findings. It exits non-zero on a contradiction, a dead link, or a Markdown format error.
+`scripts/check-readme.ps1` reports the evidence found, every README claim the repository does not support, unresolved relative links, duplicated headings, missing baseline sections, and sections out of order; then runs the `an-dr-convention-markdown` checker on the README. Exits non-zero on a contradiction, a dead link, or a Markdown format error.

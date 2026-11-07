@@ -1,17 +1,17 @@
 ---
 name: an-dr-agents-repo-build-dependencies
-description: Build the dependency graph of a repository's skills from their an-dr.dependencies declarations as a Mermaid diagram, mark every skill that declares none, and keep a Markdown block current. Use after adding, renaming, or re-declaring a skill, when a dependency diagram needs refreshing, or when you need to see what depends on what.
+description: Build a Mermaid dependency graph of a repository's skills from their an-dr.dependencies declarations and keep a Markdown block current. Use after adding, renaming, or re-declaring a skill, or when a dependency diagram needs refreshing.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "1.1.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-send-message an-dr-convention-agent-skill
 ---
 
 # Build skill dependencies
 
-Turns the `an-dr.dependencies` that every skill declares, as `an-dr-convention-agent-skill` defines them, into one picture. A script does the work, so the diagram is always derived from the declarations and never edited by hand.
+Defers: the `an-dr.dependencies` format to `an-dr-convention-agent-skill`.
 
 ## Build
 
@@ -19,21 +19,22 @@ Turns the `an-dr.dependencies` that every skill declares, as `an-dr-convention-a
 pwsh <skill>/scripts/build-dependencies.ps1 [-Root <repository>] [-Markdown <file>] [-Check]
 ```
 
-- Without `-Markdown`, it prints the Mermaid diagram and a summary.
-- With `-Markdown <file>`, it replaces the block between `<!-- skill-dependencies begin -->` and `<!-- skill-dependencies end -->` in that file, so the surrounding text stays. A file without the two markers is an error.
-- With `-Check`, it changes nothing and exits 1 when the block is stale or a skill is marked below.
-
-Each category folder under `skills/` is a group, and each name in a skill's `an-dr.dependencies` is an arrow. `none` and `PROHIBITED` draw no arrow.
+- No `-Markdown` → prints the Mermaid diagram and a summary.
+- `-Markdown <file>` → replaces the block between `<!-- skill-dependencies begin -->` and `<!-- skill-dependencies end -->`, keeping surrounding text; a file without both markers is an error.
+- `-Check` → changes nothing; exits 1 when the block is stale or a skill is marked.
+- Each category folder under `skills/` is a group; each name in `an-dr.dependencies` is an arrow; `none` and `PROHIBITED` draw none.
 
 ## Marks
 
-A skill whose frontmatter has no `an-dr.dependencies` key is drawn with a dashed outline and listed after the diagram, because a missing declaration is different from declaring none. A declared name that matches no skill is listed too. Fix both by declaring the key, as the registration check also requires.
+- A skill with no `an-dr.dependencies` key is drawn dashed and listed after the diagram; a missing declaration differs from declaring none.
+- A declared name matching no skill is listed.
+- Fix both by declaring the key, as the registration check also requires.
 
 ## Output
 
-The script prints a Markdown summary: the skill and arrow counts, then the marked skills and unknown names. Relay it to the user with `an-dr-ai-send-message`, and give the path of any file it rebuilt.
+The script prints a Markdown summary: skill and arrow counts, then marked skills and unknown names. Relay it with `an-dr-ai-send-message` and give the path of any rebuilt file.
 
 ## Rules
 
-- Rebuild after every change to a declaration; never edit the generated block by hand.
-- The script reads declarations only. Whether a declaration matches what a skill names is the registration check's job.
+- Rebuild after every declaration change; never edit the generated block by hand.
+- The script reads declarations only; whether a declaration matches what a skill names is the registration check's job.

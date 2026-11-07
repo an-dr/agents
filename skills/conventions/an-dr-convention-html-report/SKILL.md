@@ -1,82 +1,41 @@
 ---
 name: an-dr-convention-html-report
-description: The format of an HTML report for people, with the scripts that apply it — one self-contained file, the report brand, a theme switch and print layout, problem levels, and Mermaid diagrams rendered offline to inline SVG, each with a button that copies its source. Use whenever any skill writes an HTML page for people, such as change reports, code reviews, and project overviews, or when the user asks for an HTML report with diagrams.
+description: The format of an HTML report for people and the scripts that apply it — one self-contained file, the report brand, theme switch, print layout, problem levels, and offline-rendered Mermaid. Use whenever a skill writes an HTML page for people, or the user asks for an HTML report with diagrams.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "1.2.0"
   an-dr.type: convention
   an-dr.dependencies: an-dr-concept-dark-cockpit an-dr-convention-artifact-layout
 ---
 
 # Convention: HTML report
 
-One file a reader can open from disk, in an editor preview, or as a published page, and see the same thing: text, tables, and rendered diagrams. The calling skill owns what the page says; this convention owns how it is built and how its diagrams render, and its scripts apply the rules.
+Owns: how a page is built and how its diagrams render; the calling skill owns what it says. Defers: path, stamp, and latest copy to `an-dr-convention-artifact-layout`; the level ladder to `an-dr-concept-dark-cockpit`.
 
-## Where the page goes
+## Reference files
 
-A generated page is an artifact, not repository content: its path, stamp, and latest copy follow `an-dr-convention-artifact-layout`.
+- [references/levels.md](references/levels.md): level classes, their look, and branded reports.
+- [references/diagrams.md](references/diagrams.md): when to draw, Mermaid types, and source rules.
 
 ## The page
 
-- One self-contained `.html` file: inline CSS and scripts, no fonts, styles, or scripts from the network.
-- Take every colour and font from the report brand, `assets/brand.css`. It holds the agramakov.me palette: dark-blue headings, grey text, and fuchsia underlined links that turn cyan on hover. It defines light and dark values, sets the body's background, text, and font, and styles headings and links. Page styles use its `--brand-*` tokens and define no colour of their own.
-- Let paragraphs, list items, and table cells fill the width of their container. Never cap prose with `max-width`, a `ch` measure, or a fixed column narrower than its box: a paragraph that wraps early inside a wide card leaves a blank band beside it. Narrow the whole layout column instead when lines grow too long.
-- Keep it usable at phone width: wide tables, code, and diagrams sit in their own `overflow-x: auto` container so the page never scrolls sideways.
-- Every page gets a theme switch and a print layout, both supplied by `embed-brand.ps1`: the switch cycles Auto / Light / Dark and is remembered per browser; print uses white paper and the light palette, with collapsed `<details>` opened. Never write a page's own theme control, `data-theme` handling, or print palette; page styles may only add layout rules under `@media print`.
-- Stamp the page with what it was generated from — commit, branch, or range — and the date.
-- This skill decides whether a page needs problem levels. A page that reports findings, checks, verdicts, or risks gets them, as set out in the section below, and uses no other colour for status. Calling skills hand over items with a level (`critical`, `high`, `notice`, `info`, `ok`) and never name classes, colours, or scripts.
-
-## Problem levels
-
-This skill is the HTML implementor of `an-dr-concept-dark-cockpit`, which owns the ladder and its rules. Mark each finding with one level class on its badge (`ck-badge`), its block (`ck-item`), or its table row. `embed-cockpit.ps1` then inlines the stylesheet, and does nothing when the page carries no `ck-` class, so the render step below is the same for every page.
-
-| Level      | Class         | Look                                      |
-| ---------- | ------------- | ----------------------------------------- |
-| `critical` | `ck-critical` | red, filled badge, tinted background, `✖` |
-| `high`     | `ck-high`     | amber, solid edge, `▲`                    |
-| `notice`   | `ck-notice`   | full ink, no hue, dashed edge, `◆`        |
-| `info`     | `ck-info`     | secondary ink, no edge                    |
-| `ok`       | `ck-ok`       | low-contrast grey, no hue, no edge        |
-
-- Collapse `ok` items into a closed `<details class="ck-quiet">`.
-- Normal content sits on an off-white page, never pure white; only lit `notice` and `high` items lift to the white `--ck-lift` surface, and `critical` keeps its red tint. In dark themes the lift is the lightest panel.
-- The script is idempotent and places `assets/dark-cockpit.css` before the page's own styles. It owns the palette for light and dark themes; page styles may use its `--ck-*` tokens but never define colours of their own for a level.
-
-### Branded reports
-
-When the reader asks for a branded report, the brand becomes the neutral layer:
-
-- **The brand owns the unlit levels.** Brand colours replace the neutral chrome: headings, rules, and layout. A desaturated brand tint may carry `ok` and `info`, and the brand accent may carry `notice`.
-- **Alarms stay off-brand.** `high` and `critical` never take a brand colour.
-- **A red or orange brand stays in the chrome.** Its accent does not carry `notice`, and inside a finding it may colour only underlined links, never a fill, an edge, or a badge. `critical` stays red and is told apart by its filled badge, tint, and glyph.
-
-To brand a page, define `--brand-ok`, `--brand-info`, and `--brand-notice`; the stylesheet reads them in place of its own greys, in either embedding order. `assets/brand.css` already defines them for every report. The alarm tokens have no brand input, and a page never overrides a `--ck-high*` or `--ck-critical*` token.
-
-## Diagrams
-
-Use a diagram when structure or flow is the point: dependencies and layers, a request or handshake, a lifecycle, a decision. Do not draw what one sentence says.
-
-| Shows                                                             | Mermaid type                           |
-| ----------------------------------------------------------------- | -------------------------------------- |
-| Layers, dependencies, C4 context, container, and component levels | `flowchart` with `subgraph` boundaries |
-| Request flows, handshakes, message order                          | `sequenceDiagram`                      |
-| Lifecycles and explicit states                                    | `stateDiagram-v2`                      |
-| Branching behaviour                                               | `flowchart` with decision nodes        |
-
-- Write each diagram as a `<pre class="mermaid">` block holding the Mermaid source. Escape `<`, `>`, and `&` in that source as HTML entities; quote node labels that contain punctuation.
-- Mark meaning with shape, line style, and `classDef` stroke settings rather than fixed fill colours, so diagrams stay readable in both themes. Explain any styling in a legend or caption.
-- Prefer `flowchart` over Mermaid's experimental `C4*` diagram types, which lay out unreliably.
-- Lay out a chain of more than four nodes top to bottom (`flowchart TB`); a long left-to-right chain shrinks to unreadable text at page width.
-- Do not style generic class names that Mermaid also uses inside its SVG — `label`, `node`, `edgeLabel`, `cluster`, `actor`, `note` — on the page; give page classes distinct names, or the page CSS leaks into the diagrams and clips their text.
-- Never use a Mermaid keyword as a node id — `graph`, `flowchart`, `subgraph`, `end`, `class`, `classDef`, `style`, `click`, `default`, `direction`. Such a diagram fails to parse; name the node after what it is instead.
+- One self-contained `.html` file, same from disk, editor preview, or published: inline CSS and scripts; no network fonts, styles, or scripts.
+- Every colour and font comes from `assets/brand.css` (agramakov.me palette: dark-blue headings, grey text, fuchsia underlined links turning cyan on hover; light and dark values; body background, text, font; headings and links). Page styles use its `--brand-*` tokens and define no colour of their own.
+- Paragraphs, list items, and table cells fill their container; prose is never capped by `max-width`, a `ch` measure, or a column narrower than its box. Long lines → narrow the whole layout column.
+- Phone width: wide tables, code, and diagrams sit in their own `overflow-x: auto` container; the page never scrolls sideways.
+- Theme switch (Auto / Light / Dark, remembered per browser) and print layout (white paper, light palette, collapsed `<details>` opened) come from `embed-brand.ps1`. A page has no own theme control, `data-theme` handling, or print palette; page styles add only layout rules under `@media print`.
+- Stamp: the commit, branch, or range it was generated from, and the date.
+- A page reporting findings, checks, verdicts, or risks carries problem levels and no other status colour. Calling skills hand over items with a level (`critical`, `high`, `notice`, `info`, `ok`) and never name classes, colours, or scripts.
 
 ## Scripts
 
-- `scripts/embed-brand.ps1` places the brand stylesheet before the page's own styles and inserts the theme switch at the start of the body; a rerun replaces both.
-- `scripts/embed-cockpit.ps1` inlines the problem-level stylesheet, and does nothing when the page carries no `ck-` class. Its `-Html <markup>` form returns embedded HTML without writing a file.
-- `scripts/render-mermaid.ps1` runs the pinned Mermaid build in a local headless Chrome or Edge and replaces each `<pre class="mermaid">` block with a figure holding a light and a dark SVG, a "Copy Mermaid" button, and the source. The page carries no renderer and shows the SVG matching the reader's theme. A rerun renders every figure again from its stored source.
+- `scripts/embed-brand.ps1`: places the brand stylesheet before the page's styles and the theme switch at the body's start; a rerun replaces both.
+- `scripts/embed-cockpit.ps1`: inlines the problem-level stylesheet; no-op without a `ck-` class; `-Html <markup>` returns embedded HTML without writing a file.
+- `scripts/render-mermaid.ps1`: runs the pinned Mermaid build in local headless Chrome or Edge, replacing each `<pre class="mermaid">` with a figure holding a light and a dark SVG, a "Copy Mermaid" button, and the source. The page carries no renderer and shows the SVG matching the theme; a rerun re-renders from stored source.
 
 ## Visual verification
 
-A page is visually verified when screenshots of the actual page in light and dark themes, at desktop width and at a true 390 CSS-pixel phone viewport, were opened and inspected, and no layout defect remains. The record of it holds the final HTML hash, the screenshot paths, the theme and viewport of each view, which screenshots were opened, and the issues seen. Without that, the page is unverified, whatever the renderer reported.
+- Verified: screenshots of the actual page in light and dark themes, at desktop width and a true 390 CSS-pixel phone viewport, opened and inspected, with no layout defect left.
+- Record: final HTML hash, screenshot paths, theme and viewport of each, which were opened, issues seen.
+- Otherwise the page is unverified, whatever the renderer reported.

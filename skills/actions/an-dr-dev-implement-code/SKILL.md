@@ -1,33 +1,42 @@
 ---
 name: an-dr-dev-implement-code
-description: Implement code during Direct work or gated BUILD. Use for coding changes after the selected workflow allows edits; follow repository patterns, documentation, and the requested scope.
+description: Implement code during Direct work or gated BUILD, following repository patterns, documentation, and the requested scope. Use for coding changes once the selected workflow allows edits.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "1.1.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-convention-adr an-dr-convention-code an-dr-convention-layout an-dr-dev-write-documentation
 ---
 
 # Build
 
-Read the host `README.md`, `docs/index.md`, and project instructions before coding. In a gated increment, read the documentation written during DOCS as the specification. Find analogous code and match its structure, naming, formatting, error handling, and comment density.
+Defers: code style to `an-dr-convention-code`, file placement to `an-dr-convention-layout`, ADR format to `an-dr-convention-adr`, documentation to `an-dr-dev-write-documentation`.
 
-Implement the requested result in Direct, or only the current increment in a gated flow. Follow the recorded design. Work discovered outside that scope becomes a separate request or future increment, not a silent expansion. Compile and run a relevant test subset after each touch-point so failures stay local. Write inline documentation with the implementation.
+## Prepare
 
-## Code conventions
+1. Read the host `README.md`, `docs/index.md`, and project instructions.
+1. In a gated increment, read the documentation written during DOCS as the specification.
+1. Find analogous code; match its structure, naming, formatting, error handling, and comment density.
 
-Write code by `an-dr-convention-code`: its quality, architecture, naming, and reviewable-change rules are the defaults here, and the host repository's own conventions override them.
+## Implement
 
-Place new files and folders by `an-dr-convention-layout`, using its reference file for the project's type; a new project starts in that layout.
+- Direct → the requested result; gated → only the current increment, following the recorded design.
+- Work outside that scope becomes a separate request or future increment.
+- Compile and run a relevant test subset after each touch-point.
+- Write inline documentation and doc comments with the code.
+- Code follows `an-dr-convention-code`; host repository conventions override it.
+- Place new files by `an-dr-convention-layout`, using its reference for the project type; a new project starts in that layout.
 
-## Commits and decisions
+## Documentation and decisions
 
-- In Direct, each internal pass becomes its own commit, so a large request lands as a sequence of single-concern commits rather than one.
-- Record a lasting decision as an ADR in the format of `an-dr-convention-adr`, through `an-dr-dev-write-documentation`, when the change creates a public contract other programs depend on, or makes a deliberate exception to an existing ADR.
+- Human-facing documentation is prepared through `an-dr-dev-write-documentation` before changed behaviour is coded.
+- Documentation gap in gated BUILD → report it, do not fill it in code; in Direct → update it through `an-dr-dev-write-documentation` before continuing.
+- Documentation conflicts with code → surface it, never pick a side silently; gated → record a controller question; Direct → ask only when it blocks a sound decision.
+- Record an ADR, through `an-dr-dev-write-documentation`, when the change creates a public contract other programs depend on or deliberately departs from an existing ADR.
 
-## Documentation and delivery
+## Commit and deliver
 
-Human-facing documentation is prepared through `an-dr-dev-write-documentation` before changed behavior is coded. Doc comments belong beside code. If a documentation gap appears during gated BUILD, report it rather than silently filling it in code; in Direct, load `an-dr-dev-write-documentation` and update it before continuing. If existing documentation conflicts with code, surface the contradiction instead of silently choosing a side. For a gated flow, record the question with the controller; in Direct, ask only when the conflict blocks a sound decision.
-
-Do not commit during gated BUILD. In Direct, commit only after verification and review, subject to the process repository's uncommitted review rule. Deliver code with the explanation required by `AGENTS.md`.
+- Gated BUILD → no commits.
+- Direct → one commit per internal pass, only after verification and review, subject to the process repository's uncommitted review rule.
+- Deliver with the explanation `AGENTS.md` requires.
