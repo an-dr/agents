@@ -61,7 +61,7 @@ Only after the user approves the summary in their own words. Approval covers thi
 
 1. Commit through the `an-dr-git-commit` skill, in the clone, on its current branch — no flow, no feature branch, no `.progress/`.
 2. Push that branch.
-3. When the clone is nested in the host repository, its gitlink now points at the new commit. Leave that pointer change uncommitted, and tell the user it is waiting in the host repository.
+3. When the clone is nested in the host repository, its gitlink now points at the new commit. Follow the host's own instructions for submodule pointers, committing it through `an-dr-git-commit` when they say to; when they say nothing, leave it uncommitted and tell the user it is waiting in the host repository.
 
 ## Rules
 

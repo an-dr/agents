@@ -220,7 +220,7 @@ $nested = $hostRoot -and -not (Test-SameDirectory $hostRoot $root) -and
     $root.StartsWith(($hostRoot + [IO.Path]::DirectorySeparatorChar), [StringComparison]::OrdinalIgnoreCase)
 if ($nested) {
     Write-Output ('| nested in | `{0}` |' -f $hostRoot)
-    $notes.Add("Committing here moves the gitlink in '$hostRoot'. Leave that pointer change uncommitted and tell the user.")
+    $notes.Add("Committing here moves the gitlink in '$hostRoot'. Follow the host's rule for submodule pointers; without one, leave the change uncommitted and tell the user.")
 }
 else {
     Write-Output '| nested in | — |'
