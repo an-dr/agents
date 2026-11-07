@@ -27,7 +27,7 @@ Trace documented workflows to entry points, implementations, callers, and releva
 
 Examine the scope for the slop that `an-dr-concept-ai-slop` describes in code, text, agent-loaded instructions, and reports, applying its cut, defence, and cost tests. Name the concrete cost of each finding.
 
-Judge each item against the project's intent and conventions. Explain the concrete cost to correctness, use, understanding, or maintenance. Do not demand rewrites based only on taste, or invent findings to fill a quota. Check for a legitimate constraint or consumer before proposing removal. Group repeated instances of one cause into one finding with representative locations.
+Judge each item against the project's intent and conventions. A finding that something breaks a convention quotes the written rule it breaks: the host repository's own instructions, or the convention skill that governs that kind of file, read before the finding is recorded. A rule you cannot quote is a preference, not a finding. Explain the concrete cost to correctness, use, understanding, or maintenance. Do not demand rewrites based only on taste, or invent findings to fill a quota. Check for a legitimate constraint or consumer before proposing removal. Group repeated instances of one cause into one finding with representative locations.
 
 ## Findings and priorities
 
