@@ -60,8 +60,4 @@ The failure mode of a generated README is plausible filler, and it is worse than
 
 ## Check
 
-```powershell
-pwsh <skill>/scripts/check-readme.ps1 -MarkdownSkill <an-dr-convention-markdown> [-Path <repo>] [-Readme <file>]
-```
-
-The script reports the evidence it found, then every claim the README makes that the repository does not support, every unresolved relative link, duplicated headings, missing baseline sections, and sections out of baseline order. It then runs `an-dr-convention-markdown`'s checker on the README and prints its findings. It exits non-zero on a contradiction, a dead link, or a Markdown format error.
+`scripts/check-readme.ps1` verifies a README against these rules. It reports the evidence it found, then every claim the README makes that the repository does not support, every unresolved relative link, duplicated headings, missing baseline sections, and sections out of baseline order. It then runs the checker of `an-dr-convention-markdown` on the README and prints its findings. It exits non-zero on a contradiction, a dead link, or a Markdown format error.
