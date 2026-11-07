@@ -39,10 +39,32 @@ try {
     Rename-Item -LiteralPath (Join-Path $first 'scripts/tests/disabled.ps1') -NewName 'run.ps1'
     Set-Content -LiteralPath (Join-Path $first 'scripts/tests/run.ps1') -Value "Write-Output 'expected discovery failure'; exit 7"
     Assert-Run 1 @('expected discovery failure', 'FAIL (exit 7)', 'example-two/scripts/tests/run.ps1', '1 of 2 step(s) passed')
+    Set-Content -LiteralPath (Join-Path $first 'scripts/tests/run.ps1') -Value "#Requires -Version 7`nWrite-Output 'first ran'"
+    Remove-Item -LiteralPath (Join-Path $first 'scripts/tests/fixtures') -Recurse -Force
+    Remove-Item -LiteralPath (Join-Path $first 'scripts/tests/test-trap.ps1') -Force
+
+    # In a Git tree the default runs only affected suites: the changed skill, its dependents, and repository checks.
+    $dependent = Add-Suite 'actions' 'example-dependent' "Write-Output 'dependent ran'"
+    Set-Content -LiteralPath (Join-Path $dependent 'SKILL.md') -Value "---`nname: example-dependent`nmetadata:`n  an-dr.dependencies: example-one`n---`n# example-dependent"
+    $checks = Add-Suite 'conventions' 'example-checks' "Write-Output 'repository checks ran'"
+    Set-Content -LiteralPath (Join-Path $checks 'scripts/tests/test-repository.ps1') -Value "Write-Output 'inert'"
+    & git -C $scratch init --quiet
+    & git -C $scratch -c core.autocrlf=false add -A
+    & git -C $scratch -c user.name=test -c user.email=test@example.invalid commit --quiet -m 'baseline'
+    Assert-Run 0 @('Nothing changed, so no suite is affected')
+    Add-Content -LiteralPath (Join-Path $first 'SKILL.md') -Value 'changed'
+    $output = @(& pwsh -NoProfile -NonInteractive -File (Join-Path $scratch 'tests/run-all.ps1') 2>&1) -join "`n"
+    if ($LASTEXITCODE -ne 0) { throw "Affected run failed.`n$output" }
+    foreach ($expected in 'Affected suites: 3 of 4', 'example-one/', 'example-dependent/', 'example-checks/') {
+        if (-not $output.Contains($expected)) { throw "Missing '$expected'.`n$output" }
+    }
+    if ($output.Contains('example-two/')) { throw "An unaffected suite ran.`n$output" }
+    $output = @(& pwsh -NoProfile -NonInteractive -File (Join-Path $scratch 'tests/run-all.ps1') -All 2>&1) -join "`n"
+    if (-not $output.Contains('4 of 4 step(s) passed')) { throw "-All did not run every suite.`n$output" }
 } finally {
     $temporaryRoot = [IO.Path]::GetFullPath([IO.Path]::GetTempPath())
     $resolvedScratch = [IO.Path]::GetFullPath($scratch)
     if (-not $resolvedScratch.StartsWith($temporaryRoot, [StringComparison]::OrdinalIgnoreCase) -or -not (Split-Path -Leaf $resolvedScratch).StartsWith('agents-test-discovery-')) { throw 'Unsafe discovery fixture cleanup.' }
     Remove-Item -LiteralPath $resolvedScratch -Recurse -Force
 }
-Write-Output 'Root test discovery passed (6 scenarios). No agent evaluations ran.'
+Write-Output 'Root test discovery passed (9 scenarios). No agent evaluations ran.'

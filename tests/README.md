@@ -1,6 +1,6 @@
 # Tests
 
-Run `pwsh tests/run-all.ps1` for free repository checks. It discovers skill manifests and invokes each skill's `scripts/tests/run.ps1`. Each owning suite supplies its repository checks; the testing convention's suite discovers and validates `evals/evals.json` and ZIP fixtures. The root runner carries no validator list. It never invokes a model. A structural pass does not establish behavioral success.
+Run `pwsh tests/run-all.ps1` for free repository checks. It discovers skill manifests and invokes each skill's `scripts/tests/run.ps1`. By default it runs only the affected suites: skills with a file changed in the working tree (or since `-Base <ref>`), skills that declare a dependency on one, and every suite with a `test-repository*.ps1`, which checks the whole repository. `-All` runs every suite; CI uses it on each push. Each owning suite supplies its repository checks; the testing convention's suite discovers and validates `evals/evals.json` and ZIP fixtures. The root runner carries no validator list. It never invokes a model. A structural pass does not establish behavioral success.
 
 ## Deterministic tests
 

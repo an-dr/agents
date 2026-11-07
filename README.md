@@ -233,7 +233,7 @@ Run the repository checks from the clone root:
 pwsh tests/run-all.ps1
 ```
 
-The runner discovers skill manifests and invokes each conventional `scripts/tests/run.ps1`. Each suite owns its validators and regression tests; the testing convention's suite discovers `evals/evals.json` files and validates their ZIP fixtures. Missing runners and failed suites produce a nonzero exit code. Fixture scripts are excluded from test discovery.
+The runner discovers skill manifests and invokes each conventional `scripts/tests/run.ps1`, by default only for the suites your uncommitted change affects; `pwsh tests/run-all.ps1 -All` runs every suite, as CI does on each push. Each suite owns its validators and regression tests; the testing convention's suite discovers `evals/evals.json` files and validates their ZIP fixtures. Missing runners and failed suites produce a nonzero exit code. Fixture scripts are excluded from test discovery.
 
 Skills with scripts keep deterministic tests in `scripts/tests/`. Every skill has behavioral cases in `evals/evals.json` and evaluation intent in `evals/EVAL.md`; repository fixtures, when needed, are ZIP archives under `evals/fixtures/`. See the [testing guide](tests/README.md) for commands and run limits. Syntax-only checks establish parsing coverage, and successful structural checks do not establish that an agent follows a skill.
 
