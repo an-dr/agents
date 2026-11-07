@@ -16,7 +16,8 @@ Apply `an-dr-concept-clean-dependencies` to one scope in two stages: analyse and
 ## Map
 
 1. List the components in scope and every arrow between them. For skills, run the registration check and read its cycle paths and declared dependencies; for code, use the language's own dependency tooling.
-2. Record the starting numbers: arrows, cycles, and components that depend on many others. They are the proof at the end.
+2. Mark every cycle, every arrow that skips a layer, and every component whose contents do not change and get used together.
+3. Record the starting numbers: arrows, cycles, and components that depend on many others. They are the proof at the end.
 
 ## Judge each arrow
 
