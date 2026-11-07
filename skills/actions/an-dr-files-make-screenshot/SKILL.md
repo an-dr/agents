@@ -6,12 +6,12 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.0.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-convention-artifact-layout
+  an-dr.dependencies: an-dr-files-build-report
 ---
 
 # Screenshot
 
-A screenshot is repository content: it lands in the host repository next to the document that shows it and is committed with it. Scratch captures taken only to check something go to a `screenshots` path with extension `png` from `an-dr-convention-artifact-layout` instead.
+A screenshot is repository content: it lands in the host repository next to the document that shows it and is committed with it. Scratch captures taken only to check something go to a `screenshots` path with extension `png`, taken through `an-dr-files-build-report`, instead.
 
 ## Where the image goes
 

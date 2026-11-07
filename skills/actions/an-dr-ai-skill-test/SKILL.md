@@ -6,12 +6,12 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.2.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-skill-implement-test an-dr-ai-send-message an-dr-convention-artifact-layout an-dr-convention-script an-dr-convention-agent-skill-testing
+  an-dr.dependencies: an-dr-ai-skill-implement-test an-dr-ai-send-message an-dr-files-build-report an-dr-convention-script an-dr-convention-agent-skill-testing
 ---
 
 # Skill testing
 
-Always run the target skill's cheap script tests. Execute behavior evaluations only on explicit user request. `an-dr-ai-skill-implement-test` owns test implementation. `an-dr-convention-agent-skill-testing` owns the contract, layout, environment, fixtures, grading, and run protocol. Use `an-dr-convention-script` for script test execution, `an-dr-ai-send-message` for questions and results, and `an-dr-convention-artifact-layout` for a `skill-tests` directory holding evaluation evidence.
+Always run the target skill's cheap script tests. Execute behavior evaluations only on explicit user request. `an-dr-ai-skill-implement-test` owns test implementation. `an-dr-convention-agent-skill-testing` owns the contract, layout, environment, fixtures, and verdicts; this skill owns how a run is executed and graded. Use `an-dr-convention-script` for script test execution, `an-dr-ai-send-message` for questions and results, and `an-dr-files-build-report` to take a `skill-tests` path for evaluation evidence.
 
 ## Run script tests
 

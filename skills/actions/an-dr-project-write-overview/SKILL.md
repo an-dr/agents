@@ -7,7 +7,7 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.0.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-concept-ai-slop an-dr-convention-artifact-layout an-dr-convention-html-report an-dr-dev-write-documentation
+  an-dr.dependencies: an-dr-concept-ai-slop an-dr-files-build-report an-dr-convention-html-report an-dr-dev-write-documentation
 ---
 
 # Project overview
@@ -85,7 +85,7 @@ Say plainly when a category came up clean. "No import cycles found" is informati
 
 ## The page
 
-Build the page through `an-dr-convention-html-report`: one self-contained HTML file that opens correctly from disk with no network access. Draw the C4 levels and the main flow as Mermaid diagrams — a `flowchart` with `subgraph` boundaries for each C4 level, a `sequenceDiagram` when the main flow is easier to follow as messages — and render them with that skill's embed script. Mark the system in focus, systems the project does not own, and inferred boxes with `classDef` stroke styles, and keep the legend in the caption.
+Write the page in the format of `an-dr-convention-html-report`: one self-contained HTML file that opens correctly from disk with no network access. Draw the C4 levels and the main flow as Mermaid diagrams — a `flowchart` with `subgraph` boundaries for each C4 level, a `sequenceDiagram` when the main flow is easier to follow as messages — which `an-dr-files-build-report` renders. Mark the system in focus, systems the project does not own, and inferred boxes with `classDef` stroke styles, and keep the legend in the caption.
 
 Start from `assets/overview-template.html`, which carries the structure and a light and dark palette. Its provenance badges and severity chips carry a level:
 - a `verified` statement is `ok`;
@@ -118,6 +118,6 @@ The failure mode of a generated overview is a confident, plausible, wrong archit
 
 ## Output
 
-Take a `project-overview` path with extension `html` from `an-dr-convention-artifact-layout` in the scanned repository, write the page there, run `an-dr-convention-html-report`'s render scripts on it, and publish it as the latest. Offer to publish it as an Artifact when the user wants a link rather than a file.
+Write the page at a `project-overview` path with extension `html` in the scanned repository, and build, verify, and publish it through `an-dr-files-build-report`. Offer to publish it as an Artifact when the user wants a link rather than a file.
 
 In the chat, report the count of drift rows and the top three problems with their severities, so the user learns the headline without opening the page.

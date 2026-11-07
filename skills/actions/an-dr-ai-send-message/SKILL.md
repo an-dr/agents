@@ -6,7 +6,7 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.1.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-concept-dark-cockpit an-dr-convention-artifact-layout
+  an-dr.dependencies: an-dr-concept-dark-cockpit an-dr-files-build-report
 ---
 
 # Agents UI
@@ -112,7 +112,7 @@ Skip the repeat when the native UI already showed the chosen labels and there wa
 
 ## Answers as JSON
 
-When a decision must outlive the conversation, or another script or agent acts on it, keep the round as JSON at a `ui` path with extension `questions.json` from `an-dr-convention-artifact-layout`. Write the round there before asking:
+When a decision must outlive the conversation, or another script or agent acts on it, keep the round as JSON at a `ui` path with extension `questions.json`, taken through `an-dr-files-build-report`. Write the round there before asking:
 
 ```json
 { "questions": [

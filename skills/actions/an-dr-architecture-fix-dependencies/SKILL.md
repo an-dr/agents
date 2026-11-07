@@ -6,7 +6,7 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.0.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-send-message an-dr-concept-clean-dependencies an-dr-convention-artifact-layout an-dr-convention-html-report
+  an-dr.dependencies: an-dr-ai-send-message an-dr-concept-clean-dependencies an-dr-files-build-report an-dr-convention-html-report
 ---
 
 # Untangle dependencies
@@ -42,7 +42,7 @@ Choose the cheapest move that removes the arrow, in this order:
 
 ## Analysis report
 
-Change nothing yet. Take an `untangle` path with extension `html` from `an-dr-convention-artifact-layout`, write the page there, and publish it as the latest once it is complete. Build one self-contained page through `an-dr-convention-html-report`, and give each finding a level by consequence: a cycle through stable components is `critical`, a cycle among task components `high`, a needless or misplaced arrow `notice`, and a genuine arrow `ok`. That skill decides how levels look.
+Change nothing yet. Write one self-contained page in the format of `an-dr-convention-html-report` at an `untangle` path with extension `html`, build and publish it through `an-dr-files-build-report`, and give each finding a level by consequence: a cycle through stable components is `critical`, a cycle among task components `high`, a needless or misplaced arrow `notice`, and a genuine arrow `ok`. That skill decides how levels look.
 
 Include, in order:
 
@@ -54,7 +54,7 @@ Include, in order:
 6. The proposed graph as a diagram and the projected numbers, so the reader sees the whole result before approving any part.
 7. New components the proposal would create, each with what it owns; what was left alone and why; and open questions.
 
-Escape repository text before inserting it into HTML, render and inspect the page as `an-dr-convention-html-report` requires, and check that table rows and details agree. Give the user the page's path.
+Escape repository text before inserting it into HTML, build and verify the page through `an-dr-files-build-report`, and check that table rows and details agree. Give the user the page's path.
 
 ## Approval
 

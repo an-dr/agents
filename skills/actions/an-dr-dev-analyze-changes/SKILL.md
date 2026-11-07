@@ -6,7 +6,7 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.1.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-send-message an-dr-concept-ai-slop an-dr-convention-adr an-dr-convention-artifact-layout an-dr-convention-html-report an-dr-dev-review an-dr-dev-write-documentation
+  an-dr.dependencies: an-dr-ai-send-message an-dr-concept-ai-slop an-dr-convention-adr an-dr-files-build-report an-dr-convention-html-report an-dr-dev-review an-dr-dev-write-documentation
 ---
 
 # Change report
@@ -46,7 +46,7 @@ Omit a section only when it would be empty, and say so in the summary.
   - a partial request or an unverified item is `notice`;
   - a request not done is `high`;
   - a failed check that ships is `critical`.
-- Build the page and its diagrams through `an-dr-convention-html-report`, which owns the page rules, the diagram format, and the offline Mermaid renderer.
+- Write the page and its diagrams in the format of `an-dr-convention-html-report`.
 - Prose is plain and short. Code appears only as interface signatures or the few lines an adopter must write; never paste implementation.
 
 ## At the integration gate
@@ -82,4 +82,4 @@ An approving summary never grants integration permission. It is the material the
 
 ## Write and deliver
 
-Take a `change-report` path with extension `html` from `an-dr-convention-artifact-layout`, write the page there, publish it as the latest change report with that skill, and complete the rendering and visual-check record owned by `an-dr-convention-html-report`, again after every later edit of the page. State whether that verification is complete or blocked; generating HTML alone does not finish verification. When the tool can publish pages, publish it and give the user the link; otherwise name the file path. Tell the user when the page is private to them.
+Write the page at a `change-report` path with extension `html`, and build, verify, and publish it through `an-dr-files-build-report`, again after every later edit of the page. State whether that verification is complete or blocked; generating HTML alone does not finish verification. When the tool can publish pages, publish it and give the user the link; otherwise name the file path. Tell the user when the page is private to them.

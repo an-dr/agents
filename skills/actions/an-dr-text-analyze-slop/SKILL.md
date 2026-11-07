@@ -6,7 +6,7 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.0.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-send-message an-dr-concept-ai-slop an-dr-convention-artifact-layout an-dr-convention-html-report
+  an-dr.dependencies: an-dr-ai-send-message an-dr-concept-ai-slop an-dr-files-build-report an-dr-convention-html-report
 ---
 
 # Text slop analysis
@@ -42,9 +42,9 @@ Order findings by level, then by how much reader time they cost. An unflawed tex
 
 A table of 15 findings or fewer goes in the reply, by `an-dr-ai-send-message`'s finding levels. A longer analysis becomes an HTML page:
 
-- write it to a `text-slop` path with extension `html` from `an-dr-convention-artifact-layout`, and publish it as the latest once it is complete;
-- build it through `an-dr-convention-html-report`, with each finding's level on its row;
-- run `an-dr-convention-html-report`'s render scripts.
+- write it at a `text-slop` path with extension `html`;
+- write it in the format of `an-dr-convention-html-report`, with each finding's level on its row;
+- build, verify, and publish it through `an-dr-files-build-report`.
 
 Report the page's path, and put only the opening lines and the `high` findings in the reply. End with the share of the text the proposals would remove, as a percentage or a word count — `31 of 37 words, 84%` — so the reader sees the size of the problem; the number of findings or cut clauses is not a share.
 

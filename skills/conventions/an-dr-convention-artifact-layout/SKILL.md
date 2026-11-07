@@ -29,24 +29,13 @@ REPO/.tmp-ai-gen/
 - A file is named `<kind>-<YYYY-MM-DD_hh-mm>.<extension>` inside its `<kind>/` folder. A second artifact in the same minute takes `-2`, `-3`, and so on after the minute.
 - Files of one artifact share one stamp and differ only in extension, such as a review's `.json` and its rendered `.html`, or `questions.json` and `answers.json`.
 - `<kind>-latest.<extension>` at the root of `.tmp-ai-gen/` is a copy of the newest finished artifact of that kind, not a link.
-- `<kind>` must be registered in `assets/kinds.txt`. Only outputs a skill names go here: scratch files, test fixtures, browser profiles, and diffs go to the system temp directory and are deleted after use. A skill that needs a new kind adds it to that list in the same change.
+- `<kind>` must be registered in `assets/kinds.txt`. Only outputs a skill names go here: scratch files, test fixtures, browser profiles, and diffs go to the system temp directory and are deleted after use. A new kind is added to that list in the same change as the skill that writes it.
 - Deliverables are not artifacts and never go here: ADRs, READMEs, and documentation under `docs/` are committed as ordinary repository content.
-- Commit nothing beneath `.tmp-ai-gen/`; its own `.gitignore` ignores the folder, so the repository needs no rule for it.
-- Report the artifact's path to the user whenever one is written, because an artifact they cannot find is an artifact that did not happen.
-- Never build a path by hand, in prose or in a script; take it from the scripts below.
+- Nothing beneath `.tmp-ai-gen/` is committed; its own `.gitignore` ignores the folder, so the repository needs no rule for it.
+- Every written artifact is reported to the user by its path, because an artifact they cannot find is an artifact that did not happen.
+- Every path comes from `new-artifact-path.ps1`; none is built by hand, in prose or in a script.
 
-## Take a path
+## Scripts
 
-```powershell
-pwsh <skill>/scripts/new-artifact-path.ps1 -Kind <kind> -Extension <extension> [-Stamp <YYYY-MM-DD_hh-mm>] [-RepositoryRoot <path>]
-```
-
-It creates the kind folder and the `.gitignore`, then prints the file path. Without `-Stamp` it takes the current minute; pass the printed stamp as `-Stamp` for every other file of the same artifact. It rejects an unregistered kind, an uppercase extension, and a malformed stamp, so a mistyped path fails instead of scattering files.
-
-## Publish the latest
-
-```powershell
-pwsh <skill>/scripts/publish-latest.ps1 -Path <artifact-file>
-```
-
-Run it once the artifact is complete. It replaces every `<kind>-latest.*` file with copies of all files sharing the artifact's stamp, and prints the copies. Report the latest path to the user alongside the stamped one.
+- `scripts/new-artifact-path.ps1` creates the kind folder and its `.gitignore` and prints the path for a kind, an extension, and an optional stamp. It rejects an unregistered kind, an uppercase extension, and a malformed stamp, so a mistyped path fails instead of scattering files.
+- `scripts/publish-latest.ps1` replaces every `<kind>-latest.*` file with copies of all files sharing an artifact's stamp, and prints the copies.

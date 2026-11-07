@@ -6,7 +6,7 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.1.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-review-instruction an-dr-ai-send-message an-dr-concept-ai-slop an-dr-convention-artifact-layout an-dr-convention-html-report
+  an-dr.dependencies: an-dr-ai-review-instruction an-dr-ai-send-message an-dr-concept-ai-slop an-dr-files-build-report an-dr-convention-html-report
 ---
 
 # Code and documentation coherence analysis
@@ -46,7 +46,7 @@ Keep unconfirmed questions at P2 or P3 and state any potentially larger conseque
 
 ## HTML report
 
-Take a `deslop` path with extension `html` from `an-dr-convention-artifact-layout`, write the page there, and publish it as the latest once it is complete. Build one self-contained page through `an-dr-convention-html-report`, and give findings and counts their priority level; that skill decides how levels look. Use `an-dr-ai-send-message` for tables and any questions to the user.
+Write one self-contained page in the format of `an-dr-convention-html-report` at a `deslop` path with extension `html`, build and publish it through `an-dr-files-build-report`, and give findings and counts their priority level; that skill decides how levels look. Use `an-dr-ai-send-message` for tables and any questions to the user.
 
 Include, in order:
 
@@ -56,6 +56,6 @@ Include, in order:
 1. Details keyed by the same IDs, including relevant locations, the reasoning, constraints the fix must preserve, and a way to verify the proposed change. Distinguish observed behavior from inference.
 1. Checks performed, limitations, and unresolved questions. Keep sound areas quiet rather than filling the page with positive findings.
 
-Escape repository text before inserting it into HTML. Complete the rendering and visual-check record owned by `an-dr-convention-html-report`; check that every finding has a unique ID, priority, evidence, and an actionable proposal. Verify that table rows and details agree, and that the table is readable in both themes and at phone width. State whether visual verification is complete or blocked; report generation or an overflow measurement alone does not finish it. Add diagrams only when they explain a structural issue better than prose.
+Escape repository text before inserting it into HTML. Build and verify the page through `an-dr-files-build-report`; check that every finding has a unique ID, priority, evidence, and an actionable proposal. Verify that table rows and details agree, and that the table is readable in both themes and at phone width. State whether visual verification is complete or blocked; report generation or an overflow measurement alone does not finish it. Add diagrams only when they explain a structural issue better than prose.
 
 Deliver the HTML link or local path with a short summary of the most consequential findings. HTML is the report format; do not substitute a Markdown report. Leave source changes to a separately requested implementation task under the repository's applicable workflow.

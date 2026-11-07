@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-files-build-report",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-files-build-report. Build the HTML page I just wrote at report.html into the finished deslop report.",
+      "expected_skill": "an-dr-files-build-report",
+      "context": "The page contains two Mermaid diagrams and finding rows with ck- level classes. A local Chrome is installed; no image viewer is available to the agent.",
+      "expected_behavior": [
+        "Takes a deslop path from the artifact layout script instead of building one by hand, embeds the brand and status styles, renders the diagrams, and checks each exit code.",
+        "Publishes the report as the latest and reports both the stamped and the latest path.",
+        "Marks visual verification blocked and names the missing inspection, instead of claiming it from the renderer's success."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Takes a deslop path from the artifact layout script instead of building one by hand, embeds the brand and status styles, renders the diagrams, and checks each exit code."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Publishes the report as the latest and reports both the stamped and the latest path."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Marks visual verification blocked and names the missing inspection, instead of claiming it from the renderer's success."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Finish report.html: render its diagrams, check it, and publish it as the latest deslop report.",
+      "expected_skill": "an-dr-files-build-report",
+      "context": "The page contains two Mermaid diagrams and finding rows with ck- level classes. A local Chrome is installed; no image viewer is available to the agent.",
+      "expected_behavior": [
+        "Takes a deslop path from the artifact layout script instead of building one by hand, embeds the brand and status styles, renders the diagrams, and checks each exit code.",
+        "Publishes the report as the latest and reports both the stamped and the latest path."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Takes a deslop path from the artifact layout script instead of building one by hand, embeds the brand and status styles, renders the diagrams, and checks each exit code."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Publishes the report as the latest and reports both the stamped and the latest path."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "The review meeting moved to Friday and the old drafts folder can be ignored. The actual task is: finish report.html, render its diagrams, check it, and publish it as the latest deslop report.",
+      "expected_skill": "an-dr-files-build-report",
+      "context": "The page contains two Mermaid diagrams and finding rows with ck- level classes. A local Chrome is installed; no image viewer is available to the agent.",
+      "expected_behavior": [
+        "Publishes the report as the latest and reports both the stamped and the latest path."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Publishes the report as the latest and reports both the stamped and the latest path."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Explain what a Mermaid diagram is. Do not create or change any file.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 1
+    }
+  ]
+}

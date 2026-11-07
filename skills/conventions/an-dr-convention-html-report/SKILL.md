@@ -15,7 +15,7 @@ One file a reader can open from disk, in an editor preview, or as a published pa
 
 ## Where the page goes
 
-A generated page is not repository content: take its path from `an-dr-convention-artifact-layout`, which owns where artifacts live, publish it as the latest of its kind once complete, and report both paths to the reader.
+A generated page is an artifact, not repository content: its path, stamp, and latest copy follow `an-dr-convention-artifact-layout`.
 
 ## The page
 
@@ -70,29 +70,13 @@ Use a diagram when structure or flow is the point: dependencies and layers, a re
 - Lay out a chain of more than four nodes top to bottom (`flowchart TB`); a long left-to-right chain shrinks to unreadable text at page width.
 - Do not style generic class names that Mermaid also uses inside its SVG — `label`, `node`, `edgeLabel`, `cluster`, `actor`, `note` — on the page; give page classes distinct names, or the page CSS leaks into the diagrams and clips their text.
 - Never use a Mermaid keyword as a node id — `graph`, `flowchart`, `subgraph`, `end`, `class`, `classDef`, `style`, `click`, `default`, `direction`. Such a diagram fails to parse; name the node after what it is instead.
-- Open the page after rendering and look at every diagram in both themes. The render script already fails on a diagram Mermaid cannot parse; a diagram that parses but reads badly — clipped labels, a shrunken chain — is still a defect in the page.
 
-## Render
+## Scripts
 
-After writing the page, and again after every later edit of it, inline the brand and render the diagrams:
+- `scripts/embed-brand.ps1` places the brand stylesheet before the page's own styles and inserts the theme switch at the start of the body; a rerun replaces both.
+- `scripts/embed-cockpit.ps1` inlines the problem-level stylesheet, and does nothing when the page carries no `ck-` class. Its `-Html <markup>` form returns embedded HTML without writing a file.
+- `scripts/render-mermaid.ps1` runs the pinned Mermaid build in a local headless Chrome or Edge and replaces each `<pre class="mermaid">` block with a figure holding a light and a dark SVG, a "Copy Mermaid" button, and the source. The page carries no renderer and shows the SVG matching the reader's theme. A rerun renders every figure again from its stored source.
 
-```powershell
-pwsh <skill>/scripts/embed-brand.ps1 -Path <page>.html
-if ($LASTEXITCODE -ne 0) { throw 'Brand embedding failed.' }
-pwsh <skill>/scripts/embed-cockpit.ps1 -Path <page>.html
-if ($LASTEXITCODE -ne 0) { throw 'Status stylesheet embedding failed.' }
-pwsh <skill>/scripts/render-mermaid.ps1 -Path <page>.html
-if ($LASTEXITCODE -ne 0) { throw 'Diagram rendering failed.' }
-```
+## Visual verification
 
-The cockpit script is described under problem levels. Its `-Html <markup>` alternative returns embedded HTML without writing a file, for pipelines and in-memory regression tests. The brand script places the stylesheet before the page's own styles, inserts the theme switch at the start of the body, and replaces both on a rerun. Check each command's exit code before continuing; a later success must not hide an earlier failure.
-
-`render-mermaid.ps1` runs the pinned Mermaid build in a local headless Chrome or Edge (`-Browser <exe>` when neither is found), and replaces each `<pre class="mermaid">` block with a figure holding a light and a dark SVG, a "Copy Mermaid" button, and the source. The page carries no renderer and shows the SVG matching the reader's theme. The script stops on any diagram that fails to parse and leaves the page unchanged. A rerun renders every figure again from its stored source, so edit a diagram by editing that source or by writing a new `<pre class="mermaid">` block. Never load Mermaid from a CDN.
-
-## Verify
-
-After the final render, capture and open screenshots of the actual page in light and dark themes at both desktop width and a 390 CSS-pixel phone viewport. Inspect text, tables, diagrams, and controls in all four views. Saving an image, parsing HTML, or measuring overflow alone is not visual inspection. Recheck after later edits.
-
-Verify the browser's actual viewport width. A narrow headless Chrome window can retain a wider viewport and crop its screenshot. Use device emulation or a fixed-width 390-pixel iframe inside a wider capture window; record the inner viewport and document widths. Keep wide content in its own scroll container rather than allowing document overflow.
-
-Include a visual-check record with the report: final HTML hash, screenshot paths, theme and viewport for each view, which screenshots were actually opened, and observed issues. Claim verification complete only when all four views were inspected and no unresolved layout defect remains. If a browser or image viewer is unavailable, deliver the report with visual verification explicitly marked blocked and name the missing check; do not substitute the renderer's success or a later reviewer's inspection for the author's verification.
+A page is visually verified when screenshots of the actual page in light and dark themes, at desktop width and at a true 390 CSS-pixel phone viewport, were opened and inspected, and no layout defect remains. The record of it holds the final HTML hash, the screenshot paths, the theme and viewport of each view, which screenshots were opened, and the issues seen. Without that, the page is unverified, whatever the renderer reported.
