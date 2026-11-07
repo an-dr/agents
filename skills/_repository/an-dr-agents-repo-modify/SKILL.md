@@ -51,7 +51,8 @@ Present, before asking for anything:
 - every changed file, with the behavior it changes from and to;
 - the evidence each change answers;
 - what was deliberately left alone, including any amendment considered and rejected;
-- `git -C <root> diff --stat`, plus the full diff of the instruction files themselves.
+- `git -C <root> diff --stat`, plus the full diff of the instruction files themselves;
+- the size report of `pwsh <skill>/scripts/size-diff.ps1 -Root <root>`. Growth in what agents load needs a matching cut elsewhere or a stated reason, because every added rule dilutes the rest.
 
 The user reads process changes before they enter history, so the summary is the deliverable even when the commit never follows.
 
