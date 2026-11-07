@@ -6,7 +6,7 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.0.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-send-message
+  an-dr.dependencies: an-dr-ai-send-message an-dr-convention-code
 ---
 
 # Pipeline
@@ -27,10 +27,11 @@ Ask through `an-dr-ai-send-message` for what the repository does not show, such 
 ## Build the CI
 
 1. Run the same commands a developer runs locally, ideally one entry point the project already has. Add a project script when the steps would otherwise exist only in the pipeline.
-2. Trigger on pushes and pull requests.
-3. Test every operating system and toolchain version the project states it supports, and no others.
-4. Pin third-party actions and tool versions, and grant only the permissions each job needs.
-5. Cache dependencies only when the build is slow enough to benefit.
+2. Check formatting and run the linter as steps that fail the build. When the project has neither, configure them first as `an-dr-convention-code` describes; leave them out only when the user excludes them.
+3. Trigger on pushes and pull requests.
+4. Test every operating system and toolchain version the project states it supports, and no others.
+5. Pin third-party actions and tool versions, and grant only the permissions each job needs.
+6. Cache dependencies only when the build is slow enough to benefit.
 
 ## Build the release
 

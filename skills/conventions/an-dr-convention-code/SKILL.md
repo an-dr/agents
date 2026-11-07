@@ -53,5 +53,6 @@ Shape the code the way an experienced developer in this language and domain expe
 A human reviewer must be able to tell which lines change behaviour, and `git bisect` must be able to separate one cause from another.
 
 - Keep formatter runs, re-wrapped prose, and other formatting-only edits out of behaviour changes. Do not reformat lines you are not otherwise changing unless the repository enforces a formatter.
+- A new project configures its ecosystem's standard formatter and linter, such as rustfmt and clippy, gofmt and go vet, Prettier and ESLint, or ruff, with its first code, and formats every file it writes from then on. In an existing repository without one, report the gap as follow-up work instead of reformatting it.
 - Do mechanical renames and migrations as their own pass, before any behaviour change that depends on them.
 - After removing or moving a module, file, crate, or type, search for its name across code comments, scripts, documentation, and agent instructions, and update every reference to its new owner.
