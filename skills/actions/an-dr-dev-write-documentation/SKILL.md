@@ -6,7 +6,7 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.1.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-send-message an-dr-concept-ai-slop an-dr-convention-markdown an-dr-convention-use-case
+  an-dr.dependencies: an-dr-ai-send-message an-dr-concept-ai-slop an-dr-convention-adr an-dr-convention-markdown an-dr-convention-use-case
 ---
 
 # Documentation writing
@@ -26,6 +26,8 @@ In gated DOCS, document the increment before code exists and leave the change fo
 | README            | orientation and links to deeper material                                                            |
 
 An ordinary refactoring should not require a documentation update. Give each specification one home and link to it elsewhere. Use present tense, avoid roadmap history, and do not repeat a table or example in prose. Match the target file's established style.
+
+A lasting architectural decision is an ADR in the format of `an-dr-convention-adr`. Before recording one, read [references/adr.md](references/adr.md).
 
 ## Verify
 

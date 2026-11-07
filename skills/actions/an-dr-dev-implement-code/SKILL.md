@@ -22,7 +22,7 @@ Write code by `an-dr-convention-code`: its quality, architecture, naming, and re
 ## Commits and decisions
 
 - In Direct, each internal pass becomes its own commit, so a large request lands as a sequence of single-concern commits rather than one.
-- Record a lasting decision through `an-dr-convention-adr` when the change creates a public contract other programs depend on, or makes a deliberate exception to an existing ADR.
+- Record a lasting decision as an ADR in the format of `an-dr-convention-adr`, through `an-dr-dev-write-documentation`, when the change creates a public contract other programs depend on, or makes a deliberate exception to an existing ADR.
 
 ## Documentation and delivery
 

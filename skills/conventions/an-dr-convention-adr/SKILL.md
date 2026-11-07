@@ -33,20 +33,14 @@ An ADR records one genuinely architectural decision: lasting consequences, hard 
 
 Every section stays short.
 
-## Create
-
-```powershell
-pwsh <skill>/scripts/adr-new.ps1 -Title '<title>'
-```
-
-The script creates `docs/adr/ADR-NNN-<slug>.md` with the next free number and the section skeleton. Fill in the sections afterwards.
-
 ## Immutability
 
-ADRs are immutable **once integrated**: supersede with a new one, never edit an existing one.
+An integrated ADR is immutable: a changed decision is a new ADR that supersedes it.
 
 Superseding links both ways, in the same commit. Under its title, the new ADR says which ADR it supersedes, linked to that file. The old ADR gains a single line under its own title, saying which ADR supersedes it, also linked, and no other change. Without that line, a reader who opens the old ADR takes a replaced decision for the current one.
 
-Immutability protects a decision someone else has read. An ADR still on the current feature branch has no such reader, so it is a draft: when the branch later changes its mind, edit that ADR, or collapse several into the one decision that was actually reached. Adding a second ADR to correct a first that has never been integrated records the branch's own derivation rather than its outcome, and it ships a document contradicting the tree beside it.
+Immutability protects a decision someone else has read. An ADR still on the current feature branch has no such reader, so it is a draft: the branch ships the one decision it reached, edited in place, not a chain of corrections. A second ADR correcting an unintegrated first records the branch's derivation rather than its outcome, and ships a document contradicting the tree beside it. The ADRs a branch adds are numbered contiguously and none of them supersedes, contradicts, or renames another from the same branch.
 
-When ADRs added by one branch supersede, contradict, or rename something from another in that same set, merge them and renumber so the surviving numbers stay contiguous. Nothing outside the branch references them yet, so renumbering costs only the in-branch links. Before integrating, list what the branch added with `git diff --diff-filter=A --name-only <base>..HEAD -- docs/adr`.
+## Script
+
+`scripts/adr-new.ps1` creates `docs/adr/ADR-NNN-<slug>.md` with the next free number and the section skeleton.
