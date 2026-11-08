@@ -4,9 +4,9 @@ description: The shape of a skill in any repository that uses it — Agent Skill
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.4.0"
+  version: "1.5.0"
   an-dr.type: convention
-  an-dr.dependencies: an-dr-concept-clean-dependencies an-dr-convention-script an-dr-convention-agent-skill-testing
+  an-dr.dependencies: an-dr-concept-clean-dependencies an-dr-convention-script an-dr-convention-agent-skill-testing an-dr-convention-markdown
 ---
 
 # Convention: agent skill
@@ -32,6 +32,7 @@ Defers: scripts to `an-dr-convention-script`, test packaging to `an-dr-conventio
 - [references/body.md](references/body.md): the title, the section order for each type, voice, and commands.
 - [references/size.md](references/size.md): description and body wording, format by content, scripts, progressive disclosure, and the final pass.
 - [references/dependencies.md](references/dependencies.md): dependencies, which follow `an-dr-concept-clean-dependencies`.
+- [references/readme.md](references/readme.md): the person-facing `README.md` every skill carries beside `SKILL.md`.
 
 ## Size and references
 
@@ -46,7 +47,7 @@ Layers: description in every session → `SKILL.md` on use → reference file on
 ## Check
 
 - `scripts/check-registration.ps1` verifies placement, registration, types against folders, and declared dependencies, and lists dependency cycles, which fail with `-FailOnCycle`; `-RequireTests` requires `evals/` in every skill.
-- `scripts/check-skills.ps1` verifies the frontmatter, description, title, section order, and reference links, and warns on size, on the size.md wording rules it can detect (description sentences, body lines, intro paragraph, bold rule names), and on a command block in a concept or convention.
+- `scripts/check-skills.ps1` verifies the frontmatter, description, title, section order, and reference links, and warns on size, on the size.md wording rules it can detect (description sentences, body lines, intro paragraph, bold rule names), on a command block in a concept or convention, and on a skill without `README.md`.
 - `scripts/check-skills-ref.ps1` verifies the format through `skills-ref validate`. Without `skills-ref` it prints the install command and exits 0; with `-Require` or in CI it exits 1.
 
 Each takes `-Root <repository>`, prints what it found, and exits non-zero on a problem. Their regression tests are in `scripts/tests/`.

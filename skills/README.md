@@ -1,6 +1,6 @@
 # Skills
 
-Reusable skills in the [Agent Skills](https://agentskills.io/specification) format. Each skill has `SKILL.md` and `evals/evals.json`; deterministic mechanical work may also use PowerShell 7 scripts under `scripts/`. Script tests live in `scripts/tests/test-*.ps1` and run through the skill's `scripts/tests/run.ps1`. A skill sits one level below its category folder, and the category says how the agent uses it.
+Reusable skills in the [Agent Skills](https://agentskills.io/specification) format. Each skill has `SKILL.md` for the agent, `README.md` explaining it to people (rolling out; see the [skill convention](conventions/an-dr-convention-agent-skill/references/readme.md)), and `evals/evals.json`; deterministic mechanical work may also use PowerShell 7 scripts under `scripts/`. Script tests live in `scripts/tests/test-*.ps1` and run through the skill's `scripts/tests/run.ps1`. A skill sits one level below its category folder, and the category says how the agent uses it.
 
 ## Actions
 
@@ -23,7 +23,7 @@ Procedures the agent runs. They produce a result, use scripts where the work is 
 | [`an-dr-dev-implement-adversarial-ut`](actions/an-dr-dev-implement-adversarial-ut/SKILL.md)   | Build bug-finding tests before a debug or cleanup fix.                                                                 |
 | [`an-dr-dev-implement-code`](actions/an-dr-dev-implement-code/SKILL.md)                       | Implement code within the selected workflow and repository conventions.                                                |
 | [`an-dr-dev-implement-pipeline`](actions/an-dr-dev-implement-pipeline/SKILL.md)               | Set up or update a project's CI and release pipeline from what it actually builds and tests.                           |
-| [`an-dr-dev-integrate`](actions/an-dr-dev-integrate/SKILL.md)                                 | Integrate an approved branch in the mode the user chooses.                                                             |
+| [`an-dr-dev-integrate`](actions/an-dr-dev-integrate/SKILL.md)                                 | Open, review, and merge a work branch's pull request, or integrate locally when there is no platform.                  |
 | [`an-dr-dev-review`](actions/an-dr-dev-review/SKILL.md)                                       | Review an increment or full branch diff.                                                                               |
 | [`an-dr-dev-test`](actions/an-dr-dev-test/SKILL.md)                                           | Verify changed code and report meaningful test coverage.                                                               |
 | [`an-dr-dev-write-documentation`](actions/an-dr-dev-write-documentation/SKILL.md)             | Write human-facing documentation and check its claims.                                                                 |
