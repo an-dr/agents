@@ -1,6 +1,6 @@
 ---
 name: an-dr-dev-implement-code
-description: Implement code during Direct work or gated BUILD, following repository patterns, documentation, and the requested scope. Use for coding changes once the selected workflow allows edits.
+description: Implement code during Vibe work or gated BUILD, following repository patterns, documentation, and the requested scope. Use for coding changes once the selected workflow allows edits.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
@@ -21,7 +21,7 @@ Defers: code style to `an-dr-convention-code`, file placement to `an-dr-conventi
 
 ## Implement
 
-- Direct → the requested result; gated → only the current increment, following the recorded design.
+- Vibe → the requested result; gated → only the current increment, following the recorded design.
 - Work outside that scope becomes a separate request or future increment.
 - Compile and run a relevant test subset after each touch-point.
 - Write inline documentation and doc comments with the code.
@@ -31,12 +31,12 @@ Defers: code style to `an-dr-convention-code`, file placement to `an-dr-conventi
 ## Documentation and decisions
 
 - Human-facing documentation is prepared through `an-dr-dev-write-documentation` before changed behaviour is coded.
-- Documentation gap in gated BUILD → report it, do not fill it in code; in Direct → update it through `an-dr-dev-write-documentation` before continuing.
-- Documentation conflicts with code → surface it, never pick a side silently; gated → record a controller question; Direct → ask only when it blocks a sound decision.
+- Documentation gap in gated BUILD → report it, do not fill it in code; in Vibe → update it through `an-dr-dev-write-documentation` before continuing.
+- Documentation conflicts with code → surface it, never pick a side silently; gated → record a controller question; Vibe → ask only when it blocks a sound decision.
 - Record an ADR, through `an-dr-dev-write-documentation`, when the change creates a public contract other programs depend on or deliberately departs from an existing ADR.
 
 ## Commit and deliver
 
 - Gated BUILD → no commits.
-- Direct → one commit per internal pass, only after verification and review, subject to the process repository's uncommitted review rule.
+- Vibe → one commit per internal pass on its work branch, only after verification and review, subject to the process repository's uncommitted review rule.
 - Deliver with the explanation `AGENTS.md` requires.

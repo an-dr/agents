@@ -5,8 +5,9 @@ param(
     [ValidateSet('start', 'status', 'advance', 'return-to-build', 'switch-flow', 'approve', 'add-increment', 'move-increment', 'defer-increment', 'remove-increment', 'add-request', 'remove-request', 'set-requirement', 'add-question', 'answer-question', 'dismiss-question', 'finish')]
     [string]$Command,
 
-    [ValidateSet('Detailed', 'DetailedAuto', 'Quick')]
+    [ValidateSet('SpecDriven', 'Supervised')]
     [string]$Flow,
+    [switch]$OnBase,
     [string]$Goal,
     [string]$Constraints,
     [string]$Done,
@@ -72,6 +73,19 @@ function Get-WorkflowState {
         throw "No active workflow exists at '$Path'."
     }
     $state = Get-Content -Raw -LiteralPath $Path | ConvertFrom-Json
+    # Retired flows resume under the flow that replaced them: Detailed became
+    # Supervised unchanged, and Detailed Auto became Spec-driven, whose phases
+    # it already had. Quick has no successor with the same phases, so a Quick
+    # state is refused rather than reshaped into something nobody approved.
+    if ($state.flow -eq 'Detailed') { $state.flow = 'Supervised' }
+    if ($state.flow -eq 'DetailedAuto') { $state.flow = 'SpecDriven' }
+    if ($state.flow -eq 'Quick') {
+        throw ('This workflow uses the retired Quick flow. Commit its work and delete .progress, ' +
+            'then start Spec-driven or Supervised, or finish it with an older controller.')
+    }
+    if (-not $state.PSObject.Properties['onBase']) {
+        $state | Add-Member -NotePropertyName onBase -NotePropertyValue $false
+    }
     # Phases that no longer exist collapse into the one that replaced them.
     if ($state.phase -in @('MR', 'MERGE_READY', 'INTEGRATE_READY')) {
         $state.phase = 'SUMMARY'
@@ -185,10 +199,7 @@ function Test-RequirementsComplete {
 function Get-WorkflowPhases {
     param([Parameter(Mandatory)][string]$Flow)
 
-    if ($Flow -eq 'Quick') {
-        return @('INTAKE', 'DESIGN', 'DOCS', 'BUILD', 'VERIFY', 'COMMIT')
-    }
-    if ($Flow -eq 'Detailed') {
+    if ($Flow -eq 'Supervised') {
         return @(
             'INTAKE', 'DESIGN', 'SPLIT', 'BRANCH', 'DOCS', 'BUILD', 'VERIFY', 'COMMIT',
             'SUMMARY', 'INTEGRATE'
@@ -206,7 +217,7 @@ function Assert-WorkflowState {
     if ($State.schemaVersion -ne 1) {
         throw "Unsupported workflow schema version '$($State.schemaVersion)'."
     }
-    if ($State.flow -notin @('Quick', 'Detailed', 'DetailedAuto')) {
+    if ($State.flow -notin @('SpecDriven', 'Supervised')) {
         throw "Unsupported workflow flow '$($State.flow)'."
     }
     $validPhases = @(Get-WorkflowPhases -Flow $State.flow)
@@ -235,9 +246,6 @@ function Assert-WorkflowState {
     }
 
     $increments = @($State.increments)
-    if ($State.flow -eq 'Quick' -and $increments.Count -gt 0) {
-        throw 'Quick workflow state cannot contain increments.'
-    }
     $seenIds = @{}
     $expectedNumber = 1
     $lastRank = -1
@@ -283,9 +291,9 @@ function Assert-WorkflowState {
     elseif ($active.Count -gt 0) {
         throw 'Workflow has an active increment without currentIncrementId.'
     }
-    if ($State.flow -ne 'Quick' -and $State.phase -in @('DOCS', 'BUILD', 'VERIFY', 'COMMIT') -and
+    if ($State.phase -in @('DOCS', 'BUILD', 'VERIFY', 'COMMIT') -and
         -not $State.currentIncrementId) {
-        throw "Detailed phase '$($State.phase)' requires an active increment."
+        throw "Phase '$($State.phase)' requires an active increment."
     }
     if ($State.phase -eq 'COMMIT' -and [string]::IsNullOrWhiteSpace([string]$State.commitBaseline)) {
         throw 'COMMIT phase requires commitBaseline.'
@@ -293,11 +301,11 @@ function Assert-WorkflowState {
     if ($State.phase -ne 'COMMIT' -and $State.commitBaseline) {
         throw "commitBaseline is only valid during COMMIT, not '$($State.phase)'."
     }
-    if ($State.flow -ne 'Quick' -and $State.phase -in @('SUMMARY', 'FINAL_REVIEW', 'INTEGRATE') -and
+    if ($State.phase -in @('SUMMARY', 'FINAL_REVIEW', 'INTEGRATE') -and
         @($increments | Where-Object { $_.status -ne 'completed' }).Count -gt 0) {
         throw "Phase '$($State.phase)' requires every increment to be completed."
     }
-    if ($State.flow -ne 'Quick' -and $State.phase -notin @('INTAKE', 'DESIGN', 'SPLIT', 'BRANCH') -and
+    if ($State.phase -notin @('INTAKE', 'DESIGN', 'SPLIT', 'BRANCH') -and
         [string]::IsNullOrWhiteSpace([string]$State.featureBranch)) {
         throw "Phase '$($State.phase)' requires featureBranch."
     }
@@ -395,7 +403,7 @@ function Write-ProgressMarkdown {
         [Parameter(Mandatory)][string]$Path
     )
 
-    $flowLabel = if ($State.flow -eq 'DetailedAuto') { 'Detailed Auto' } else { $State.flow }
+    $flowLabel = if ($State.flow -eq 'SpecDriven') { 'Spec-driven' } else { $State.flow }
     $lines = [Collections.Generic.List[string]]::new()
     $lines.Add('# Progress')
     $lines.Add('')
@@ -491,6 +499,15 @@ function Save-WorkflowState {
         Remove-Item -Force -LiteralPath $temporaryPath -ErrorAction SilentlyContinue
     }
     Write-ProgressMarkdown -State $State -Path (Get-ProgressMarkdownPath -WorkflowPath $Path)
+    Update-ProgressPage
+}
+
+# The browser page is derived from the same state, so every state change
+# refreshes it at no cost to the agent.
+function Update-ProgressPage {
+    # A display failure must never block a state change.
+    try { $null = & (Join-Path $PSScriptRoot 'render-progress-page.ps1') -RepositoryRoot (Get-RepositoryRoot) }
+    catch { Write-Warning "Progress page not rendered: $_" }
 }
 
 function Test-Approval {
@@ -582,7 +599,7 @@ function Show-WorkflowStatus {
         [string]$Status = 'active'
     )
 
-    $flowLabel = if ($State.flow -eq 'DetailedAuto') { 'Detailed Auto' } else { $State.flow }
+    $flowLabel = if ($State.flow -eq 'SpecDriven') { 'Spec-driven' } else { $State.flow }
     $increment = Get-CurrentIncrement -State $State
     $incrementLabel = '—'
     if ($increment) {
@@ -685,6 +702,12 @@ switch ($Command) {
         if ([string]::IsNullOrWhiteSpace([string]$Flow)) {
             throw '-Flow is required when starting a workflow.'
         }
+        # Spec-driven may run on the base branch when the user asks for it;
+        # Supervised always gets its own branch, since its per-increment review
+        # happens in that branch's pull request.
+        if ($OnBase -and $Flow -ne 'SpecDriven') {
+            throw '-OnBase is only available for SpecDriven.'
+        }
 
         $baseBranch = (git branch --show-current).Trim()
         if ([string]::IsNullOrWhiteSpace($baseBranch)) {
@@ -699,6 +722,7 @@ switch ($Command) {
             baseBranch         = $baseBranch
             baseCommit         = $baseCommit
             featureBranch      = $null
+            onBase             = [bool]$OnBase
             requirements       = [pscustomobject]@{
                 goal       = $Goal
                 constraints = $Constraints
@@ -736,19 +760,19 @@ switch ($Command) {
         }
         # The user says intake once, when the request list is complete; implement
         # once, at the last phase before code is written; and integrate once, at
-        # the review of the finished branch. Detailed Auto keeps all three: what
-        # it automates is the per-increment verification in between.
+        # the review of the finished branch. Spec-driven folds intake into the
+        # design discussion and records its own per-increment verification, so
+        # its user gates are implement and integrate only.
         $expected = switch ($state.phase) {
-            'INTAKE' { if ($state.flow -eq 'Quick') { $null } else { 'intake' } }
-            'DESIGN' { if ($state.flow -eq 'Quick') { 'implement' } else { $null } }
+            'INTAKE' { if ($state.flow -eq 'Supervised') { 'intake' } else { $null } }
             'SPLIT' { 'implement' }
-            'VERIFY' { if ($state.flow -eq 'DetailedAuto') { $null } else { 'verify' } }
-            'SUMMARY' { if ($state.flow -eq 'Detailed') { 'integrate' } else { $null } }
+            'VERIFY' { if ($state.flow -eq 'Supervised') { 'verify' } else { $null } }
+            'SUMMARY' { if ($state.flow -eq 'Supervised') { 'integrate' } else { $null } }
             'FINAL_REVIEW' { 'integrate' }
             default { $null }
         }
-        if ($state.flow -eq 'DetailedAuto' -and $state.phase -in @('VERIFY', 'SUMMARY')) {
-            throw 'Detailed Auto records its own verification; the user approves at INTAKE, SPLIT, and FINAL_REVIEW.'
+        if ($state.flow -eq 'SpecDriven' -and $state.phase -in @('INTAKE', 'VERIFY', 'SUMMARY')) {
+            throw 'Spec-driven records its own intake and verification; the user approves at SPLIT and FINAL_REVIEW.'
         }
         if (-not $expected) {
             throw "$($state.phase) has no approval gate. Advance instead."
@@ -903,9 +927,6 @@ switch ($Command) {
     'add-increment' {
         $state = Get-WorkflowState -Path $workflowPath
         Assert-WorkflowBranch -State $state
-        if ($state.flow -eq 'Quick') {
-            throw 'Quick workflows do not use increments.'
-        }
         if ([string]::IsNullOrWhiteSpace($Scope) -or [string]::IsNullOrWhiteSpace($Description)) {
             throw '-Scope and -Description are required for add-increment.'
         }
@@ -1087,30 +1108,23 @@ switch ($Command) {
                     throw ('Distil the requests into goal, constraints, done, and outOfScope ' +
                         'with set-requirement before leaving INTAKE.')
                 }
-                # Quick advances freely, as its predecessor START did: a small
-                # self-contained pass does not earn a gate of its own. Detailed
-                # Auto does not skip this one — autonomy is worth nothing if it
-                # runs on a half-stated ask.
-                if ($state.flow -ne 'Quick') {
+                # Spec-driven settles the request list inside its design
+                # discussion, which the implement gate closes; Supervised asks
+                # for the list to be closed on its own first.
+                if ($state.flow -eq 'Supervised') {
                     Assert-Approval -State $state -GateName 'intake'
                 }
                 $state.phase = 'DESIGN'
             }
             'DESIGN' {
-                if ($state.flow -eq 'Quick') {
-                    Assert-Approval -State $state -GateName 'implement'
-                    $state.phase = 'DOCS'
-                }
-                else {
-                    $state.phase = 'SPLIT'
-                }
+                $state.phase = 'SPLIT'
             }
             'SPLIT' {
                 if (@($state.increments).Count -eq 0) {
                     throw 'Add at least one increment before leaving SPLIT.'
                 }
                 # Every flow buys its first written line with this approval,
-                # Detailed Auto included: the plan it will execute unattended is
+                # Spec-driven included: the plan it will execute unattended is
                 # exactly the plan the user should have seen.
                 Assert-Approval -State $state -GateName 'implement'
                 $state.phase = 'BRANCH'
@@ -1120,7 +1134,10 @@ switch ($Command) {
                 if ([string]::IsNullOrWhiteSpace($branch)) {
                     throw 'Switch from detached HEAD to a feature branch before leaving BRANCH.'
                 }
-                if ($branch -eq $state.baseBranch) {
+                if ($state.onBase -and $branch -ne $state.baseBranch) {
+                    throw "This Spec-driven workflow runs on '$($state.baseBranch)'; switch back to it before leaving BRANCH."
+                }
+                if (-not $state.onBase -and $branch -eq $state.baseBranch) {
                     throw "Create and switch to a feature branch before leaving BRANCH."
                 }
                 $state.featureBranch = $branch
@@ -1133,7 +1150,7 @@ switch ($Command) {
                 $state.phase = 'VERIFY'
             }
             'VERIFY' {
-                if ($state.flow -ne 'DetailedAuto') {
+                if ($state.flow -eq 'Supervised') {
                     Assert-Approval -State $state -GateName 'verify'
                 }
                 $current = Get-CurrentIncrement -State $state
@@ -1144,9 +1161,6 @@ switch ($Command) {
                 $state.phase = 'COMMIT'
             }
             'COMMIT' {
-                if ($state.flow -eq 'Quick') {
-                    throw 'Run finish, then commit the Quick workflow result.'
-                }
                 Assert-IncrementCommitted -State $state
                 $current = Get-CurrentIncrement -State $state
                 $current.status = 'completed'
@@ -1160,7 +1174,7 @@ switch ($Command) {
                 }
             }
             'SUMMARY' {
-                if ($state.flow -eq 'DetailedAuto') {
+                if ($state.flow -eq 'SpecDriven') {
                     $state.phase = 'FINAL_REVIEW'
                 }
                 else {
@@ -1233,8 +1247,8 @@ switch ($Command) {
         $droppedIncrements = @($state.increments).Count
         $state.flow = $Flow
         # Back to INTAKE rather than to whichever phase the two flows share.
-        # The flows do not collect the same gates -- Quick never asks for
-        # `intake`, Detailed cannot leave INTAKE without it -- so carrying a
+        # The flows do not collect the same gates -- Spec-driven never asks for
+        # `intake`, Supervised cannot leave INTAKE without it -- so carrying a
         # phase across would credit the new flow with an approval nobody gave.
         # Reopening the request list is usually the point: the flow changed
         # because the user asked for something the old one was not sized for.
@@ -1252,10 +1266,8 @@ switch ($Command) {
     'finish' {
         $state = Get-WorkflowState -Path $workflowPath
         Assert-WorkflowBranch -State $state
-        $allowed = ($state.flow -eq 'Quick' -and $state.phase -eq 'COMMIT') -or
-            ($state.flow -ne 'Quick' -and $state.phase -eq 'INTEGRATE')
-        if (-not $allowed) {
-            throw "Workflow state can only be removed at Quick/COMMIT or Detailed/INTEGRATE; current state is $($state.flow)/$($state.phase)."
+        if ($state.phase -ne 'INTEGRATE') {
+            throw "Workflow state can only be removed at INTEGRATE; current state is $($state.flow)/$($state.phase)."
         }
         Remove-Item -LiteralPath $workflowPath
         $progressMarkdownPath = Get-ProgressMarkdownPath -WorkflowPath $workflowPath
@@ -1266,6 +1278,7 @@ switch ($Command) {
         if ((Get-ChildItem -Force -LiteralPath $directory | Measure-Object).Count -eq 0) {
             Remove-Item -LiteralPath $directory
         }
+        Update-ProgressPage
         Write-Output 'Workflow state removed. Commit the deletion; integration then removes .progress from the feature branch.'
         Show-WorkflowStatus -State $state -Status finished
     }

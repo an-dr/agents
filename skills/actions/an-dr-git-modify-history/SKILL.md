@@ -5,7 +5,7 @@ license: MIT
 allowed-tools: PowerShell
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "2.0.0"
+  version: "2.1.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-convention-commit-message
 ---
@@ -25,14 +25,14 @@ Defers: the message format and its checker to `an-dr-convention-commit-message`.
 
 ## Regroup unpushed commits
 
-Unpushed commits are `git log --oneline @{u}..HEAD`; without an upstream, the merge base with the default branch to `HEAD`. Evaluate them every time before committing and before pushing, and regroup with `git reset --soft`, `git commit --fixup` plus `git rebase --autosquash`, or a non-interactive rebase:
+Unpushed commits are `git log --oneline @{u}..HEAD`; without an upstream, the merge base with the default branch to `HEAD`. On the agent's own work branch (`vibe/`, `spec/`, `supervised/`), which is pushed automatically, every commit after the merge base with the base branch counts as unpushed, and a regroup is pushed with `--force-with-lease`; while its pull or merge request is under review, add commits instead and regroup only after the `integrate` approval. Evaluate them every time before committing and before pushing, and regroup with `git reset --soft`, `git commit --fixup` plus `git rebase --autosquash`, or a non-interactive rebase:
 
 - Fold a fix, a follow-up, or a "WIP" into the commit it corrects.
 - Drop add-then-remove pairs: a change and its revert, or a line added and later deleted, leave no trace in history.
 - Merge small commits in the same area into one commit that names each change as a body entry.
 - Keep unrelated concerns apart; a formatting-only change and a mechanical rename stay their own commits.
 - A commit is too small when it cannot be understood or reverted on its own.
-- Never rewrite a pushed commit. Each regrouped commit's message goes through Commit's checker.
+- Never rewrite a commit pushed to any other branch. Each regrouped commit's message goes through Commit's checker.
 
 ## Commit
 
@@ -51,6 +51,7 @@ pwsh <skill>/scripts/new-commit.ps1 `
 
 - Trailing arguments are body entries, one quoted string each, without the `- ` marker.
 - The script assembles the subject, prefixes entries, appends `-Footer` lines after the single blank line, and commits only when the checker passes; otherwise it prints violations and commits nothing.
+- On a work branch, push after every commit (`git push -u origin HEAD` the first time); never push the base branch from here.
 - `-Breaking` adds `!` and requires a `BREAKING CHANGE:` footer; `-DryRun` prints the message; `-Amend` rewrites the tip.
 
 ## Rewrite messages

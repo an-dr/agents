@@ -1,6 +1,6 @@
 ---
 name: an-dr-dev-analyze-changes
-description: Produce one human-facing HTML report of a finished change — what and why, new and upgraded components, dependency graphs, decisions, verification — in diagrams and plain prose. Use at a Detailed flow's integration gate, after a big change, or when the user accepts the offer after a smaller one.
+description: Produce one human-facing HTML report of a finished change — what and why, new and upgraded components, dependency graphs, decisions, verification — in diagrams and plain prose. Use at a Spec-driven or Supervised flow's integration gate, after a big change, or when the user accepts the offer after a smaller one.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
@@ -15,7 +15,7 @@ Defers: prose to `an-dr-dev-write-documentation`, page format and levels to `an-
 
 ## Decide
 
-- Detailed or Detailed Auto flow, or a delivery that adds a component (crate, package, module, service), adds an ADR, or changes the architecture → write it.
+- Spec-driven or Supervised flow, or a delivery that adds a component (crate, package, module, service), adds an ADR, or changes the architecture → write it.
 - Any other code delivery → offer it in one line; write only when the user accepts.
 - At the integration gate, before writing, read [references/integration-gate.md](references/integration-gate.md).
 

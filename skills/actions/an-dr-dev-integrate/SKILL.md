@@ -1,11 +1,11 @@
 ---
 name: an-dr-dev-integrate
-description: Integrate an approved feature branch into the default branch by rebasing, then keeping, regrouping, or squashing its commits, opening a request, or landing a regrouped request with rebase and merge. Use after the integration gate.
+description: Integrate an approved work branch into the default branch through its pull or merge request with the repository's merge method, or locally by rebasing and keeping, regrouping, or squashing its commits when no platform is available. Use for the draft request at a work branch's first push, for review comments, and after the integration gate.
 license: MIT
 allowed-tools: PowerShell
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "2.0.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-send-message an-dr-convention-commit-message an-dr-git-modify-history
 ---
@@ -14,14 +14,17 @@ metadata:
 
 Defers: questions to `an-dr-ai-send-message`; messages to `an-dr-git-modify-history`, checked by `an-dr-convention-commit-message`.
 
-## Ask the mode
+## Through the request
 
-Before asking, read [references/modes.md](references/modes.md).
+Spec-driven and Supervised branches integrate through their pull or merge request whenever the platform allows it. Read [references/pull-request.md](references/pull-request.md) at the first push, when the user says to address the comments, and at integration.
+
+## Ask the local mode
+
+Only when the request path is unavailable, and after saying what is missing. Before asking, read [references/modes.md](references/modes.md).
 
 - Ask every time, as the first step, before progress cleanup, rebase, or any history change; never answer it yourself.
 - Approval to integrate is not a mode choice; the last mode used is not a default.
-- One `an-dr-ai-send-message` question, the five modes as options (`Commits`, `Regroup`, `Squash`, `Request`, `RebaseMerge`), no recommendation; wait for the answer.
-- Host question UI holds fewer than five options → first ask local (`Commits`, `Regroup`, `Squash`) or pull request (`Request`, `RebaseMerge`), then the mode within that group.
+- One `an-dr-ai-send-message` question, the three local modes as options (`Commits`, `Regroup`, `Squash`), no recommendation; wait for the answer.
 
 ## Run the steps
 
@@ -53,5 +56,5 @@ For a human: `pwsh <skill>/scripts/integrate.ps1 -CommitMessageSkill <an-dr-conv
 
 ## Rules
 
-- Always rebase first; the default branch never gains a merge commit from this skill.
+- Local modes always rebase first and never add a merge commit; the request path uses the repository's configured merge method, merge commits included.
 - `integrate-4-finish.ps1` makes `-Mode` mandatory so no run skips the question.

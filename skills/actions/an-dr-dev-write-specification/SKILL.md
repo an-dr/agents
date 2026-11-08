@@ -67,7 +67,7 @@ Derive it from the use cases: each use case traces through it, each part serves 
 | Lasting decisions | ADRs                                                                                                  |
 
 - Gated flow → draft in `.progress/specification.md` during read-only phases, shown before the `implement` gate; final documents written in the first DOCS phase, then the draft deleted.
-- Direct → final documents written before the code and named in the delivery.
+- Vibe → final documents written before the code and named in the delivery.
 
 ## Rules
 

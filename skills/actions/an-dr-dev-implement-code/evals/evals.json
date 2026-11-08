@@ -27,7 +27,7 @@
       "bucket": "explicit",
       "prompt": "Use an-dr-dev-implement-code. Make the smallest implementation change for this requirement.",
       "expected_skill": "an-dr-dev-implement-code",
-      "context": "Direct work is selected. A formatter returns the requested name but drops its trailing newline. The public signature must remain stable; a new formatting framework is excluded.",
+      "context": "Vibe work is selected. A formatter returns the requested name but drops its trailing newline. The public signature must remain stable; a new formatting framework is excluded.",
       "expected_behavior": [
         "Keeps the existing public interface and limits the change to the trailing-newline requirement.",
         "Verifies the changed result and does not introduce the excluded framework or unrelated refactoring."
@@ -68,7 +68,7 @@
       "bucket": "implicit",
       "prompt": "Make the smallest implementation change for this requirement.",
       "expected_skill": "an-dr-dev-implement-code",
-      "context": "Direct work is selected. A formatter returns the requested name but drops its trailing newline. The public signature must remain stable; a new formatting framework is excluded.",
+      "context": "Vibe work is selected. A formatter returns the requested name but drops its trailing newline. The public signature must remain stable; a new formatting framework is excluded.",
       "expected_behavior": [
         "Keeps the existing public interface and limits the change to the trailing-newline requirement.",
         "Verifies the changed result and does not introduce the excluded framework or unrelated refactoring."
@@ -109,7 +109,7 @@
       "bucket": "contextual",
       "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Make the smallest implementation change for this requirement.",
       "expected_skill": "an-dr-dev-implement-code",
-      "context": "Direct work is selected. A formatter returns the requested name but drops its trailing newline. The public signature must remain stable; a new formatting framework is excluded.",
+      "context": "Vibe work is selected. A formatter returns the requested name but drops its trailing newline. The public signature must remain stable; a new formatting framework is excluded.",
       "expected_behavior": [
         "Keeps the existing public interface and limits the change to the trailing-newline requirement.",
         "Verifies the changed result and does not introduce the excluded framework or unrelated refactoring."

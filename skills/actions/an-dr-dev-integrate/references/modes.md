@@ -1,4 +1,7 @@
-# Modes
+# Local modes
+
+Used only when the request path in [pull-request.md](pull-request.md) is unavailable. `Request` and `RebaseMerge` remain in the scripts for a user who asks for them by name; they are not offered.
+
 
 | Mode          | What it does                                                                                                                                                | Choose it when                                                                                    |
 | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |

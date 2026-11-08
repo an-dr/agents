@@ -33,7 +33,7 @@ pwsh <skill>/scripts/install-agents.ps1
 - Idempotent; edits only between its `agents-install` markers and replaces only links it recognises.
 - A repository with this clone as its own `agents/` submodule wins over the global install, because its `AGENTS.md` is nearer the work.
 - Re-run after adding a skill to the clone or moving the clone.
-- The managed block makes the policy conditional: a flow starts only when the repository has a root `AGENTS.md`/`CLAUDE.md` referencing it, has `.progress/workflow.json`, or the user names a flow or skill; otherwise every scratch directory would get Direct work or gated-flow setup.
+- The managed block makes the policy conditional: a flow starts only when the repository has a root `AGENTS.md`/`CLAUDE.md` referencing it, has `.progress/workflow.json`, or the user names a flow or skill; otherwise every scratch directory would get Vibe work or gated-flow setup.
 
 ## Verify
 

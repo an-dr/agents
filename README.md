@@ -4,7 +4,7 @@
 
 [![Checks](https://github.com/an-dr/agents/actions/workflows/checks.yml/badge.svg)](https://github.com/an-dr/agents/actions/workflows/checks.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE) [![AI Level 3](https://ai-level.dev/badge/standard/3.svg)](https://ai-level.dev/level-3) [![Agent Skills](https://img.shields.io/badge/format-Agent%20Skills-blueviolet)](https://agentskills.io/specification)
 
-**Transparent, human-controlled AI development. Not vibe coding.**
+**Transparent AI development: you choose how much of your attention each change gets.**
 
 </div>
 
@@ -22,7 +22,7 @@ Supported platforms:
 
 ## 🎯 Why
 
-Vibe coding hides the decisions. This repository makes them visible and puts you in charge of them: the agent records requests, questions, and design choices, and it stops at gates where only your explicit approval moves the work forward (intake, implement, integrate). Those decisions and approvals need to survive beyond a chat session, so this repository supplies shared engineering policy and skills, with an executable controller for gated work and saved state in `.progress/workflow.json`. Direct work uses the same engineering guidance without controller state or approval gates.
+Unseen decisions are the risk in AI development. This repository lets you choose, per task, where your attention goes: the result, the design and its documentation, or every step. Whatever you choose, the agent records requests, questions, and design choices, and it stops at gates where only your explicit approval moves the work forward. Those decisions and approvals need to survive beyond a chat session, so this repository supplies shared engineering policy and skills, with an executable controller for gated work, saved state in `.progress/workflow.json`, and a live progress page, `tmp-agent-progress.html`, at the host root.
 
 ## 📑 Contents
 
@@ -31,6 +31,7 @@ Vibe coding hides the decisions. This repository makes them visible and puts you
     - [📑 Contents](#-contents)
     - [📦 Installation](#-installation)
     - [🚀 Quickstart](#-quickstart)
+    - [🧭 Choosing a flow](#-choosing-a-flow)
     - [✨ Features](#-features)
     - [🔧 Configuration](#-configuration)
     - [📚 Documentation](#-documentation)
@@ -60,27 +61,115 @@ The installer adds a managed policy reference and links the skills into supporte
 Open the project you want to change in your AI tool and select a flow in the request:
 
 ```text
-Use Direct to fix the parser's handling of empty input. Preserve its public
-API and run the existing tests before committing the change. Do not push.
+Vibe: fix the parser's handling of empty input. Preserve its public API.
 ```
 
-| Flow          | Use it for                                    | User decisions                                                         |
-| ------------- | --------------------------------------------- | ---------------------------------------------------------------------- |
-| Direct        | Work completed on the current branch          | No workflow approval gates                                             |
-| Quick         | One self-contained pass on the current branch | Implementation and verification                                        |
-| Detailed      | Planned increments on a feature branch        | Intake, implementation, each increment's verification, and integration |
-| Detailed Auto | Planned increments with agent verification    | Intake, implementation, and final integration                          |
+| Flow        | Your attention goes to    | You decide                                                  | Where it lands                                                |
+| ----------- | ------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------- |
+| Vibe        | The result                | land, redo, or drop after trying it                         | `vibe/<slug>` branch, fast-forwarded into the base on land    |
+| Spec-driven | The design, then the docs | implement after the design talk, integrate after the review | `spec/<slug>` branch and pull request, or the base on request |
+| Supervised  | Every step                | intake, implement, each increment's verification, integrate | `supervised/<slug>` branch and pull request                   |
 
-For gated work, the [workflow controller skill](skills/actions/an-dr-dev-follow-workflow/SKILL.md) owns the commands and transitions. The agent resumes existing state instead of reconstructing it from conversation history. [AGENTS.md](AGENTS.md) defines the policy, including the separate review rule for changes to this process repository.
+Work branches are pushed to the remote automatically; the base branch never is. For gated work, the [workflow controller skill](skills/actions/an-dr-dev-follow-workflow/README.md) owns the commands and transitions. The agent resumes existing state instead of reconstructing it from conversation history. [AGENTS.md](AGENTS.md) defines the policy, including the separate review rule for changes to this process repository.
+
+## 🧭 Choosing a flow
+
+The three flows sit on one line: how much of your attention a change takes, and how much the agent does alone in exchange. You always name the flow yourself; the agent never infers it from task size.
+
+```mermaid
+quadrantChart
+  title Your attention versus agent autonomy
+  x-axis Little user attention --> Much user attention
+  y-axis Low agent autonomy --> High agent autonomy
+  quadrant-1 Supervised autonomy
+  quadrant-2 Hands-off
+  quadrant-3 Rare
+  quadrant-4 Pair work
+  Vibe: [0.15, 0.88]
+  Spec-driven: [0.5, 0.7]
+  Supervised: [0.85, 0.3]
+```
+
+```mermaid
+flowchart TD
+  S([Task that changes files]) --> A{Agree the design first?}
+  A -- No, show me the result --> V[Vibe]
+  A -- Yes --> C{Check every increment?}
+  C -- No, review docs and PR at the end --> SD[Spec-driven]
+  C -- Yes --> SU[Supervised]
+```
+
+**Vibe** — you judge the behaviour, not the code. The agent builds, tests, and reviews on a `vibe/<slug>` branch, then hands over one command, artefact, or screenshot that shows the change, what was tested, and its limits. You answer with one word.
+
+```mermaid
+sequenceDiagram
+  actor U as You
+  participant A as Agent
+  participant B as vibe/slug
+  participant M as base
+  U->>A: "Vibe: make X"
+  A->>B: build, test, review, commit, push
+  A->>U: demo command, what was tested, limits
+  alt land
+    U->>A: land
+    A->>M: rebase and fast-forward (not pushed)
+    A->>B: delete local and remote branch
+  else redo
+    U->>A: notes
+    A->>B: rework from the explanation
+  else drop
+    U->>A: drop
+    A->>B: delete, the base never saw it
+  end
+```
+
+**Spec-driven** — you shape the design; the agent does the rest. The documentation is the review surface: you check that the docs say what you agreed and that the behaviour matches the docs, with the change report and the pull request beside them.
+
+```mermaid
+stateDiagram-v2
+  direction LR
+  [*] --> DESIGN: you and the agent
+  DESIGN --> AUTONOMOUS: implement
+  state AUTONOMOUS {
+    direction LR
+    DOCS --> BUILD
+    BUILD --> VERIFY
+    VERIFY --> COMMIT
+    COMMIT --> DOCS: next increment
+  }
+  AUTONOMOUS --> FINAL_REVIEW: draft PR marked ready
+  FINAL_REVIEW --> AUTONOMOUS: PR comments
+  FINAL_REVIEW --> INTEGRATE: integrate
+  INTEGRATE --> [*]
+```
+
+**Supervised** — every increment waits for your verification before the next begins. Use it for architecture-heavy or risky work, where catching a wrong turn early is worth your time.
+
+```mermaid
+stateDiagram-v2
+  direction LR
+  [*] --> INTAKE
+  INTAKE --> DESIGN: intake
+  DESIGN --> SPLIT
+  SPLIT --> DOCS: implement
+  DOCS --> BUILD
+  BUILD --> VERIFY
+  VERIFY --> DOCS: you verify, next increment
+  VERIFY --> SUMMARY: last increment verified
+  SUMMARY --> INTEGRATE: integrate
+  INTEGRATE --> [*]
+```
+
+Spec-driven and Supervised integrate through their pull or merge request, using the repository's own merge method; without a supported platform the agent says what is missing and integrates locally.
 
 ## ✨ Features
 
 - Shared engineering instructions available across projects through one global installation.
-- Explicit workflow gates and resumable state for Quick, Detailed, and Detailed Auto.
+- Three flows by attention — Vibe, Spec-driven, Supervised — with explicit gates, resumable state, and a live progress page.
 - Self-contained skills for specification, implementation, debugging, testing, review, documentation, and Git operations.
 - HTML reports for code reviews, project overviews, and completed changes.
 - Deterministic script checks and separate, explicitly requested agent evaluations.
-- Integration choices that rebase before landing and remove workflow state from delivered history.
+- Integration through pull or merge requests with the repository's merge method, a local fallback that rebases before landing, and no workflow state in delivered history.
 
 ## 🔧 Configuration
 
@@ -215,7 +304,7 @@ flowchart LR
     an-dr-project-write-overview --> an-dr-concept-ai-slop & an-dr-files-build-report & an-dr-convention-html-report & an-dr-dev-write-documentation
     an-dr-text-analyze-slop --> an-dr-ai-send-message & an-dr-concept-ai-slop & an-dr-files-build-report & an-dr-convention-html-report
     an-dr-text-verify-claims --> an-dr-ai-send-message & an-dr-files-build-report & an-dr-convention-html-report
-    an-dr-convention-agent-skill --> an-dr-concept-clean-dependencies & an-dr-convention-script & an-dr-convention-agent-skill-testing
+    an-dr-convention-agent-skill --> an-dr-concept-clean-dependencies & an-dr-convention-script & an-dr-convention-agent-skill-testing & an-dr-convention-markdown
     an-dr-convention-code --> an-dr-concept-ai-slop & an-dr-concept-clean-dependencies & an-dr-convention-layout
     an-dr-convention-html-report --> an-dr-concept-dark-cockpit & an-dr-convention-artifact-layout
     an-dr-convention-layout --> an-dr-convention-artifact-layout

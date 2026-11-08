@@ -27,7 +27,7 @@
       "bucket": "explicit",
       "prompt": "Use an-dr-dev-follow-workflow. Resume the active workflow without changing its phase.",
       "expected_skill": "an-dr-dev-follow-workflow",
-      "context": "The user selected Quick. Controller status is DESIGN with an open question about compatibility; no implement approval was given.",
+      "context": "The user selected Spec-driven. Controller status is DESIGN with an open question about compatibility; no implement approval was given.",
       "expected_behavior": [
         "Uses controller status as authority and retains the open question.",
         "Does not write implementation, start another flow, or infer approval from the existing design discussion."
@@ -56,7 +56,7 @@
       "bucket": "implicit",
       "prompt": "Resume the active workflow without changing its phase.",
       "expected_skill": "an-dr-dev-follow-workflow",
-      "context": "The user selected Quick. Controller status is DESIGN with an open question about compatibility; no implement approval was given.",
+      "context": "The user selected Spec-driven. Controller status is DESIGN with an open question about compatibility; no implement approval was given.",
       "expected_behavior": [
         "Uses controller status as authority and retains the open question.",
         "Does not write implementation, start another flow, or infer approval from the existing design discussion."
@@ -85,7 +85,7 @@
       "bucket": "contextual",
       "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Resume the active workflow without changing its phase.",
       "expected_skill": "an-dr-dev-follow-workflow",
-      "context": "The user selected Quick. Controller status is DESIGN with an open question about compatibility; no implement approval was given.",
+      "context": "The user selected Spec-driven. Controller status is DESIGN with an open question about compatibility; no implement approval was given.",
       "expected_behavior": [
         "Uses controller status as authority and retains the open question.",
         "Does not write implementation, start another flow, or infer approval from the existing design discussion."

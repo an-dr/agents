@@ -1,6 +1,6 @@
 ---
 name: an-dr-dev-test
-description: Verify a code change in Direct or gated VERIFY. Use for relevant tests, boundary and failure cases, regression coverage, and reporting what testing can and cannot establish.
+description: Verify a code change in Vibe or gated VERIFY. Use for relevant tests, boundary and failure cases, regression coverage, and reporting what testing can and cannot establish.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
@@ -31,7 +31,7 @@ Defers: systematic bug hunts to `an-dr-dev-implement-adversarial-ut`, finding le
 - Report failure cases, untested edges, documentation gaps, scope, and documentation consistency.
 - Failures and gaps first, each with its `an-dr-ai-send-message` finding level; passing suites as one count line.
 - End with the next check or fix: what would resolve the first failure and what it needs.
-- Quick and Detailed → the user owns the verdict. Detailed Auto and Direct → record the verdict before moving on.
+- Supervised → the user owns the verdict. Spec-driven and Vibe → record the verdict before moving on; Vibe also names what the user can run to see it.
 
 ## Rules
 

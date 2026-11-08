@@ -1,6 +1,6 @@
 # At the integration gate
 
-In a Detailed flow, `SUMMARY` runs this skill for the full branch after every increment is committed and before the final approval gate.
+In a Spec-driven or Supervised flow, `SUMMARY` runs this skill for the full branch after every increment is committed and before the final approval gate.
 
 ## Before writing
 
@@ -30,4 +30,4 @@ Write the report, then return this exact shape with the report's link or path:
 ```
 
 - In `Requests delivered` and `How to verify`, use `an-dr-ai-send-message` finding levels: unmet requests and known failures first with their level glyph, delivered requests as plain lines.
-- The summary never grants integration permission; it is what the user reads before the `integrate` approval (at `SUMMARY` in Detailed, `FINAL_REVIEW` in Detailed Auto). The integration mode question follows as a separate decision.
+- The summary never grants integration permission; it is what the user reads before the `integrate` approval (at `SUMMARY` in Supervised, `FINAL_REVIEW` in Spec-driven). It is linked from the pull or merge request; a local integration mode question, when needed, follows as a separate decision.

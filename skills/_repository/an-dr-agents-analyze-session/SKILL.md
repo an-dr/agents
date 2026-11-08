@@ -1,6 +1,6 @@
 ---
 name: an-dr-agents-analyze-session
-description: Find where the process itself caused friction in a finished flow and propose AGENTS.md or skill amendments for the user's approval. Use after a Detailed flow's integration or when the user asks for a retrospective.
+description: Find where the process itself caused friction in a finished flow and propose AGENTS.md or skill amendments for the user's approval. Use after a Spec-driven or Supervised flow's integration or when the user asks for a retrospective.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
