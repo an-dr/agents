@@ -70,7 +70,7 @@ Assert-Check 'concept name lacks its type' 1 "is a concept, so its name needs 'c
 
 New-Fixture
 Set-Content -LiteralPath (Join-Path $fixtureRoot 'skills/concepts/an-dr-concept-ai-slop/helper.ps1') -Value '# helper'
-Assert-Check 'concept with a script' 1 'a concept allows only SKILL.md and evals/'
+Assert-Check 'concept with a script' 1 'a concept allows only SKILL.md, README.md, and evals/'
 
 New-Fixture
 Edit-Fixture 'skills/actions/an-dr-dev-test/SKILL.md' 'an-dr.dependencies: ' 'an-dr.dependencies: an-dr-agents-repo-install '

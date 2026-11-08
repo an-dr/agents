@@ -1,6 +1,6 @@
 # Skills
 
-Reusable skills in the [Agent Skills](https://agentskills.io/specification) format. Each skill has `SKILL.md` for the agent, `README.md` explaining it to people (rolling out; see the [skill convention](conventions/an-dr-convention-agent-skill/references/readme.md)), and `evals/evals.json`; deterministic mechanical work may also use PowerShell 7 scripts under `scripts/`. Script tests live in `scripts/tests/test-*.ps1` and run through the skill's `scripts/tests/run.ps1`. A skill sits one level below its category folder, and the category says how the agent uses it.
+Reusable skills in the [Agent Skills](https://agentskills.io/specification) format. Each skill has `SKILL.md` for the agent, `README.md` explaining it to people — what it is for, how it works, with diagrams — and `evals/evals.json`; deterministic mechanical work may also use PowerShell 7 scripts under `scripts/`. Script tests live in `scripts/tests/test-*.ps1` and run through the skill's `scripts/tests/run.ps1`. A skill sits one level below its category folder, and the category says how the agent uses it.
 
 ## Actions
 

@@ -35,9 +35,8 @@ function Get-Tokens([string]$Text) { [int][Math]::Round($Text.Length / 4) }
 
 $checked = 0
 foreach ($file in Get-ChildItem -Path (Join-Path $skillsDir '*/*/SKILL.md') | Sort-Object FullName) {
-    # A warning until every skill has its person-facing README; then a problem.
     if (-not (Test-Path -LiteralPath (Join-Path $file.DirectoryName 'README.md'))) {
-        Add-Warning $file.Directory.Name 'README.md is missing; see references/readme.md.'
+        Add-Problem $file.Directory.Name 'README.md is missing; see references/readme.md.'
     }
     $name = $file.Directory.Name
     $checked++

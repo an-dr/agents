@@ -144,8 +144,8 @@ foreach ($name in $folders) {
             if ($type -ceq 'convention' -and $name -cnotmatch '(^|-)convention-') { Add-Problem $where "is a convention, so its name needs 'convention-'" }
         }
         if ($type -ceq 'concept') {
-            $extra = @(Get-ChildItem -LiteralPath $skillPaths[$name].Path -Force | Where-Object { $_.Name -cne 'SKILL.md' -and -not ($_.Name -ceq 'evals' -and $_.PSIsContainer) })
-            if ($extra.Count -gt 0) { Add-Problem $where "is a concept and holds $($extra[0].Name); a concept allows only SKILL.md and evals/" }
+            $extra = @(Get-ChildItem -LiteralPath $skillPaths[$name].Path -Force | Where-Object { $_.Name -cnotin @('SKILL.md', 'README.md') -and -not ($_.Name -ceq 'evals' -and $_.PSIsContainer) })
+            if ($extra.Count -gt 0) { Add-Problem $where "is a concept and holds $($extra[0].Name); a concept allows only SKILL.md, README.md, and evals/" }
         }
     }
 

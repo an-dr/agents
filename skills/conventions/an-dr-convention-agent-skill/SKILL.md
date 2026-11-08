@@ -15,11 +15,11 @@ Defers: scripts to `an-dr-convention-script`, test packaging to `an-dr-conventio
 
 ## Types
 
-| Type       | Holds                                                                              | Agent uses it by                                   | Contains                                                     |
-| ---------- | ---------------------------------------------------------------------------------- | -------------------------------------------------- | ------------------------------------------------------------ |
-| Action     | A procedure that produces a result                                                 | running it                                         | `SKILL.md`, references, scripts, assets, tests               |
-| Concept    | A principle: what it requires, where its boundary is, how to recognise a violation | reading it when its subject is in play             | `SKILL.md` and evals; no production scripts                  |
-| Convention | The format rules for an artifact: what a correct one looks like                    | reading it when writing or reviewing that artifact | `SKILL.md`, references, tests, and the scripts that check it |
+| Type       | Holds                                                                              | Agent uses it by                                   | Contains                                                      |
+| ---------- | ---------------------------------------------------------------------------------- | -------------------------------------------------- | ------------------------------------------------------------- |
+| Action     | A procedure that produces a result                                                 | running it                                         | `SKILL.md`, `README.md`, references, scripts, assets, tests   |
+| Concept    | A principle: what it requires, where its boundary is, how to recognise a violation | reading it when its subject is in play             | `SKILL.md`, `README.md`, and evals; no production scripts     |
+| Convention | The format rules for an artifact: what a correct one looks like                    | reading it when writing or reviewing that artifact | `SKILL.md`, `README.md`, references, tests, and check scripts |
 
 - Concepts and conventions only describe: declarative statements, no steps, no instructions to the agent, no commands to run; when to apply one, what to run, and what to tell the user belong to the action that uses it.
 - A concept has no production scripts and names no action; its tests assess application of the principle; presentation details such as colours and glyphs belong to an implementor.
@@ -47,7 +47,7 @@ Layers: description in every session → `SKILL.md` on use → reference file on
 ## Check
 
 - `scripts/check-registration.ps1` verifies placement, registration, types against folders, and declared dependencies, and lists dependency cycles, which fail with `-FailOnCycle`; `-RequireTests` requires `evals/` in every skill.
-- `scripts/check-skills.ps1` verifies the frontmatter, description, title, section order, and reference links, and warns on size, on the size.md wording rules it can detect (description sentences, body lines, intro paragraph, bold rule names), on a command block in a concept or convention, and on a skill without `README.md`.
+- `scripts/check-skills.ps1` verifies the frontmatter, description, title, section order, reference links, and that `README.md` exists, and warns on size, on the size.md wording rules it can detect (description sentences, body lines, intro paragraph, bold rule names), and on a command block in a concept or convention.
 - `scripts/check-skills-ref.ps1` verifies the format through `skills-ref validate`. Without `skills-ref` it prints the install command and exits 0; with `-Require` or in CI it exits 1.
 
 Each takes `-Root <repository>`, prints what it found, and exits non-zero on a problem. Their regression tests are in `scripts/tests/`.
