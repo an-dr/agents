@@ -155,8 +155,7 @@ flowchart LR
         an-dr-files-build-report
         an-dr-files-make-screengif
         an-dr-files-make-screenshot
-        an-dr-git-commit
-        an-dr-git-fix-commit-messages
+        an-dr-git-modify-history
         an-dr-project-write-overview
         an-dr-text-analyze-slop
         an-dr-text-verify-claims
@@ -185,9 +184,9 @@ flowchart LR
     end
     an-dr-agents-analyze-session --> an-dr-agents-repo-modify
     an-dr-agents-repo-build-dependencies --> an-dr-ai-send-message & an-dr-convention-agent-skill
-    an-dr-agents-repo-convention-skills --> an-dr-ai-skill-implement-test & an-dr-ai-skill-test & an-dr-convention-agent-skill & an-dr-dev-test & an-dr-dev-write-documentation & an-dr-git-commit & an-dr-convention-agent-skill-testing
+    an-dr-agents-repo-convention-skills --> an-dr-ai-skill-implement-test & an-dr-ai-skill-test & an-dr-convention-agent-skill & an-dr-dev-test & an-dr-dev-write-documentation & an-dr-convention-agent-skill-testing
     an-dr-agents-repo-install --> an-dr-ai-skill-test
-    an-dr-agents-repo-modify --> an-dr-agents-repo-convention-skills & an-dr-agents-repo-install & an-dr-agents-repo-verify-installation & an-dr-ai-review-instruction & an-dr-ai-send-message & an-dr-ai-skill-implement-test & an-dr-ai-skill-test & an-dr-ai-write-instruction & an-dr-convention-agent-skill & an-dr-convention-markdown & an-dr-convention-script & an-dr-git-commit
+    an-dr-agents-repo-modify --> an-dr-agents-repo-convention-skills & an-dr-agents-repo-install & an-dr-agents-repo-verify-installation & an-dr-ai-review-instruction & an-dr-ai-send-message & an-dr-ai-skill-implement-test & an-dr-ai-skill-test & an-dr-ai-write-instruction & an-dr-convention-agent-skill & an-dr-convention-markdown & an-dr-convention-script & an-dr-git-modify-history
     an-dr-agents-repo-verify-installation --> an-dr-agents-repo-install & an-dr-ai-skill-implement-test & an-dr-ai-skill-test & an-dr-convention-commit-message
     an-dr-ai-review-instruction --> an-dr-ai-send-message
     an-dr-ai-send-message --> an-dr-concept-dark-cockpit & an-dr-files-build-report
@@ -199,10 +198,10 @@ flowchart LR
     an-dr-dev-analyze-slop --> an-dr-ai-review-instruction & an-dr-ai-send-message & an-dr-concept-ai-slop & an-dr-files-build-report & an-dr-convention-html-report
     an-dr-dev-assign-ai-level --> an-dr-ai-send-message & an-dr-convention-ai-level
     an-dr-dev-design --> an-dr-ai-send-message & an-dr-convention-adr & an-dr-convention-use-case & an-dr-dev-write-documentation
-    an-dr-dev-follow-workflow --> an-dr-ai-send-message & an-dr-convention-adr & an-dr-dev-analyze-changes & an-dr-dev-debug & an-dr-dev-design & an-dr-dev-implement-code & an-dr-dev-implement-pipeline & an-dr-dev-integrate & an-dr-dev-review & an-dr-dev-test & an-dr-dev-write-documentation & an-dr-dev-write-readme & an-dr-dev-write-specification & an-dr-git-commit
+    an-dr-dev-follow-workflow --> an-dr-ai-send-message & an-dr-convention-adr & an-dr-dev-analyze-changes & an-dr-dev-debug & an-dr-dev-design & an-dr-dev-implement-code & an-dr-dev-implement-pipeline & an-dr-dev-integrate & an-dr-dev-review & an-dr-dev-test & an-dr-dev-write-documentation & an-dr-dev-write-readme & an-dr-dev-write-specification & an-dr-git-modify-history
     an-dr-dev-implement-code --> an-dr-convention-adr & an-dr-convention-code & an-dr-convention-layout & an-dr-dev-write-documentation
     an-dr-dev-implement-pipeline --> an-dr-ai-send-message & an-dr-convention-code
-    an-dr-dev-integrate --> an-dr-ai-send-message & an-dr-convention-commit-message & an-dr-git-commit
+    an-dr-dev-integrate --> an-dr-ai-send-message & an-dr-convention-commit-message & an-dr-git-modify-history
     an-dr-dev-review --> an-dr-ai-send-message & an-dr-concept-ai-slop & an-dr-concept-clean-dependencies & an-dr-concept-evidence-grounding & an-dr-convention-artifact-layout & an-dr-convention-code & an-dr-convention-html-report & an-dr-convention-layout
     an-dr-dev-test --> an-dr-ai-send-message & an-dr-dev-implement-adversarial-ut
     an-dr-dev-write-documentation --> an-dr-ai-send-message & an-dr-concept-ai-slop & an-dr-convention-adr & an-dr-convention-markdown & an-dr-convention-use-case
@@ -212,8 +211,7 @@ flowchart LR
     an-dr-files-build-report --> an-dr-convention-artifact-layout & an-dr-convention-html-report
     an-dr-files-make-screengif --> an-dr-files-make-screenshot
     an-dr-files-make-screenshot --> an-dr-files-build-report
-    an-dr-git-commit --> an-dr-convention-commit-message
-    an-dr-git-fix-commit-messages --> an-dr-convention-commit-message
+    an-dr-git-modify-history --> an-dr-convention-commit-message
     an-dr-project-write-overview --> an-dr-concept-ai-slop & an-dr-files-build-report & an-dr-convention-html-report & an-dr-dev-write-documentation
     an-dr-text-analyze-slop --> an-dr-ai-send-message & an-dr-concept-ai-slop & an-dr-files-build-report & an-dr-convention-html-report
     an-dr-text-verify-claims --> an-dr-ai-send-message & an-dr-files-build-report & an-dr-convention-html-report

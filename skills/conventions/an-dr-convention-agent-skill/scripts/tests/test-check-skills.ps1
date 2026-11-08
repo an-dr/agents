@@ -80,12 +80,12 @@ Add-Content -LiteralPath (Join-Path $fixtureRoot 'skills/actions/an-dr-dev-debug
 Assert-Check 'broken reference link' 1 'links references/logs.md, which does not exist'
 
 New-Fixture
-Edit-Fixture 'skills/actions/an-dr-git-commit/SKILL.md' 'allowed-tools: PowerShell' "allowed-tools: PowerShell, Read`nuser-invocable: false"
+Edit-Fixture 'skills/actions/an-dr-git-modify-history/SKILL.md' 'allowed-tools: PowerShell' "allowed-tools: PowerShell, Read`nuser-invocable: false"
 Assert-Check 'unknown key and comma tools' 1 "frontmatter key 'user-invocable' is not part of the Agent Skills format"
 Assert-Check 'comma separated tools' 1 'allowed-tools must be a space-separated string'
 
 New-Fixture
-Edit-Fixture 'skills/actions/an-dr-git-commit/SKILL.md' 'description: Compose and record' 'description: Note: compose and record'
+Edit-Fixture 'skills/actions/an-dr-git-modify-history/SKILL.md' 'description: Change a' 'description: Note: change a'
 Assert-Check 'yaml colon in description' 1 'invalid in an unquoted YAML value'
 
 New-Fixture

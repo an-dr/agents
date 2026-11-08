@@ -141,7 +141,7 @@ else {
     Add-Result -Scope 'repo' -Check 'policy' -Status 'info' -Detail 'no agents/ submodule; the policy must come from a global install'
 }
 
-# --- Commit scopes, which an-dr-git-commit's checker requires ---
+# --- Commit scopes, which an-dr-git-modify-history's checker requires ---
 if ($rootInstructions) {
     $scopeSource = @($rootInstructions | Where-Object {
         $c = Get-Content -LiteralPath $_ -Raw
@@ -152,7 +152,7 @@ if ($rootInstructions) {
         Add-Result -Scope 'repo' -Check 'commit-scopes' -Status 'pass' -Detail "declared in $names"
     }
     else {
-        Add-Result -Scope 'repo' -Check 'commit-scopes' -Status 'warn' -Detail 'no "## Commit scopes" section; an-dr-git-commit will reject every scoped subject'
+        Add-Result -Scope 'repo' -Check 'commit-scopes' -Status 'warn' -Detail 'no "## Commit scopes" section; an-dr-git-modify-history will reject every scoped subject'
     }
 }
 

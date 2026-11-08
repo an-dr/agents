@@ -48,8 +48,8 @@ Assert-Check 'missing requires' 1 "does not start with '#Requires -Version 7'"
 New-Fixture
 # Joined at run time so the checker does not flag this test file itself.
 $up = '..' + '/../..'
-Edit-Fixture 'skills/actions/an-dr-dev-integrate/scripts/integrate-2-squash.ps1' '#Requires -Version 7' "#Requires -Version 7`nImport-Module (Join-Path `$PSScriptRoot '$up/actions/an-dr-git-commit/scripts/new-commit.ps1')"
-Assert-Check 'sibling guess' 1 'guesses where an-dr-git-commit is installed'
+Edit-Fixture 'skills/actions/an-dr-dev-integrate/scripts/integrate-2-squash.ps1' '#Requires -Version 7' "#Requires -Version 7`nImport-Module (Join-Path `$PSScriptRoot '$up/actions/an-dr-git-modify-history/scripts/new-commit.ps1')"
+Assert-Check 'sibling guess' 1 'guesses where an-dr-git-modify-history is installed'
 
 New-Fixture
 Rename-Item -LiteralPath (Join-Path $fixtureRoot 'skills/actions/an-dr-dev-integrate/scripts/tests/run.ps1') -NewName 'runner-disabled.ps1'

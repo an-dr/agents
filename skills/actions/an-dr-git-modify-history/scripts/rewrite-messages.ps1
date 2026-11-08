@@ -71,7 +71,7 @@ if ($errorCount -gt 0) {
 }
 
 $oldTip = (@(Invoke-GitCommand -Arguments @('rev-parse', 'HEAD')) -join '').Trim()
-$backupRef = "refs/backup/an-dr-git-fix-commit-messages/$($target.Branch)/$(Get-Date -Format 'yyyyMMdd-HHmmss')"
+$backupRef = "refs/backup/an-dr-git-modify-history/$($target.Branch)/$(Get-Date -Format 'yyyyMMdd-HHmmss')"
 Invoke-GitCommand -Arguments @('update-ref', $backupRef, $oldTip) | Out-Null
 
 $messagePath = [IO.Path]::GetTempFileName()

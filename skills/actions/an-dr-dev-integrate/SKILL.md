@@ -7,12 +7,12 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.1.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-send-message an-dr-convention-commit-message an-dr-git-commit
+  an-dr.dependencies: an-dr-ai-send-message an-dr-convention-commit-message an-dr-git-modify-history
 ---
 
 # Integrate
 
-Defers: questions to `an-dr-ai-send-message`; messages to `an-dr-git-commit`, checked by `an-dr-convention-commit-message`.
+Defers: questions to `an-dr-ai-send-message`; messages to `an-dr-git-modify-history`, checked by `an-dr-convention-commit-message`.
 
 ## Ask the mode
 
@@ -43,7 +43,7 @@ Scripts are in `<skill>/scripts/`; each exits non-zero on failure. `<an-dr-conve
 4. Run step 3 (fetch + rebase); fix conflicts where it pauses.
 5. Run step 1 again, then:
    - `Commits` → step 4 `-Mode Commits`.
-   - `Squash`, `Request` → step 4 with `-Message`; it collapses itself, step 2 is not rerun. Compose the message with `an-dr-git-commit`; it is validated before anything is rewritten.
+   - `Squash`, `Request` → step 4 with `-Message`; it collapses itself, step 2 is not rerun. Compose the message with `an-dr-git-modify-history`; it is validated before anything is rewritten.
    - `Regroup` → read [references/regroup.md](references/regroup.md), then step 4 `-Mode Commits`.
    - `RebaseMerge` → read [references/rebase-merge.md](references/rebase-merge.md).
 

@@ -7,12 +7,12 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.2.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-agents-repo-convention-skills an-dr-agents-repo-install an-dr-agents-repo-verify-installation an-dr-ai-review-instruction an-dr-ai-send-message an-dr-ai-skill-implement-test an-dr-ai-skill-test an-dr-ai-write-instruction an-dr-convention-agent-skill an-dr-convention-markdown an-dr-convention-script an-dr-git-commit
+  an-dr.dependencies: an-dr-agents-repo-convention-skills an-dr-agents-repo-install an-dr-agents-repo-verify-installation an-dr-ai-review-instruction an-dr-ai-send-message an-dr-ai-skill-implement-test an-dr-ai-skill-test an-dr-ai-write-instruction an-dr-convention-agent-skill an-dr-convention-markdown an-dr-convention-script an-dr-git-modify-history
 ---
 
 # Modify the agents repository
 
-Defers: rule writing to `an-dr-ai-write-instruction`, tests to `an-dr-ai-skill-implement-test` and `an-dr-ai-skill-test`, commits to `an-dr-git-commit`.
+Defers: rule writing to `an-dr-ai-write-instruction`, tests to `an-dr-ai-skill-implement-test` and `an-dr-ai-skill-test`, commits to `an-dr-git-modify-history`.
 
 ## Locate the clone
 
@@ -57,9 +57,9 @@ Present before asking for anything; the summary is the deliverable even if no co
 
 Only after the user approves the summary in their own words; approval covers this change only.
 
-1. Commit through `an-dr-git-commit` in the clone, on its current branch: no flow, no feature branch, no `.progress/`.
+1. Commit through `an-dr-git-modify-history` in the clone, on its current branch: no flow, no feature branch, no `.progress/`.
 2. Push that branch.
-3. Clone nested in the host → its gitlink moved. Follow the host's instructions for submodule pointers, committing through `an-dr-git-commit` when they say so; if they say nothing, leave it uncommitted and tell the user it waits in the host repository.
+3. Clone nested in the host → its gitlink moved. Follow the host's instructions for submodule pointers, committing through `an-dr-git-modify-history` when they say so; if they say nothing, leave it uncommitted and tell the user it waits in the host repository.
 
 ## Rules
 

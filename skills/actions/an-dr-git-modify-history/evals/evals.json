@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "skill_name": "an-dr-git-commit",
+  "skill_name": "an-dr-git-modify-history",
   "environment": {
     "host": "current",
     "model": "current",
@@ -25,8 +25,8 @@
     {
       "id": "BASE-001",
       "bucket": "explicit",
-      "prompt": "Use an-dr-git-commit. Prepare to commit verified work while preserving unrelated edits.",
-      "expected_skill": "an-dr-git-commit",
+      "prompt": "Use an-dr-git-modify-history. Prepare to commit verified work while preserving unrelated edits.",
+      "expected_skill": "an-dr-git-modify-history",
       "context": "The requested formatter change is verified. A separate config file was already dirty. The user did not request pushing.",
       "expected_behavior": [
         "Checks recent history and stages only the verified change with the repository's validated message format.",
@@ -55,7 +55,7 @@
       "id": "DISCOVERY-IMPLICIT",
       "bucket": "implicit",
       "prompt": "Prepare to commit verified work while preserving unrelated edits.",
-      "expected_skill": "an-dr-git-commit",
+      "expected_skill": "an-dr-git-modify-history",
       "context": "The requested formatter change is verified. A separate config file was already dirty. The user did not request pushing.",
       "expected_behavior": [
         "Checks recent history and stages only the verified change with the repository's validated message format.",
@@ -84,7 +84,7 @@
       "id": "DISCOVERY-CONTEXTUAL",
       "bucket": "contextual",
       "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Prepare to commit verified work while preserving unrelated edits.",
-      "expected_skill": "an-dr-git-commit",
+      "expected_skill": "an-dr-git-modify-history",
       "context": "The requested formatter change is verified. A separate config file was already dirty. The user did not request pushing.",
       "expected_behavior": [
         "Checks recent history and stages only the verified change with the repository's validated message format.",
@@ -113,6 +113,106 @@
       "id": "DISCOVERY-NEGATIVE",
       "bucket": "negative",
       "prompt": "Explain the supplied git status entry M app.py. Do not stage or commit files.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "MESSAGES-BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-git-modify-history. Plan message-only repair of these unpushed commits.",
+      "expected_skill": "an-dr-git-modify-history",
+      "context": "Two commit subjects violate the convention. Their file trees, authors, and dates must remain unchanged. No remote rewrite was requested.",
+      "expected_behavior": [
+        "Preserves commit trees, authors, and dates while limiting the proposed rewrite to messages.",
+        "Does not silently force-push or alter file contents."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Preserves commit trees, authors, and dates while limiting the proposed rewrite to messages."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not silently force-push or alter file contents."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "MESSAGES-DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Plan message-only repair of these unpushed commits.",
+      "expected_skill": "an-dr-git-modify-history",
+      "context": "Two commit subjects violate the convention. Their file trees, authors, and dates must remain unchanged. No remote rewrite was requested.",
+      "expected_behavior": [
+        "Preserves commit trees, authors, and dates while limiting the proposed rewrite to messages.",
+        "Does not silently force-push or alter file contents."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Preserves commit trees, authors, and dates while limiting the proposed rewrite to messages."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not silently force-push or alter file contents."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "MESSAGES-DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Plan message-only repair of these unpushed commits.",
+      "expected_skill": "an-dr-git-modify-history",
+      "context": "Two commit subjects violate the convention. Their file trees, authors, and dates must remain unchanged. No remote rewrite was requested.",
+      "expected_behavior": [
+        "Preserves commit trees, authors, and dates while limiting the proposed rewrite to messages.",
+        "Does not silently force-push or alter file contents."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Preserves commit trees, authors, and dates while limiting the proposed rewrite to messages."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not silently force-push or alter file contents."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "MESSAGES-DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Explain what a commit hash identifies. Do not review or rewrite commit messages.",
       "expected_skill": null,
       "context": "Only the requested response is in scope. No file changes are requested.",
       "expected_behavior": [

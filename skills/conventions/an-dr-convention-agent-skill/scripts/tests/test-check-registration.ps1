@@ -78,8 +78,8 @@ Add-FixtureText 'skills/actions/an-dr-dev-test/SKILL.md' 'See `an-dr-agents-repo
 Assert-Check 'general skill depends on a repository skill' 1 'a skill of the repository itself'
 
 New-Fixture
-Edit-Fixture 'skills/actions/an-dr-dev-integrate/SKILL.md' 'commit-message an-dr-git-commit' 'commit-message'
-Assert-Check 'undeclared skill' 1 'names an-dr-git-commit but does not declare it in dependencies'
+Edit-Fixture 'skills/actions/an-dr-dev-integrate/SKILL.md' 'commit-message an-dr-git-modify-history' 'commit-message'
+Assert-Check 'undeclared skill' 1 'names an-dr-git-modify-history but does not declare it in dependencies'
 
 New-Fixture
 Edit-Fixture 'skills/actions/an-dr-dev-implement-adversarial-ut/SKILL.md' 'an-dr.dependencies: none' 'an-dr.dependencies: an-dr-dev-debug'

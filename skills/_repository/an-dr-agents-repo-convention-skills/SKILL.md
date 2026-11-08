@@ -6,7 +6,7 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.4.0"
   an-dr.type: convention
-  an-dr.dependencies: an-dr-ai-skill-implement-test an-dr-ai-skill-test an-dr-convention-agent-skill an-dr-dev-test an-dr-dev-write-documentation an-dr-git-commit an-dr-convention-agent-skill-testing
+  an-dr.dependencies: an-dr-ai-skill-implement-test an-dr-ai-skill-test an-dr-convention-agent-skill an-dr-dev-test an-dr-dev-write-documentation an-dr-convention-agent-skill-testing
 ---
 
 # Convention: this repository's skills
@@ -31,7 +31,7 @@ Groups: `ai` agent instructions and the conversation with the user; `ai-skill` i
 
 - The longest registered group matches before the verb is read.
 - Verb: one lowercase word from the Verbs table.
-- Noun: what the action acts on, one or more words; absent when group and verb already say it (`an-dr-dev-write-documentation`, `an-dr-git-commit`).
+- Noun: what the action acts on, one or more words; absent when group and verb already say it (`an-dr-dev-write-documentation`, `an-dr-dev-test`).
 - A skill sits in the folder of its type; the repository's own skills sit in `_repository/`.
 
 ## Verbs
