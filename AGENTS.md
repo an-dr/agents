@@ -85,6 +85,7 @@ Load `an-dr-dev-follow-workflow` for phase responsibilities and transitions. It 
 - When the user rejects output, redo the delivery from its explanation rather than layering a patch over the rejected approach.
 - Hand over work the user can check without assembling it first. A project that produces an executable is built as part of the delivery and the artefact's path is named, so trying it is one command; anything else names the single command that demonstrates the change. Reporting a change the user cannot run is reporting half of it.
 - End a big change with the `an-dr-dev-analyze-changes` HTML report: a Spec-driven or Supervised flow, or any delivery that adds a component, adds an ADR, or changes the architecture. End every other code delivery with a one-line offer to produce it.
+- A new point, principle, or piece of information can affect the whole document or change. Revise every affected place so the result stays consistent and correct; never deliver a minimal additive change that leaves the rest contradicting it.
 - Push back on workarounds. If no clean solution exists, explain the compromise and let the user decide.
 
 ## Kaizen: fix the cause, not just the symptom
