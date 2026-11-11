@@ -4,7 +4,7 @@ description: The naming, metadata, and test rules of this repository's skills - 
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.4.0"
+  version: "1.5.0"
   an-dr.type: convention
   an-dr.dependencies: an-dr-ai-skill-implement-test an-dr-ai-skill-test an-dr-convention-agent-skill an-dr-dev-test an-dr-dev-write-documentation an-dr-convention-agent-skill-testing
 ---
@@ -44,6 +44,7 @@ A verb is added here before use, with a meaning distinct from the others; `check
 | `assign`    | settle a value for a subject with the user and record it where it belongs |
 | `build`     | assemble a derived artifact from its sources                              |
 | `commit`    | record work in repository history                                         |
+| `collect`   | gather information from a source for a task                               |
 | `debug`     | find the cause of a concrete failure                                      |
 | `design`    | explore a decision and its options before it is made                      |
 | `fix`       | correct a defect that is known                                            |

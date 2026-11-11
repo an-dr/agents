@@ -219,6 +219,7 @@ flowchart LR
         an-dr-agents-repo-verify-installation
     end
     subgraph g_actions["Actions"]
+        an-dr-ai-collect-input
         an-dr-ai-review-instruction
         an-dr-ai-send-message
         an-dr-ai-skill-implement-test
@@ -277,6 +278,7 @@ flowchart LR
     an-dr-agents-repo-install --> an-dr-ai-skill-test
     an-dr-agents-repo-modify --> an-dr-agents-repo-convention-skills & an-dr-agents-repo-install & an-dr-agents-repo-verify-installation & an-dr-ai-review-instruction & an-dr-ai-send-message & an-dr-ai-skill-implement-test & an-dr-ai-skill-test & an-dr-ai-write-instruction & an-dr-convention-agent-skill & an-dr-convention-markdown & an-dr-convention-script & an-dr-git-modify-history
     an-dr-agents-repo-verify-installation --> an-dr-agents-repo-install & an-dr-ai-skill-implement-test & an-dr-ai-skill-test & an-dr-convention-commit-message
+    an-dr-ai-collect-input --> an-dr-ai-send-message & an-dr-concept-ai-slop & an-dr-concept-evidence-grounding
     an-dr-ai-review-instruction --> an-dr-ai-send-message
     an-dr-ai-send-message --> an-dr-concept-dark-cockpit & an-dr-files-build-report
     an-dr-ai-skill-implement-test --> an-dr-ai-write-instruction & an-dr-convention-agent-skill & an-dr-convention-script & an-dr-convention-agent-skill-testing

@@ -8,6 +8,7 @@ Procedures the agent runs. They produce a result, use scripts where the work is 
 
 | Skill                                                                                         | When to use                                                                                                            |
 | --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| [`an-dr-ai-collect-input`](actions/an-dr-ai-collect-input/SKILL.md)                           | Interview for task input after drafting from known facts, with coverage estimates and an option to stop.               |
 | [`an-dr-ai-review-instruction`](actions/an-dr-ai-review-instruction/SKILL.md)                 | Review agent instructions for contradictions, weak rules, and wasted context.                                          |
 | [`an-dr-ai-send-message`](actions/an-dr-ai-send-message/SKILL.md)                             | Ask questions and confirmations through the host's UI, fall back to text, and render tables that work everywhere.      |
 | [`an-dr-ai-skill-implement-test`](actions/an-dr-ai-skill-implement-test/SKILL.md)             | Implement script tests and behavior cases; run cheap checks without starting agent evaluations.                        |

@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-ai-collect-input",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": ["windows", "linux", "macos"],
+    "tools": ["git", "pwsh"],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": ["target-and-dependencies"],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "DRAFT-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-ai-collect-input to interview me before writing a short customer announcement about our new appointment booking service. We serve dental clinics; the launch date and pricing are not yet provided.",
+      "expected_skill": "an-dr-ai-collect-input",
+      "context": "A native question tool is available. The user can answer in free text or stop at any point.",
+      "expected_behavior": ["Uses the known audience to identify consequential gaps without asking for it again or inventing a launch date or pricing.", "Starts each question with estimated input coverage and allows the user to stop the interview."],
+      "assertions": [
+        {"type": "invocation_check", "expected": true},
+        {"type": "llm_judge", "rubric": "Uses the known audience to identify consequential gaps without asking for it again or inventing a launch date or pricing."},
+        {"type": "llm_judge", "rubric": "Starts each question with estimated input coverage and allows the user to stop the interview."}
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Interview me about what you need before drafting a customer announcement for our dental appointment booking service.",
+      "expected_skill": "an-dr-ai-collect-input",
+      "context": "A native question tool is available; launch date and pricing have not been supplied.",
+      "expected_behavior": ["Identifies important unknowns and asks questions with estimated input coverage and a way to stop."],
+      "assertions": [
+        {"type": "invocation_check", "expected": true},
+        {"type": "llm_judge", "rubric": "Identifies important unknowns and asks questions with estimated input coverage and a way to stop."}
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "Our team meeting moved to Friday. Before you write an announcement for our dental appointment booking service, please interview me about what is missing.",
+      "expected_skill": "an-dr-ai-collect-input",
+      "context": "A native question tool is available; launch date and pricing have not been supplied.",
+      "expected_behavior": ["Focuses the interview on consequential gaps rather than unrelated meeting details and shows estimated coverage for each question."],
+      "assertions": [
+        {"type": "invocation_check", "expected": true},
+        {"type": "llm_judge", "rubric": "Focuses the interview on consequential gaps rather than unrelated meeting details and shows estimated coverage for each question."}
+      ],
+      "runs": 1
+    },
+    {
+      "id": "STOP-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-ai-collect-input for a customer announcement. I want to stop the interview now; continue with what you know. Our service books dental appointments.",
+      "expected_skill": "an-dr-ai-collect-input",
+      "context": "No launch date, price, or user approval for external publication has been supplied.",
+      "expected_behavior": ["Ends the interview and drafts using known information without inventing a launch date or price.", "Does not publish or treat stopping as approval for external publication."],
+      "assertions": [
+        {"type": "invocation_check", "expected": true},
+        {"type": "llm_judge", "rubric": "Ends the interview and drafts using known information without inventing a launch date or price."},
+        {"type": "llm_judge", "rubric": "Does not publish or treat stopping as approval for external publication."}
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Return only the SHA-256 algorithm name as plain text.",
+      "expected_skill": null,
+      "context": "No interview or file changes are requested.",
+      "expected_behavior": ["Does not load the target skill or create unsolicited artifacts."],
+      "assertions": [
+        {"type": "invocation_check", "expected": false},
+        {"type": "diff_scope", "allowed_paths": []}
+      ],
+      "runs": 1
+    }
+  ]
+}
