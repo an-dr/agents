@@ -6,12 +6,12 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "2.2.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-concept-dark-cockpit an-dr-files-build-report
+  an-dr.dependencies: an-dr-concept-dark-cockpit an-dr-convention-html-repo-style an-dr-files-build-report
 ---
 
 # User interface
 
-Defers: severity levels to `an-dr-concept-dark-cockpit`, artifact paths to `an-dr-files-build-report`.
+Defers: severity levels to `an-dr-concept-dark-cockpit`, the look of its browser page to `an-dr-convention-html-repo-style`, artifact paths to `an-dr-files-build-report`.
 
 ## Choose the channel
 

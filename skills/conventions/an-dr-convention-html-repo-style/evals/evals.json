@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-convention-html-repo-style",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-convention-html-repo-style. Plan the look of a new interactive HTML page with a form and a progress log.",
+      "expected_skill": "an-dr-convention-html-repo-style",
+      "context": "The page is generated at run time by a script and must open from a local server and from disk without network access.",
+      "expected_behavior": [
+        "Takes colours and fonts from the shared brand tokens and defines none of its own.",
+        "Uses the shared components and the two-column work surface, with interaction left and progress right, stacking on a phone."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Takes colours and fonts from the shared brand tokens and defines none of its own."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Uses the shared components and the two-column work surface, with interaction left and progress right, stacking on a phone."
+        }
+      ],
+      "runs": 1,
+      "environment": {
+        "tools": [
+          "git",
+          "pwsh",
+          "browser-rendering",
+          "image-inspection"
+        ]
+      }
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Plan rendering for a report containing repository-provided text.",
+      "expected_skill": "an-dr-convention-html-repo-style",
+      "context": "Source title is <script>alert(1)</script> & status. The report must open offline and show a dependency diagram in light and dark themes.",
+      "expected_behavior": [
+        "Escapes source text and renders diagrams offline rather than executing source markup or requiring a CDN.",
+        "Includes the owned brand, theme control, print behavior, and a diagram that can be inspected in both themes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Escapes source text and renders diagrams offline rather than executing source markup or requiring a CDN."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Includes the owned brand, theme control, print behavior, and a diagram that can be inspected in both themes."
+        }
+      ],
+      "runs": 1,
+      "environment": {
+        "tools": [
+          "git",
+          "pwsh",
+          "browser-rendering",
+          "image-inspection"
+        ]
+      }
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Return a one-line plain-text status: service available. Do not generate HTML.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 1
+    }
+  ]
+}

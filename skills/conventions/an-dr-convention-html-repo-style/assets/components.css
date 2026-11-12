@@ -1,0 +1,18 @@
+/* HTML style components: the shared building blocks of every page, drawn only from the --brand-* tokens.
+   Owned by an-dr-convention-html-repo-style; embedded after brand.css by embed-brand.ps1. */
+.brand-page { max-width: 76rem; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+.brand-cols { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 2rem; align-items: start; }
+.brand-sticky { position: sticky; top: 1rem; max-height: calc(100vh - 2rem); overflow: auto; }
+@media (max-width: 800px) { .brand-cols { grid-template-columns: 1fr; } .brand-sticky { position: static; max-height: none; } }
+.brand-section { font-size: 1.05rem; margin: 2rem 0 .6rem; padding-bottom: .3rem; border-bottom: 1px solid var(--brand-rule); }
+.brand-card { border: 1px solid var(--brand-rule); border-radius: 8px; background: var(--brand-paper); padding: 1rem 1.25rem; margin: 0 0 1.25rem; }
+.brand-note { padding: .6rem 1rem; border-radius: 6px; background: var(--brand-paper); border: 1px solid var(--brand-rule); margin: 1rem 0; }
+.brand-note.brand-strong { border-color: var(--brand-notice); font-weight: 600; }
+.brand-muted { color: var(--brand-muted); }
+.brand-button { background: var(--brand-heading); color: var(--brand-bg); border: 0; border-radius: 6px; padding: .6rem 1.4rem; font: inherit; font-weight: 600; cursor: pointer; }
+.brand-button.brand-quiet { background: none; color: var(--brand-muted); padding: .2rem 0; font-weight: 400; font-size: .8rem; text-decoration: underline; }
+.brand-input { width: 100%; box-sizing: border-box; padding: .45rem .6rem; border: 1px solid var(--brand-rule); border-radius: 6px; background: var(--brand-lift); color: var(--brand-ink); font: inherit; }
+.brand-list { list-style: none; margin: 0; padding: 0; font-size: .9rem; }
+.brand-list li { padding: .25rem 0; border-bottom: 1px solid var(--brand-rule); }
+:focus-visible { outline: 2px solid var(--brand-heading); outline-offset: 2px; }
+@media print { .brand-sticky { position: static; max-height: none; } .brand-button { display: none; } }

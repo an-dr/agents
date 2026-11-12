@@ -23,6 +23,9 @@ log, the answered rounds (history), and the draft persist, and the page address 
 for the chat (port and token are kept in <state>.session.json), so an open tab reconnects
 by itself when serve runs again.
 
+The page takes its look from the an-dr-convention-html-repo-style skill, whose folder `serve`
+receives as --html-style-skill.
+
 Exit codes: 0 done; 2 invalid input; 3 serve found no browser (use the text form);
 4 wait timed out (the draft is kept; use the text form or wait again).
 """
@@ -32,8 +35,10 @@ import hmac
 import json
 import os
 import secrets
+import shutil
 import subprocess
 import sys
+import tempfile
 import threading
 import time
 import urllib.request
@@ -150,49 +155,32 @@ PAGE = """<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Your agent</title>
 <style>
-:root{color-scheme:light dark;--bg:#fff;--fg:#1c1c1e;--muted:#6b6b70;--line:#d4d4d8;--accent:#2557d6;--card:#f6f6f8;--bad:#c0392b}
-@media(prefers-color-scheme:dark){:root{--bg:#18181b;--fg:#ececef;--muted:#a1a1aa;--line:#3f3f46;--accent:#7aa2ff;--card:#222226;--bad:#ff8a7a}}
-body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,sans-serif}
-main{max-width:76rem;margin:0 auto;padding:1.5rem 1rem 4rem}
-.cols{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:2rem;align-items:start}
-#right{position:sticky;top:1rem;max-height:calc(100vh - 2rem);overflow:auto}
-@media(max-width:800px){.cols{grid-template-columns:1fr}#right{position:static;max-height:none}}
-details{margin:.4rem 0;font-size:.9rem}
-summary{cursor:pointer;color:var(--muted)}
-.round{margin:.3rem 0 .6rem 1rem}
-h2{font-size:1.05rem;margin:2rem 0 .6rem;border-bottom:1px solid var(--line);padding-bottom:.3rem}
-#banner{padding:.6rem 1rem;border-radius:6px;background:var(--card);border:1px solid var(--line);margin:1rem 0}
-#banner.bad{border-color:var(--bad)}
-#log{list-style:none;margin:0;padding:0;font-size:.9rem}
-#log li{padding:.25rem 0;border-bottom:1px solid var(--line)}
-#log .t{color:var(--muted);font-variant-numeric:tabular-nums}
-#log .s{display:inline-block;min-width:4.5rem;font-weight:600}
-#log .problem .s{color:var(--bad)}
-fieldset{border:1px solid var(--line);border-radius:8px;background:var(--card);margin:0 0 1.25rem;padding:1rem 1.25rem}
-legend{font-weight:600;padding:0 .4rem}
 label.opt{display:block;padding:.4rem .5rem;border-radius:6px;cursor:pointer}
-label.opt:hover{background:rgba(127,127,127,.12)}
-.desc{display:block;color:var(--muted);font-size:.875rem;margin-left:1.6rem}
-input[type=text]{width:100%;box-sizing:border-box;margin-top:.6rem;padding:.45rem .6rem;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg);font:inherit}
-button{background:var(--accent);color:#fff;border:0;border-radius:6px;padding:.6rem 1.4rem;font:inherit;font-weight:600;cursor:pointer}
-button.link{background:none;color:var(--muted);padding:.2rem 0;font-weight:400;font-size:.8rem;text-decoration:underline}
-:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+label.opt:hover{background:var(--brand-code)}
+.desc{display:block;color:var(--brand-muted);font-size:.875rem;margin-left:1.6rem}
+fieldset.brand-card legend{font-weight:600;padding:0 .4rem;color:var(--brand-heading)}
+.brand-list .t{color:var(--brand-muted);font-variant-numeric:tabular-nums}
+.brand-list .s{display:inline-block;min-width:4.5rem;font-weight:600}
+.brand-list .problem .s{color:var(--brand-notice)}
+details{margin:.4rem 0;font-size:.9rem}
+summary{cursor:pointer;color:var(--brand-muted)}
+.round{margin:.3rem 0 .6rem 1rem}
 </style></head>
-<body><main>
+<body><main class="brand-page">
 <h1>Your agent</h1>
-<div id="banner" role="status" hidden></div>
-<div class="cols">
+<div id="banner" class="brand-note" role="status" hidden></div>
+<div class="brand-cols">
 <section id="left">
-<h2>Interaction</h2>
-<p id="note" style="color:var(--muted)"></p>
+<h2 class="brand-section">Interaction</h2>
+<p id="note" class="brand-muted"></p>
 <form id="form"></form>
 <p id="status" role="status"></p>
-<h2>Earlier answers</h2>
+<h2 class="brand-section">Earlier answers</h2>
 <div id="history"></div>
 </section>
-<section id="right">
-<h2>Progress</h2>
-<ul id="log" aria-live="polite"></ul>
+<section id="right" class="brand-sticky">
+<h2 class="brand-section">Progress</h2>
+<ul id="log" class="brand-list" aria-live="polite"></ul>
 </section>
 </div>
 </main>
@@ -207,7 +195,7 @@ function el(tag, props, ...kids) {
   kids.forEach(k => node.append(k));
   return node;
 }
-const say = (text, bad) => { const b = document.getElementById('banner'); b.hidden = !text; b.textContent = text || ''; b.className = bad ? 'bad' : ''; };
+const say = (text, bad) => { const b = document.getElementById('banner'); b.hidden = !text; b.textContent = text || ''; b.className = bad ? 'brand-note brand-strong' : 'brand-note'; };
 const url = path => path + '?t=' + encodeURIComponent(TOKEN);
 function collectFor(questions) {
   return questions.map((q, qi) => ({
@@ -236,7 +224,7 @@ function renderLog() {
 function renderHistory() {
   const box = document.getElementById('history');
   box.replaceChildren();
-  if (!S.history.length) { box.append(el('p', {textContent: 'None yet.', style: 'color:var(--muted)'})); return; }
+  if (!S.history.length) { box.append(el('p', {textContent: 'None yet.', className: 'brand-muted'})); return; }
   [...S.history].reverse().forEach(r => {
     const d = el('details', {}, el('summary', {textContent: (r.time || '').replace('T', ' ') + ' — ' + r.questions.length + ' question(s)'}));
     r.questions.forEach(q => {
@@ -249,26 +237,27 @@ function renderHistory() {
 }
 function renderForm(old) {
   // Keep what the user typed: read it from the form as it was, before it is rebuilt.
-  const kept = old && old.questions.length ? collectFor(old.questions) : null;
+  const kept = old && !old.committed && old.questions.length ? collectFor(old.questions) : null;
   form.replaceChildren();
   const note = document.getElementById('note');
   if (S.error) { note.textContent = S.error; return; }
   if (!S.questions.length) { note.textContent = 'Nothing to answer right now.'; return; }
-  note.textContent = S.committed ? 'Committed. Your agent is working on it.' : 'Pick an option or type your own answer. Changes are saved as you go; press Commit to send them.';
+  if (S.committed) { note.textContent = 'Committed. Waiting for the next questions; your answers are under Earlier answers.'; return; }
+  note.textContent = 'Pick an option or type your own answer. Changes are saved as you go; press Commit to send them.';
   S.questions.forEach((q, qi) => {
-    const set = el('fieldset', {}, el('legend', {textContent: q.id + ' — ' + q.question}));
+    const set = el('fieldset', {className: 'brand-card'}, el('legend', {textContent: q.id + ' — ' + q.question}));
     q.options.forEach((o, oi) => {
       const key = o.key ? String(o.key).toLowerCase() : String.fromCharCode(97 + oi);
       const row = el('label', {className: 'opt'}, el('input', {type: q.multiSelect ? 'checkbox' : 'radio', name: 'q' + qi, value: key}), ' ', el('strong', {textContent: key + '. '}), o.label);
       if (o.description) row.append(el('span', {className: 'desc', textContent: o.description}));
       set.append(row);
     });
-    set.append(el('input', {type: 'text', name: 't' + qi, placeholder: 'Or your own answer…', 'aria-label': 'Own answer for ' + q.id}));
+    set.append(el('input', {type: 'text', className: 'brand-input', style: 'margin-top:.6rem', name: 't' + qi, placeholder: 'Or your own answer…', 'aria-label': 'Own answer for ' + q.id}));
     form.append(set);
   });
-  if (LIVE && !S.committed) form.append(el('button', {type: 'submit', textContent: 'Commit'}));
+  if (LIVE) form.append(el('button', {type: 'submit', className: 'brand-button', textContent: 'Commit'}));
   apply(kept || S.draft);
-  if (!LIVE || S.committed) form.querySelectorAll('input,button').forEach(i => i.disabled = true);
+  if (!LIVE) form.querySelectorAll('input,button').forEach(i => i.disabled = true);
 }
 function render(old) {
   renderLog(); renderHistory();
@@ -285,10 +274,12 @@ else {
   form.onsubmit = async event => {
     event.preventDefault();
     sending = true;
+    clearTimeout(timer);
     try {
       const r = await fetch(url('/commit'), {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({answers: collect(), qhash: S.qhash})});
       if (!r.ok) throw new Error('HTTP ' + r.status);
-      const old = S; S = Object.assign({}, S, {committed: true}); render(old);
+      const next = await (await fetch(url('/state'))).json();
+      const old = S; S = next; render(old);
     } catch (error) { document.getElementById('status').textContent = 'Not sent: ' + error.message + '. Answer in the chat instead.'; }
     sending = false;
   };
@@ -299,11 +290,31 @@ else {
 """
 
 
+TEMPLATE = PAGE  # replaced at serve start by the page with the shared HTML style embedded
+
+
+def styled_template(style_skill):
+    """Run the page once through the HTML style convention's embed-brand.ps1 (brand, components, theme switch)."""
+    script = Path(style_skill) / "scripts" / "embed-brand.ps1"
+    if not script.is_file():
+        raise InputError(f"--html-style-skill has no scripts/embed-brand.ps1; pass the an-dr-convention-html-repo-style folder (looked in {script}).")
+    pwsh = shutil.which("pwsh")
+    if not pwsh:
+        raise InputError("pwsh (PowerShell 7) is needed to apply the HTML style; install it or use the text form.")
+    with tempfile.TemporaryDirectory() as folder:
+        page = Path(folder) / "page.html"
+        page.write_text(PAGE, encoding="utf-8")
+        run = subprocess.run([pwsh, "-NoProfile", "-File", str(script), "-Path", str(page)], capture_output=True, text=True)
+        if run.returncode != 0:
+            raise InputError(f"embed-brand.ps1 failed: {run.stderr.strip() or run.stdout.strip()}")
+        return page.read_text(encoding="utf-8")
+
+
 def render_page(state_data, token):
     """token=None renders the read-only record: nothing polls and nothing can be sent."""
     # Escape "<" so a label or log line can never close the script element.
     embed = lambda value: json.dumps(value, ensure_ascii=False).replace("<", "\\u003c")
-    return PAGE.replace("__STATE__", embed(state_data)).replace("__TOKEN__", embed(token))
+    return TEMPLATE.replace("__STATE__", embed(state_data)).replace("__TOKEN__", embed(token))
 
 
 class Server(ThreadingHTTPServer):
@@ -434,6 +445,12 @@ def already_serving(port, token):
 
 
 def cmd_serve(args):
+    global TEMPLATE
+    try:
+        TEMPLATE = styled_template(args.html_style_skill)
+    except InputError as error:
+        print(error, file=sys.stderr)
+        return EXIT_BAD_INPUT
     sess = session(args.state)
     address = lambda port: f"http://127.0.0.1:{port}/?t={sess['token']}"
     if already_serving(sess["port"], sess["token"]):
@@ -504,6 +521,7 @@ def main(argv=None):
         command = sub.add_parser(name, help=helptext)
         command.add_argument("--state", required=True, help="path prefix shared by every file of this conversation")
         if name == "serve":
+            command.add_argument("--html-style-skill", required=True, help="folder of the an-dr-convention-html-repo-style skill")
             command.add_argument("--page", default="tmp-ai-ui.html", help="read-only record of the page (default tmp-ai-ui.html)")
             command.add_argument("--lifetime", type=int, default=3600, help="seconds before the server stops by itself (default 3600)")
             command.add_argument("--no-open", action="store_true", help="print the URL instead of opening a browser")

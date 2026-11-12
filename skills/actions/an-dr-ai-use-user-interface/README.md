@@ -35,5 +35,6 @@ Every question it asks; a click and a typed reply count the same.
 
 ## Related skills
 
+- [an-dr-convention-html-repo-style](../../conventions/an-dr-convention-html-repo-style/README.md) — the look of the browser page.
 - [an-dr-concept-dark-cockpit](../../concepts/an-dr-concept-dark-cockpit/README.md) — levels for findings in replies.
 - [an-dr-convention-script](../../conventions/an-dr-convention-script/README.md) — how scripts mark their output.

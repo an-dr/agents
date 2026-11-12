@@ -6,12 +6,12 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.1.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-convention-artifact-layout an-dr-convention-html-report
+  an-dr.dependencies: an-dr-convention-artifact-layout an-dr-convention-html-repo-style an-dr-convention-html-report
 ---
 
 # Build a report
 
-Defers: page content to the calling skill, page format to `an-dr-convention-html-report`, artifact locations to `an-dr-convention-artifact-layout`.
+Defers: page content to the calling skill, page style to `an-dr-convention-html-repo-style`, report format to `an-dr-convention-html-report`, artifact locations to `an-dr-convention-artifact-layout`.
 
 ## Take a path
 
@@ -31,7 +31,7 @@ pwsh <an-dr-convention-artifact-layout>/scripts/new-artifact-path.ps1 -Kind <kin
 After writing the page and after every later edit:
 
 ```powershell
-pwsh <an-dr-convention-html-report>/scripts/embed-brand.ps1 -Path <page>.html
+pwsh <an-dr-convention-html-repo-style>/scripts/embed-brand.ps1 -Path <page>.html
 if ($LASTEXITCODE -ne 0) { throw 'Brand embedding failed.' }
 pwsh <an-dr-convention-html-report>/scripts/embed-cockpit.ps1 -Path <page>.html
 if ($LASTEXITCODE -ne 0) { throw 'Status stylesheet embedding failed.' }

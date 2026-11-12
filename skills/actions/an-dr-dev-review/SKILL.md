@@ -6,7 +6,7 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.1.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-concept-ai-slop an-dr-concept-clean-dependencies an-dr-concept-evidence-grounding an-dr-convention-artifact-layout an-dr-convention-code an-dr-convention-html-report an-dr-convention-layout
+  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-concept-ai-slop an-dr-concept-clean-dependencies an-dr-concept-evidence-grounding an-dr-convention-artifact-layout an-dr-convention-code an-dr-convention-html-repo-style an-dr-convention-html-report an-dr-convention-layout
 ---
 
 # Code review
@@ -78,7 +78,7 @@ pwsh <skill>/scripts/review-note.ps1 -ReviewPath <json> `
 ## Render and report
 
 ```powershell
-pwsh <skill>/scripts/review-render.ps1 -ReviewPath <json> -HtmlReportSkill <an-dr-convention-html-report> -ArtifactLayoutSkill <an-dr-convention-artifact-layout>
+pwsh <skill>/scripts/review-render.ps1 -ReviewPath <json> -HtmlReportSkill <an-dr-convention-html-report> -HtmlStyleSkill <an-dr-convention-html-repo-style> -ArtifactLayoutSkill <an-dr-convention-artifact-layout>
 ```
 
 Writes one self-contained `.html` beside the JSON, copies both to `code-review-latest.*`, orders sections verdict, summary, critical, high, slop, improvements, positives, and renders diagrams offline through `an-dr-convention-html-report`'s embed script.

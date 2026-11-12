@@ -5,6 +5,7 @@ param(
     [Parameter(Mandatory)][string]$ReviewPath,
     # Both skills' folders, passed by the agent because skills need not sit side by side.
     [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$HtmlReportSkill,
+    [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$HtmlStyleSkill,
     [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$ArtifactLayoutSkill,
     [string]$OutputPath
 )
@@ -155,7 +156,7 @@ Write-ReviewText -Text ($html -join [Environment]::NewLine) -Path $OutputPath
 # Neutral colours come from the report brand, severity colours from the dark-cockpit sheet,
 # and diagrams become inline SVG through the HTML report skill's pinned, offline Mermaid build.
 foreach ($step in @(
-        @{ Skill = $HtmlReportSkill; Parameter = 'HtmlReportSkill'; Script = 'scripts/embed-brand.ps1' },
+        @{ Skill = $HtmlStyleSkill; Parameter = 'HtmlStyleSkill'; Script = 'scripts/embed-brand.ps1' },
         @{ Skill = $HtmlReportSkill; Parameter = 'HtmlReportSkill'; Script = 'scripts/embed-cockpit.ps1' },
         @{ Skill = $HtmlReportSkill; Parameter = 'HtmlReportSkill'; Script = 'scripts/render-mermaid.ps1' })) {
     $script = Join-Path $step.Skill $step.Script

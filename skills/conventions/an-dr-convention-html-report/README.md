@@ -1,23 +1,22 @@
 # an-dr-convention-html-report
 
-How every human-facing HTML page in this repository is built: one self-contained file, the shared brand, a theme switch, a print layout, problem levels, and diagrams rendered offline.
+What a report adds to the repository's HTML style: problem levels, diagrams rendered offline, and a visual check.
 
 ## When it runs
 
-A convention is read, never run. Any skill that writes an HTML page for people uses it — reviews, change reports, overviews — and runs its three scripts to finish the page.
+A convention is read, never run. Any skill that writes an HTML page for people uses it — reviews, change reports, overviews — and runs the brand script and its two scripts to finish the page.
 
 ## How it works
 
 ```mermaid
 flowchart LR
-  W[Page written by a skill] --> B[embed-brand.ps1: brand stylesheet + theme switch]
+  W[Page written by a skill] --> B[embed-brand.ps1 from the html-repo-style convention]
   B --> K[embed-cockpit.ps1: problem-level styles]
   K --> M[render-mermaid.ps1: light + dark SVG per diagram, offline]
   M --> V[Visual check: light and dark, desktop and 390 px phone]
 ```
 
-- **Self-contained.** Inline CSS and scripts, nothing from the network; the page looks the same from disk, a preview, or a published link.
-- **Brand.** Every colour and font comes from one stylesheet; pages define none of their own.
+- **Style.** Looks and layout come from [an-dr-convention-html-repo-style](../an-dr-convention-html-repo-style/README.md).
 - **Levels.** A page that reports problems uses the dark-cockpit levels and no other status colour.
 - **Diagrams.** Mermaid renders in local headless Chrome or Edge; the page stores the source, with a "Copy Mermaid" button.
 - **Verified** means screenshots in both themes at desktop and phone width were opened and inspected; otherwise the page is reported as unverified.

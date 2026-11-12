@@ -52,7 +52,7 @@ if ($html -match $pattern) {
 }
 else {
     # Before the page's first stylesheet, so its own rules can refine the shared ones.
-    $match = [regex]::Match($html, '<!-- an-dr-convention-html-report:brand begin -->|<style[\s>]|</head>', 'IgnoreCase')
+    $match = [regex]::Match($html, '<!-- an-dr-convention-html-repo-style:brand begin -->|<style[\s>]|</head>', 'IgnoreCase')
     if (-not $match.Success) {
         throw 'HTML input has no <head>; write the page as a complete HTML document first.'
     }

@@ -1,11 +1,11 @@
 #Requires -Version 7
 <#
 .SYNOPSIS
-    Inlines the report brand stylesheet into an HTML page.
+    Inlines the repository's HTML style (brand tokens and components) into an HTML page.
 
 .DESCRIPTION
-    Every report page takes its neutral palette, fonts, and element defaults from
-    ../assets/brand.css. This script places that stylesheet in the page's <head>,
+    Every page takes its neutral palette, fonts, element defaults, and shared components
+    from ../assets/brand.css and ../assets/components.css. This script places that stylesheet in the page's <head>,
     before the page's own styles, so the page can use the --brand-* tokens.
 
     It also inserts the theme switch at the start of the <body>, so every page offers
@@ -27,19 +27,20 @@ param([Parameter(Mandatory, Position = 0)][string]$Path)
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-$begin = '<!-- an-dr-convention-html-report:brand begin -->'
-$end = '<!-- an-dr-convention-html-report:brand end -->'
+$begin = '<!-- an-dr-convention-html-repo-style:brand begin -->'
+$end = '<!-- an-dr-convention-html-repo-style:brand end -->'
 
 $page = (Resolve-Path -LiteralPath $Path).Path
-$sheet = Join-Path $PSScriptRoot '../assets/brand.css'
-if (-not (Test-Path -LiteralPath $sheet)) {
-    throw "Brand stylesheet not found at $sheet."
+$sheets = foreach ($name in 'brand.css', 'components.css') {
+    $sheet = Join-Path $PSScriptRoot "../assets/$name"
+    if (-not (Test-Path -LiteralPath $sheet)) { throw "Stylesheet not found at $sheet." }
+    [IO.File]::ReadAllText($sheet).TrimEnd()
 }
 
 $block = @"
 $begin
 <style>
-$([IO.File]::ReadAllText($sheet).TrimEnd())
+$($sheets -join "`n")
 </style>
 $end
 "@
@@ -58,8 +59,8 @@ else {
     $html = $html.Substring(0, $match.Index) + $block + "`n" + $html.Substring($match.Index)
 }
 
-$themeBegin = '<!-- an-dr-convention-html-report:theme begin -->'
-$themeEnd = '<!-- an-dr-convention-html-report:theme end -->'
+$themeBegin = '<!-- an-dr-convention-html-repo-style:theme begin -->'
+$themeEnd = '<!-- an-dr-convention-html-repo-style:theme end -->'
 $theme = @"
 $themeBegin
 <button type="button" class="brand-theme" id="brand-theme" title="Switch between automatic, light, and dark themes">Theme: auto</button>
@@ -111,4 +112,4 @@ else {
     $html = $html.Substring(0, $at) + "`n" + $theme + $html.Substring($at)
 }
 [IO.File]::WriteAllText($page, $html, [Text.UTF8Encoding]::new($false))
-Write-Output "Embedded the report brand and theme switch into $page."
+Write-Output "Embedded the HTML style and theme switch into $page."
