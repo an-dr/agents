@@ -1,0 +1,140 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-text-write-curated",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-text-write-curated. Write a short onboarding note for new contributors, step by step with my approval.",
+      "expected_skill": "an-dr-text-write-curated",
+      "context": "The repository has a README and CONTRIBUTING.md. The user has not said who reads the note, where it goes, or which sources count.",
+      "expected_behavior": [
+        "Starts by settling the target (reader, purpose, destination, length) and asks for missing facts instead of drafting the document.",
+        "Does not write the document file before the target and sources are agreed."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Starts by settling the target (reader, purpose, destination, length) and asks for missing facts instead of drafting the document."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not write the document file before the target and sources are agreed."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Write a short onboarding note for new contributors, step by step with my approval.",
+      "expected_skill": "an-dr-text-write-curated",
+      "context": "The repository has a README and CONTRIBUTING.md. The user has not said who reads the note, where it goes, or which sources count.",
+      "expected_behavior": [
+        "Starts by settling the target (reader, purpose, destination, length) and asks for missing facts instead of drafting the document.",
+        "Does not write the document file before the target and sources are agreed."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Starts by settling the target (reader, purpose, destination, length) and asks for missing facts instead of drafting the document."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not write the document file before the target and sources are agreed."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Write a short onboarding note for new contributors, step by step with my approval.",
+      "expected_skill": "an-dr-text-write-curated",
+      "context": "The repository has a README and CONTRIBUTING.md. The user has not said who reads the note, where it goes, or which sources count.",
+      "expected_behavior": [
+        "Starts by settling the target (reader, purpose, destination, length) and asks for missing facts instead of drafting the document.",
+        "Does not write the document file before the target and sources are agreed."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Starts by settling the target (reader, purpose, destination, length) and asks for missing facts instead of drafting the document."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not write the document file before the target and sources are agreed."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Fix the typo 'recieve' in README.md. No document preparation is requested.",
+      "expected_skill": null,
+      "context": "README.md contains the word 'recieve' once.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Fixes only the typo without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": [
+            "README.md"
+          ]
+        }
+      ],
+      "runs": 1
+    }
+  ]
+}

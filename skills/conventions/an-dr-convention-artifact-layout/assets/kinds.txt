@@ -1,6 +1,7 @@
 claim-audit
 change-report
 code-review
+curated-doc
 deslop
 project-overview
 screenshots

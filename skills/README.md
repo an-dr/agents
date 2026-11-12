@@ -38,6 +38,7 @@ Procedures the agent runs. They produce a result, use scripts where the work is 
 | [`an-dr-project-write-overview`](actions/an-dr-project-write-overview/SKILL.md)               | Explain an unfamiliar repository in one HTML page, code first.                                                         |
 | [`an-dr-text-analyze-slop`](actions/an-dr-text-analyze-slop/SKILL.md)                         | Analyze a text for slop and propose what to cut or say specifically.                                                   |
 | [`an-dr-text-verify-claims`](actions/an-dr-text-verify-claims/SKILL.md)                       | Check a report or analysis against its sources and separate facts from inference and opinion.                          |
+| [`an-dr-text-write-curated`](actions/an-dr-text-write-curated/SKILL.md)                       | Prepare a document through approved stages: target, sources, structure, sections, final check.                         |
 
 ## Concepts
 

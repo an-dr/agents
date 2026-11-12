@@ -249,6 +249,7 @@ flowchart LR
         an-dr-project-write-overview
         an-dr-text-analyze-slop
         an-dr-text-verify-claims
+        an-dr-text-write-curated
     end
     subgraph g_concepts["Concepts"]
         an-dr-concept-ai-slop
@@ -306,6 +307,7 @@ flowchart LR
     an-dr-project-write-overview --> an-dr-concept-ai-slop & an-dr-files-build-report & an-dr-convention-html-report & an-dr-dev-write-documentation
     an-dr-text-analyze-slop --> an-dr-ai-send-message & an-dr-concept-ai-slop & an-dr-files-build-report & an-dr-convention-html-report
     an-dr-text-verify-claims --> an-dr-ai-send-message & an-dr-files-build-report & an-dr-convention-html-report
+    an-dr-text-write-curated --> an-dr-ai-send-message & an-dr-text-verify-claims & an-dr-text-analyze-slop & an-dr-convention-artifact-layout
     an-dr-convention-agent-skill --> an-dr-concept-clean-dependencies & an-dr-convention-script & an-dr-convention-agent-skill-testing & an-dr-convention-markdown
     an-dr-convention-code --> an-dr-concept-ai-slop & an-dr-concept-clean-dependencies & an-dr-convention-layout
     an-dr-convention-html-report --> an-dr-concept-dark-cockpit & an-dr-convention-artifact-layout
