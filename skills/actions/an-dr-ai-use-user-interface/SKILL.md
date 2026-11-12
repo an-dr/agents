@@ -1,15 +1,15 @@
 ---
 name: an-dr-ai-use-user-interface
-description: Talk to the user in a form that works in every host, via the host's question UI or else a fixed text form, for tables, questions, confirmations, and reading answers. Use whenever a reply shows a table, relays script output, asks the user to choose or confirm, or reads their answer.
+description: Talk to the user in a form that works in every host, via the host's question UI, a local browser form, or else a fixed text form, for tables, questions, confirmations, and reading answers. Use whenever a reply shows a table, relays script output, asks the user to choose or confirm, or reads their answer.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.2.0"
+  version: "2.0.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-concept-dark-cockpit an-dr-files-build-report
 ---
 
-# Agents UI
+# User interface
 
 Defers: severity levels to `an-dr-concept-dark-cockpit`, artifact paths to `an-dr-files-build-report`.
 
@@ -17,6 +17,7 @@ Defers: severity levels to `an-dr-concept-dark-cockpit`, artifact paths to `an-d
 
 - Session has a question tool (Claude Code `AskUserQuestion`, Codex `request_user_input`, or equivalent) → every question, choice, and confirmation goes through it. Check this session's tools; do not infer them from the host's name.
 - No such tool, it fails, or the session is non-interactive → use the text form.
+- A round the widget cannot carry well (more than 4 questions, long option texts, a table to read first) and a session that can open a browser → offer the browser form; see Ask in a form.
 - Never repeat in chat a question already shown in a widget.
 - A click and a typed reply map to the same decision.
 
@@ -71,3 +72,20 @@ pwsh <skill>/scripts/read-answers.ps1 -Questions <ui-stamp>.questions.json -Repl
 ```
 
 Writes `<ui-stamp>.answers.json` beside the questions file and prints the echo lines. Each answer's `status`: `answered` (`choices`, `labels`), `custom` (`text`), `ambiguous` (ask again), or `open`. Act only on `answered` and `custom`.
+
+## Ask in a form
+
+An optional channel for a large round. It needs Python 3 and a browser on the user's machine; `ask-form.py` is this repository's one intentional Python script, an exception to its PowerShell-only script rule.
+
+1. Write the round as a `questions.json` file, as in Keep answers as JSON.
+2. Run it; the page opens in the browser and the call blocks until the user sends the answers:
+
+```shell
+python <skill>/scripts/ask-form.py --questions <ui-stamp>.questions.json
+```
+
+3. Exit `0` → answers are in `<ui-stamp>.answers.json`, the same file `read-answers.ps1` writes; echo each decision and act on `answered` and `custom` only.
+4. Exit `3` (no browser here) or `4` (no answer within 9 minutes), or no Python → ask the same round in the text form; never leave it open.
+5. Exit `2` → the questions file is invalid; fix it.
+
+The form is a channel, not a second source of decisions: an approval the workflow requires still goes through the controller in the user's own words. Do not repeat in chat a round the form shows.

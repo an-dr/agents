@@ -4,7 +4,7 @@ description: Rules for the PowerShell scripts a skill ships — PowerShell 7, no
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.4.0"
+  version: "1.5.0"
   an-dr.type: convention
   an-dr.dependencies: an-dr-ai-use-user-interface an-dr-convention-agent-skill-testing
 ---
@@ -16,6 +16,7 @@ Defers: `scripts/tests/`, fixtures, the `scripts/tests/run.ps1` entry point, and
 ## Rules
 
 - A script exists only for repeated, mechanical work; `SKILL.md` says when it runs.
+- Exception: `an-dr-ai-use-user-interface/scripts/ask-form.py` is Python 3, standard library only, by intent: a local HTTP server is simpler and safer there. It keeps the other runtime rules (non-interactive, non-zero exit on failure, own files only) and states the exception in its header; it ships without script tests by the user's decision. Another exception needs the same explicit, recorded reason.
 - Runtime: PowerShell 7, first line `#Requires -Version 7`, non-interactive, non-zero exit on failure.
 - A skill's script tests run after every change to the skill, its scripts, or its tests, against the final edited scripts; a pre-edit pass verifies nothing.
 - Missing tests or failed assertions are reported, never claimed as success.
