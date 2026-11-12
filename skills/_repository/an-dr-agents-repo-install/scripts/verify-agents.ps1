@@ -119,7 +119,7 @@ foreach ($tool in $targets) {
 }
 
 # --- Report ---
-# Finding levels (an-dr-ai-send-message): problems first and marked, passing rows plain and last.
+# Finding levels (an-dr-ai-use-user-interface): problems first and marked, passing rows plain and last.
 $rank = @{ fail = 0; warn = 1; pass = 2 }
 $mark = @{ fail = '▲ **fail**'; warn = '◆ warn'; pass = 'pass' }
 Write-Output '| Scope | Check | Status | Detail |'

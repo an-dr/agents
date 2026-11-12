@@ -6,7 +6,7 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.2.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-send-message an-dr-concept-ai-slop an-dr-convention-adr an-dr-convention-markdown an-dr-convention-use-case
+  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-concept-ai-slop an-dr-convention-adr an-dr-convention-markdown an-dr-convention-use-case
 ---
 
 # Documentation writing
@@ -53,4 +53,4 @@ The formatter prints each file it changed; the checker exits non-zero on a viola
 - Resolve every internal link, including references to moved pages.
 - Check claims against the layer above: architecture against ADRs and user intent, design against architecture, code against design.
 - Check counts and field layouts; no two documents state one fact differently.
-- Behaviour contract and code disagree → report the contradiction with evidence of which may be stale; never silently pick a side; ask the user through `an-dr-ai-send-message` when the decision is needed. The written contract normally governs, but abandoned documentation may be stale.
+- Behaviour contract and code disagree → report the contradiction with evidence of which may be stale; never silently pick a side; ask the user through `an-dr-ai-use-user-interface` when the decision is needed. The written contract normally governs, but abandoned documentation may be stale.

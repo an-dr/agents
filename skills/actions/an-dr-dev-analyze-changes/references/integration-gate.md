@@ -29,5 +29,5 @@ Write the report, then return this exact shape with the report's link or path:
 <numbered test steps>
 ```
 
-- In `Requests delivered` and `How to verify`, use `an-dr-ai-send-message` finding levels: unmet requests and known failures first with their level glyph, delivered requests as plain lines.
+- In `Requests delivered` and `How to verify`, use `an-dr-ai-use-user-interface` finding levels: unmet requests and known failures first with their level glyph, delivered requests as plain lines.
 - The summary never grants integration permission; it is what the user reads before the `integrate` approval (at `SUMMARY` in Supervised, `FINAL_REVIEW` in Spec-driven). It is linked from the pull or merge request; a local integration mode question, when needed, follows as a separate decision.

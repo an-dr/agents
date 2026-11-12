@@ -6,7 +6,7 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.1.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-send-message an-dr-concept-ai-slop an-dr-files-build-report an-dr-convention-html-report
+  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-concept-ai-slop an-dr-files-build-report an-dr-convention-html-report
 ---
 
 # Text slop analysis
@@ -16,7 +16,7 @@ Defers: signals and tests to `an-dr-concept-ai-slop`, HTML output to `an-dr-file
 ## Inputs
 
 - Text: a file, several files, or pasted text.
-- Kind: prose document, agent instructions, or report or summary. Infer it; ask through `an-dr-ai-send-message` only when two kinds would give different findings.
+- Kind: prose document, agent instructions, or report or summary. Infer it; ask through `an-dr-ai-use-user-interface` only when two kinds would give different findings.
 
 ## Method
 
@@ -41,7 +41,7 @@ Each finding: stable ID `TS-001`, `TS-002`, ...; quoted location; signal; cost t
 
 ## Output
 
-- 15 findings or fewer → table in the reply, by `an-dr-ai-send-message`'s finding levels.
+- 15 findings or fewer → table in the reply, by `an-dr-ai-use-user-interface`'s finding levels.
 - More → HTML page at a `text-slop` path, extension `html`, in the format of `an-dr-convention-html-report` with each finding's level on its row, built, verified, and published through `an-dr-files-build-report`. Reply with the page path, the opening lines, and the `high` findings.
 - End with the share of the text the proposals remove, as percentage or word count (`31 of 37 words, 84%`); a count of findings or cut clauses is not a share.
 

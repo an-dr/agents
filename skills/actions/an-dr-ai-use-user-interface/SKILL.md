@@ -1,5 +1,5 @@
 ---
-name: an-dr-ai-send-message
+name: an-dr-ai-use-user-interface
 description: Talk to the user in a form that works in every host, via the host's question UI or else a fixed text form, for tables, questions, confirmations, and reading answers. Use whenever a reply shows a table, relays script output, asks the user to choose or confirm, or reads their answer.
 license: MIT
 metadata:

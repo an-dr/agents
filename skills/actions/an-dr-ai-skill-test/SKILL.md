@@ -6,12 +6,12 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.3.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-skill-implement-test an-dr-ai-send-message an-dr-files-build-report an-dr-convention-script an-dr-convention-agent-skill-testing
+  an-dr.dependencies: an-dr-ai-skill-implement-test an-dr-ai-use-user-interface an-dr-files-build-report an-dr-convention-script an-dr-convention-agent-skill-testing
 ---
 
 # Skill testing
 
-Owns: executing and grading a run. Defers: test implementation to `an-dr-ai-skill-implement-test`; contract, layout, environment, fixtures, and verdicts to `an-dr-convention-agent-skill-testing`; script test execution to `an-dr-convention-script`; questions and results to `an-dr-ai-send-message`; the `skill-tests` evidence path to `an-dr-files-build-report`.
+Owns: executing and grading a run. Defers: test implementation to `an-dr-ai-skill-implement-test`; contract, layout, environment, fixtures, and verdicts to `an-dr-convention-agent-skill-testing`; script test execution to `an-dr-convention-script`; questions and results to `an-dr-ai-use-user-interface`; the `skill-tests` evidence path to `an-dr-files-build-report`.
 
 ## Run script tests
 

@@ -7,12 +7,12 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.1.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-send-message
+  an-dr.dependencies: an-dr-ai-use-user-interface
 ---
 
 # Agent instruction review
 
-Defers: finding levels to `an-dr-ai-send-message`.
+Defers: finding levels to `an-dr-ai-use-user-interface`.
 
 ## Review
 
@@ -67,5 +67,5 @@ Resolves every relative Markdown link, checks every skill `name` against its dir
 
 ## Output
 
-- Findings ranked, each with file and line, what breaks, and the concrete edit, shown with its `an-dr-ai-send-message` finding level.
+- Findings ranked, each with file and line, what breaks, and the concrete edit, shown with its `an-dr-ai-use-user-interface` finding level.
 - Areas checked and found sound, as one quiet closing line, so they are not re-reviewed.

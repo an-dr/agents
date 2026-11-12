@@ -6,14 +6,14 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.1.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-send-message
+  an-dr.dependencies: an-dr-ai-use-user-interface
 ---
 
 # Install PowerShell
 
 1. Run `pwsh --version`. Stop when it reports 7 or newer.
 2. Identify the operating system; use its native shell, since PowerShell may not exist.
-3. Ask before installing packages or elevating, as an `an-dr-ai-send-message` confirmation naming the exact command.
+3. Ask before installing packages or elevating, as an `an-dr-ai-use-user-interface` confirmation naming the exact command.
 4. Install:
    - Windows client: `winget install --id Microsoft.PowerShell --source winget` from Command Prompt or Windows PowerShell.
    - macOS: the signed package for the machine architecture from `https://learn.microsoft.com/en-us/powershell/scripting/install/install-powershell-on-macos`.

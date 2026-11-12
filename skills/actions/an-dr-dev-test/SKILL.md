@@ -6,12 +6,12 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.1.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-send-message an-dr-dev-implement-adversarial-ut
+  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-dev-implement-adversarial-ut
 ---
 
 # Testing
 
-Defers: systematic bug hunts to `an-dr-dev-implement-adversarial-ut`, finding levels to `an-dr-ai-send-message`.
+Defers: systematic bug hunts to `an-dr-dev-implement-adversarial-ut`, finding levels to `an-dr-ai-use-user-interface`.
 
 ## Select the tests
 
@@ -29,7 +29,7 @@ Defers: systematic bug hunts to `an-dr-dev-implement-adversarial-ut`, finding le
 ## Output
 
 - Report failure cases, untested edges, documentation gaps, scope, and documentation consistency.
-- Failures and gaps first, each with its `an-dr-ai-send-message` finding level; passing suites as one count line.
+- Failures and gaps first, each with its `an-dr-ai-use-user-interface` finding level; passing suites as one count line.
 - End with the next check or fix: what would resolve the first failure and what it needs.
 - Supervised → the user owns the verdict. Spec-driven and Vibe → record the verdict before moving on; Vibe also names what the user can run to see it.
 

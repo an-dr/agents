@@ -6,7 +6,7 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "2.0.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-send-message an-dr-convention-adr an-dr-dev-analyze-changes an-dr-dev-debug an-dr-dev-design an-dr-dev-implement-code an-dr-dev-implement-pipeline an-dr-dev-integrate an-dr-dev-review an-dr-dev-test an-dr-dev-write-documentation an-dr-dev-write-readme an-dr-dev-write-specification an-dr-git-modify-history
+  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-convention-adr an-dr-dev-analyze-changes an-dr-dev-debug an-dr-dev-design an-dr-dev-implement-code an-dr-dev-implement-pipeline an-dr-dev-integrate an-dr-dev-review an-dr-dev-test an-dr-dev-write-documentation an-dr-dev-write-readme an-dr-dev-write-specification an-dr-git-modify-history
 ---
 
 # Workflow controller
@@ -69,7 +69,7 @@ pwsh <script> finish
 | `integrate` | Supervised `SUMMARY`, Spec-driven `FINAL_REVIEW` | the user says land the branch                  |
 
 - The controller names the gate it expects. Spec-driven refuses `intake` and `verify`; it settles intake in the design discussion and records verification itself. `DESIGN` has no gate.
-- Ask each user gate as an `an-dr-ai-send-message` confirmation, never a closing line like "reply implement": show the plan, increment, or summary first, then, in the same message, one approving option and one asking for a change.
+- Ask each user gate as an `an-dr-ai-use-user-interface` confirmation, never a closing line like "reply implement": show the plan, increment, or summary first, then, in the same message, one approving option and one asking for a change.
 - `-Note` is the chosen label plus any notes the user added; a widget choice counts as their own words; any other answer leaves the gate closed.
 - A request recorded after `intake` approval drops it; the user closes the longer list again.
 - The controller records approval evidence and never supplies it, in Spec-driven too, where review, tests, doc checks, and clean commits still run between `implement` and final review.
@@ -78,7 +78,7 @@ pwsh <script> finish
 
 - `add-question` records, at any phase, what the agent cannot settle alone, instead of interrupting.
 - `answer-question` and `dismiss-question` both require `-Answer`; a dismissal records why it stopped mattering.
-- Ask accumulated questions as one `an-dr-ai-send-message` round; pass each echoed decision as `-Answer`.
+- Ask accumulated questions as one `an-dr-ai-use-user-interface` round; pass each echoed decision as `-Answer`.
 - `approve -Gate implement` is refused while any question is open, listing the offenders.
 
 ## Share and finish

@@ -6,7 +6,7 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.1.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-send-message an-dr-convention-agent-skill
+  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-convention-agent-skill
 ---
 
 # Build skill dependencies
@@ -32,7 +32,7 @@ pwsh <skill>/scripts/build-dependencies.ps1 [-Root <repository>] [-Markdown <fil
 
 ## Output
 
-The script prints a Markdown summary: skill and arrow counts, then marked skills and unknown names. Relay it with `an-dr-ai-send-message` and give the path of any rebuilt file.
+The script prints a Markdown summary: skill and arrow counts, then marked skills and unknown names. Relay it with `an-dr-ai-use-user-interface` and give the path of any rebuilt file.
 
 ## Rules
 

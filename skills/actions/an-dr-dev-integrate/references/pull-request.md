@@ -31,5 +31,5 @@ Only after the `integrate` approval:
 2. Wait for checks to pass on the pushed commit; a failing check goes back to the user, never merged around.
 3. Merge with the repository's own merge method:
    - GitLab: `glab mr merge --remove-source-branch` applies the project's configured method.
-   - GitHub has no single default: read `gh repo view --json mergeCommitAllowed,rebaseMergeAllowed,squashMergeAllowed`. Exactly one allowed → use it. Several → ask the user which of the allowed methods, as one `an-dr-ai-send-message` question. Then `gh pr merge --<method> --delete-branch`.
+   - GitHub has no single default: read `gh repo view --json mergeCommitAllowed,rebaseMergeAllowed,squashMergeAllowed`. Exactly one allowed → use it. Several → ask the user which of the allowed methods, as one `an-dr-ai-use-user-interface` question. Then `gh pr merge --<method> --delete-branch`.
 4. Fast-forward the local base to the merged result and delete the local branch.

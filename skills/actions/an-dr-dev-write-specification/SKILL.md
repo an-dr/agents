@@ -6,12 +6,12 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.1.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-send-message an-dr-concept-clean-dependencies an-dr-convention-adr an-dr-convention-use-case an-dr-dev-write-documentation
+  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-concept-clean-dependencies an-dr-convention-adr an-dr-convention-use-case an-dr-dev-write-documentation
 ---
 
 # Specification
 
-Defers: use-case format to `an-dr-convention-use-case`; decision records to `an-dr-convention-adr`; final documents to `an-dr-dev-write-documentation`; questions to `an-dr-ai-send-message`.
+Defers: use-case format to `an-dr-convention-use-case`; decision records to `an-dr-convention-adr`; final documents to `an-dr-dev-write-documentation`; questions to `an-dr-ai-use-user-interface`.
 
 ## Decide whether it applies
 

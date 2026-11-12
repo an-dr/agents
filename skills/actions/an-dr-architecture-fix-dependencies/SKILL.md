@@ -6,7 +6,7 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.1.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-send-message an-dr-concept-clean-dependencies an-dr-files-build-report an-dr-convention-html-report
+  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-concept-clean-dependencies an-dr-files-build-report an-dr-convention-html-report
 ---
 
 # Untangle dependencies
@@ -53,7 +53,7 @@ Change nothing yet.
 
 ## Approval
 
-- Ask through `an-dr-ai-send-message`: all, a subset by ID, or none.
+- Ask through `an-dr-ai-use-user-interface`: all, a subset by ID, or none.
 - A change of ownership, a merge, or a split is its own question, even under "all".
 - Apply nothing before the answer, and nothing it leaves out.
 
@@ -70,7 +70,7 @@ Change nothing yet.
 
 ## Output
 
-- Through `an-dr-ai-send-message`: starting and ending numbers, each move with its finding ID, new components and what they own, what was skipped or deferred and why.
+- Through `an-dr-ai-use-user-interface`: starting and ending numbers, each move with its finding ID, new components and what they own, what was skipped or deferred and why.
 - Offer to rewrite the report with the final graph.
 
 ## Rules

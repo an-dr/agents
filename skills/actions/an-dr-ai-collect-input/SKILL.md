@@ -6,12 +6,12 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.0.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-send-message an-dr-concept-ai-slop an-dr-concept-evidence-grounding
+  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-concept-ai-slop an-dr-concept-evidence-grounding
 ---
 
 # Collect input
 
-Defers: questions and answers to `an-dr-ai-send-message`, substance to `an-dr-concept-ai-slop`, and claims to `an-dr-concept-evidence-grounding`.
+Defers: questions and answers to `an-dr-ai-use-user-interface`, substance to `an-dr-concept-ai-slop`, and claims to `an-dr-concept-evidence-grounding`.
 
 ## Draft and identify gaps
 
@@ -22,7 +22,7 @@ Defers: questions and answers to `an-dr-ai-send-message`, substance to `an-dr-co
 
 ## Interview
 
-1. Use `an-dr-ai-send-message` for each round. Begin every individual question with the current estimated task coverage, including in the question UI; use the same estimate within a round.
+1. Use `an-dr-ai-use-user-interface` for each round. Begin every individual question with the current estimated task coverage, including in the question UI; use the same estimate within a round.
 2. Ask the most consequential gaps first, in rounds of at most four. Use meaningful options where choices are clear and open questions where they are not; accept free text, corrections, and skipped answers.
 3. At the start, tell the user they can say `stop` at any time and the task will continue with the information available. Offer `Stop interview` as an option on each selectable interview question without exceeding the messaging skill's option limit; open questions accept `stop` as text.
 4. Incorporate each answer into the working draft and reassess gaps and coverage before the next round. Stop asking when the relevant gaps are resolved, the user stops, or no useful question remains.

@@ -4,7 +4,7 @@
 Reads a user's reply against a questions file and writes the decisions as answers JSON.
 
 .DESCRIPTION
-Accepts every reply form an-dr-ai-send-message allows: `1a 2bc`, `1a, 2b`, `a b` in question order, `1: a`, `Q2 b`,
+Accepts every reply form an-dr-ai-use-user-interface allows: `1a 2bc`, `1a, 2b`, `a b` in question order, `1: a`, `Q2 b`,
 an option label, `y`/`n` for a confirmation, or free text after `N:`. Pass a native widget's chosen
 labels the same way, as `1: <label>`. Prints one echo line per question and writes the JSON file.
 #>

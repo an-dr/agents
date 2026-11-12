@@ -6,7 +6,7 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.2.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-send-message an-dr-concept-ai-slop an-dr-convention-adr an-dr-files-build-report an-dr-convention-html-report an-dr-dev-review an-dr-dev-write-documentation
+  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-concept-ai-slop an-dr-convention-adr an-dr-files-build-report an-dr-convention-html-report an-dr-dev-review an-dr-dev-write-documentation
 ---
 
 # Change report

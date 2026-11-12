@@ -7,7 +7,7 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.2.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-send-message an-dr-dev-assign-ai-level an-dr-convention-markdown an-dr-convention-readme an-dr-dev-write-documentation an-dr-files-make-screengif an-dr-files-make-screenshot
+  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-dev-assign-ai-level an-dr-convention-markdown an-dr-convention-readme an-dr-dev-write-documentation an-dr-files-make-screengif an-dr-files-make-screenshot
 ---
 
 # README
@@ -47,4 +47,4 @@ Run before writing and again after; deliver only once it exits zero.
 
 - The finished `README.md`, or a diff or plan first when the user wants to review; a plan names the same command the README would.
 - Either form gives the exact command to run — `python exporter.py` or the installed console script — with its expected input; mark a command you could not run as unverified. A quickstart without that command is not a deliverable.
-- Then the open questions as one `an-dr-ai-send-message` round, each naming what the repository could not establish.
+- Then the open questions as one `an-dr-ai-use-user-interface` round, each naming what the repository could not establish.

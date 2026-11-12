@@ -6,12 +6,12 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.4.0"
   an-dr.type: convention
-  an-dr.dependencies: an-dr-ai-send-message an-dr-convention-agent-skill-testing
+  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-convention-agent-skill-testing
 ---
 
 # Convention: script
 
-Defers: `scripts/tests/`, fixtures, the `scripts/tests/run.ps1` entry point, and free checks versus agent evaluations to `an-dr-convention-agent-skill-testing`; output form to `an-dr-ai-send-message`.
+Defers: `scripts/tests/`, fixtures, the `scripts/tests/run.ps1` entry point, and free checks versus agent evaluations to `an-dr-convention-agent-skill-testing`; output form to `an-dr-ai-use-user-interface`.
 
 ## Rules
 
@@ -20,7 +20,7 @@ Defers: `scripts/tests/`, fixtures, the `scripts/tests/run.ps1` entry point, and
 - A skill's script tests run after every change to the skill, its scripts, or its tests, against the final edited scripts; a pre-edit pass verifies nothing.
 - Missing tests or failed assertions are reported, never claimed as success.
 - Script tests need no model calls or separate approval; paid behavioral evaluations need an explicit user request.
-- Output is printed for the user in `an-dr-ai-send-message`'s safe Markdown (pipe tables, short status lines, a report path), progress noise off stdout, so it is relayed without reshaping; `SKILL.md` says what it shows and that it is relayed.
+- Output is printed for the user in `an-dr-ai-use-user-interface`'s safe Markdown (pipe tables, short status lines, a report path), progress noise off stdout, so it is relayed without reshaping; `SKILL.md` says what it shows and that it is relayed.
 - User-facing stdout sits between `<!-- user-output: verbatim -->` or `<!-- user-output: summarize -->` and `<!-- /user-output -->`, each marker on its own line, emitted with plain `Write-Output`, no shared helper.
 - `verbatim`: read exactly as printed, such as a status table. `summarize`: condensed by the agent, such as findings or a long list. Outside the markers: detail the agent may omit.
 - Own files are reached through `$PSScriptRoot`; never an absolute path, a repository-layout path such as `skills/<name>`, or a submodule folder name.

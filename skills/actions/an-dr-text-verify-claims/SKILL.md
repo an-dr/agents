@@ -6,17 +6,17 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.1.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-send-message an-dr-files-build-report an-dr-convention-html-report
+  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-files-build-report an-dr-convention-html-report
 ---
 
 # Text claim audit
 
-Defers: chat levels to `an-dr-ai-send-message`, HTML format to `an-dr-convention-html-report`, building to `an-dr-files-build-report`.
+Defers: chat levels to `an-dr-ai-use-user-interface`, HTML format to `an-dr-convention-html-report`, building to `an-dr-files-build-report`.
 
 ## Inputs
 
 - The text under audit, and the sources it should rest on: files, datasets, documents, code, transcripts.
-- No sources → ask for them through `an-dr-ai-send-message`; audit anyway on request, with every factual claim `unverifiable`.
+- No sources → ask for them through `an-dr-ai-use-user-interface`; audit anyway on request, with every factual claim `unverifiable`.
 - Sources are the only evidence. Background knowledge goes in the note, labelled outside knowledge, without changing the verdict.
 - Do not audit whether sources are true; report where a source contradicts itself.
 - The audit judges grounding, not writing quality.

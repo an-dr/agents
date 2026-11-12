@@ -37,6 +37,6 @@ One level per claim from its verdict; grounded claims stay dark so the eye lands
 
 ## Medium
 
-- 15 rows or fewer → in the reply, with `an-dr-ai-send-message`'s text levels.
+- 15 rows or fewer → in the reply, with `an-dr-ai-use-user-interface`'s text levels.
 - Longer → HTML page at a `claim-audit` path with extension `html`, in `an-dr-convention-html-report` format; each ledger row carries its level, verdict and kind as labels; build, verify, and publish through `an-dr-files-build-report`.
 - HTML → reply holds the page's path, the opening lines, and the lit findings only.

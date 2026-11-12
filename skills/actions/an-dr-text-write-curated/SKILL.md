@@ -6,12 +6,12 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "2.0.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-send-message an-dr-text-verify-claims an-dr-text-analyze-slop an-dr-convention-artifact-layout
+  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-text-verify-claims an-dr-text-analyze-slop an-dr-convention-artifact-layout
 ---
 
 # Curated document writing
 
-Defers: questions and gates to `an-dr-ai-send-message`, fact checking to `an-dr-text-verify-claims`, slop analysis to `an-dr-text-analyze-slop`, fallback paths to `an-dr-convention-artifact-layout`.
+Defers: questions and gates to `an-dr-ai-use-user-interface`, fact checking to `an-dr-text-verify-claims`, slop analysis to `an-dr-text-analyze-slop`, fallback paths to `an-dr-convention-artifact-layout`.
 
 ## The file is the working tool
 

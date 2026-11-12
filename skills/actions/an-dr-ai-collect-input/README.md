@@ -29,6 +29,6 @@ Answer with a choice or your own words, skip a question, or stop the interview a
 
 ## Related skills
 
-- [an-dr-ai-send-message](../an-dr-ai-send-message/README.md) handles questions and answers across hosts.
+- [an-dr-ai-use-user-interface](../an-dr-ai-use-user-interface/README.md) handles questions and answers across hosts.
 - [an-dr-concept-ai-slop](../../concepts/an-dr-concept-ai-slop/README.md) describes output that costs more than it gives.
 - [an-dr-concept-evidence-grounding](../../concepts/an-dr-concept-evidence-grounding/README.md) distinguishes evidence from assumption.

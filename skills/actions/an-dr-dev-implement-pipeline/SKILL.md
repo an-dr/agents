@@ -6,12 +6,12 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.1.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-send-message an-dr-convention-code
+  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-convention-code
 ---
 
 # Pipeline
 
-Defers: questions to `an-dr-ai-send-message`; formatter and linter setup to `an-dr-convention-code`. Deployment to running environments is out of scope.
+Defers: questions to `an-dr-ai-use-user-interface`; formatter and linter setup to `an-dr-convention-code`. Deployment to running environments is out of scope.
 
 ## Establish what exists
 

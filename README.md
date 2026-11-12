@@ -221,9 +221,9 @@ flowchart LR
     subgraph g_actions["Actions"]
         an-dr-ai-collect-input
         an-dr-ai-review-instruction
-        an-dr-ai-send-message
         an-dr-ai-skill-implement-test
         an-dr-ai-skill-test
+        an-dr-ai-use-user-interface
         an-dr-ai-write-instruction
         an-dr-architecture-fix-dependencies
         an-dr-dev-analyze-changes
@@ -274,46 +274,46 @@ flowchart LR
         an-dr-convention-use-case
     end
     an-dr-agents-analyze-session --> an-dr-agents-repo-modify
-    an-dr-agents-repo-build-dependencies --> an-dr-ai-send-message & an-dr-convention-agent-skill
+    an-dr-agents-repo-build-dependencies --> an-dr-ai-use-user-interface & an-dr-convention-agent-skill
     an-dr-agents-repo-convention-skills --> an-dr-ai-skill-implement-test & an-dr-ai-skill-test & an-dr-convention-agent-skill & an-dr-dev-test & an-dr-dev-write-documentation & an-dr-convention-agent-skill-testing
     an-dr-agents-repo-install --> an-dr-ai-skill-test
-    an-dr-agents-repo-modify --> an-dr-agents-repo-convention-skills & an-dr-agents-repo-install & an-dr-agents-repo-verify-installation & an-dr-ai-review-instruction & an-dr-ai-send-message & an-dr-ai-skill-implement-test & an-dr-ai-skill-test & an-dr-ai-write-instruction & an-dr-convention-agent-skill & an-dr-convention-markdown & an-dr-convention-script & an-dr-git-modify-history
+    an-dr-agents-repo-modify --> an-dr-agents-repo-convention-skills & an-dr-agents-repo-install & an-dr-agents-repo-verify-installation & an-dr-ai-review-instruction & an-dr-ai-use-user-interface & an-dr-ai-skill-implement-test & an-dr-ai-skill-test & an-dr-ai-write-instruction & an-dr-convention-agent-skill & an-dr-convention-markdown & an-dr-convention-script & an-dr-git-modify-history
     an-dr-agents-repo-verify-installation --> an-dr-agents-repo-install & an-dr-ai-skill-implement-test & an-dr-ai-skill-test & an-dr-convention-commit-message
-    an-dr-ai-collect-input --> an-dr-ai-send-message & an-dr-concept-ai-slop & an-dr-concept-evidence-grounding
-    an-dr-ai-review-instruction --> an-dr-ai-send-message
-    an-dr-ai-send-message --> an-dr-concept-dark-cockpit & an-dr-files-build-report
+    an-dr-ai-collect-input --> an-dr-ai-use-user-interface & an-dr-concept-ai-slop & an-dr-concept-evidence-grounding
+    an-dr-ai-review-instruction --> an-dr-ai-use-user-interface
     an-dr-ai-skill-implement-test --> an-dr-ai-write-instruction & an-dr-convention-agent-skill & an-dr-convention-script & an-dr-convention-agent-skill-testing
-    an-dr-ai-skill-test --> an-dr-ai-skill-implement-test & an-dr-ai-send-message & an-dr-files-build-report & an-dr-convention-script & an-dr-convention-agent-skill-testing
+    an-dr-ai-skill-test --> an-dr-ai-skill-implement-test & an-dr-ai-use-user-interface & an-dr-files-build-report & an-dr-convention-script & an-dr-convention-agent-skill-testing
+    an-dr-ai-use-user-interface --> an-dr-concept-dark-cockpit & an-dr-files-build-report
     an-dr-ai-write-instruction --> an-dr-ai-review-instruction & an-dr-concept-ai-slop & an-dr-convention-markdown & an-dr-dev-write-documentation
-    an-dr-architecture-fix-dependencies --> an-dr-ai-send-message & an-dr-concept-clean-dependencies & an-dr-files-build-report & an-dr-convention-html-report
-    an-dr-dev-analyze-changes --> an-dr-ai-send-message & an-dr-concept-ai-slop & an-dr-convention-adr & an-dr-files-build-report & an-dr-convention-html-report & an-dr-dev-review & an-dr-dev-write-documentation
-    an-dr-dev-analyze-slop --> an-dr-ai-review-instruction & an-dr-ai-send-message & an-dr-concept-ai-slop & an-dr-files-build-report & an-dr-convention-html-report
-    an-dr-dev-assign-ai-level --> an-dr-ai-send-message & an-dr-convention-ai-level
-    an-dr-dev-design --> an-dr-ai-send-message & an-dr-convention-adr & an-dr-convention-use-case & an-dr-dev-write-documentation
-    an-dr-dev-follow-workflow --> an-dr-ai-send-message & an-dr-convention-adr & an-dr-dev-analyze-changes & an-dr-dev-debug & an-dr-dev-design & an-dr-dev-implement-code & an-dr-dev-implement-pipeline & an-dr-dev-integrate & an-dr-dev-review & an-dr-dev-test & an-dr-dev-write-documentation & an-dr-dev-write-readme & an-dr-dev-write-specification & an-dr-git-modify-history
+    an-dr-architecture-fix-dependencies --> an-dr-ai-use-user-interface & an-dr-concept-clean-dependencies & an-dr-files-build-report & an-dr-convention-html-report
+    an-dr-dev-analyze-changes --> an-dr-ai-use-user-interface & an-dr-concept-ai-slop & an-dr-convention-adr & an-dr-files-build-report & an-dr-convention-html-report & an-dr-dev-review & an-dr-dev-write-documentation
+    an-dr-dev-analyze-slop --> an-dr-ai-review-instruction & an-dr-ai-use-user-interface & an-dr-concept-ai-slop & an-dr-files-build-report & an-dr-convention-html-report
+    an-dr-dev-assign-ai-level --> an-dr-ai-use-user-interface & an-dr-convention-ai-level
+    an-dr-dev-design --> an-dr-ai-use-user-interface & an-dr-convention-adr & an-dr-convention-use-case & an-dr-dev-write-documentation
+    an-dr-dev-follow-workflow --> an-dr-ai-use-user-interface & an-dr-convention-adr & an-dr-dev-analyze-changes & an-dr-dev-debug & an-dr-dev-design & an-dr-dev-implement-code & an-dr-dev-implement-pipeline & an-dr-dev-integrate & an-dr-dev-review & an-dr-dev-test & an-dr-dev-write-documentation & an-dr-dev-write-readme & an-dr-dev-write-specification & an-dr-git-modify-history
     an-dr-dev-implement-code --> an-dr-convention-adr & an-dr-convention-code & an-dr-convention-layout & an-dr-dev-write-documentation
-    an-dr-dev-implement-pipeline --> an-dr-ai-send-message & an-dr-convention-code
-    an-dr-dev-integrate --> an-dr-ai-send-message & an-dr-convention-commit-message & an-dr-git-modify-history
-    an-dr-dev-review --> an-dr-ai-send-message & an-dr-concept-ai-slop & an-dr-concept-clean-dependencies & an-dr-concept-evidence-grounding & an-dr-convention-artifact-layout & an-dr-convention-code & an-dr-convention-html-report & an-dr-convention-layout
-    an-dr-dev-test --> an-dr-ai-send-message & an-dr-dev-implement-adversarial-ut
-    an-dr-dev-write-documentation --> an-dr-ai-send-message & an-dr-concept-ai-slop & an-dr-convention-adr & an-dr-convention-markdown & an-dr-convention-use-case
-    an-dr-dev-write-readme --> an-dr-ai-send-message & an-dr-dev-assign-ai-level & an-dr-convention-markdown & an-dr-convention-readme & an-dr-dev-write-documentation & an-dr-files-make-screengif & an-dr-files-make-screenshot
-    an-dr-dev-write-specification --> an-dr-ai-send-message & an-dr-concept-clean-dependencies & an-dr-convention-adr & an-dr-convention-use-case & an-dr-dev-write-documentation
-    an-dr-env-install-powershell --> an-dr-ai-send-message
+    an-dr-dev-implement-pipeline --> an-dr-ai-use-user-interface & an-dr-convention-code
+    an-dr-dev-integrate --> an-dr-ai-use-user-interface & an-dr-convention-commit-message & an-dr-git-modify-history
+    an-dr-dev-review --> an-dr-ai-use-user-interface & an-dr-concept-ai-slop & an-dr-concept-clean-dependencies & an-dr-concept-evidence-grounding & an-dr-convention-artifact-layout & an-dr-convention-code & an-dr-convention-html-report & an-dr-convention-layout
+    an-dr-dev-test --> an-dr-ai-use-user-interface & an-dr-dev-implement-adversarial-ut
+    an-dr-dev-write-documentation --> an-dr-ai-use-user-interface & an-dr-concept-ai-slop & an-dr-convention-adr & an-dr-convention-markdown & an-dr-convention-use-case
+    an-dr-dev-write-readme --> an-dr-ai-use-user-interface & an-dr-dev-assign-ai-level & an-dr-convention-markdown & an-dr-convention-readme & an-dr-dev-write-documentation & an-dr-files-make-screengif & an-dr-files-make-screenshot
+    an-dr-dev-write-specification --> an-dr-ai-use-user-interface & an-dr-concept-clean-dependencies & an-dr-convention-adr & an-dr-convention-use-case & an-dr-dev-write-documentation
+    an-dr-env-install-powershell --> an-dr-ai-use-user-interface
     an-dr-files-build-report --> an-dr-convention-artifact-layout & an-dr-convention-html-report
     an-dr-files-make-screengif --> an-dr-files-make-screenshot
     an-dr-files-make-screenshot --> an-dr-files-build-report
     an-dr-git-modify-history --> an-dr-convention-commit-message
     an-dr-project-write-overview --> an-dr-concept-ai-slop & an-dr-files-build-report & an-dr-convention-html-report & an-dr-dev-write-documentation
-    an-dr-text-analyze-slop --> an-dr-ai-send-message & an-dr-concept-ai-slop & an-dr-files-build-report & an-dr-convention-html-report
-    an-dr-text-verify-claims --> an-dr-ai-send-message & an-dr-files-build-report & an-dr-convention-html-report
-    an-dr-text-write-curated --> an-dr-ai-send-message & an-dr-text-verify-claims & an-dr-text-analyze-slop & an-dr-convention-artifact-layout
+    an-dr-text-analyze-slop --> an-dr-ai-use-user-interface & an-dr-concept-ai-slop & an-dr-files-build-report & an-dr-convention-html-report
+    an-dr-text-verify-claims --> an-dr-ai-use-user-interface & an-dr-files-build-report & an-dr-convention-html-report
+    an-dr-text-write-curated --> an-dr-ai-use-user-interface & an-dr-text-verify-claims & an-dr-text-analyze-slop & an-dr-convention-artifact-layout
     an-dr-convention-agent-skill --> an-dr-concept-clean-dependencies & an-dr-convention-script & an-dr-convention-agent-skill-testing & an-dr-convention-markdown
     an-dr-convention-code --> an-dr-concept-ai-slop & an-dr-concept-clean-dependencies & an-dr-convention-layout
     an-dr-convention-html-report --> an-dr-concept-dark-cockpit & an-dr-convention-artifact-layout
     an-dr-convention-layout --> an-dr-convention-artifact-layout
     an-dr-convention-readme --> an-dr-concept-ai-slop & an-dr-concept-evidence-grounding & an-dr-convention-markdown
-    an-dr-convention-script --> an-dr-ai-send-message & an-dr-convention-agent-skill-testing
+    an-dr-convention-script --> an-dr-ai-use-user-interface & an-dr-convention-agent-skill-testing
 ```
 
 <!-- skill-dependencies end -->

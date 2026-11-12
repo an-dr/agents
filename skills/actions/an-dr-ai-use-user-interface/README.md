@@ -1,4 +1,4 @@
-# an-dr-ai-send-message
+# an-dr-ai-use-user-interface
 
 How the agent talks to you in any tool: questions through the host's own question UI when it has one, a fixed text form when it does not, and script output relayed so you never miss a result.
 

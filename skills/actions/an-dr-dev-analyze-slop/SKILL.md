@@ -6,12 +6,12 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.2.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-review-instruction an-dr-ai-send-message an-dr-concept-ai-slop an-dr-files-build-report an-dr-convention-html-report
+  an-dr.dependencies: an-dr-ai-review-instruction an-dr-ai-use-user-interface an-dr-concept-ai-slop an-dr-files-build-report an-dr-convention-html-report
 ---
 
 # Code and documentation coherence analysis
 
-Defers: what slop is to `an-dr-concept-ai-slop`, agent instruction correctness to `an-dr-ai-review-instruction`, report format to `an-dr-convention-html-report`, building to `an-dr-files-build-report`, user messages to `an-dr-ai-send-message`.
+Defers: what slop is to `an-dr-concept-ai-slop`, agent instruction correctness to `an-dr-ai-review-instruction`, report format to `an-dr-convention-html-report`, building to `an-dr-files-build-report`, user messages to `an-dr-ai-use-user-interface`.
 
 ## Establish scope
 

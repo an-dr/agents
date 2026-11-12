@@ -6,7 +6,7 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.2.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-send-message an-dr-convention-adr an-dr-convention-use-case an-dr-dev-write-documentation
+  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-convention-adr an-dr-convention-use-case an-dr-dev-write-documentation
 ---
 
 # Design
@@ -20,7 +20,7 @@ Defers: ADR format to `an-dr-convention-adr`, use cases to `an-dr-convention-use
 3. Argue the strongest case for the option you would reject; if it wins, change the recommendation.
 4. Pre-mortem the favourite ("shipped, failed six months later — why?"): top 2–3 failure stories and what detects each early.
 5. Record each unresolved choice as a controller question first, so exploring the next does not lose it.
-6. Present options with tradeoffs as an `an-dr-ai-send-message` question; the user picks. Never a single "correct" solution.
+6. Present options with tradeoffs as an `an-dr-ai-use-user-interface` question; the user picks. Never a single "correct" solution.
 7. Record a lasting decision as an ADR through `an-dr-dev-write-documentation`, close its question with `answer-question`, and put the resulting design in the topic's design doc.
 
 ## Options table

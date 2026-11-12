@@ -7,12 +7,12 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "2.0.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-send-message an-dr-convention-commit-message an-dr-git-modify-history
+  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-convention-commit-message an-dr-git-modify-history
 ---
 
 # Integrate
 
-Defers: questions to `an-dr-ai-send-message`; messages to `an-dr-git-modify-history`, checked by `an-dr-convention-commit-message`.
+Defers: questions to `an-dr-ai-use-user-interface`; messages to `an-dr-git-modify-history`, checked by `an-dr-convention-commit-message`.
 
 ## Through the request
 
@@ -24,7 +24,7 @@ Only when the request path is unavailable, and after saying what is missing. Bef
 
 - Ask every time, as the first step, before progress cleanup, rebase, or any history change; never answer it yourself.
 - Approval to integrate is not a mode choice; the last mode used is not a default.
-- One `an-dr-ai-send-message` question, the three local modes as options (`Commits`, `Regroup`, `Squash`), no recommendation; wait for the answer.
+- One `an-dr-ai-use-user-interface` question, the three local modes as options (`Commits`, `Regroup`, `Squash`), no recommendation; wait for the answer.
 
 ## Run the steps
 

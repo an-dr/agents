@@ -6,7 +6,7 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.1.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-send-message an-dr-concept-ai-slop an-dr-concept-clean-dependencies an-dr-concept-evidence-grounding an-dr-convention-artifact-layout an-dr-convention-code an-dr-convention-html-report an-dr-convention-layout
+  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-concept-ai-slop an-dr-concept-clean-dependencies an-dr-concept-evidence-grounding an-dr-convention-artifact-layout an-dr-convention-code an-dr-convention-html-report an-dr-convention-layout
 ---
 
 # Code review
@@ -84,7 +84,7 @@ pwsh <skill>/scripts/review-render.ps1 -ReviewPath <json> -HtmlReportSkill <an-d
 Writes one self-contained `.html` beside the JSON, copies both to `code-review-latest.*`, orders sections verdict, summary, critical, high, slop, improvements, positives, and renders diagrams offline through `an-dr-convention-html-report`'s embed script.
 
 - HTML only; no Markdown review.
-- In chat: critical findings and verdict by `an-dr-ai-send-message`'s text levels, plus paths of the HTML and its latest copy; a local inspection artifact.
+- In chat: critical findings and verdict by `an-dr-ai-use-user-interface`'s text levels, plus paths of the HTML and its latest copy; a local inspection artifact.
 
 ## Rules
 

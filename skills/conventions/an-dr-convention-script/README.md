@@ -27,4 +27,4 @@ Scripts that run the same on any machine, fail loudly, and print results you can
 ## Related skills
 
 - [an-dr-convention-agent-skill-testing](../an-dr-convention-agent-skill-testing/README.md) — test layout and runners.
-- [an-dr-ai-send-message](../../actions/an-dr-ai-send-message/README.md) — the output form.
+- [an-dr-ai-use-user-interface](../../actions/an-dr-ai-use-user-interface/README.md) — the output form.

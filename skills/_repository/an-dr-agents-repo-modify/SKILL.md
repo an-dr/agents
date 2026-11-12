@@ -7,7 +7,7 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.2.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-agents-repo-convention-skills an-dr-agents-repo-install an-dr-agents-repo-verify-installation an-dr-ai-review-instruction an-dr-ai-send-message an-dr-ai-skill-implement-test an-dr-ai-skill-test an-dr-ai-write-instruction an-dr-convention-agent-skill an-dr-convention-markdown an-dr-convention-script an-dr-git-modify-history
+  an-dr.dependencies: an-dr-agents-repo-convention-skills an-dr-agents-repo-install an-dr-agents-repo-verify-installation an-dr-ai-review-instruction an-dr-ai-use-user-interface an-dr-ai-skill-implement-test an-dr-ai-skill-test an-dr-ai-write-instruction an-dr-convention-agent-skill an-dr-convention-markdown an-dr-convention-script an-dr-git-modify-history
 ---
 
 # Modify the agents repository
@@ -22,11 +22,11 @@ pwsh <skill>/scripts/find-agents-root.ps1 [-Path <start-directory>] [-AgentsRoot
 
 It checks the clone providing this skill (through a global install's junction), the working repository, an `agents` submodule in it, and each tool's `an-dr-agents-repo-install` policy path. It prints a candidate table, then the resolved root's branch, working tree, upstream, and whether it is nested in the host repository.
 
-| Exit | Meaning                  | Do                                                                                                              |
-| ---- | ------------------------ | --------------------------------------------------------------------------------------------------------------- |
-| `0`  | one clone resolved       | work in the printed root                                                                                        |
-| `1`  | no clone found           | ask where the clone is through `an-dr-ai-send-message`, re-run with `-AgentsRoot`                               |
-| `2`  | several different clones | show the table, ask as an `an-dr-ai-send-message` question with one option per clone, re-run with `-AgentsRoot` |
+| Exit | Meaning                  | Do                                                                                                                    |
+| ---- | ------------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| `0`  | one clone resolved       | work in the printed root                                                                                              |
+| `1`  | no clone found           | ask where the clone is through `an-dr-ai-use-user-interface`, re-run with `-AgentsRoot`                               |
+| `2`  | several different clones | show the table, ask as an `an-dr-ai-use-user-interface` question with one option per clone, re-run with `-AgentsRoot` |
 
 - Report every printed note: detached HEAD, dirty tree, missing upstream, and nested clone each change the commit.
 - Use the resolved root for every later path and every git call; git must run in the clone, not through a junction.
@@ -63,7 +63,7 @@ Only after the user approves the summary in their own words; approval covers thi
 
 ## Rules
 
-- Before editing anything, explain the intended change and get approval as an `an-dr-ai-send-message` confirmation.
+- Before editing anything, explain the intended change and get approval as an `an-dr-ai-use-user-interface` confirmation.
 - Leave the host's work untouched: no phase advances, no host file edits, no host commit carries the amendment.
 - Stage only this amendment's files; in an already dirty clone, ask rather than sweep other changes in.
 - Never weaken or delete an existing rule as a side effect; that is a separate proposal with its own approval.

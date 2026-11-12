@@ -7,12 +7,12 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.1.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-send-message an-dr-convention-ai-level
+  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-convention-ai-level
 ---
 
 # Assign AI level
 
-Defers: level definitions to `an-dr-convention-ai-level`; questions to `an-dr-ai-send-message`.
+Defers: level definitions to `an-dr-convention-ai-level`; questions to `an-dr-ai-use-user-interface`.
 
 ## Ask
 
