@@ -18,6 +18,7 @@ flowchart LR
 
 - The file is created as soon as the target, sources, and destination are agreed, and every later step happens in it.
 - You can edit the file or leave notes in it at any time; each step re-reads it, keeps your edits, and acts on your notes.
+- Once the file exists, each step asks one question only: approved, notes in the file, or your own input.
 - Working notes (target, sources, section status) sit in a comment block at the top and are removed at delivery.
 - Each section waits for approve, revise, or restructure; approved sections stay frozen.
 - Final check: facts against the agreed sources, slop, coherence, and improvement options you accept or reject.

@@ -4,7 +4,7 @@ description: Prepare a document in the document file itself through gated stages
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "2.0.0"
+  version: "2.1.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-use-user-interface an-dr-text-verify-claims an-dr-text-analyze-slop an-dr-convention-artifact-layout
 ---
@@ -21,7 +21,7 @@ Working notes go in one block at the top of the file, in the format's comment sy
 
 ## Gates
 
-Every stage ends at a gate: point the user to the changed part of the file and wait for approval in their own words. Revise on notes, in chat or in the file; never advance on silence. A later stage may reopen an earlier one; say which and why.
+Every stage ends at a gate; never advance on silence. Before the file exists, ask in whatever form fits. Once it exists, each gate is exactly one question, pointing to the changed part of the file, with three answers: `Approved`, `Notes in the file` (re-read the file and act on them), and free input. Any open point goes into the file as a note for the user, not into further questions. A later stage may reopen an earlier one; say which and why.
 
 ## Stages
 
