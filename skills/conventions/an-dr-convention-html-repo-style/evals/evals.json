@@ -91,6 +91,40 @@
       }
     },
     {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am clearing my inbox before a release call and the old prototype folder is a mess. The actual task is: lay out the page where users answer setup questions while a script reports its steps.",
+      "expected_skill": "an-dr-convention-html-repo-style",
+      "context": "The page is a single local HTML file opened from disk; it shows a form and a running list of steps with done and problem states.",
+      "expected_behavior": [
+        "Takes every colour and font from the shared brand tokens and lets the page define none of its own.",
+        "Places the form on the left and the progress log on the right, stacking them under 800 px, with status shown as words rather than colour alone."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Takes every colour and font from the shared brand tokens and lets the page define none of its own."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Places the form on the left and the progress log on the right, stacking them under 800 px, with status shown as words rather than colour alone."
+        }
+      ],
+      "runs": 1,
+      "environment": {
+        "tools": [
+          "git",
+          "pwsh",
+          "browser-rendering",
+          "image-inspection"
+        ]
+      }
+    },
+    {
       "id": "DISCOVERY-NEGATIVE",
       "bucket": "negative",
       "prompt": "Return a one-line plain-text status: service available. Do not generate HTML.",
