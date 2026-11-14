@@ -20,5 +20,5 @@ pwsh <script> set-requirement -Field goal -Value '<the problem>'
 - Start of DESIGN → decide whether `an-dr-dev-write-specification` applies; if so, draft the specification first and choose options within it.
 - DESIGN: present 2–4 real options with tradeoffs and let the user choose, in both flows; Spec-driven ends DESIGN with a short design summary (problem, approach, interfaces, exclusions, definition of done) that becomes the spec its DOCS phase writes. Deeper decision → `an-dr-dev-design`; lasting architectural decision → `an-dr-convention-adr`.
 - New project without CI → plan an `an-dr-dev-implement-pipeline` increment unless the user excluded it.
-- Before leaving SPLIT: every request covered, every question answered or dismissed, each increment names its documentation work; increments about 300 changed lines or less.
+- Before leaving SPLIT: every request covered, every question answered or dismissed, each increment names its documentation work. Supervised: increments of about 300 changed lines or less, each small enough for the user to verify. Spec-driven: one increment per logical step, whatever its size, because the user reviews the whole branch, not each increment.
 - Present the numbered plan with estimated lines and answered questions before the `implement` approval.
