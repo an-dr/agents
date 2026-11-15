@@ -1,10 +1,10 @@
 ---
 name: an-dr-env-install-powershell
-description: Install or verify PowerShell 7 when pwsh is missing or older than version 7. Use before running any .ps1 workflow or mechanical skill on a machine without a suitable pwsh.
+description: Install or verify PowerShell 7 when pwsh is missing or older than version 7. Use when a tool or repository that still relies on PowerShell scripts needs a suitable pwsh.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "1.2.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-use-user-interface
 ---

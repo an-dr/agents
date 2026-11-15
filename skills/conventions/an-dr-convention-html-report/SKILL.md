@@ -26,8 +26,8 @@ Owns: what only a report needs - stamp, problem levels, offline diagrams, verifi
 
 ## Scripts
 
-- `scripts/embed-cockpit.ps1`: inlines the problem-level stylesheet; no-op without a `ck-` class; `-Html <markup>` returns embedded HTML without writing a file.
-- `scripts/render-mermaid.ps1`: runs the pinned Mermaid build in local headless Chrome or Edge, replacing each `<pre class="mermaid">` with a figure holding a light and a dark SVG, a "Copy Mermaid" button, and the source. The page carries no renderer and shows the SVG matching the theme; a rerun re-renders from stored source.
+- `scripts/embed-cockpit.py`: inlines the problem-level stylesheet; no-op without a `ck-` class; `--html <markup>` returns embedded HTML without writing a file.
+- `scripts/render-mermaid.py`: runs the pinned Mermaid build in local headless Chrome or Edge, replacing each `<pre class="mermaid">` with a figure holding a light and a dark SVG, a "Copy Mermaid" button, and the source. The page carries no renderer and shows the SVG matching the theme; a rerun re-renders from stored source.
 
 ## Visual verification
 

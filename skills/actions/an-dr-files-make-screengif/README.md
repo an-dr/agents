@@ -12,8 +12,8 @@ Only when you explicitly ask for a GIF or animation. A GIF costs megabytes in ev
 flowchart LR
   P[Plan: start state, actions, end state] --> R{Source}
   R -- Windows window --> W[-Window: ffmpeg after a countdown]
-  R -- existing recording --> V[-Video: trim and convert]
-  R -- website --> C[Browser GIF recorder, trimmed via -Video]
+  R -- existing recording --> V[Video: trim and convert]
+  R -- website --> C[Browser GIF recorder, trimmed via video]
   W --> K[Watch the loop]
   V --> K
   C --> K

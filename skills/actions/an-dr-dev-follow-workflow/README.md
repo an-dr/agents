@@ -12,7 +12,7 @@ The workflow controller: it keeps every flow's state in one file, `tmp-agent-wip
 
 ## How it works
 
-The controller is one script, `scripts/workflow.ps1`. Each command reads the state, checks that the transition is legal (approval present, right branch, increment committed, no open question before `implement`), writes the new state, and refuses anything else. The agent can therefore not skip a gate by forgetting it.
+The controller is one script, `scripts/workflow.py`. Each command reads the state, checks that the transition is legal (approval present, right branch, increment committed, no open question before `implement`), writes the new state, and refuses anything else. The agent can therefore not skip a gate by forgetting it.
 
 ### Spec-driven
 

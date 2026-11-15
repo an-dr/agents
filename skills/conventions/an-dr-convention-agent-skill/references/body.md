@@ -27,6 +27,6 @@ Sections are `##` headings in sentence case, named for what the reader does or f
 
 ## Commands
 
-- A command appears in a fenced `powershell` block, with the skill's own scripts written `<skill>/scripts/<name>.ps1` and another skill's folder as `<that-skill-name>`. Only actions contain commands to run.
+- A command appears in a fenced `sh` block, with the skill's own scripts written `<skill>/scripts/<name>.py` and another skill's folder as `<that-skill-name>`. Only actions contain commands to run.
 - The block is followed by what the command prints or returns and what each exit code means; the action's step also says that the result is relayed to the user.
 - A deterministic check lives in a script, and the text says in one sentence what it checks, without restating in prose what the script enforces.

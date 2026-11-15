@@ -1,6 +1,6 @@
 ---
 name: an-dr-convention-diagram
-description: How much a diagram may show — one level of abstraction, a reading budget of about seven items, one loop, short trigger-only edge labels, and a shape that fits its length — and how an over-budget diagram splits into an overview and its parts. Use when drawing or reviewing any Mermaid diagram in Markdown or HTML; check-diagrams.ps1 in this skill measures it.
+description: How much a diagram may show — one level of abstraction, a reading budget of about seven items, one loop, short trigger-only edge labels, and a shape that fits its length — and how an over-budget diagram splits into an overview and its parts. Use when drawing or reviewing any Mermaid diagram in Markdown or HTML; check-diagrams.py in this skill measures it.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
@@ -60,4 +60,4 @@ A diagram within every limit is left as it is. A generated reference graph that 
 
 ## Check
 
-`scripts/check-diagrams.ps1 -Path <files or folders>` reads every Mermaid block in Markdown (fenced `mermaid`) and HTML (`<pre class="mermaid">`), measures `flowchart`, `graph`, and `stateDiagram` blocks against the budget, lists other types as not measured, and exits non-zero when a block is over budget. It counts what it can parse; judging whether a split reads well is left to the reader. Regression tests are in `scripts/tests/`.
+`python scripts/check-diagrams.py --path <files or folders>` reads every Mermaid block in Markdown (fenced `mermaid`) and HTML (`<pre class="mermaid">`), measures `flowchart`, `graph`, and `stateDiagram` blocks against the budget, lists other types as not measured, and exits non-zero when a block is over budget. It counts what it can parse; judging whether a split reads well is left to the reader. Regression tests are in `scripts/tests/`.

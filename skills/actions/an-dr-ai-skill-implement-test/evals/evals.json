@@ -11,7 +11,7 @@
     ],
     "tools": [
       "git",
-      "pwsh"
+      "python"
     ],
     "network": "disabled",
     "permissions": "workspace-only",
@@ -138,7 +138,7 @@
       "bucket": "explicit",
       "prompt": "Use an-dr-ai-skill-implement-test. Implement script tests for the supplied normalize skill. Capture the reported trailing-whitespace defect and run the tests, but do not fix the implementation or start agent evaluations.",
       "expected_skill": "an-dr-ai-skill-implement-test",
-      "context": "normalize.ps1 must remove whitespace at both ends and preserve interior spaces. The observed failure: input '  alpha beta  ' returns 'alpha beta  '.",
+      "context": "normalize.py must remove whitespace at both ends and preserve interior spaces. The observed failure: input '  alpha beta  ' returns 'alpha beta  '.",
       "follow_up": [
         "Now fix the script to trim both ends and run its script tests again against the edited implementation. Do not start behavior evaluations."
       ],
@@ -146,11 +146,11 @@
         "fixtures/AUTHOR-004.zip"
       ],
       "expected_behavior": [
-        "Creates scripts/tests/test-normalize.ps1 that executes the real normalize script and asserts boundary trimming and preservation of interior spaces.",
+        "Creates scripts/tests/test-normalize.py that executes the real normalize script and asserts boundary trimming and preservation of interior spaces.",
         "Actually runs the test and records the trailing-whitespace regression as failed before the follow-up, without weakening assertions or changing the implementation prematurely.",
         "After the follow-up edit, reruns the script tests against the final version and bases its final verdict on that run rather than the earlier result.",
         "Starts no behavioral evaluation or paid grader and keeps script results distinct from case-structure checks.",
-        "Creates scripts/tests/run.ps1 and uses that entry point to execute tests from scripts/tests/ after the implementation change."
+        "Creates scripts/tests/run.py and uses that entry point to execute tests from scripts/tests/ after the implementation change."
       ],
       "assertions": [
         {
@@ -159,7 +159,7 @@
         },
         {
           "type": "llm_judge",
-          "rubric": "Creates scripts/tests/test-normalize.ps1 that executes the real normalize script and asserts boundary trimming and preservation of interior spaces."
+          "rubric": "Creates scripts/tests/test-normalize.py that executes the real normalize script and asserts boundary trimming and preservation of interior spaces."
         },
         {
           "type": "llm_judge",
@@ -175,7 +175,7 @@
         },
         {
           "type": "llm_judge",
-          "rubric": "Creates scripts/tests/run.ps1 and uses that entry point to execute tests from scripts/tests/ after the implementation change."
+          "rubric": "Creates scripts/tests/run.py and uses that entry point to execute tests from scripts/tests/ after the implementation change."
         }
       ],
       "runs": 1

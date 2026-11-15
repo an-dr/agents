@@ -43,10 +43,10 @@ Defers: Markdown format to `an-dr-convention-markdown`, diagrams to `an-dr-conve
 
 Format and check every `.md` file written or touched:
 
-```powershell
-pwsh <an-dr-convention-markdown>/scripts/format-markdown.ps1 -Path <file-or-directory>
-pwsh <an-dr-convention-markdown>/scripts/check-markdown.ps1 -Path <file-or-directory>
-pwsh <an-dr-convention-diagram>/scripts/check-diagrams.ps1 -Path <file-or-directory>
+```sh
+python <an-dr-convention-markdown>/scripts/format-markdown.py --path <file-or-directory>
+python <an-dr-convention-markdown>/scripts/check-markdown.py --path <file-or-directory>
+python <an-dr-convention-diagram>/scripts/check-diagrams.py --path <file-or-directory>
 ```
 
 The formatter prints each file it changed; the checkers exit non-zero on a violation. A diagram over budget is split as `an-dr-convention-diagram` describes, never squeezed under the numbers by dropping what the reader needs. Fix what they report and relay the result.

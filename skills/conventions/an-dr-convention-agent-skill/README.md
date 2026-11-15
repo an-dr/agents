@@ -4,7 +4,7 @@ The shape of a skill: the Agent Skills format plus this repository's extensions 
 
 ## When it runs
 
-A convention is read, never run. Skills load it when creating, renaming, restructuring, writing, or reviewing any skill. Three scripts check it: `check-registration.ps1`, `check-skills.ps1`, and `check-skills-ref.ps1`.
+A convention is read, never run. Skills load it when creating, renaming, restructuring, writing, or reviewing any skill. Three scripts check it: `check-registration.py`, `check-skills.py`, and `check-skills-ref.py`.
 
 ## How it works
 

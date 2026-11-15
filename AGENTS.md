@@ -119,7 +119,7 @@ Deliverables are the exception and are committed as ordinary repository content:
 
 ## Skills
 
-Skills use the [Agent Skills](https://agentskills.io/specification) format and live in `skills/<category>/<name>/SKILL.md` next to this file; `skills/README.md` lists each with its one-line use. Read a matching skill before acting and use its PowerShell scripts for mechanical operations.
+Skills use the [Agent Skills](https://agentskills.io/specification) format and live in `skills/<category>/<name>/SKILL.md` next to this file; `skills/README.md` lists each with its one-line use. Read a matching skill before acting and use its public scripts for mechanical operations.
 
 Skill names start with `an-dr-`, and a concept's or convention's name carries `concept-` or `convention-`, so the type shows in a tool's flat skill list. This repository adds two keys under each skill's `metadata`. `an-dr.type` is `action`, `concept`, or `convention`: an action is a procedure you run, while a concept or a convention is passive, a principle or a format you read when its subject is in play and never run. A concept or convention only describes: it contains no steps, no instructions to the agent, and no commands to run, and what to do with it is always the responsibility of an action. This rule has no exceptions. `an-dr.dependencies` lists the skills a skill names. Both are defined by `an-dr-convention-agent-skill`, and a tool that ignores them still reads every skill. In skill commands, `<skill>` is that skill's own folder and `<other-skill>`, such as `<an-dr-git-modify-history>`, is the folder you loaded that skill from. The user never sees raw script output; relay it as `an-dr-ai-use-user-interface` describes.
 

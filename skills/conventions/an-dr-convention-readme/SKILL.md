@@ -58,4 +58,4 @@ Present only where the repository shows the signal.
 
 ## Check
 
-`scripts/check-readme.ps1` reports the evidence found, every README claim the repository does not support, unresolved relative links, duplicated headings, missing baseline sections, and sections out of order; then runs the `an-dr-convention-markdown` checker on the README. Exits non-zero on a contradiction, a dead link, or a Markdown format error.
+`python scripts/check-readme.py --path <repository>` reports the evidence found, every README claim the repository does not support, unresolved relative links, duplicated headings, missing baseline sections, and sections out of order; then runs the `an-dr-convention-markdown` checker on the README. Exits non-zero on a contradiction, a dead link, or a Markdown format error.

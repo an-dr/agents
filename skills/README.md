@@ -1,6 +1,6 @@
 # Skills
 
-Reusable skills in the [Agent Skills](https://agentskills.io/specification) format. Each skill has `SKILL.md` for the agent, `README.md` explaining it to people — what it is for, how it works, with diagrams — and `evals/evals.json`; deterministic mechanical work may also use PowerShell 7 scripts under `scripts/`. Script tests live in `scripts/tests/test-*.ps1` and run through the skill's `scripts/tests/run.ps1`. A skill sits one level below its category folder, and the category says how the agent uses it.
+Reusable skills in the [Agent Skills](https://agentskills.io/specification) format. Each skill has `SKILL.md` for the agent, `README.md` explaining it to people — what it is for, how it works, with diagrams — and `evals/evals.json`; deterministic mechanical work may also use Python scripts under `scripts/`. Script tests live in `scripts/tests/test-*.py` and run through the skill's `scripts/tests/run.py`. A skill sits one level below its category folder, and the category says how the agent uses it.
 
 ## Actions
 
@@ -31,7 +31,7 @@ Procedures the agent runs. They produce a result, use scripts where the work is 
 | [`an-dr-dev-write-documentation`](actions/an-dr-dev-write-documentation/SKILL.md)             | Write human-facing documentation and check its claims.                                                                                                                        |
 | [`an-dr-dev-write-readme`](actions/an-dr-dev-write-readme/SKILL.md)                           | Rewrite a README from what the repository actually contains.                                                                                                                  |
 | [`an-dr-dev-write-specification`](actions/an-dr-dev-write-specification/SKILL.md)             | Define the use cases and architecture of a new project or a completely new feature.                                                                                           |
-| [`an-dr-env-install-powershell`](actions/an-dr-env-install-powershell/SKILL.md)               | Install or verify PowerShell 7 before running scripts.                                                                                                                        |
+| [`an-dr-env-install-powershell`](actions/an-dr-env-install-powershell/SKILL.md)               | Install or verify PowerShell 7 for the tools and repositories that still need it.                                                                                             |
 | [`an-dr-files-make-screengif`](actions/an-dr-files-make-screengif/SKILL.md)                   | Record an animated GIF of a website, application, or game, only on request.                                                                                                   |
 | [`an-dr-files-build-report`](actions/an-dr-files-build-report/SKILL.md)                       | Build a written HTML page into a finished report, and take paths for generated artifacts.                                                                                     |
 | [`an-dr-files-make-screenshot`](actions/an-dr-files-make-screenshot/SKILL.md)                 | Capture a website, GUI application, or game as documentation media.                                                                                                           |
@@ -72,7 +72,7 @@ Passive. The format rules for an artifact, with the checkers and generators that
 | [`an-dr-convention-layout`](conventions/an-dr-convention-layout/SKILL.md)                           | Lay out any repository: shared root files and folders, plus one reference file per project type (Rust, C, C++, STM32, PlatformIO, Python, TypeScript, PowerShell, hardware). |
 | [`an-dr-convention-markdown`](conventions/an-dr-convention-markdown/SKILL.md)                       | Format Markdown: one line per paragraph, heading, list, fence, link, and table rules.                                                                                        |
 | [`an-dr-convention-readme`](conventions/an-dr-convention-readme/SKILL.md)                           | Write READMEs to a fixed baseline order, with modules the evidence supports and nothing invented.                                                                            |
-| [`an-dr-convention-script`](conventions/an-dr-convention-script/SKILL.md)                           | Write skill scripts: PowerShell 7, non-interactive, tested, relayable output, folders passed in.                                                                             |
+| [`an-dr-convention-script`](conventions/an-dr-convention-script/SKILL.md)                           | Write skill scripts: non-interactive, tested, relayable output, folders passed in.                                                                                           |
 | [`an-dr-convention-use-case`](conventions/an-dr-convention-use-case/SKILL.md)                       | Write use cases in one format: the layer above architecture, stable IDs, actor, goal, flow, success.                                                                         |
 
 ## The repository itself
@@ -91,4 +91,4 @@ Skills that exist for maintaining and installing this repository itself. No skil
 
 Every name starts with `an-dr-`. Actions follow `<group>-<verb>`, with a noun when needed, with the verb taken from the list in `an-dr-agents-repo-convention-skills`; concepts and conventions follow `concept-<name>` and `convention-<name>`; the skills of this repository itself follow `agents-repo-<name>`. `an-dr-agents-repo-convention-skills` defines the rule and checks it.
 
-To add a skill, create `skills/<category>/<name>/SKILL.md` with a matching `name`, a trigger-focused `description`, and the `an-dr.type` and `an-dr.dependencies` metadata that `agent-skill` defines. Add a PowerShell script only for repeated, mechanical operations and ensure it exits non-zero on failure. Register the skill in this table.
+To add a skill, create `skills/<category>/<name>/SKILL.md` with a matching `name`, a trigger-focused `description`, and the `an-dr.type` and `an-dr.dependencies` metadata that `agent-skill` defines. Add a Python script only for repeated, mechanical operations and ensure it exits non-zero on failure. Register the skill in this table.

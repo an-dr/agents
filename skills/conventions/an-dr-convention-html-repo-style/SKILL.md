@@ -20,7 +20,7 @@ Owns: how every page looks; a calling skill owns what it says, and a convention 
 - Shared building blocks come from `assets/components.css`, which uses only those tokens: `brand-page`, `brand-cols`, `brand-sticky`, `brand-section`, `brand-card`, `brand-note`, `brand-muted`, `brand-button`, `brand-input`, `brand-list`. A page adds layout rules only where no block fits.
 - Paragraphs, list items, and table cells fill their container; prose is never capped by `max-width` or a `ch` measure. Long lines → narrow the whole layout column.
 - Phone width: wide tables, code, and diagrams sit in their own `overflow-x: auto` container; the page never scrolls sideways.
-- Theme switch (Auto / Light / Dark, remembered per browser) and print layout (white paper, light palette, collapsed `<details>` opened) come from `embed-brand.ps1`. A page has no own theme control, `data-theme` handling, or print palette.
+- Theme switch (Auto / Light / Dark, remembered per browser) and print layout (white paper, light palette, collapsed `<details>` opened) come from `embed-brand.py`. A page has no own theme control, `data-theme` handling, or print palette.
 - Status is a word, never a colour alone: a step or item says `doing`, `done`, or `problem` in text. Severity colours are never part of the brand.
 
 ## Work surface
@@ -29,4 +29,4 @@ A page the user works in, not only reads, has two columns on a wide screen: inte
 
 ## Scripts
 
-- `scripts/embed-brand.ps1`: places the brand and component styles before the page's own styles and the theme switch at the body's start; a rerun replaces both. A page generated at run time embeds a static template once, then fills it.
+- `scripts/embed-brand.py`: places the brand and component styles before the page's own styles and the theme switch at the body's start; a rerun replaces both. A page generated at run time embeds a static template once, then fills it.

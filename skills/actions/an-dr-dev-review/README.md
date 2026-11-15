@@ -18,7 +18,7 @@ flowchart LR
   D[Select the diff] --> J[Judge: defects, security, structure, ergonomics, conventions, modernisation]
   J --> L[Layout check of added files]
   J --> S[Slop check of added lines]
-  L --> N[review-note.ps1 per finding]
+  L --> N[review-note.py per finding]
   S --> N
   N --> H[JSON record rendered to HTML]
 ```

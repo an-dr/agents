@@ -37,8 +37,8 @@ After writing, run `an-dr-dev-assign-ai-level`, unless the user declined earlier
 
 ## Check
 
-```powershell
-pwsh <an-dr-convention-readme>/scripts/check-readme.ps1 -MarkdownSkill <an-dr-convention-markdown> [-Path <repo>] [-Readme <file>]
+```sh
+python <an-dr-convention-readme>/scripts/check-readme.py --markdown-skill <an-dr-convention-markdown> [--path <repo>] [--readme <file>]
 ```
 
 Run before writing and again after; deliver only once it exits zero.

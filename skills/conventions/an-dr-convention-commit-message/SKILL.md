@@ -1,6 +1,6 @@
 ---
 name: an-dr-convention-commit-message
-description: The repository's commit message format — Conventional Commits narrowed to a typed subject, a one-line-per-entry bullet body, footers, no Markdown, and no AI attribution. Use when composing, reviewing, or rewriting any commit message; check-message.ps1 in this skill enforces it.
+description: The repository's commit message format — Conventional Commits narrowed to a typed subject, a one-line-per-entry bullet body, footers, no Markdown, and no AI attribution. Use when composing, reviewing, or rewriting any commit message; check-message.py in this skill enforces it.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
@@ -66,7 +66,7 @@ The checker rejects these on every line, whether from `-Footer`, a body entry, o
 
 ## Check
 
-`scripts/check-message.ps1` verifies a message file, string, or commit against these rules, including the scope list, and works as a `commit-msg` hook; it is the only enforcement point for every tool that records, rewrites, or validates a message. It exits non-zero on any violation and prints entry-length warnings without failing.
+`python scripts/check-message.py` verifies a message file, a string (`--message`), or a commit (`--commit`) against these rules, including the scope list, and works as a `commit-msg` hook; it is the only enforcement point for every tool that records, rewrites, or validates a message. It exits non-zero on any violation and prints entry-length warnings without failing.
 
 ## Examples
 

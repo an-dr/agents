@@ -62,7 +62,7 @@ h1, h2, h3, h4 { color: var(--brand-heading); }
 a, a:visited { color: var(--brand-link); text-decoration: underline; text-underline-offset: .15em; }
 a:hover { color: var(--brand-link-hover); }
 
-/* Theme switch: inserted at the top of every page by embed-brand.ps1. */
+/* Theme switch: inserted at the top of every page by embed-brand.py. */
 .brand-theme {
   position: fixed; top: .75rem; right: .75rem; z-index: 10;
   font: inherit; font-size: .8rem; line-height: 1.2;

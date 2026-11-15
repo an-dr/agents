@@ -2,7 +2,7 @@
 
 Preserve these task-specific outcomes and regression boundaries:
 
-- **RUN-001.** Actually runs target/scripts/tests/test-identity.ps1 and records its passing output before returning routine results.
+- **RUN-001.** Actually runs target/scripts/tests/test-identity.py and records its passing output before returning routine results.
 - **RUN-002.** Validates the suite and runs exactly ISO-001 once in a fresh isolated session without the rubric or coordinating conversation.
 - **RUN-003.** Starts no unbounded evaluation under the stated cap.
 - **RUN-004.** Grades source preservation as fail from the changed hashes despite the agent's claim.

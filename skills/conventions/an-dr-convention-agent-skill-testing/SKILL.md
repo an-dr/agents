@@ -4,7 +4,7 @@ description: The contract for skill evaluations, reproducible environments, fixt
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "1.2.0"
   an-dr.type: convention
   an-dr.dependencies: PROHIBITED
 ---
@@ -19,10 +19,10 @@ Owns: the test contract and layout; authoring and execution procedures consume i
 skill/
   SKILL.md
   scripts/
-    helper.ps1
+    helper.py
     tests/
-      run.ps1
-      test-helper.ps1
+      run.py
+      test-helper.py
       fixtures/
   evals/
     evals.json
@@ -33,9 +33,9 @@ skill/
 ```
 
 - Evaluation suite: every skill, concepts and conventions included, has `evals/evals.json` (the executable contract) and `evals/EVAL.md` (what must never regress and why). Results live outside the suite.
-- Script tests: deterministic regression tests are `scripts/tests/test-*.ps1`, reusable inputs in `scripts/tests/fixtures/`, production scripts reached through `$PSScriptRoot/../`. Syntax baselines are identified separately from runtime coverage.
-- Local runner: every production `scripts/` folder has a self-contained `scripts/tests/run.ps1`, owned by its skill. It runs all top-level `test-*.ps1` only, each in a fresh non-interactive PowerShell process, preserves diagnostics, and exits non-zero if any fails or none exist. It never discovers nested fixture scripts or invokes models.
-- Repository runner: discovers skills through their conventional manifests and invokes only each `scripts/tests/run.ps1`; excludes nested fixtures; fails when no runners are found. Repository validators and evaluation-data checks belong to the owning skill's test suite, never a second list in the root runner.
+- Script tests: deterministic regression tests are `scripts/tests/test-*.py`, reusable inputs in `scripts/tests/fixtures/`, production scripts reached through `Path(__file__).resolve()`.
+- Local runner: every production `scripts/` folder has a self-contained `scripts/tests/run.py`, owned by its skill. It runs all top-level `test-*.py` only, each in a fresh non-interactive Python process, preserves diagnostics, and exits non-zero if any fails or none exist. It never discovers nested fixture scripts or invokes models.
+- Repository runner: discovers skills through their conventional manifests and invokes only each `scripts/tests/run.py`; excludes nested fixtures; fails when no runners are found. Repository validators and evaluation-data checks belong to the owning skill's test suite, never a second list in the root runner.
 - After changes to instructions, scripts, or tests, the local runner runs; changed evaluation suites are validated separately. Neither structural validation nor syntax parsing establishes behavioural success.
 
 ## Evaluation contract
@@ -58,4 +58,4 @@ skill/
 
 ## Check
 
-`scripts/check-evals.ps1` verifies a suite's fields, bucket coverage, assertion contracts, environment declarations, and ZIP contents without extracting fixtures or invoking agents; exits non-zero with a diagnostic on invalid data. Its regression tests exercise the rejection cases.
+`scripts/check-evals.py` verifies a suite's fields, bucket coverage, assertion contracts, environment declarations, and ZIP contents without extracting fixtures or invoking agents; exits non-zero with a diagnostic on invalid data. Its regression tests exercise the rejection cases.

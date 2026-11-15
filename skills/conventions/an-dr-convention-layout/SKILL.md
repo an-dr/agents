@@ -64,4 +64,4 @@ Each file adds one type's layout to the shared rules below. A repository of seve
 
 ## Check
 
-`scripts/check-layout.ps1 [-Path <repository>]` checks a git repository's tracked files for: missing `README.md` or `LICENSE`, committed generated folders (`.artifacts/`, `code-review/`, `.tmp-ai-gen/`, `__pycache__/`), top-level `doc/` or `example/`, and an `apps/<name>/` holding only a single subfolder. One row per finding, missing `LICENSE` a warning and the rest errors; exits `1` on any error.
+`python scripts/check-layout.py [--path <repository>]` checks a git repository's tracked files for: missing `README.md` or `LICENSE`, committed generated folders (`.artifacts/`, `code-review/`, `.tmp-ai-gen/`, `__pycache__/`), top-level `doc/` or `example/`, and an `apps/<name>/` holding only a single subfolder. One row per finding, missing `LICENSE` a warning and the rest errors; exits `1` on any error.

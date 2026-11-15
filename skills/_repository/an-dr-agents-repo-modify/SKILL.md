@@ -2,7 +2,7 @@
 name: an-dr-agents-repo-modify
 description: Change this workflow repository's instructions — AGENTS.md, roles, skills, scripts — from wherever the need appeared, summarize the change, and commit and push it once the user approves. Use for every change to this repository, whether requested here or while working in another repository.
 license: MIT
-allowed-tools: PowerShell Read Grep Glob Write Edit
+allowed-tools: Python Read Grep Glob Write Edit
 metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.2.0"
@@ -16,8 +16,8 @@ Defers: rule writing to `an-dr-ai-write-instruction`, tests to `an-dr-ai-skill-i
 
 ## Locate the clone
 
-```powershell
-pwsh <skill>/scripts/find-agents-root.ps1 [-Path <start-directory>] [-AgentsRoot <path>]
+```sh
+python <skill>/scripts/find-agents-root.py [--path <start-directory>] [--agents-root <path>]
 ```
 
 It checks the clone providing this skill (through a global install's junction), the working repository, an `agents` submodule in it, and each tool's `an-dr-agents-repo-install` policy path. It prints a candidate table, then the resolved root's branch, working tree, upstream, and whether it is nested in the host repository.
@@ -39,8 +39,8 @@ It checks the clone providing this skill (through a global install's junction), 
 4. Find each rule stated more than once across the changed files and the files they touch. Keep a repeat only if it adds a point-specific detail (exact options, safe default) or sits where an agent would otherwise miss the rule; otherwise delete it or name its owner.
 5. Read root `README.md` and `skills/README.md` against the diff; update every description of changed behavior (mode, phase, skill, command, layout) in the same change.
 6. Use `an-dr-ai-skill-implement-test` for script test coverage and, for new or corrected behavior, behavior cases. After every modification run the affected skills' cheap script tests and validate changed case data with `an-dr-ai-skill-test`. Behavioral execution needs an explicit user request. Report unrun evaluations separately from script results and structural checks.
-7. Run `pwsh <clone>/tests/run-all.ps1` (`<clone>` = resolved root) and fix everything it reports. For its scope, `-All`, the repository-wide checks, and a missing `skills-ref`, read [references/checks.md](references/checks.md).
-8. A skill directory added, renamed, or removed → re-run `an-dr-agents-repo-install`'s `install-agents.ps1` and report its table.
+7. Run `python <clone>/tests/run-all.py` (`<clone>` = resolved root) and fix everything it reports. For its scope, `--all`, the repository-wide checks, and a missing `skills-ref`, read [references/checks.md](references/checks.md).
+8. A skill directory added, renamed, or removed → re-run `an-dr-agents-repo-install`'s `install-agents.py` and report its table.
 9. A skill or policy file added, renamed, or moved → run `an-dr-agents-repo-verify-installation`.
 
 ## Summarize
@@ -51,7 +51,7 @@ Present before asking for anything; the summary is the deliverable even if no co
 - the evidence each change answers;
 - what was left alone, including amendments considered and rejected;
 - `git -C <root> diff --stat`, plus the full diff of the instruction files;
-- the size report of `pwsh <skill>/scripts/size-diff.ps1 -Root <root>`; growth in what agents load needs a matching cut or a stated reason.
+- the size report of `python <skill>/scripts/size-diff.py --root <root>`; growth in what agents load needs a matching cut or a stated reason.
 
 ## Commit and push
 

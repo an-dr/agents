@@ -38,7 +38,7 @@ Read the delivered diff, commits, intake requests or brief, touched ADRs and arc
 Omit a section only when empty, and say so in the summary.
 
 - Explain one change, not the whole repository; every section states something the reader needs, free of `an-dr-concept-ai-slop` signals.
-- Diagrams follow `an-dr-convention-diagram`: one level each, an overview first and its parts after; run its `check-diagrams.ps1` on the page before building it.
+- Diagrams follow `an-dr-convention-diagram`: one level each, an overview first and its parts after; run its `check-diagrams.py` on the page before building it.
 - Levels for Requests and Verification: delivered or passed → `ok`; partial or unverified → `notice`; not done → `high`; failed check that ships → `critical`.
 - Code only as interface signatures or the few lines an adopter writes; never implementation.
 

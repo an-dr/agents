@@ -9,7 +9,7 @@ Versions this repository and publishes it as a package, so a user can take a kno
 
 ## How it works
 
-The version lives in `VERSION` at the root, and each release has notes in `docs/releases/<version>.md`. `scripts/package.ps1` builds `agents-<version>.zip`: the policy (`AGENTS.md`), `README.md`, `VERSION`, `LICENSE`, and every skill except those under `skills/_repository`, which only maintain this repository. Pushing a `v<version>` tag makes `.github/workflows/release.yml` rerun every check, package, and publish the GitHub release with the notes, the zip, and its checksum.
+The version lives in `VERSION` at the root, and each release has notes in `docs/releases/<version>.md`. `scripts/package.py` builds `agents-<version>.zip`: the policy (`AGENTS.md`), `README.md`, `VERSION`, `LICENSE`, and every skill except those under `skills/_repository`, which only maintain this repository. Pushing a `v<version>` tag makes `.github/workflows/release.yml` rerun every check, package, and publish the GitHub release with the notes, the zip, and its checksum.
 
 ## What you get
 

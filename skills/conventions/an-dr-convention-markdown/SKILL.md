@@ -1,6 +1,6 @@
 ---
 name: an-dr-convention-markdown
-description: Format rules for Markdown files — one line per paragraph, headings, lists, fences, emphasis, links, and aligned tables. Use when writing, editing, or reviewing any .md file, including documentation and SKILL.md files; format-markdown.ps1 in this skill formats it and check-markdown.ps1 checks it.
+description: Format rules for Markdown files — one line per paragraph, headings, lists, fences, emphasis, links, and aligned tables. Use when writing, editing, or reviewing any .md file, including documentation and SKILL.md files; format-markdown.py in this skill formats it and check-markdown.py checks it.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
@@ -35,8 +35,8 @@ Owns: mechanics only. Content and structure belong to the document's writer; a c
 
 ## Check
 
-- `scripts/format-markdown.ps1` formats a file or directory: aligns tables, removes trailing whitespace, ends each file with one newline; leaves frontmatter, code fences, and HTML comments untouched. It refuses to write a file whose text would change, and counts an emoji as one character, so emoji tables can look slightly off.
-- `scripts/check-markdown.ps1` verifies these rules, including hard-wrapped paragraphs and unaligned tables, and exits non-zero on any violation. HTML comments are excluded from prose checks; visible text around them is still checked. `-Path` takes files or directories.
-- `scripts/reflow-markdown.ps1` joins hard-wrapped paragraphs.
+- `python scripts/format-markdown.py --path <files or folders>` formats a file or directory: aligns tables, removes trailing whitespace, ends each file with one newline; leaves frontmatter, code fences, and HTML comments untouched. It refuses to write a file whose text would change, and counts an emoji as one character, so emoji tables can look slightly off.
+- `python scripts/check-markdown.py --path <files or folders>` verifies these rules, including hard-wrapped paragraphs and unaligned tables, and exits non-zero on any violation. HTML comments are excluded from prose checks; visible text around them is still checked. `--path` takes files or directories.
+- `python scripts/reflow-markdown.py --path <file or folder>` joins hard-wrapped paragraphs.
 
 Regression tests are in `scripts/tests/`.

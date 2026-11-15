@@ -8,10 +8,10 @@
 - The four facts distil the whole request list, including the exclusions it implies; never invent one, ask it as a question.
 - The list stays in state so `SUMMARY` checks the branch against it.
 
-```powershell
-pwsh <script> add-request -Text '<something the user wants from this branch>'
-pwsh <script> remove-request -Number 3
-pwsh <script> set-requirement -Field goal -Value '<the problem>'
+```sh
+python <script> add-request --text '<something the user wants from this branch>'
+python <script> remove-request --number 3
+python <script> set-requirement --field goal --value '<the problem>'
 ```
 
 ## Plan the gated work

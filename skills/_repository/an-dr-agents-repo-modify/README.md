@@ -12,7 +12,7 @@ For every change to this repository — `AGENTS.md`, skills, scripts — whether
 flowchart LR
   L[Locate the clone] --> X[You confirm the intended change]
   X --> C[Change from quoted evidence]
-  C --> T[Script tests and run-all.ps1]
+  C --> T[Script tests and run-all.py]
   T --> S[Summary, diff, context-size report]
   S --> A{You approve}
   A --> G[Commit and push; move the host's pointer]

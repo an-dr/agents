@@ -11,7 +11,7 @@
     ],
     "tools": [
       "git",
-      "pwsh"
+      "python"
     ],
     "network": "disabled",
     "permissions": "workspace-only",
@@ -27,7 +27,7 @@
       "bucket": "explicit",
       "prompt": "Use an-dr-convention-agent-skill. Review the proposed skill structure.",
       "expected_skill": "an-dr-convention-agent-skill",
-      "context": "A general concept skill has SKILL.md, evals/evals.json, and production scripts/modify-source.ps1. Its metadata type is concept.",
+      "context": "A general concept skill has SKILL.md, evals/evals.json, and production scripts/modify-source.py. Its metadata type is concept.",
       "expected_behavior": [
         "Allows the evals folder but rejects production scripts in the passive concept.",
         "Explains the type boundary without requiring tests to be deleted."
@@ -53,7 +53,7 @@
       "bucket": "implicit",
       "prompt": "Review the proposed skill structure.",
       "expected_skill": "an-dr-convention-agent-skill",
-      "context": "A general concept skill has SKILL.md, evals/evals.json, and production scripts/modify-source.ps1. Its metadata type is concept.",
+      "context": "A general concept skill has SKILL.md, evals/evals.json, and production scripts/modify-source.py. Its metadata type is concept.",
       "expected_behavior": [
         "Allows the evals folder but rejects production scripts in the passive concept.",
         "Explains the type boundary without requiring tests to be deleted."
@@ -79,7 +79,7 @@
       "bucket": "contextual",
       "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Review the proposed skill structure.",
       "expected_skill": "an-dr-convention-agent-skill",
-      "context": "A general concept skill has SKILL.md, evals/evals.json, and production scripts/modify-source.ps1. Its metadata type is concept.",
+      "context": "A general concept skill has SKILL.md, evals/evals.json, and production scripts/modify-source.py. Its metadata type is concept.",
       "expected_behavior": [
         "Allows the evals folder but rejects production scripts in the passive concept.",
         "Explains the type boundary without requiring tests to be deleted."

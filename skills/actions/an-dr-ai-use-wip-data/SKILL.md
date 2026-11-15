@@ -11,25 +11,25 @@ metadata:
 
 # WIP data
 
-Owns: `tmp-agent-wip.json` and its register, `scripts/sections.json`. No skill reads or writes the file except through `scripts/wip.ps1`.
+Owns: `tmp-agent-wip.json` and its register, `scripts/sections.json`. No skill reads or writes the file except through `scripts/wip.py`.
 
 ## Read and write
 
-```powershell
-pwsh <skill>/scripts/wip.ps1 get -Section <section> -Reader <reading-skill> -Field <field>
-pwsh <skill>/scripts/wip.ps1 get -Section <section> -Reader <owning-skill>
-pwsh <skill>/scripts/wip.ps1 set -Section <section> -Owner <owning-skill> -JsonPath <file>
-pwsh <skill>/scripts/wip.ps1 remove -Section <section> -Owner <owning-skill>
-pwsh <skill>/scripts/wip.ps1 path
+```sh
+python <skill>/scripts/wip.py get --section <section> --reader <reading-skill> --field <field>
+python <skill>/scripts/wip.py get --section <section> --reader <owning-skill>
+python <skill>/scripts/wip.py set --section <section> --owner <owning-skill> --json-path <file>
+python <skill>/scripts/wip.py remove --section <section> --owner <owning-skill>
+python <skill>/scripts/wip.py path
 ```
 
 - `get` prints compact JSON, `null` when the section or field is absent. The owner may read the whole section; any other reader names one field it is registered for.
-- `set` replaces the whole section with the JSON in `-JsonPath`; only the owner may, and only with registered fields. `remove` deletes the section and the file once it is empty.
-- A script calling another skill's script passes this skill's folder as `-WipDataSkill`, and calls `wip.ps1` in its own process.
+- `set` replaces the whole section with the JSON in `--json-path`; only the owner may, and only with registered fields. `remove` deletes the section and the file once it is empty.
+- A script calling another skill's script passes this skill's folder as its WIP data skill parameter, and calls `wip.py` in its own process.
 
 ## Register a section
 
-- Add the section to `scripts/sections.json` with its `owner`, every field it holds, and per reader skill the fields that skill may read; extend the tests in `scripts/tests/test-wip.ps1` in the same change.
+- Add the section to `scripts/sections.json` with its `owner`, every field it holds, and per reader skill the fields that skill may read; extend the tests in `scripts/tests/test-wip.py` in the same change.
 - One owner per section, named after the skill that writes it; a second writer is a design error, solved by a field the owner writes for it.
 
 ## The file

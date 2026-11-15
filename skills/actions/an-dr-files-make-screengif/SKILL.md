@@ -28,20 +28,20 @@ Defers: storage, naming, subject preparation, and personal data to `an-dr-files-
 
 ## Record
 
-```powershell
-pwsh <skill>/scripts/record-gif.ps1 -Window <title> -OutFile docs/media/<name>.gif [-Seconds 8] [-Fps 12] [-Width 800]
-pwsh <skill>/scripts/record-gif.ps1 -Video <recording.mp4> -OutFile docs/media/<name>.gif [-Start 2] [-Seconds 8] [-Fps 12] [-Width 800]
+```sh
+python <skill>/scripts/record-gif.py --window <title> --out-file docs/media/<name>.gif [--seconds 8] [--fps 12] [--width 800]
+python <skill>/scripts/record-gif.py --video <recording.mp4> --out-file docs/media/<name>.gif [--start 2] [--seconds 8] [--fps 12] [--width 800]
 ```
 
-- `-Window`: records one window on Windows by exact title through ffmpeg after a countdown, while you or the user perform the planned actions.
-- `-Video`: converts an existing recording (browser, game capture, OS recorder), trimmed with `-Start` and `-Seconds`.
+- `--window`: records one window on Windows by exact title through ffmpeg after a countdown, while you or the user perform the planned actions.
+- `--video`: converts an existing recording (browser, game capture, OS recorder), trimmed with `--start` and `--seconds`.
 - Both use ffmpeg's two-pass palette; missing ffmpeg → the script stops with the install command.
-- Website → Claude in Chrome `gif_creator` records directly; pass its export through `-Video` only to trim or resize.
+- Website → Claude in Chrome `gif_creator` records directly; pass its export through `--video` only to trim or resize.
 
 ## Check
 
 - Watch the GIF loop.
-- Re-record when it starts mid-action, shows a purposeless wandering cursor, drops frames at the key moment, or exceeds about 5 MB; lower `-Fps` or `-Width` first.
+- Re-record when it starts mid-action, shows a purposeless wandering cursor, drops frames at the key moment, or exceeds about 5 MB; lower `--fps` or `--width` first.
 
 ## Output
 

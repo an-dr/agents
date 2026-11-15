@@ -17,11 +17,11 @@ Owns: executing and grading a run. Defers: test implementation to `an-dr-ai-skil
 
 Resolve the target skill from the request or modified files, then run:
 
-```powershell
-pwsh <target-skill>/scripts/tests/run.ps1
+```sh
+python <target-skill>/scripts/tests/run.py
 ```
 
-- The runner discovers top-level `scripts/tests/test-*.ps1` and runs each in a fresh PowerShell process.
+- The runner discovers top-level `scripts/tests/test-*.py` and runs each in a fresh Python process.
 - Run on every invocation, including behavioral runs and grading requests, and after every change to the skill, its scripts, or its tests. Reuse a recorded passing run only when no target file changed since.
 - Needs no evaluation approval; starts no agents or paid services.
 - No scripts → report script testing not applicable.

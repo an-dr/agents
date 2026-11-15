@@ -1,6 +1,6 @@
 ---
 name: an-dr-agents-repo-convention-skills
-description: The naming, metadata, and test rules of this repository's skills - the an-dr namespace, groups, verbs, type words, and agents-repo prefix - on top of the general skill convention. Use when naming, renaming, or reviewing a skill of this repository; check-names.ps1 in this skill enforces the names.
+description: The naming, metadata, and test rules of this repository's skills - the an-dr namespace, groups, verbs, type words, and agents-repo prefix - on top of the general skill convention. Use when naming, renaming, or reviewing a skill of this repository; check-names.py in this skill enforces the names.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
@@ -36,7 +36,7 @@ Groups: `ai` agent instructions and the conversation with the user; `ai-skill` i
 
 ## Verbs
 
-A verb is added here before use, with a meaning distinct from the others; `check-names.ps1` reads this table.
+A verb is added here before use, with a meaning distinct from the others; `check-names.py` reads this table.
 
 | Verb        | Means                                                                     |
 | ----------- | ------------------------------------------------------------------------- |
@@ -73,5 +73,5 @@ A verb is added here before use, with a meaning distinct from the others; `check
 
 ## Check
 
-- `scripts/check-names.ps1` verifies every skill name against the naming tables, reading verbs from the Verbs table, and exits non-zero on any break.
+- `scripts/check-names.py` verifies every skill name against the naming tables, reading verbs from the Verbs table, and exits non-zero on any break.
 - Its regression test breaks a copy one way at a time and expects each break named; the repository test run also checks the required test layout.

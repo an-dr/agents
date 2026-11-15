@@ -1,10 +1,10 @@
 # Tests
 
-Run `pwsh tests/run-all.ps1` for free repository checks. It discovers skill manifests and invokes each skill's `scripts/tests/run.ps1`. By default it runs only the affected suites: skills with a file changed in the working tree (or since `-Base <ref>`), skills that declare a dependency on one, and every suite with a `test-repository*.ps1`, which checks the whole repository. `-All` runs every suite; CI uses it on each push. Each owning suite supplies its repository checks; the testing convention's suite discovers and validates `evals/evals.json` and ZIP fixtures. The root runner carries no validator list. It never invokes a model. A structural pass does not establish behavioral success.
+Run `python tests/run-all.py` for free repository checks. It discovers skill manifests and invokes each skill's `scripts/tests/run.py`. By default it runs only the affected suites: skills with a file changed in the working tree (or since `--base <ref>`), skills that declare a dependency on one, and every suite with a `test-repository*.py`, which checks the whole repository. `--all` runs every suite; CI does the same on each push. Each owning suite supplies its repository checks; the testing convention's suite discovers and validates `evals/evals.json` and ZIP fixtures. The root runner carries no validator list. It never invokes a model. A structural pass does not establish behavioral success.
 
 ## Deterministic tests
 
-Production helpers live in `scripts/`; their tests live in `scripts/tests/test-*.ps1` and reusable script fixtures in `scripts/tests/fixtures/`. Run one skill with `pwsh <skill>/scripts/tests/run.ps1`. Local runners execute only top-level test scripts in fresh non-interactive PowerShell processes and preserve failures. Syntax baselines are identified separately from runtime regression coverage.
+Production helpers live in `scripts/`; their tests live in `scripts/tests/test-*.py` and reusable fixtures in `scripts/tests/fixtures/`. Run one skill with `python <skill>/scripts/tests/run.py`. Local runners execute only top-level test scripts in fresh processes and preserve failures. Syntax baselines are identified separately from runtime regression coverage.
 
 ## Skill evaluations
 
@@ -14,8 +14,8 @@ Every skill has `evals/evals.json` and `evals/EVAL.md`. Cases cover explicit, im
 
 Validate a suite without starting an agent:
 
-```powershell
-pwsh skills/conventions/an-dr-convention-agent-skill-testing/scripts/check-evals.ps1 -Path skills/actions/an-dr-dev-analyze-changes/evals/evals.json
+```sh
+python skills/conventions/an-dr-convention-agent-skill-testing/scripts/check-evals.py --path skills/actions/an-dr-dev-analyze-changes/evals/evals.json
 ```
 
 To request execution, name the skill, cases, and limits: "Use an-dr-ai-skill-test to run AC-001 once against the change-report skill with the current model, single arm, no extra paid grader." A full repository request covers every suite. The default is one arm and one trial per case, so its tested-agent session count equals the number of cases. Request a comparison or more trials explicitly. The agent states the total before execution and respects any spending cap.

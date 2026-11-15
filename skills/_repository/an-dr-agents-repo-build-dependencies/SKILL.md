@@ -15,8 +15,8 @@ Defers: the `an-dr.dependencies` format to `an-dr-convention-agent-skill`.
 
 ## Build
 
-```powershell
-pwsh <skill>/scripts/build-dependencies.ps1 [-Root <repository>] [-Markdown <file>] [-Check]
+```sh
+python <skill>/scripts/build-dependencies.py [--root <repository>] [--markdown <file>] [--check]
 ```
 
 - No `-Markdown` → prints the Mermaid diagram and a summary.

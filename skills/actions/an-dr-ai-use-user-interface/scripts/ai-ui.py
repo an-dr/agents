@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 """An experimental browser page for talking to the user: a progress log and updatable forms.
 
-INTENTIONAL EXCEPTION to an-dr-convention-script: this script is Python 3 (standard
-library only), not PowerShell 7, because a local HTTP server is far simpler and safer
-in Python. It is the only script in this repository allowed to be Python.
+Uses only the Python standard library, including the local HTTP server.
 
 One page, two parts. Progress: the agent appends a step with `log` and the user sees it
 within seconds. Forms: the agent writes or replaces <state>.questions.json (schema:
@@ -35,7 +33,6 @@ import hmac
 import json
 import os
 import secrets
-import shutil
 import subprocess
 import sys
 import tempfile
@@ -294,19 +291,16 @@ TEMPLATE = PAGE  # replaced at serve start by the page with the shared HTML styl
 
 
 def styled_template(style_skill):
-    """Run the page once through the HTML style convention's embed-brand.ps1 (brand, components, theme switch)."""
-    script = Path(style_skill) / "scripts" / "embed-brand.ps1"
+    """Run the page once through the HTML style convention's Python embedder."""
+    script = Path(style_skill) / "scripts" / "embed-brand.py"
     if not script.is_file():
-        raise InputError(f"--html-style-skill has no scripts/embed-brand.ps1; pass the an-dr-convention-html-repo-style folder (looked in {script}).")
-    pwsh = shutil.which("pwsh")
-    if not pwsh:
-        raise InputError("pwsh (PowerShell 7) is needed to apply the HTML style; install it or use the text form.")
+        raise InputError(f"--html-style-skill has no scripts/embed-brand.py; pass the an-dr-convention-html-repo-style folder (looked in {script}).")
     with tempfile.TemporaryDirectory() as folder:
         page = Path(folder) / "page.html"
         page.write_text(PAGE, encoding="utf-8")
-        run = subprocess.run([pwsh, "-NoProfile", "-File", str(script), "-Path", str(page)], capture_output=True, text=True)
+        run = subprocess.run([sys.executable, str(script), "--path", str(page)], capture_output=True, text=True)
         if run.returncode != 0:
-            raise InputError(f"embed-brand.ps1 failed: {run.stderr.strip() or run.stdout.strip()}")
+            raise InputError(f"embed-brand.py failed: {run.stderr.strip() or run.stdout.strip()}")
         return page.read_text(encoding="utf-8")
 
 

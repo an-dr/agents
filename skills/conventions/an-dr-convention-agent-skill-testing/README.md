@@ -4,15 +4,15 @@ The contract for testing a skill: cheap deterministic script tests that run afte
 
 ## When it runs
 
-A convention is read, never run. Skills load it when authoring, executing, packaging, or reviewing a skill's tests; `scripts/check-evals.ps1` validates an evaluation suite without running any agent.
+A convention is read, never run. Skills load it when authoring, executing, packaging, or reviewing a skill's tests; `scripts/check-evals.py` validates an evaluation suite without running any agent.
 
 ## How it works
 
 ```mermaid
 flowchart LR
   subgraph Free["Free — after every change"]
-    T[scripts/tests/test-*.ps1] --> R[scripts/tests/run.ps1]
-    R --> A[tests/run-all.ps1]
+    T[scripts/tests/test-*.py] --> R[scripts/tests/run.py]
+    R --> A[tests/run-all.py]
   end
   subgraph Paid["Paid — on explicit request"]
     E[evals/evals.json] --> F[fresh session + ZIP fixture]

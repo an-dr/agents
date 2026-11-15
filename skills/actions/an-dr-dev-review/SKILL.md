@@ -32,8 +32,8 @@ Defers: structure and dependencies to `an-dr-concept-clean-dependencies`, eviden
 
 Judge placement of added files and folders by `an-dr-convention-layout` and its reference for the project type:
 
-```powershell
-pwsh <an-dr-convention-layout>/scripts/check-layout.ps1 -Path <repository>
+```sh
+python <an-dr-convention-layout>/scripts/check-layout.py --path <repository>
 ```
 
 Prints one row per layout finding; exit `1` on any error. Error in a path the diff adds or moves → finding; errors elsewhere → summary, as existing layout debt.
@@ -42,8 +42,10 @@ Prints one row per layout finding; exit `1` on any error. Error in a path the di
 
 From the reviewed repository:
 
-```powershell
-pwsh <skill>/scripts/review-start.ps1 -Reference '<branch-or-ref>' -Scope <direct|verify|summary|requested> -ArtifactLayoutSkill <an-dr-convention-artifact-layout>
+```sh
+python <skill>/scripts/review-start.py --reference '<branch-or-ref>' \
+  --scope <direct|verify|summary|requested> \
+  --artifact-layout-skill <an-dr-convention-artifact-layout>
 ```
 
 Takes a `code-review` path from `an-dr-convention-artifact-layout` and writes a schema-versioned JSON record there from `assets/review-template.json`. Review state and reports stay local unless the user asks otherwise.
@@ -57,28 +59,31 @@ Takes a `code-review` path from `an-dr-convention-artifact-layout` and writes a 
 
 ## Record sections
 
-Use `review-note.ps1` for every change:
+Use `review-note.py` for every change:
 
-```powershell
-pwsh <skill>/scripts/review-note.ps1 -ReviewPath <json> `
-  -Section critical -File src/app.ps1 -Line 42 `
-  -Text '<problem>' -Recommendation '<concrete fix>'
+```sh
+python <skill>/scripts/review-note.py --review-path <json> \
+  --section critical --file src/app.py --line 42 \
+  --text '<problem>' --recommendation '<concrete fix>'
 
-pwsh <skill>/scripts/review-note.ps1 -ReviewPath <json> `
-  -Section summary -Text '<summary>'
+python <skill>/scripts/review-note.py --review-path <json> \
+  --section summary --text '<summary>'
 
-pwsh <skill>/scripts/review-note.ps1 -ReviewPath <json> `
-  -Section verdict -Decision changes-required -Text '<rationale>'
+python <skill>/scripts/review-note.py --review-path <json> \
+  --section verdict --decision changes-required --text '<rationale>'
 ```
 
 - Finding sections `critical`, `high`, `slop`, `improvement` get IDs `CR.N`, `HI.N`, `SL.N`, `IM.N`; positives `PO.N`.
 - Summary and verdict are singletons, updated rather than appended.
-- Before attaching a diagram with `-Diagram` or `-DiagramPath`, read [references/checklist.md](references/checklist.md).
+- Before attaching a diagram with `--diagram` or `--diagram-path`, read [references/checklist.md](references/checklist.md).
 
 ## Render and report
 
-```powershell
-pwsh <skill>/scripts/review-render.ps1 -ReviewPath <json> -HtmlReportSkill <an-dr-convention-html-report> -HtmlStyleSkill <an-dr-convention-html-repo-style> -ArtifactLayoutSkill <an-dr-convention-artifact-layout>
+```sh
+python <skill>/scripts/review-render.py --review-path <json> \
+  --html-report-skill <an-dr-convention-html-report> \
+  --html-style-skill <an-dr-convention-html-repo-style> \
+  --artifact-layout-skill <an-dr-convention-artifact-layout>
 ```
 
 Writes one self-contained `.html` beside the JSON, copies both to `code-review-latest.*`, orders sections verdict, summary, critical, high, slop, improvements, positives, and renders diagrams offline through `an-dr-convention-html-report`'s embed script.

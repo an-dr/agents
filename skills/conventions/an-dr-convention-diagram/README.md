@@ -28,7 +28,7 @@ flowchart TD
   O --> P[One diagram per box]
 ```
 
-`check-diagrams.ps1` counts what it can parse in `flowchart`, `graph`, and `stateDiagram` blocks; other types are listed as not measured. A generated reference graph opts out with a `%% diagram-budget: exempt <reason>` line.
+`check-diagrams.py` counts what it can parse in `flowchart`, `graph`, and `stateDiagram` blocks; other types are listed as not measured. A generated reference graph opts out with a `%% diagram-budget: exempt <reason>` line.
 
 ## What you get
 

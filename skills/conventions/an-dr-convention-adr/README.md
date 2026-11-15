@@ -4,7 +4,7 @@ The format and lifecycle of an architecture decision record: where it lives, how
 
 ## When it runs
 
-A convention is read, never run. Skills load it when writing, editing, superseding, or reviewing an ADR; `scripts/adr-new.ps1` creates one with the next number and the section skeleton.
+A convention is read, never run. Skills load it when writing, editing, superseding, or reviewing an ADR; `scripts/adr-new.py` creates one with the next number and the section skeleton.
 
 ## How it works
 

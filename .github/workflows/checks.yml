@@ -12,5 +12,4 @@ jobs:
       - name: Install the Agent Skills reference validator
         run: pipx install "git+https://github.com/agentskills/agentskills#subdirectory=skills-ref"
       - name: Run every skill test and repository check
-        shell: pwsh
-        run: ./tests/run-all.ps1 -All
+        run: python3 tests/run-all.py --all

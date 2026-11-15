@@ -5,7 +5,7 @@ Format and lifecycle: `an-dr-convention-adr`. Only for a lasting architectural d
 1. Create the file with the next free number and the section skeleton; it prints the path. Fill every section briefly.
 
    ```powershell
-   pwsh <an-dr-convention-adr>/scripts/adr-new.ps1 -Title '<title>'
+   python <an-dr-convention-adr>/scripts/adr-new.py --title '<title>'
    ```
 
 2. Changing an integrated decision → new superseding ADR, and in the same commit the single "Superseded by" line in the old one.

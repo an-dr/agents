@@ -11,7 +11,7 @@
     ],
     "tools": [
       "git",
-      "pwsh"
+      "python"
     ],
     "network": "disabled",
     "permissions": "workspace-only",

@@ -12,8 +12,8 @@ When a README or document needs an image of visible output, or when you ask for 
 flowchart LR
   S[Start with the documented command] --> D[Load shipped sample data, remove personal data]
   D --> C{Capture}
-  C -- web page --> U[-Url: headless Chromium]
-  C -- Windows window --> W[-Window: Screen or Print mode]
+  C -- web page --> U[--url: headless Chromium]
+  C -- Windows window --> W[--window: Screen or Print mode]
   U --> K[Open and inspect]
   W --> K
   K -- spinner, black frame, personal data --> S

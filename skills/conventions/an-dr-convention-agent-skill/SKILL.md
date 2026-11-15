@@ -4,7 +4,7 @@ description: The shape of a skill in any repository that uses it — Agent Skill
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.5.0"
+  version: "1.6.0"
   an-dr.type: convention
   an-dr.dependencies: an-dr-concept-clean-dependencies an-dr-convention-script an-dr-convention-agent-skill-testing an-dr-convention-markdown
 ---
@@ -46,8 +46,8 @@ Layers: description in every session → `SKILL.md` on use → reference file on
 
 ## Check
 
-- `scripts/check-registration.ps1` verifies placement, registration, types against folders, and declared dependencies, and lists dependency cycles, which fail with `-FailOnCycle`; `-RequireTests` requires `evals/` in every skill.
-- `scripts/check-skills.ps1` verifies the frontmatter, description, title, section order, reference links, and that `README.md` exists, and warns on size, on the size.md wording rules it can detect (description sentences, body lines, intro paragraph, bold rule names), and on a command block in a concept or convention.
-- `scripts/check-skills-ref.ps1` verifies the format through `skills-ref validate`. Without `skills-ref` it prints the install command and exits 0; with `-Require` or in CI it exits 1.
+- `scripts/check-registration.py` verifies placement, registration, types against folders, and declared dependencies, and lists dependency cycles, which fail with `--fail-on-cycle`; `--require-tests` requires `evals/` in every skill.
+- `scripts/check-skills.py` verifies the frontmatter, description, title, section order, reference links, and that `README.md` exists, and warns on size, on the size.md wording rules it can detect (description sentences, body lines, intro paragraph, bold rule names), and on a command block in a concept or convention.
+- `scripts/check-skills-ref.py` verifies the format through `skills-ref validate`. Without `skills-ref` it prints the install command and exits 0; with `--require` or in CI it exits 1.
 
-Each takes `-Root <repository>`, prints what it found, and exits non-zero on a problem. Their regression tests are in `scripts/tests/`.
+Each takes `--root <repository>`, prints what it found, and exits non-zero on a problem. Their regression tests are in `scripts/tests/`.

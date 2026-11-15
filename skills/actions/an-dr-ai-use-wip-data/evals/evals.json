@@ -11,7 +11,7 @@
     ],
     "tools": [
       "git",
-      "pwsh"
+      "python"
     ],
     "network": "disabled",
     "permissions": "workspace-only",
@@ -29,7 +29,7 @@
       "expected_skill": "an-dr-ai-use-wip-data",
       "context": "The repository has tmp-agent-wip.json with a workflow section owned by the workflow controller.",
       "expected_behavior": [
-        "Writes the section only through scripts/wip.ps1 with the owning skill as -Owner, never by editing tmp-agent-wip.json directly.",
+        "Writes the section only through scripts/wip.py with the owning skill as --owner, never by editing tmp-agent-wip.json directly.",
         "Registers any new field in scripts/sections.json before writing it."
       ],
       "assertions": [
@@ -39,7 +39,7 @@
         },
         {
           "type": "llm_judge",
-          "rubric": "Writes the section only through scripts/wip.ps1 with the owning skill as -Owner, never by editing tmp-agent-wip.json directly."
+          "rubric": "Writes the section only through scripts/wip.py with the owning skill as --owner, never by editing tmp-agent-wip.json directly."
         },
         {
           "type": "llm_judge",
@@ -55,7 +55,7 @@
       "expected_skill": "an-dr-ai-use-wip-data",
       "context": "The repository has tmp-agent-wip.json with a workflow section owned by the workflow controller.",
       "expected_behavior": [
-        "Writes the section only through scripts/wip.ps1 with the owning skill as -Owner, never by editing tmp-agent-wip.json directly.",
+        "Writes the section only through scripts/wip.py with the owning skill as --owner, never by editing tmp-agent-wip.json directly.",
         "Registers any new field in scripts/sections.json before writing it."
       ],
       "assertions": [
@@ -65,7 +65,7 @@
         },
         {
           "type": "llm_judge",
-          "rubric": "Writes the section only through scripts/wip.ps1 with the owning skill as -Owner, never by editing tmp-agent-wip.json directly."
+          "rubric": "Writes the section only through scripts/wip.py with the owning skill as --owner, never by editing tmp-agent-wip.json directly."
         },
         {
           "type": "llm_judge",
@@ -81,7 +81,7 @@
       "expected_skill": "an-dr-ai-use-wip-data",
       "context": "A Vibe task is half done; tmp-agent-wip.json exists at the root.",
       "expected_behavior": [
-        "Writes the section only through scripts/wip.ps1 with the owning skill as -Owner, never by editing tmp-agent-wip.json directly.",
+        "Writes the section only through scripts/wip.py with the owning skill as --owner, never by editing tmp-agent-wip.json directly.",
         "Registers any new field in scripts/sections.json before writing it."
       ],
       "assertions": [
@@ -91,7 +91,7 @@
         },
         {
           "type": "llm_judge",
-          "rubric": "Writes the section only through scripts/wip.ps1 with the owning skill as -Owner, never by editing tmp-agent-wip.json directly."
+          "rubric": "Writes the section only through scripts/wip.py with the owning skill as --owner, never by editing tmp-agent-wip.json directly."
         },
         {
           "type": "llm_judge",

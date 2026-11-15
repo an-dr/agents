@@ -9,7 +9,7 @@ Keeps the data of the work in progress — which flow runs, its stage, the branc
 
 ## How it works
 
-One script, `scripts/wip.ps1`, is the only way in. Its register, `scripts/sections.json`, gives each section one owner skill, the fields it may hold, and the fields each other skill may read. A write by any other skill, a field the register does not list, or a read beyond a reader's fields is refused, so every skill stays strict about what it uses.
+One script, `scripts/wip.py`, is the only way in. Its register, `scripts/sections.json`, gives each section one owner skill, the fields it may hold, and the fields each other skill may read. A write by any other skill, a field the register does not list, or a read beyond a reader's fields is refused, so every skill stays strict about what it uses.
 
 ## What you get
 

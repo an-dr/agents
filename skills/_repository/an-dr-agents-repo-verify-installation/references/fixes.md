@@ -2,7 +2,7 @@
 
 | Finding                                                              | Fix                                                                                                                                             |
 | -------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| Install rows fail                                                    | Re-run `an-dr-agents-repo-install`'s `install-agents.ps1`; its SKILL.md owns conflicts, `unsupported` rows, and unknown tools                   |
+| Install rows fail                                                    | Re-run `an-dr-agents-repo-install`'s `install-agents.py`; its SKILL.md owns conflicts, `unsupported` rows, and unknown tools                    |
 | No root `AGENTS.md`/`CLAUDE.md`, or it does not reference the policy | Add a root instruction file referencing `agents/AGENTS.md`, only if the repository should be governed; the `verdict` row reports this as `info` |
 | `AGENTS.md` without `CLAUDE.md`, or the reverse                      | Add the missing one; Claude Code reads `CLAUDE.md`; Codex, Copilot, opencode, and DeepSeek Harness read `AGENTS.md`                             |
 | `agents/` present but empty                                          | `git submodule update --init --recursive`                                                                                                       |

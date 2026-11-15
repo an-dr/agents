@@ -4,7 +4,7 @@ This repository's naming, metadata, and test rules for its own skills, on top of
 
 ## When it runs
 
-A convention is read, never run. It applies when naming, renaming, or reviewing a skill here; `check-names.ps1` enforces the names.
+A convention is read, never run. It applies when naming, renaming, or reviewing a skill here; `check-names.py` enforces the names.
 
 ## How it works
 

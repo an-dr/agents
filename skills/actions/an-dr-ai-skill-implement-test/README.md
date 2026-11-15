@@ -10,8 +10,8 @@ When you ask to add or update a skill's tests, or when a skill change needs cove
 
 ```mermaid
 flowchart LR
-  S[Skill scripts and callers] --> T[scripts/tests/test-*.ps1]
-  T --> R[scripts/tests/run.ps1]
+  S[Skill scripts and callers] --> T[scripts/tests/test-*.py]
+  T --> R[scripts/tests/run.py]
   O[Observed request or failure] --> B[Behaviour cases in evals/evals.json]
 ```
 
@@ -21,7 +21,7 @@ flowchart LR
 
 ## What you get
 
-Tests that run in `tests/run-all.ps1`, and an evaluation suite ready for someone to run when they ask.
+Tests that run in `tests/run-all.py`, and an evaluation suite ready for someone to run when they ask.
 
 ## Related skills
 

@@ -1,6 +1,6 @@
 ---
 name: an-dr-convention-adr
-description: The format and lifecycle of an architecture decision record — location, numbering, section template, and when an ADR is immutable versus still a draft. Use when writing, editing, superseding, or reviewing an ADR; adr-new.ps1 in this skill creates the file.
+description: The format and lifecycle of an architecture decision record — location, numbering, section template, and when an ADR is immutable versus still a draft. Use when writing, editing, superseding, or reviewing an ADR; adr-new.py in this skill creates the file.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
@@ -46,4 +46,4 @@ Every section is short.
 
 ## Script
 
-- `scripts/adr-new.ps1` creates `docs/adr/ADR-NNN-<slug>.md` with the next free number and the section skeleton.
+- `scripts/adr-new.py` creates `docs/adr/ADR-NNN-<slug>.md` with the next free number and the section skeleton.

@@ -15,4 +15,4 @@ It cannot see the conversation, so pass:
 ## Return
 
 - Type, scope, summary, and body entries as text.
-- It commits nothing; the session runs `new-commit.ps1`, so the history write stays where the user watches.
+- It commits nothing; the session runs `new-commit.py`, so the history write stays where the user watches.

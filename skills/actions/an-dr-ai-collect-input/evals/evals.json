@@ -5,7 +5,7 @@
     "host": "current",
     "model": "current",
     "os": ["windows", "linux", "macos"],
-    "tools": ["git", "pwsh"],
+    "tools": ["git", "python"],
     "network": "disabled",
     "permissions": "workspace-only",
     "discovery": "host-native",

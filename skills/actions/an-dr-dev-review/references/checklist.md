@@ -37,7 +37,7 @@ Judged against `an-dr-concept-clean-dependencies` and the Architecture, Names an
 
 ## Diagrams
 
-A finding may carry one Mermaid diagram through `-Diagram '<source>'` or `-DiagramPath <file>`.
+A finding may carry one Mermaid diagram through `--diagram '<source>'` or `--diagram-path <file>`.
 
 - Attach one when the problem is structural and a picture explains it faster than prose: a dependency pointing the wrong way, a request or handoff flow going wrong, a lifecycle with a missing transition, unclear ownership.
 - Not for a line-level defect.

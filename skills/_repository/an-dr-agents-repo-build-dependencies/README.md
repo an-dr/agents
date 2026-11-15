@@ -10,7 +10,7 @@ After a skill is added, renamed, or re-declares its dependencies, or when the di
 
 ```mermaid
 flowchart LR
-  F[SKILL.md metadata] --> S[build-dependencies.ps1]
+  F[SKILL.md metadata] --> S[build-dependencies.py]
   S -- no flag --> P[Print diagram and summary]
   S -- -Markdown file --> W[Replace the block between the markers]
   S -- -Check --> C[Exit 1 if stale]

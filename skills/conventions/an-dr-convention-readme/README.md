@@ -4,7 +4,7 @@ What a project README contains and in what order, and the rule that every statem
 
 ## When it runs
 
-A convention is read, never run. Skills load it when writing, reviewing, or checking a README; `scripts/check-readme.ps1` compares a README against the repository.
+A convention is read, never run. Skills load it when writing, reviewing, or checking a README; `scripts/check-readme.py` compares a README against the repository.
 
 ## How it works
 

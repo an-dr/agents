@@ -11,7 +11,7 @@
     ],
     "tools": [
       "git",
-      "pwsh"
+      "python"
     ],
     "network": "disabled",
     "permissions": "workspace-only",
@@ -244,7 +244,7 @@
       "environment": {
         "tools": [
           "git",
-          "pwsh",
+          "python",
           "browser-rendering",
           "image-inspection"
         ]

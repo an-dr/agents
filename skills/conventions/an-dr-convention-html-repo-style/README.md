@@ -4,13 +4,13 @@ How every HTML page in this repository looks: one palette, one set of building b
 
 ## When it runs
 
-A convention is read, never run. Any skill that builds an HTML page uses it; `embed-brand.ps1` applies it to a finished page.
+A convention is read, never run. Any skill that builds an HTML page uses it; `embed-brand.py` applies it to a finished page.
 
 ## How it works
 
 ```mermaid
 flowchart LR
-  P[Page written by a skill] --> E[embed-brand.ps1: brand tokens, components, theme switch]
+  P[Page written by a skill] --> E[embed-brand.py: brand tokens, components, theme switch]
   E --> R[Report: html-report adds levels and diagrams]
   E --> U[Interactive page: two-column work surface]
 ```

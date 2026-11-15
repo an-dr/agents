@@ -2,7 +2,7 @@
 name: an-dr-project-write-overview
 description: Produce one self-contained HTML overview of an unfamiliar repository — what it is, C4 levels 1–3 from the code, a reading path, documentation-versus-code drift, and ranked structural problems. Use when arriving at a codebase, onboarding someone, or auditing its architecture and health.
 license: MIT
-allowed-tools: Read Grep Glob Write Edit Bash PowerShell
+allowed-tools: Read Grep Glob Write Edit Bash
 metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.1.0"
@@ -18,8 +18,8 @@ Defers: prose to `an-dr-dev-write-documentation`; slop signals to `an-dr-concept
 
 1. Run the scan before reading anything:
 
-   ```powershell
-   pwsh <skill>/scripts/scan-project.ps1 [-Path <repo>] [-Json <file>]
+   ```sh
+   python <skill>/scripts/scan-project.py [--path <repo>] [--json <file>]
    ```
 
    It reports languages and weight, manifests, entry points, container and packaging signals, test ratio and files with inline test modules, CI definitions, every documentation file with its last-edit age against the repository's last commit, last year's churn hotspots, largest files, `TODO`/`FIXME` density, and author spread. Start from the stale-document and churn lists; drift and risk are there.

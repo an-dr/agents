@@ -16,12 +16,12 @@ Defers: contract, environment, fixtures, grading assertions, and layout to `an-d
 ## Implement script tests
 
 1. Read the target skill's scripts and their callers before selecting assertions.
-2. Write `scripts/tests/test-<script>.ps1` for each script that needs coverage.
+2. Write `scripts/tests/test-<script>.py` for each script that needs coverage.
 3. Exercise observable results, exit codes, boundary inputs, failures, and no-op safety.
 4. For a reported defect, capture the failing behavior before changing the implementation.
 5. Execute the script; never substitute text matching against source or a mocked copy of the implementation.
 6. Keep reusable fixtures in `scripts/tests/fixtures/`; isolate scratch data from the user's files and live services.
-7. Add `scripts/tests/run.ps1` to each skill with scripts; it runs top-level script tests, not fixtures or behavioral cases.
+7. Add `scripts/tests/run.py` to each skill with scripts; it runs top-level script tests, not fixtures or behavioral cases.
 8. Tests are non-interactive, fail non-zero on an assertion failure, and invoke no model or paid evaluator.
 9. Preserve existing tests and assertions when extending coverage; a script without a test is a coverage gap, not a pass.
 
@@ -46,13 +46,13 @@ Defers: contract, environment, fixtures, grading assertions, and layout to `an-d
 
 ## Check
 
-1. Run `pwsh <target-skill>/scripts/tests/run.ps1` after every modification to a skill with scripts, including tests or instructions.
+1. Run `python <target-skill>/scripts/tests/run.py` after every modification to a skill with scripts, including tests or instructions.
 2. After a script edit, run its regression tests against the final version before reporting it verified.
 3. Fix failures within scope, or report the failure and remaining coverage; never replace script execution with case-file validation.
 4. When a behavior suite was added or changed, validate it:
 
-```powershell
-pwsh <an-dr-convention-agent-skill-testing>/scripts/check-evals.ps1 -Path <target-skill>/evals/evals.json
+```sh
+python <an-dr-convention-agent-skill-testing>/scripts/check-evals.py --path <target-skill>/evals/evals.json
 ```
 
 Validates format, fixture paths, and case IDs without invoking an agent; prints the case count and exits 0 on success, exits non-zero with a diagnostic on invalid input. Relay the result.

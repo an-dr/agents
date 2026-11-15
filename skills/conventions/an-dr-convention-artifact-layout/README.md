@@ -4,7 +4,7 @@ Where generated outputs live — code reviews, change reports, overviews — so 
 
 ## When it runs
 
-A convention is read, never run. Every skill that writes a non-repository output takes its path from `scripts/new-artifact-path.ps1` and refreshes the latest copy with `scripts/publish-latest.ps1`.
+A convention is read, never run. Every skill that writes a non-repository output takes its path from `scripts/new-artifact-path.py` and refreshes the latest copy with `scripts/publish-latest.py`.
 
 ## How it works
 

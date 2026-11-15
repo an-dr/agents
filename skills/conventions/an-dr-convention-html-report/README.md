@@ -10,9 +10,9 @@ A convention is read, never run. Any skill that writes an HTML page for people u
 
 ```mermaid
 flowchart LR
-  W[Page written by a skill] --> B[embed-brand.ps1 from the html-repo-style convention]
-  B --> K[embed-cockpit.ps1: problem-level styles]
-  K --> M[render-mermaid.ps1: light + dark SVG per diagram, offline]
+  W[Page written by a skill] --> B[embed-brand.py from the html-repo-style convention]
+  B --> K[embed-cockpit.py: problem-level styles]
+  K --> M[render-mermaid.py: light + dark SVG per diagram, offline]
   M --> V[Visual check: light and dark, desktop and 390 px phone]
 ```
 

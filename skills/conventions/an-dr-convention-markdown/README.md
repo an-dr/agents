@@ -13,11 +13,11 @@ A convention is read, never run. Every skill that writes or reviews a `.md` file
 - **Inline.** `-` bullets, `**bold**` and `*italic*`, backticks for identifiers and paths, descriptive links with repository-relative paths.
 - **Tables** aligned by the formatter, never by hand.
 
-| Script                | Does                                                                  |
-| --------------------- | --------------------------------------------------------------------- |
-| `format-markdown.ps1` | aligns tables, trims trailing whitespace, ends files with one newline |
-| `check-markdown.ps1`  | reports every rule violation and exits non-zero                       |
-| `reflow-markdown.ps1` | joins hard-wrapped paragraphs                                         |
+| Script               | Does                                                                  |
+| -------------------- | --------------------------------------------------------------------- |
+| `format-markdown.py` | aligns tables, trims trailing whitespace, ends files with one newline |
+| `check-markdown.py`  | reports every rule violation and exits non-zero                       |
+| `reflow-markdown.py` | joins hard-wrapped paragraphs                                         |
 
 ## What you get
 

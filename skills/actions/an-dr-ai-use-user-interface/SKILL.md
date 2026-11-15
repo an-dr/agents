@@ -67,8 +67,8 @@ The user does not see tool results; output reaches them only through the reply.
 
 When a decision must outlive the conversation or a script or agent acts on it, write the round before asking to a `ui` path with extension `questions.json`, taken through `an-dr-files-build-report`. For the schema, read [references/answers-json.md](references/answers-json.md). Pass the reply through the reader: a typed reply as typed, a widget result as `N: <chosen label>` per question.
 
-```powershell
-pwsh <skill>/scripts/read-answers.ps1 -Questions <ui-stamp>.questions.json -Reply '1a 2: only on Mondays'
+```sh
+python <skill>/scripts/read-answers.py --questions <ui-stamp>.questions.json --reply '1a 2: only on Mondays'
 ```
 
 Writes `<ui-stamp>.answers.json` beside the questions file and prints the echo lines. Each answer's `status`: `answered` (`choices`, `labels`), `custom` (`text`), `ambiguous` (ask again), or `open`. Act only on `answered` and `custom`.

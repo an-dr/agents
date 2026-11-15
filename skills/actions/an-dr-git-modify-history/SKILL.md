@@ -2,7 +2,6 @@
 name: an-dr-git-modify-history
 description: Change a repository's local history — record commits in the Conventional Commits format, regroup unpushed commits into coherent ones, and rewrite non-conforming messages. Use whenever work is ready to commit, including the workflow COMMIT phase, and before any push or integration of unpushed commits.
 license: MIT
-allowed-tools: PowerShell
 metadata:
   author: Andrei Gramakov (an-dr)
   version: "2.1.0"
@@ -40,19 +39,19 @@ Unpushed commits are `git log --oneline @{u}..HEAD`; without an upstream, the me
 1. Delegate drafting to a subagent on a mid-tier model. For the spawn and its inputs, read [references/drafting.md](references/drafting.md).
 1. Check and record the returned draft in one call:
 
-```powershell
-pwsh <skill>/scripts/new-commit.ps1 `
-    -Type fix -Scope ci `
-    -CommitMessageSkill <an-dr-convention-commit-message> `
-    -Summary 'comma-separate cargo install --features on win-arm64' `
-    'cargo took only env_logger from --features, making structopt a package' `
+```sh
+python <skill>/scripts/new-commit.py \
+    --type fix --scope ci \
+    --commit-message-skill <an-dr-convention-commit-message> \
+    --summary 'comma-separate cargo install --features on win-arm64' \
+    'cargo took only env_logger from --features, making structopt a package' \
     'shell:true joins argv with unquoted spaces, splitting the value in two'
 ```
 
 - Trailing arguments are body entries, one quoted string each, without the `- ` marker.
-- The script assembles the subject, prefixes entries, appends `-Footer` lines after the single blank line, and commits only when the checker passes; otherwise it prints violations and commits nothing.
+- The script assembles the subject, prefixes entries, appends `--footer` lines after the single blank line, and commits only when the checker passes; otherwise it prints violations and commits nothing.
 - On a work branch, push after every commit (`git push -u origin HEAD` the first time); never push the base branch from here.
-- `-Breaking` adds `!` and requires a `BREAKING CHANGE:` footer; `-DryRun` prints the message; `-Amend` rewrites the tip.
+- `--breaking` adds `!` and requires a `BREAKING CHANGE:` footer; `--dry-run` prints the message; `--amend` rewrites the tip.
 
 ## Rewrite messages
 
@@ -60,8 +59,8 @@ Run only before a first release or on an unpushed branch; rewriting published hi
 
 1. Find what breaks the format; changes nothing:
 
-```powershell
-pwsh <skill>/scripts/check-history.ps1 -CommitMessageSkill <an-dr-convention-commit-message> [-Range <rev>] [-FromRoot] [-FailingOnly]
+```sh
+python <skill>/scripts/check-history.py --commit-message-skill <an-dr-convention-commit-message> [--range <rev>] [--from-root] [--failing-only]
 ```
 
 Default range: merge base with the default branch to `HEAD`; refuses to guess a range while the default branch is checked out.
@@ -69,8 +68,8 @@ Default range: merge base with the default branch to `HEAD`; refuses to guess a 
 2. For each failing commit, read what it did (`git show --stat <sha>`, the diff when the subject is unclear) and write the replacement to `<directory>/<sha>.txt`. Short hashes work; commits without a file keep their message; the directory is outside the repository, since rewriting requires a clean working tree.
 3. Apply the replacements:
 
-```powershell
-pwsh <skill>/scripts/rewrite-messages.ps1 -MessageDirectory <directory> -CommitMessageSkill <an-dr-convention-commit-message> [-Range <rev>] [-FromRoot]
+```sh
+python <skill>/scripts/rewrite-messages.py --message-directory <directory> --commit-message-skill <an-dr-convention-commit-message> [--range <rev>] [--from-root]
 ```
 
 Validates every replacement before writing any commit, so a violation aborts with history untouched. Records a backup ref under `refs/backup/an-dr-git-modify-history/`, preserves author and committer identity and dates, and aborts when the rewritten tip's tree differs from the old one.
@@ -79,9 +78,9 @@ Validates every replacement before writing any commit, so a violation aborts wit
 
 ## Check an existing message
 
-```powershell
-pwsh <an-dr-convention-commit-message>/scripts/check-message.ps1 -Path <file>
-pwsh <an-dr-convention-commit-message>/scripts/check-message.ps1 -Commit HEAD
+```sh
+python <an-dr-convention-commit-message>/scripts/check-message.py --path <file>
+python <an-dr-convention-commit-message>/scripts/check-message.py --commit HEAD
 ```
 
 Exits non-zero on a violation and prints length warnings; relay both to the user.

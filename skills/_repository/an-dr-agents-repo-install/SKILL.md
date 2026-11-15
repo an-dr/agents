@@ -2,10 +2,10 @@
 name: an-dr-agents-repo-install
 description: Install this agents clone globally for local AI tools (Claude Code, Codex, Copilot CLI, DeepSeek Harness, Gemini CLI, opencode) so every repository gets its policy and skills. Use when the user wants the workflow machine-wide, or to move, update, or verify a global install.
 license: MIT
-allowed-tools: PowerShell
+allowed-tools: Python Read Grep Glob
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.2.0"
+  version: "1.3.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-skill-test
 ---
@@ -16,17 +16,19 @@ Defers: behavioral verification to `an-dr-ai-skill-test`.
 
 ## Install
 
-```powershell
-pwsh <skill>/scripts/install-agents.ps1
+```sh
+python <skill>/scripts/install-agents.py
 ```
 
-| Parameter            | Effect                                                                                                                    |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `-AgentsRoot <path>` | Clone to install from. Defaults to the clone holding this script.                                                         |
-| `-Tools <ids>`       | Limit to `claude`, `codex`, `copilot`, `deepseek`, `gemini`, `opencode`. Default: every tool whose home directory exists. |
-| `-SkipSkills`        | Write instruction blocks only, no junctions.                                                                              |
-| `-Force`             | Replace a real directory occupying a skill link path.                                                                     |
-| `-Uninstall`         | Remove the managed blocks and the junctions.                                                                              |
+| Parameter              | Effect                                                                                                                    |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `--agents-root <path>` | Clone to install from. Defaults to the clone holding this script.                                                         |
+| `--tools <ids>`        | Limit to `claude`, `codex`, `copilot`, `deepseek`, `gemini`, `opencode`. Default: every tool whose home directory exists. |
+| `--skip-skills`        | Write instruction blocks only, no junctions.                                                                              |
+| `--force`              | Replace a real directory occupying a skill link path.                                                                     |
+| `--uninstall`          | Remove the managed blocks and the junctions.                                                                              |
+
+Every parameter also accepts its former PowerShell spelling, such as `-AgentsRoot` or `-Tools`, and `--tools` still takes comma-separated ids.
 
 - Writes a managed block in each tool's user-level instruction file, pointing at this clone's `AGENTS.md`.
 - Links each skill into each tool's global skills directory: a junction on Windows, a symbolic link on Linux/macOS; neither needs elevation or developer mode.
@@ -37,16 +39,16 @@ pwsh <skill>/scripts/install-agents.ps1
 
 ## Verify
 
-```powershell
-pwsh <skill>/scripts/verify-agents.ps1
+```sh
+python <skill>/scripts/verify-agents.py
 ```
 
 Checks the clone, each tool's managed block and policy path, and every junction, including that `SKILL.md` is readable through the link. Prints a Markdown table; exits non-zero on any failure. Report the table to the user as-is.
 
 ## Handle what the scripts cannot
 
-- Exit `2` (conflict): a real directory sits where a skill link belongs → read it, decide whether it is an unrelated same-name skill or a stale copy, then rename it or re-run with `-Force`. Never `-Force` blindly.
-- `unsupported` skills row: the tool has no known user-level skills directory → check its current documentation; if one exists, add it to `Get-AgentsToolTarget` in `scripts/Install.Common.psm1`, not a hand-made link.
+- Exit `2` (conflict): a real directory sits where a skill link belongs → read it, decide whether it is an unrelated same-name skill or a stale copy, then rename it or re-run with `--force`. Never `--force` blindly.
+- `unsupported` skills row: the tool has no known user-level skills directory → check its current documentation; if one exists, add it to `tool_targets` in `scripts/install-agents.py`, and to the copy in `scripts/verify-agents.py`, not a hand-made link.
 - Unknown tool → add it to the same function, with its instruction-file path and whether it supports `@` imports.
 - `warn` on the git check: a dirty or non-git clone works but cannot update by `git pull` → tell the user which it is.
 - The scripts prove files and links, not that a tool loaded them → report that coverage limit. `an-dr-ai-skill-test` runs cheap script tests always, behavioral cases only on explicit user request; installing links does not authorize new agent sessions.
@@ -54,4 +56,4 @@ Checks the clone, each tool's managed block and policy path, and every junction,
 
 ## Move or remove the clone
 
-Moving or deleting the clone leaves dangling junctions in every tool. Run `-Uninstall` first, or re-run the install from the new location; it repoints links and rewrites the blocks.
+Moving or deleting the clone leaves dangling junctions in every tool. Run `--uninstall` first, or re-run the install from the new location; it repoints links and rewrites the blocks.

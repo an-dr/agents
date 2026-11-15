@@ -18,7 +18,7 @@ flowchart LR
 - **Instruction block.** Points each tool at this clone's `AGENTS.md`. The policy engages only when a repository references it, has `tmp-agent-wip.json`, or you name a flow (Vibe, Spec-driven, Supervised) or a skill, so scratch folders stay free of workflow.
 - **Skill links.** A junction on Windows, a symlink elsewhere; no elevation needed. `git pull` updates every tool at once.
 - **Safe to repeat.** It edits only between its markers and replaces only links it recognises. A conflicting real directory stops it until you decide.
-- **Verify.** `verify-agents.ps1` checks the clone, every block, and every link, and prints a table. It proves the files, not that a tool loaded them.
+- **Verify.** `verify-agents.py` checks the clone, every block, and every link, and prints a table. It proves the files, not that a tool loaded them.
 
 ## What you get
 

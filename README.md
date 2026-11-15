@@ -45,13 +45,13 @@ Unseen decisions are the risk in AI development. This repository lets you choose
 
 ## 📦 Installation
 
-Install Git and PowerShell 7 first. The [PowerShell setup skill](skills/actions/an-dr-env-install-powershell/SKILL.md) covers a missing or outdated `pwsh` runtime.
+Install Git and Python 3 first. The [PowerShell setup skill](skills/actions/an-dr-env-install-powershell/SKILL.md) remains for repositories whose tools still need `pwsh`.
 
-```powershell
+```sh
 git clone https://github.com/an-dr/agents.git
-Set-Location agents
-pwsh skills/_repository/an-dr-agents-repo-install/scripts/install-agents.ps1
-pwsh skills/_repository/an-dr-agents-repo-install/scripts/verify-agents.ps1
+cd agents
+python skills/_repository/an-dr-agents-repo-install/scripts/install-agents.py
+python skills/_repository/an-dr-agents-repo-install/scripts/verify-agents.py
 ```
 
 The installer adds a managed policy reference and links the skills into supported tools' user configuration. It handles Claude Code, Codex, GitHub Copilot CLI, DeepSeek Harness, Gemini CLI, and opencode; its current skill-link support covers the first four, while Gemini CLI and opencode receive policy references. See the [installation skill](skills/_repository/an-dr-agents-repo-install/SKILL.md) for tool selection, updates, conflicts, and removal.
@@ -104,25 +104,15 @@ flowchart TD
 **Vibe** — you judge the behaviour, not the code. The agent builds, tests, and reviews on a `vibe/<slug>` branch, then hands over one command, artefact, or screenshot that shows the change, what was tested, and its limits. You answer with one word.
 
 ```mermaid
-sequenceDiagram
-  actor U as You
-  participant A as Agent
-  participant B as vibe/slug
-  participant M as base
-  U->>A: "Vibe: make X"
-  A->>B: build, test, review, commit, push
-  A->>U: demo command, what was tested, limits
-  alt land
-    U->>A: land
-    A->>M: rebase and fast-forward (not pushed)
-    A->>B: delete local and remote branch
-  else redo
-    U->>A: notes
-    A->>B: rework from the explanation
-  else drop
-    U->>A: drop
-    A->>B: delete, the base never saw it
-  end
+flowchart TD
+  S([Vibe request]) --> B[Build and verify]
+  B --> H[Hand over result]
+  H --> C{Your choice}
+  C -- land --> L[Integrate and delete branch]
+  C -- redo --> B
+  C -- drop --> D[Delete branch]
+  L --> E([Done])
+  D --> E
 ```
 
 **Spec-driven** — you shape the design; the agent does the rest. The documentation is the review surface: you check that the docs say what you agreed and that the behaviour matches the docs, with the change report and the pull request beside them.
@@ -236,7 +226,7 @@ Each release is a version in [VERSION](VERSION), with notes in [docs/releases/](
 | `skills/concepts/`    | Principles applied when their subject is in play                     |
 | `skills/conventions/` | Artifact formats and their mechanical checks                         |
 | `skills/_repository/` | Maintenance and installation of this repository                      |
-| `tests/run-all.ps1`   | Discovery of conventional skill test runners                         |
+| `tests/run-all.py`    | Discovery of every skill test runner                                 |
 | `.tmp-ai-gen/`        | Ignored generated skill outputs, with a `<kind>-latest` copy of each |
 
 ### 🔗 Skill dependencies
@@ -304,8 +294,8 @@ flowchart LR
     end
     subgraph g_conventions["Conventions"]
         an-dr-convention-adr
-        an-dr-convention-agent-skill-testing
         an-dr-convention-agent-skill
+        an-dr-convention-agent-skill-testing
         an-dr-convention-ai-level
         an-dr-convention-artifact-layout
         an-dr-convention-code
@@ -371,11 +361,11 @@ flowchart LR
 
 Run the repository checks from the clone root:
 
-```powershell
-pwsh tests/run-all.ps1
+```sh
+python tests/run-all.py
 ```
 
-The runner discovers skill manifests and invokes each conventional `scripts/tests/run.ps1`, by default only for the suites your uncommitted change affects; `pwsh tests/run-all.ps1 -All` runs every suite, as CI does on each push. Each suite owns its validators and regression tests; the testing convention's suite discovers `evals/evals.json` files and validates their ZIP fixtures. Missing runners and failed suites produce a nonzero exit code. Fixture scripts are excluded from test discovery.
+The runner discovers skill manifests and invokes each `scripts/tests/run.py`. By default it runs suites affected by uncommitted changes; `python tests/run-all.py --all` runs every suite, as CI does. Each suite owns its validators and regression tests; the testing convention's suite discovers `evals/evals.json` files and validates their ZIP fixtures. Missing runners and failed suites produce a nonzero exit code. Fixture scripts are excluded from test discovery.
 
 Skills with scripts keep deterministic tests in `scripts/tests/`. Every skill has behavioral cases in `evals/evals.json` and evaluation intent in `evals/EVAL.md`; repository fixtures, when needed, are ZIP archives under `evals/fixtures/`. See the [testing guide](tests/README.md) for commands and run limits. Syntax-only checks establish parsing coverage, and successful structural checks do not establish that an agent follows a skill.
 

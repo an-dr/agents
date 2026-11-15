@@ -10,7 +10,7 @@ When you arrive at a codebase, onboard someone, or want an audit of a repository
 
 ```mermaid
 flowchart LR
-  S[scan-project.ps1: languages, manifests, entry points, tests, CI, doc age, churn] --> R[Read: manifests, entry points, config, hot module, tests, then docs]
+  S[scan-project.py: languages, manifests, entry points, tests, CI, doc age, churn] --> R[Read: manifests, entry points, config, hot module, tests, then docs]
   R --> T[Tag every statement: verified, inferred, claimed]
   T --> C[C4 levels 1–3]
   T --> D[Drift table: docs vs code]

@@ -3,7 +3,7 @@
 This skill is the HTML implementor of `an-dr-concept-dark-cockpit`, which owns the ladder and its rules.
 
 - Each finding carries one level class on its badge (`ck-badge`), its block (`ck-item`), or its table row.
-- `embed-cockpit.ps1` inlines the stylesheet and does nothing without a `ck-` class, so every page renders the same way.
+- `embed-cockpit.py` inlines the stylesheet and does nothing without a `ck-` class, so every page renders the same way.
 
 | Level      | Class         | Look                                      |
 | ---------- | ------------- | ----------------------------------------- |

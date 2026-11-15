@@ -2,7 +2,7 @@
 name: an-dr-ai-review-instruction
 description: Review agentic instructions — AGENTS.md, CLAUDE.md, and SKILL.md files — for contradictions, weakened rules, wasted context, and logic that belongs in a script. Use after editing instructions, before installing them globally, or when an agent keeps behaving in a way the instructions did not intend.
 license: MIT
-allowed-tools: PowerShell
+allowed-tools: Python
 metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.1.0"
@@ -23,8 +23,8 @@ Subject: every file that reaches an agent's context — `AGENTS.md`, `CLAUDE.md`
 3. Read each file as the agent that loads it, in its order; stop at the first place two files disagree.
 4. Rank findings by cost: wrong behaviour, then unenforceable rules, then wasted context.
 
-```powershell
-pwsh <skill>/scripts/check-references.ps1 [-Path <repo>]
+```sh
+python <skill>/scripts/check-references.py [--path <repo>]
 ```
 
 Resolves every relative Markdown link, checks every skill `name` against its directory, reports per-file size and approximate token cost; exits non-zero on any broken reference.

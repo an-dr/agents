@@ -10,12 +10,12 @@ Whenever a skill writes an HTML report, or needs a path for any generated artefa
 
 ```mermaid
 flowchart LR
-  P[new-artifact-path.ps1] --> W[Calling skill writes the page]
-  W --> B[embed-brand.ps1]
-  B --> K[embed-cockpit.ps1]
-  K --> M[render-mermaid.ps1]
+  P[new-artifact-path.py] --> W[Calling skill writes the page]
+  W --> B[embed-brand.py]
+  B --> K[embed-cockpit.py]
+  K --> M[render-mermaid.py]
   M --> V[Screenshots: light and dark, desktop and phone]
-  V --> L[publish-latest.ps1]
+  V --> L[publish-latest.py]
 ```
 
 - Every exit code is checked before the next step, so a later success never hides an earlier failure.

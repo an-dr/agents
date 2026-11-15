@@ -2,7 +2,7 @@
 
 - `move-increment` reorders or inserts only planned increments. Completed increments keep immutable IDs and fixed positions; renumbering never changes which increment is active.
 - `defer-increment` is the only way the active increment changes position: priorities move an untouched increment later, never to escape one under way.
-  - Returns the active increment to `planned` at `-To`, starts the first planned increment, stays in `BUILD`.
+  - Returns the active increment to `planned` at `--to`, starts the first planned increment, stays in `BUILD`.
   - Requires a clean working tree; refuses when no planned increment remains.
   - The clean tree is the controller's only evidence nothing was built; it cannot see committed work, so never defer an increment whose commits are on the branch.
   - IDs survive, so history and approvals stay attached.

@@ -2,7 +2,7 @@
 name: an-dr-dev-integrate
 description: Integrate a branch into its base — the branch it started from, else the default branch — through its pull or merge request with the repository's merge method, or locally by rebasing and keeping, regrouping, or squashing its commits when no platform is available. Use only when the user explicitly asks to integrate, merge, or land a branch; also opens draft requests and addresses review comments.
 license: MIT
-allowed-tools: PowerShell
+allowed-tools: Read Grep Glob Bash Python
 metadata:
   author: Andrei Gramakov (an-dr)
   version: "4.0.0"
@@ -37,31 +37,31 @@ Only when the request path is unavailable, and after saying what is missing. Bef
 
 Scripts are in `<skill>/scripts/`; each exits non-zero on failure. `<an-dr-convention-commit-message>` is that convention's folder, wherever it was loaded from; scripts take it as a parameter instead of guessing.
 
-| Step                                  | Command                                                                                                                                                                   |
-| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1 — check state                       | `pwsh integrate-1-check.ps1 [-BaseBranch <name>]`                                                                                                                         |
-| 2 — squash commits (optional)         | `pwsh integrate-2-squash.ps1 -Hash <hash> -Message '<msg>' -CommitMessageSkill <an-dr-convention-commit-message> [-BaseBranch <name>]`                                    |
-| 2 — regroup commits (`Regroup` only)  | `pwsh integrate-2-regroup.ps1 -Plan <plan.json> -CommitMessageSkill <an-dr-convention-commit-message> [-BaseBranch <name>]`                                               |
-| 3 — rebase                            | `pwsh integrate-3-rebase.ps1 [-BaseBranch <name>]`                                                                                                                        |
-| 4 — finish                            | `pwsh integrate-4-finish.ps1 -Mode <Commits\|Squash\|Request\|RebaseMerge> [-Message '<msg>' -CommitMessageSkill <an-dr-convention-commit-message>] [-BaseBranch <name>]` |
-| 5 — rebase-merge (`RebaseMerge` only) | `pwsh integrate-5-rebase-merge.ps1 -TestedCommit <sha> [-BaseBranch <name>]`                                                                                              |
+| Step                                  | Command                                                                                                                                                                           |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1 — check state                       | `python integrate-1-check.py [--base-branch <name>]`                                                                                                                              |
+| 2 — squash commits (optional)         | `python integrate-2-squash.py --hash <hash> --message '<msg>' --commit-message-skill <an-dr-convention-commit-message> [--base-branch <name>]`                                    |
+| 2 — regroup commits (`Regroup` only)  | `python integrate-2-regroup.py --plan <plan.json> --commit-message-skill <an-dr-convention-commit-message> [--base-branch <name>]`                                                |
+| 3 — rebase                            | `python integrate-3-rebase.py [--base-branch <name>]`                                                                                                                             |
+| 4 — finish                            | `python integrate-4-finish.py --mode <Commits\|Squash\|Request\|RebaseMerge> [--message '<msg>' --commit-message-skill <an-dr-convention-commit-message>] [--base-branch <name>]` |
+| 5 — rebase-merge (`RebaseMerge` only) | `python integrate-5-rebase-merge.py --tested-commit <sha> [--base-branch <name>]`                                                                                                 |
 
-Every script also takes `-WipDataSkill <an-dr-ai-use-wip-data>`, through which it reads the base the work started from.
+Every script also takes `--wip-data-skill <an-dr-ai-use-wip-data>`, through which it reads the base the work started from.
 
 1. Run step 1. Check the recent log for WIP commits and the base-to-HEAD log for topic commits.
 2. WIP commits at the tip → step 2 squash, `<hash>` = the commit before the first WIP, with a clean message.
 3. Run step 3 (fetch + rebase); fix conflicts where it pauses.
 4. Run step 1 again, then:
-   - `Commits` → step 4 `-Mode Commits`.
-   - `Squash`, `Request` → step 4 with `-Message`; it collapses itself, step 2 is not rerun. Compose the message with `an-dr-git-modify-history`; it is validated before anything is rewritten.
-   - `Regroup` → read [references/regroup.md](references/regroup.md), then step 4 `-Mode Commits`.
+   - `Commits` → step 4 `--mode Commits`.
+   - `Squash`, `Request` → step 4 with `--message`; it collapses itself, step 2 is not rerun. Compose the message with `an-dr-git-modify-history`; it is validated before anything is rewritten.
+   - `Regroup` → read [references/regroup.md](references/regroup.md), then step 4 `--mode Commits`.
    - `RebaseMerge` → read [references/rebase-merge.md](references/rebase-merge.md).
 
 ## Interactive script
 
-For a human: `pwsh <skill>/scripts/integrate.ps1 -CommitMessageSkill <an-dr-convention-commit-message>`; it asks the mode and refuses to proceed without an answer.
+For a human: `python <skill>/scripts/integrate.py --commit-message-skill <an-dr-convention-commit-message>`; it asks the mode and refuses to proceed without an answer.
 
 ## Rules
 
 - Local modes always rebase first and never add a merge commit; the request path uses the repository's configured merge method, merge commits included.
-- `integrate-4-finish.ps1` makes `-Mode` mandatory so no run skips the question.
+- `integrate-4-finish.py` makes `--mode` mandatory so no run skips the question.

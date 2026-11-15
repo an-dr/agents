@@ -2,7 +2,7 @@
 name: an-dr-agents-repo-verify-installation
 description: Diagnose why an AI tool ignores this workflow's policy by checking the machine install, this repository's opt-in wiring, and whether the session loaded the policy, then recommend the fix. Use when a tool ignores the policy, bypasses the workflow controller, or obeys while another tool does not.
 license: MIT
-allowed-tools: PowerShell Read Grep Glob
+allowed-tools: Bash Read Grep Glob
 metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.2.0"
@@ -16,24 +16,24 @@ Defers: install fixes to `an-dr-agents-repo-install`, regression coverage to `an
 
 Diagnose layers in order; the first broken layer explains the symptom, and fixing a later one changes nothing.
 
-| Layer      | Question                                                     | Owner                                                                |
-| ---------- | ------------------------------------------------------------ | -------------------------------------------------------------------- |
-| Machine    | Is the policy installed for this tool?                       | `check-agents-health.ps1`, delegating to `an-dr-agents-repo-install` |
-| Repository | Does this repository opt in, and does its reference resolve? | `check-agents-health.ps1`                                            |
-| Pickup     | Did the bot load and act on what is wired?                   | this skill; no script can see it                                     |
+| Layer      | Question                                                     | Owner                                                               |
+| ---------- | ------------------------------------------------------------ | ------------------------------------------------------------------- |
+| Machine    | Is the policy installed for this tool?                       | `check-agents-health.py`, delegating to `an-dr-agents-repo-install` |
+| Repository | Does this repository opt in, and does its reference resolve? | `check-agents-health.py`                                            |
+| Pickup     | Did the bot load and act on what is wired?                   | this skill; no script can see it                                    |
 
 ## Run
 
-```powershell
-pwsh <skill>/scripts/check-agents-health.ps1 -WipDataSkill <an-dr-ai-use-wip-data>
+```sh
+python <skill>/scripts/check-agents-health.py --wip-data-skill <an-dr-ai-use-wip-data>
 ```
 
-| Parameter                | Effect                                                                                     |
-| ------------------------ | ------------------------------------------------------------------------------------------ |
-| `-RepositoryPath <path>` | Repository to diagnose; default current directory; a subdirectory resolves to its git root |
-| `-AgentsRoot <path>`     | Clone the global install should point at; passed to the install verifier                   |
-| `-Tools <ids>`           | Limit the install layer to `claude`, `codex`, `copilot`, `deepseek`, `gemini`, `opencode`  |
-| `-SkipInstallCheck`      | Repository layer only, when the machine install is known good                              |
+| Parameter                  | Effect                                                                                     |
+| -------------------------- | ------------------------------------------------------------------------------------------ |
+| `--repository-path <path>` | Repository to diagnose; default current directory; a subdirectory resolves to its git root |
+| `--agents-root <path>`     | Clone the global install should point at; passed to the install verifier                   |
+| `--tools <ids>`            | Limit the install layer to `claude`, `codex`, `copilot`, `deepseek`, `gemini`, `opencode`  |
+| `--skip-install-check`     | Repository layer only, when the machine install is known good                              |
 
 - Prints one Markdown table for the machine and repository layers; exits non-zero on any failure.
 - Relay the table as-is, then check pickup; a `pass` verdict means the answer lies there.

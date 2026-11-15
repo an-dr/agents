@@ -30,13 +30,13 @@ Show realistic use, not an empty state or first-run dialog:
 
 ## Capture
 
-```powershell
-pwsh <skill>/scripts/capture-screenshot.ps1 -Url <url> -OutFile docs/media/<name>.png [-Width 1280] [-Height 720] [-FullPage]
-pwsh <skill>/scripts/capture-screenshot.ps1 -Window <process-or-title> -OutFile docs/media/<name>.png [-Method Screen|Print]
+```sh
+python <skill>/scripts/capture-screenshot.py --url <url> --out-file docs/media/<name>.png [--width 1280] [--height 720] [--full-page]
+python <skill>/scripts/capture-screenshot.py --window <process-or-title> --out-file docs/media/<name>.png [--method Screen|Print]
 ```
 
-- `-Url`: headless Chromium through Playwright; local dev servers work. Stops with the install command when Node.js or the Playwright browser is missing.
-- `-Window`: one top-level Windows window by process name or title substring. `Screen` (default) brings it forward and copies screen pixels, works for games and hardware-accelerated apps; `Print` asks the window to draw itself, works while covered, can be black for DirectX or OpenGL.
+- `--url`: headless Chromium through Playwright; local dev servers work. Stops with the install command when Node.js or the Playwright browser is missing.
+- `--window`: one top-level Windows window by process name or title substring. `Screen` (default) brings it forward and copies screen pixels, works for games and hardware-accelerated apps; `Print` asks the window to draw itself, works while covered, can be black for DirectX or OpenGL.
 - macOS and Linux: the script names the native command to use instead.
 - Page needs a signed-in session and Claude in Chrome tools are available → interact there; capture with the script against the same URL only if it needs no session, otherwise ask the user for the capture.
 

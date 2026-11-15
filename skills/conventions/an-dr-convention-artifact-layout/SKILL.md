@@ -1,6 +1,6 @@
 ---
 name: an-dr-convention-artifact-layout
-description: Where generated artifacts live — one folder per kind under .tmp-ai-gen, kind-and-minute file names, kind-latest copy, registered kinds only, deliverables kept out. Use when naming or reporting a non-repository output file; new-artifact-path.ps1 and publish-latest.ps1 in this skill create the paths.
+description: Where generated artifacts live — one folder per kind under .tmp-ai-gen, kind-and-minute file names, kind-latest copy, registered kinds only, deliverables kept out. Use when naming or reporting a non-repository output file; new-artifact-path.py and publish-latest.py in this skill create the paths.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
@@ -21,12 +21,12 @@ metadata:
 - Deliverables never go here: ADRs, READMEs, and `docs/` are committed repository content.
 - Nothing beneath `.tmp-ai-gen/` is committed; its own `.gitignore` (`*`) ignores it, so the repository needs no rule.
 - Every written artifact is reported to the user by its path; one they cannot find did not happen.
-- Every path comes from `new-artifact-path.ps1`, never built by hand in prose or a script.
+- Every path comes from `new-artifact-path.py`, never built by hand in prose or a script.
 
 ## Scripts
 
-- `scripts/new-artifact-path.ps1` creates the kind folder and its `.gitignore` and prints the path for a kind, an extension, and an optional stamp; it rejects an unregistered kind, an uppercase extension, and a malformed stamp.
-- `scripts/publish-latest.ps1` replaces every `<kind>-latest.*` file with copies of all files sharing an artifact's stamp and prints the copies.
+- `scripts/new-artifact-path.py` creates the kind folder and its `.gitignore` and prints the path for a kind, an extension, and an optional stamp; it rejects an unregistered kind, an uppercase extension, and a malformed stamp.
+- `scripts/publish-latest.py` replaces every `<kind>-latest.*` file with copies of all files sharing an artifact's stamp and prints the copies.
 
 ## Examples
 

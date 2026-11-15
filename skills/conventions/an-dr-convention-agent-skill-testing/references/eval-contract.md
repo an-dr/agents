@@ -46,7 +46,7 @@ Assertion objects accept only their type's fields:
 - `file_check`: `path` safe workspace-relative filename, optional `contains`; missing file fails
 - `exit_code`: `command_pattern` regex and integer `expected` vs recorded tool results; missing result is blocked
 - `diff_scope`: `allowed_paths` safe relative file or directory prefixes, empty for no writes; hashes, tracked changes, and untracked files compared to the run-start snapshot, input diff kept separately; a prefix permits only that path and descendants
-- `deterministic`: `script` safe suite-relative `.ps1` under `graders/`, run with only `-EvidenceRoot` (read-only captured evidence); exit 0 pass, 1 fail, 2 blocked, other exits blocked grader error; non-interactive, inside the sandbox, no model or live account; stdout, stderr, exit captured
+- `deterministic`: `script` safe suite-relative `.py` under `graders/`, run with only `--evidence-root` (read-only captured evidence); exit 0 pass, 1 fail, 2 blocked, other exits blocked grader error; non-interactive, inside the sandbox, no model or live account; stdout, stderr, exit captured
 - `llm_judge`: `rubric` nonempty text; evidence supplied only after the tested session ends; verdict and evidence recorded per item
 
 - The convention's security baseline applies to every case regardless of assertions; no real secrets in cases; safety is never inferred from missing events.

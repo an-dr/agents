@@ -2,7 +2,7 @@
 
 Preserve these task-specific outcomes and regression boundaries:
 
-- **TESTING-001.** Places evaluations in evals/evals.json and deterministic tests under scripts/tests/ with run.ps1; defaults to one trial and one arm, and keeps behavior evidence separate from isolation claims.
+- **TESTING-001.** Places evaluations in evals/evals.json and deterministic tests under scripts/tests/ with run.py; defaults to one trial and one arm, and keeps behavior evidence separate from isolation claims.
 
 TESTING-002 preserves repository-runner discovery: adding a conforming suite must not require edits to a root list, and fixture programs must remain inert.
 

@@ -2,7 +2,7 @@
 name: an-dr-dev-assign-ai-level
 description: Ask whether to disclose AI usage with an ai-level.dev level and, on yes, assess the level from evidence, confirm it, and add the badge to the README. Use when a README is written or updated, or when the user asks to assign, change, or check a repository's AI level.
 license: MIT
-allowed-tools: Read Grep Glob Edit PowerShell
+allowed-tools: Read Grep Glob Edit Python
 metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.1.0"
@@ -41,8 +41,8 @@ Defers: level definitions to `an-dr-convention-ai-level`; questions to `an-dr-ai
 
 1. Print the badge for the confirmed level:
 
-```powershell
-pwsh <skill>/scripts/new-badge.ps1 -Level <0-4> [-Style standard|compact]
+```sh
+python <skill>/scripts/new-badge.py --level <0-4> [--style standard|compact]
 ```
 
 Rejects a level outside 0 to 4; prints the badge as Markdown and HTML, `[![AI Level N](https://ai-level.dev/badge/standard/N.svg)](https://ai-level.dev/level-N)`; `compact` replaces `standard` in the image URL.

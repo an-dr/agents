@@ -1,5 +1,5 @@
 /* HTML style components: the shared building blocks of every page, drawn only from the --brand-* tokens.
-   Owned by an-dr-convention-html-repo-style; embedded after brand.css by embed-brand.ps1. */
+   Owned by an-dr-convention-html-repo-style; embedded after brand.css by embed-brand.py. */
 .brand-page { max-width: 76rem; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
 .brand-cols { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 2rem; align-items: start; }
 .brand-sticky { position: sticky; top: 1rem; max-height: calc(100vh - 2rem); overflow: auto; }

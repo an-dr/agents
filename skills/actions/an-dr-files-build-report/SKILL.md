@@ -17,8 +17,8 @@ Defers: page content to the calling skill, page style to `an-dr-convention-html-
 
 Before writing any report or other generated artifact:
 
-```powershell
-pwsh <an-dr-convention-artifact-layout>/scripts/new-artifact-path.ps1 -Kind <kind> -Extension <extension> [-Stamp <YYYY-MM-DD_hh-mm>] [-RepositoryRoot <path>]
+```sh
+python <an-dr-convention-artifact-layout>/scripts/new-artifact-path.py <kind> <extension> [--stamp <YYYY-MM-DD_hh-mm>] [--repository-root <path>]
 ```
 
 - Creates the kind folder and its `.gitignore`, prints the file path.
@@ -30,17 +30,14 @@ pwsh <an-dr-convention-artifact-layout>/scripts/new-artifact-path.ps1 -Kind <kin
 
 After writing the page and after every later edit:
 
-```powershell
-pwsh <an-dr-convention-html-repo-style>/scripts/embed-brand.ps1 -Path <page>.html
-if ($LASTEXITCODE -ne 0) { throw 'Brand embedding failed.' }
-pwsh <an-dr-convention-html-report>/scripts/embed-cockpit.ps1 -Path <page>.html
-if ($LASTEXITCODE -ne 0) { throw 'Status stylesheet embedding failed.' }
-pwsh <an-dr-convention-html-report>/scripts/render-mermaid.ps1 -Path <page>.html
-if ($LASTEXITCODE -ne 0) { throw 'Diagram rendering failed.' }
+```sh
+python <an-dr-convention-html-repo-style>/scripts/embed-brand.py --path <page>.html
+python <an-dr-convention-html-report>/scripts/embed-cockpit.py --path <page>.html
+python <an-dr-convention-html-report>/scripts/render-mermaid.py --path <page>.html
 ```
 
 - Check each exit code before continuing; a later success must not hide an earlier failure.
-- `render-mermaid.ps1` needs a local Chrome or Edge, or `-Browser <exe>`; it stops on a diagram that fails to parse and leaves the page unchanged.
+- `render-mermaid.py` needs a local Chrome or Edge, or `--browser <exe>`; it stops on a diagram that fails to parse and leaves the page unchanged.
 - To change a diagram, edit its stored source or write a new `<pre class="mermaid">` block, then build again.
 
 ## Verify
@@ -51,8 +48,8 @@ After the final build, inspect screenshots in light and dark themes at desktop a
 
 Once the artifact is complete:
 
-```powershell
-pwsh <an-dr-convention-artifact-layout>/scripts/publish-latest.ps1 -Path <artifact-file>
+```sh
+python <an-dr-convention-artifact-layout>/scripts/publish-latest.py <artifact-file>
 ```
 
 Replaces every `<kind>-latest.*` with copies of all files sharing the artifact's stamp; prints the copies.

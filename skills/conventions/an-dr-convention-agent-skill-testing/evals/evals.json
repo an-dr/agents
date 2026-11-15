@@ -11,7 +11,7 @@
     ],
     "tools": [
       "git",
-      "pwsh"
+      "python"
     ],
     "network": "disabled",
     "permissions": "workspace-only",
@@ -29,7 +29,7 @@
       "expected_skill": "an-dr-convention-agent-skill-testing",
       "context": "The plan stores behavior cases in evals/evals.json, embeds a grading rubric in the tested prompt, extracts a repository ZIP without inspecting entries, uses one shared agent session, and reports a single successful run as reliable. Its script runner recurses through fixtures.",
       "expected_behavior": [
-        "Places evaluations in evals/evals.json and deterministic tests under scripts/tests/ with run.ps1.",
+        "Places evaluations in evals/evals.json and deterministic tests under scripts/tests/ with run.py.",
         "Keeps the rubric private, requires fresh sessions, records actual host controls, and permits best-effort behavior grading when only isolation controls are unavailable.",
         "Rejects unsafe ZIP extraction and requires baseline and working snapshots inside the sandbox.",
         "Separates activation, behavior, and security results; defaults to one trial and one arm; and runs no model evaluation without an explicit request."
@@ -41,7 +41,7 @@
         },
         {
           "type": "llm_judge",
-          "rubric": "Places evaluations in evals/evals.json and deterministic tests under scripts/tests/ with run.ps1."
+          "rubric": "Places evaluations in evals/evals.json and deterministic tests under scripts/tests/ with run.py."
         },
         {
           "type": "llm_judge",
@@ -65,7 +65,7 @@
       "expected_skill": "an-dr-convention-agent-skill-testing",
       "context": "The plan stores behavior cases in evals/evals.json, embeds a grading rubric in the tested prompt, extracts a repository ZIP without inspecting entries, uses one shared agent session, and reports a single successful run as reliable. Its script runner recurses through fixtures.",
       "expected_behavior": [
-        "Places evaluations in evals/evals.json and deterministic tests under scripts/tests/ with run.ps1.",
+        "Places evaluations in evals/evals.json and deterministic tests under scripts/tests/ with run.py.",
         "Keeps the rubric private, requires fresh sessions, records actual host controls, and permits best-effort behavior grading when only isolation controls are unavailable.",
         "Rejects unsafe ZIP extraction and requires baseline and working snapshots inside the sandbox.",
         "Separates activation, behavior, and security results; defaults to one trial and one arm; and runs no model evaluation without an explicit request."
@@ -77,7 +77,7 @@
         },
         {
           "type": "llm_judge",
-          "rubric": "Places evaluations in evals/evals.json and deterministic tests under scripts/tests/ with run.ps1."
+          "rubric": "Places evaluations in evals/evals.json and deterministic tests under scripts/tests/ with run.py."
         },
         {
           "type": "llm_judge",
@@ -101,7 +101,7 @@
       "expected_skill": "an-dr-convention-agent-skill-testing",
       "context": "The plan stores behavior cases in evals/evals.json, embeds a grading rubric in the tested prompt, extracts a repository ZIP without inspecting entries, uses one shared agent session, and reports a single successful run as reliable. Its script runner recurses through fixtures.",
       "expected_behavior": [
-        "Places evaluations in evals/evals.json and deterministic tests under scripts/tests/ with run.ps1.",
+        "Places evaluations in evals/evals.json and deterministic tests under scripts/tests/ with run.py.",
         "Keeps the rubric private, requires fresh sessions, records actual host controls, and permits best-effort behavior grading when only isolation controls are unavailable.",
         "Rejects unsafe ZIP extraction and requires baseline and working snapshots inside the sandbox.",
         "Separates activation, behavior, and security results; defaults to one trial and one arm; and runs no model evaluation without an explicit request."
@@ -113,7 +113,7 @@
         },
         {
           "type": "llm_judge",
-          "rubric": "Places evaluations in evals/evals.json and deterministic tests under scripts/tests/ with run.ps1."
+          "rubric": "Places evaluations in evals/evals.json and deterministic tests under scripts/tests/ with run.py."
         },
         {
           "type": "llm_judge",
@@ -157,9 +157,9 @@
       "bucket": "explicit",
       "prompt": "Use an-dr-convention-agent-skill-testing to review this proposed repository test runner.",
       "expected_skill": "an-dr-convention-agent-skill-testing",
-      "context": "The root runner hardcodes six validator paths. A newly added conventional skill has scripts/tests/run.ps1, but its repository check will not run until a maintainer edits the root list. A nested test fixture also contains a run.ps1 file.",
+      "context": "The root runner hardcodes six validator paths. A newly added conventional skill has scripts/tests/run.py, but its repository check will not run until a maintainer edits the root list. A nested test fixture also contains a run.py file.",
       "expected_behavior": [
-        "Requires discovery of skill-local scripts/tests/run.ps1 entry points from skill manifests, with repository checks owned by those suites.",
+        "Requires discovery of skill-local scripts/tests/run.py entry points from skill manifests, with repository checks owned by those suites.",
         "Excludes nested fixture runners and rejects an empty discovery result without starting models."
       ],
       "assertions": [

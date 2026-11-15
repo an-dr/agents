@@ -4,7 +4,7 @@ The commit message format: Conventional Commits narrowed to a typed subject, a s
 
 ## When it runs
 
-A convention is read, never run. Skills load it when composing, reviewing, or rewriting a commit message. `scripts/check-message.ps1` is the single enforcement point and also works as a `commit-msg` hook.
+A convention is read, never run. Skills load it when composing, reviewing, or rewriting a commit message. `python scripts/check-message.py` is the single enforcement point and also works as a `commit-msg` hook.
 
 ## How it works
 
