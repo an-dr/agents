@@ -5,14 +5,14 @@ license: MIT
 allowed-tools: Python Read Grep Glob Write Edit
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.2.0"
+  version: "1.3.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-agents-repo-convention-skills an-dr-agents-repo-install an-dr-agents-repo-verify-installation an-dr-ai-review-instruction an-dr-ai-use-user-interface an-dr-ai-skill-implement-test an-dr-ai-skill-test an-dr-ai-write-instruction an-dr-convention-agent-skill an-dr-convention-markdown an-dr-convention-script an-dr-git-modify-history
+  an-dr.dependencies: an-dr-agents-repo-build-release an-dr-agents-repo-convention-skills an-dr-agents-repo-install an-dr-agents-repo-verify-installation an-dr-ai-review-instruction an-dr-ai-use-user-interface an-dr-ai-skill-implement-test an-dr-ai-skill-test an-dr-ai-write-instruction an-dr-convention-agent-skill an-dr-convention-markdown an-dr-convention-script an-dr-git-modify-history
 ---
 
 # Modify the agents repository
 
-Defers: rule writing to `an-dr-ai-write-instruction`, tests to `an-dr-ai-skill-implement-test` and `an-dr-ai-skill-test`, commits to `an-dr-git-modify-history`.
+Defers: promotion and the staleness check to `an-dr-agents-repo-build-release`, rule writing to `an-dr-ai-write-instruction`, tests to `an-dr-ai-skill-implement-test` and `an-dr-ai-skill-test`, commits to `an-dr-git-modify-history`.
 
 ## Locate the clone
 
@@ -30,6 +30,19 @@ It checks the clone providing this skill (through a global install's junction), 
 
 - Report every printed note: detached HEAD, dirty tree, missing upstream, and nested clone each change the commit.
 - Use the resolved root for every later path and every git call; git must run in the clone, not through a junction.
+
+## Branches
+
+`dev` takes every amendment; `main` holds only tested, promoted commits, normally the release commit. The host's submodule pointer follows `main`.
+
+```sh
+python <an-dr-agents-repo-build-release>/scripts/check-main-staleness.py --root <root> [--max-days 14] [--max-commits 20]
+```
+
+- Run it after locating the clone and again before the summary; it prints days since `main` moved and the `dev` commits not on `main`, and exits 1 when `dev` is ahead and either limit is passed.
+- Stale → tell the user and offer promotion through `an-dr-agents-repo-build-release`; promotion is never part of an amendment's commit.
+- No `dev` branch (exit 2) → create it from `main` once the user approves.
+- Not on `dev` → switch to it before editing; a clone with unrelated uncommitted changes is asked about, not swept in.
 
 ## Change it
 
@@ -57,9 +70,9 @@ Present before asking for anything; the summary is the deliverable even if no co
 
 Only after the user approves the summary in their own words; approval covers this change only.
 
-1. Commit through `an-dr-git-modify-history` in the clone, on its current branch: no flow, no feature branch, no `tmp-agent-wip.json`.
-2. Push that branch.
-3. Clone nested in the host → its gitlink moved. Follow the host's instructions for submodule pointers, committing through `an-dr-git-modify-history` when they say so; if they say nothing, leave it uncommitted and tell the user it waits in the host repository.
+1. Commit through `an-dr-git-modify-history` in the clone, on `dev`: no flow, no feature branch, no `tmp-agent-wip.json`.
+2. Push `dev`; `main` moves only through promotion.
+3. Clone nested in the host → its gitlink stays on `main`; a `dev` commit does not move it. Follow the host's instructions for submodule pointers, committing through `an-dr-git-modify-history` when they say so; if they say nothing, leave it uncommitted and tell the user it waits in the host repository.
 
 ## Rules
 

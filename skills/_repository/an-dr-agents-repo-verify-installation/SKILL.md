@@ -5,9 +5,9 @@ license: MIT
 allowed-tools: Bash Read Grep Glob
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.2.0"
+  version: "1.3.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-agents-repo-install an-dr-ai-skill-implement-test an-dr-ai-skill-test an-dr-ai-use-wip-data an-dr-convention-commit-message
+  an-dr.dependencies: an-dr-agents-repo-build-release an-dr-agents-repo-install an-dr-ai-skill-implement-test an-dr-ai-skill-test an-dr-ai-use-wip-data an-dr-convention-commit-message
 ---
 
 # Agents health check
@@ -28,14 +28,15 @@ Diagnose layers in order; the first broken layer explains the symptom, and fixin
 python <skill>/scripts/check-agents-health.py --wip-data-skill <an-dr-ai-use-wip-data>
 ```
 
-| Parameter                  | Effect                                                                                     |
-| -------------------------- | ------------------------------------------------------------------------------------------ |
-| `--repository-path <path>` | Repository to diagnose; default current directory; a subdirectory resolves to its git root |
-| `--agents-root <path>`     | Clone the global install should point at; passed to the install verifier                   |
-| `--tools <ids>`            | Limit the install layer to `claude`, `codex`, `copilot`, `deepseek`, `gemini`, `opencode`  |
-| `--skip-install-check`     | Repository layer only, when the machine install is known good                              |
+| Parameter                  | Effect                                                                                                  |
+| -------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `--repository-path <path>` | Repository to diagnose; default current directory; a subdirectory resolves to its git root              |
+| `--agents-root <path>`     | Clone the global install should point at; passed to the install verifier and the `main` staleness check |
+| `--tools <ids>`            | Limit the install layer to `claude`, `codex`, `copilot`, `deepseek`, `gemini`, `opencode`               |
+| `--skip-install-check`     | Repository layer only, when the machine install is known good                                           |
 
 - Prints one Markdown table for the machine and repository layers; exits non-zero on any failure.
+- With `--agents-root` on a clone that has a `dev` branch, one more row reports whether `main` is stale, using the check of `an-dr-agents-repo-build-release`; stale is a warning.
 - Relay the table as-is, then check pickup; a `pass` verdict means the answer lies there.
 
 ## Pickup

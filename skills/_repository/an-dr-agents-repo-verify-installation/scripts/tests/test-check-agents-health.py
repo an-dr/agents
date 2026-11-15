@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import subprocess
 import sys
 import tempfile
@@ -67,6 +68,26 @@ class RepositoryLayerTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             self.assertIn("tmp-agent-wip.json holds a workflow (vibe at build)", result.stdout)
             self.assertIn("| verdict | pickup | pass |", result.stdout)
+
+    def test_stale_main_is_a_warning(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="health-") as temporary:
+            root = Path(temporary)
+            wip = stub_wip(root / "wip-skill", NULL_STUB)
+            clone = root / "clone"
+            clone.mkdir()
+            env = {**os.environ, "GIT_COMMITTER_DATE": "2020-01-01T00:00:00", "GIT_AUTHOR_DATE": "2020-01-01T00:00:00"}
+            for command in (["init", "--quiet", "-b", "main"], ["commit", "--quiet", "--allow-empty", "-m", "base"],
+                            ["switch", "--quiet", "-c", "dev"], ["commit", "--quiet", "--allow-empty", "-m", "change"]):
+                subprocess.run(
+                    ["git", "-C", str(clone), "-c", "user.name=test", "-c", "user.email=test@example.invalid", *command],
+                    check=True, capture_output=True, env=env,
+                )
+            result = check(
+                "--repository-path", str(root), "--wip-data-skill", str(wip),
+                "--agents-root", str(clone), "--skip-install-check",
+            )
+            self.assertIn("main staleness", result.stdout)
+            self.assertIn("is stale", result.stdout)
 
     def test_missing_wip_script_names_the_parameter(self) -> None:
         with tempfile.TemporaryDirectory(prefix="health-") as temporary:

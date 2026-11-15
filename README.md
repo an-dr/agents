@@ -206,7 +206,7 @@ Generated skill outputs live under `.tmp-ai-gen/` according to the [artifact lay
 
 ## 📦 Releases
 
-Each release is a version in [VERSION](VERSION), with notes in [docs/releases/](docs/releases/), published on GitHub as `agents-<version>.zip`: the policy, this README, the license, and every skill except those under `skills/_repository`, which only maintain this repository. The [release skill](skills/_repository/an-dr-agents-repo-build-release/SKILL.md) builds and publishes it.
+Each release is a version in [VERSION](VERSION), with notes in [docs/releases/](docs/releases/), published on GitHub as `agents-<version>.zip`: the policy, this README, the license, and every skill except those under `skills/_repository`, which only maintain this repository. Day-to-day amendments land on `dev`; `main` only receives tested commits through the release skill's promotion. The [release skill](skills/_repository/an-dr-agents-repo-build-release/SKILL.md) builds and publishes it.
 
 ## 📚 Documentation
 
@@ -314,8 +314,8 @@ flowchart LR
     an-dr-agents-repo-build-release --> an-dr-ai-use-user-interface & an-dr-git-modify-history
     an-dr-agents-repo-convention-skills --> an-dr-ai-skill-implement-test & an-dr-ai-skill-test & an-dr-convention-agent-skill & an-dr-dev-test & an-dr-dev-write-documentation & an-dr-convention-agent-skill-testing
     an-dr-agents-repo-install --> an-dr-ai-skill-test
-    an-dr-agents-repo-modify --> an-dr-agents-repo-convention-skills & an-dr-agents-repo-install & an-dr-agents-repo-verify-installation & an-dr-ai-review-instruction & an-dr-ai-use-user-interface & an-dr-ai-skill-implement-test & an-dr-ai-skill-test & an-dr-ai-write-instruction & an-dr-convention-agent-skill & an-dr-convention-markdown & an-dr-convention-script & an-dr-git-modify-history
-    an-dr-agents-repo-verify-installation --> an-dr-agents-repo-install & an-dr-ai-skill-implement-test & an-dr-ai-skill-test & an-dr-ai-use-wip-data & an-dr-convention-commit-message
+    an-dr-agents-repo-modify --> an-dr-agents-repo-build-release & an-dr-agents-repo-convention-skills & an-dr-agents-repo-install & an-dr-agents-repo-verify-installation & an-dr-ai-review-instruction & an-dr-ai-use-user-interface & an-dr-ai-skill-implement-test & an-dr-ai-skill-test & an-dr-ai-write-instruction & an-dr-convention-agent-skill & an-dr-convention-markdown & an-dr-convention-script & an-dr-git-modify-history
+    an-dr-agents-repo-verify-installation --> an-dr-agents-repo-build-release & an-dr-agents-repo-install & an-dr-ai-skill-implement-test & an-dr-ai-skill-test & an-dr-ai-use-wip-data & an-dr-convention-commit-message
     an-dr-ai-collect-input --> an-dr-ai-use-user-interface & an-dr-concept-ai-slop & an-dr-concept-evidence-grounding
     an-dr-ai-review-instruction --> an-dr-ai-use-user-interface
     an-dr-ai-skill-implement-test --> an-dr-ai-write-instruction & an-dr-convention-agent-skill & an-dr-convention-script & an-dr-convention-agent-skill-testing

@@ -15,12 +15,13 @@ flowchart LR
   C --> T[Script tests and run-all.py]
   T --> S[Summary, diff, context-size report]
   S --> A{You approve}
-  A --> G[Commit and push; move the host's pointer]
+  A --> G[Commit and push dev; host pointer stays on main]
 ```
 
 - **Evidence first.** Each change names what the agent did, which instruction caused it, and what it should do; without evidence it is a preference and yours to decide.
 - **No duplication.** Rules stated twice are cut back to one owner; the READMEs are updated with any changed behaviour.
 - **Context cost visible.** A size report shows how many tokens every session now loads; growth needs a matching cut or a stated reason.
+- **Two branches.** Amendments commit and push to `dev`; `main` holds only tested, promoted commits. A staleness check warns when `dev` is ahead and `main` has not moved for 14 days or 20 commits.
 - **No side effects.** An existing rule is never weakened in passing, and the host repository's own work is left untouched.
 
 ## What you get

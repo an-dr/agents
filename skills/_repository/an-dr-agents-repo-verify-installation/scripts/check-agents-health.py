@@ -269,6 +269,24 @@ def install_layer(results: Results, agents_root: Path | None, tools: list[str], 
         results.add("install", "verify", "fail", "verify-agents.py exited non-zero; run it directly for the reason")
 
 
+def branch_layer(results: Results, agents_root: Path | None) -> None:
+    """Warn when the clone's main has trailed its dev branch for too long."""
+    if not agents_root:
+        return
+    check = Path(__file__).resolve().parents[2] / "an-dr-agents-repo-build-release/scripts/check-main-staleness.py"
+    if not check.is_file():
+        return
+    result = subprocess.run(
+        [sys.executable, str(check), "--root", str(agents_root)],
+        capture_output=True, text=True, encoding="utf-8", errors="replace", check=False,
+    )
+    if result.returncode == 2:
+        return  # no dev branch: the branch model is not in use in this clone
+    lines = [line for line in result.stdout.splitlines() if line.strip() and not line.startswith("|")]
+    detail = lines[-1] if lines else "see check-main-staleness.py"
+    results.add("install/branches", "main staleness", "warn" if result.returncode else "pass", detail)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--repository-path", "-RepositoryPath", type=Path, default=Path.cwd())
@@ -297,6 +315,7 @@ def main() -> int:
     has_workflow_state = workflow_layer(results, wip_script, repo)
     try:
         install_layer(results, args.agents_root, tools, args.skip_install_check)
+        branch_layer(results, args.agents_root)
     except RuntimeError as error:
         print(error, file=sys.stderr)
         return 1
