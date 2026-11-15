@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-convention-diagram",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-convention-diagram. Make the workflow diagram in docs/flow.md easier to read.",
+      "expected_skill": "an-dr-convention-diagram",
+      "context": "docs/flow.md holds one Mermaid stateDiagram: DESIGN, a nested AUTONOMOUS state with DOCS, BUILD, VERIFY, COMMIT and a loop, then FINAL_REVIEW, HANDOVER, with labels such as 'draft PR marked ready' and 'branch ready to integrate', all left to right.",
+      "expected_behavior": [
+        "Replaces the nested group with one black-box node in an overview diagram and draws the group's inside as its own diagram after a sentence that introduces it.",
+        "Keeps edge labels to short triggers and moves explanations into prose, so each diagram stays within the item, loop, level, and row budget."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Replaces the nested group with one black-box node in an overview diagram and draws the group's inside as its own diagram after a sentence that introduces it."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Keeps edge labels to short triggers and moves explanations into prose, so each diagram stays within the item, loop, level, and row budget."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Make the workflow diagram in docs/flow.md easier to read.",
+      "expected_skill": "an-dr-convention-diagram",
+      "context": "docs/flow.md holds one Mermaid stateDiagram: DESIGN, a nested AUTONOMOUS state with DOCS, BUILD, VERIFY, COMMIT and a loop, then FINAL_REVIEW, HANDOVER, with labels such as 'draft PR marked ready' and 'branch ready to integrate', all left to right.",
+      "expected_behavior": [
+        "Replaces the nested group with one black-box node in an overview diagram and draws the group's inside as its own diagram after a sentence that introduces it.",
+        "Keeps edge labels to short triggers and moves explanations into prose, so each diagram stays within the item, loop, level, and row budget."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Replaces the nested group with one black-box node in an overview diagram and draws the group's inside as its own diagram after a sentence that introduces it."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Keeps edge labels to short triggers and moves explanations into prose, so each diagram stays within the item, loop, level, and row budget."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am tidying the docs before a release call and the changelog is behind. The actual task is: Make the workflow diagram in docs/flow.md easier to read.",
+      "expected_skill": "an-dr-convention-diagram",
+      "context": "docs/flow.md holds one Mermaid stateDiagram: DESIGN, a nested AUTONOMOUS state with DOCS, BUILD, VERIFY, COMMIT and a loop, then FINAL_REVIEW, HANDOVER, with labels such as 'draft PR marked ready' and 'branch ready to integrate', all left to right.",
+      "expected_behavior": [
+        "Replaces the nested group with one black-box node in an overview diagram and draws the group's inside as its own diagram after a sentence that introduces it.",
+        "Keeps edge labels to short triggers and moves explanations into prose, so each diagram stays within the item, loop, level, and row budget."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Replaces the nested group with one black-box node in an overview diagram and draws the group's inside as its own diagram after a sentence that introduces it."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Keeps edge labels to short triggers and moves explanations into prose, so each diagram stays within the item, loop, level, and row budget."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "What does the Mermaid keyword 'subgraph' do? Do not edit any file.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Answers the question without loading the diagram convention or editing files."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Answers the question without loading the diagram convention or editing files."
+        }
+      ],
+      "runs": 1
+    }
+  ]
+}

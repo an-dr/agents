@@ -6,7 +6,7 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.2.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-concept-ai-slop an-dr-convention-adr an-dr-files-build-report an-dr-convention-html-report an-dr-dev-review an-dr-dev-write-documentation
+  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-concept-ai-slop an-dr-convention-adr an-dr-convention-diagram an-dr-files-build-report an-dr-convention-html-report an-dr-dev-review an-dr-dev-write-documentation
 ---
 
 # Change report
@@ -38,7 +38,7 @@ Read the delivered diff, commits, intake requests or brief, touched ADRs and arc
 Omit a section only when empty, and say so in the summary.
 
 - Explain one change, not the whole repository; every section states something the reader needs, free of `an-dr-concept-ai-slop` signals.
-- Mermaid: `flowchart` for layers and dependencies, `sequenceDiagram` for handshakes and request flows, decision flowcharts for branching.
+- Diagrams follow `an-dr-convention-diagram`: one level each, an overview first and its parts after; run its `check-diagrams.ps1` on the page before building it.
 - Levels for Requests and Verification: delivered or passed → `ok`; partial or unverified → `notice`; not done → `high`; failed check that ships → `critical`.
 - Code only as interface signatures or the few lines an adopter writes; never implementation.
 

@@ -56,6 +56,8 @@ $unknown = @(foreach ($skill in $skills) { foreach ($d in @($skill.Dependencies)
 $lines = [System.Collections.Generic.List[string]]::new()
 $lines.Add('```mermaid')
 $lines.Add('flowchart LR')
+# A reference graph of every skill is read by lookup, not at a glance (an-dr-convention-diagram).
+$lines.Add('    %% diagram-budget: exempt generated reference graph of every skill')
 foreach ($category in ($skills | ForEach-Object Category | Sort-Object -Unique)) {
     $title = (($category.TrimStart('_') -replace '-', ' '))
     $title = $title.Substring(0, 1).ToUpperInvariant() + $title.Substring(1)

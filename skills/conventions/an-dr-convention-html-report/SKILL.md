@@ -6,7 +6,7 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.3.0"
   an-dr.type: convention
-  an-dr.dependencies: an-dr-concept-dark-cockpit an-dr-convention-artifact-layout an-dr-convention-html-repo-style
+  an-dr.dependencies: an-dr-concept-dark-cockpit an-dr-convention-artifact-layout an-dr-convention-diagram an-dr-convention-html-repo-style
 ---
 
 # Convention: HTML report
@@ -16,7 +16,7 @@ Owns: what only a report needs - stamp, problem levels, offline diagrams, verifi
 ## Reference files
 
 - [references/levels.md](references/levels.md): level classes, their look, and branded reports.
-- [references/diagrams.md](references/diagrams.md): when to draw, Mermaid types, and source rules.
+- [references/diagrams.md](references/diagrams.md): how a diagram sits in an HTML page; what it shows and how much belongs to `an-dr-convention-diagram`.
 
 ## The page
 

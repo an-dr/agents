@@ -6,12 +6,12 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.2.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-concept-ai-slop an-dr-convention-adr an-dr-convention-markdown an-dr-convention-use-case
+  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-concept-ai-slop an-dr-convention-adr an-dr-convention-diagram an-dr-convention-markdown an-dr-convention-use-case
 ---
 
 # Documentation writing
 
-Defers: Markdown format to `an-dr-convention-markdown`, use cases to `an-dr-convention-use-case`, ADR format to `an-dr-convention-adr`, README rewrites to their own entry skill.
+Defers: Markdown format to `an-dr-convention-markdown`, diagrams to `an-dr-convention-diagram`, use cases to `an-dr-convention-use-case`, ADR format to `an-dr-convention-adr`, README rewrites to their own entry skill.
 
 ## Scope
 
@@ -46,9 +46,10 @@ Format and check every `.md` file written or touched:
 ```powershell
 pwsh <an-dr-convention-markdown>/scripts/format-markdown.ps1 -Path <file-or-directory>
 pwsh <an-dr-convention-markdown>/scripts/check-markdown.ps1 -Path <file-or-directory>
+pwsh <an-dr-convention-diagram>/scripts/check-diagrams.ps1 -Path <file-or-directory>
 ```
 
-The formatter prints each file it changed; the checker exits non-zero on a violation. Fix what it reports and relay the result.
+The formatter prints each file it changed; the checkers exit non-zero on a violation. A diagram over budget is split as `an-dr-convention-diagram` describes, never squeezed under the numbers by dropping what the reader needs. Fix what they report and relay the result.
 
 - Resolve every internal link, including references to moved pages.
 - Check claims against the layer above: architecture against ADRs and user intent, design against architecture, code against design.

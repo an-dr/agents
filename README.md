@@ -90,13 +90,15 @@ quadrantChart
   Supervised: [0.85, 0.3]
 ```
 
+Two questions pick it. Do you want to agree the design before any code? If not, Vibe shows you the result. If you do, do you want to check every increment, or review the docs and the pull request at the end?
+
 ```mermaid
 flowchart TD
   S([Task that changes files]) --> A{Agree the design first?}
-  A -- No, show me the result --> V[Vibe]
-  A -- Yes --> C{Check every increment?}
-  C -- No, review docs and PR at the end --> SD[Spec-driven]
-  C -- Yes --> SU[Supervised]
+  A -- no --> V[Vibe]
+  A -- yes --> C{Check every increment?}
+  C -- no --> SD[Spec-driven]
+  C -- yes --> SU[Supervised]
 ```
 
 **Vibe** — you judge the behaviour, not the code. The agent builds, tests, and reviews on a `vibe/<slug>` branch, then hands over one command, artefact, or screenshot that shows the change, what was tested, and its limits. You answer with one word.
@@ -125,25 +127,51 @@ sequenceDiagram
 
 **Spec-driven** — you shape the design; the agent does the rest. The documentation is the review surface: you check that the docs say what you agreed and that the behaviour matches the docs, with the change report and the pull request beside them.
 
+You and the agent settle the design together. After `implement`, the agent builds every increment alone, and its draft pull request turns ready when the last one is done. You review it; comments send the agent back to work, and `accept` starts the handover.
+
 ```mermaid
 stateDiagram-v2
   direction LR
-  [*] --> DESIGN: you and the agent
-  DESIGN --> AUTONOMOUS: implement
-  state AUTONOMOUS {
-    direction LR
-    DOCS --> BUILD
-    BUILD --> VERIFY
-    VERIFY --> COMMIT
-    COMMIT --> DOCS: next increment
-  }
-  AUTONOMOUS --> FINAL_REVIEW: draft PR marked ready
-  FINAL_REVIEW --> AUTONOMOUS: PR comments
-  FINAL_REVIEW --> HANDOVER: accept
-  HANDOVER --> [*]: branch ready to integrate
+  [*] --> DESIGN
+  DESIGN --> INCREMENTS: implement
+  INCREMENTS --> REVIEW
+  REVIEW --> INCREMENTS: comments
+  REVIEW --> HANDOVER: accept
+  HANDOVER --> [*]
+  classDef blackbox stroke-width:3px,stroke-dasharray:5 3
+  class INCREMENTS blackbox
+```
+
+A dashed, heavier box opens into a diagram of its own. Inside INCREMENTS, each increment goes the same way: documentation first, then code, verification by the agent, and a commit pushed to the pull request.
+
+```mermaid
+stateDiagram-v2
+  direction LR
+  [*] --> DOCS
+  DOCS --> BUILD
+  BUILD --> VERIFY
+  VERIFY --> COMMIT
+  COMMIT --> DOCS: next
+  COMMIT --> [*]: last
 ```
 
 **Supervised** — every increment waits for your verification before the next begins. Use it for architecture-heavy or risky work, where catching a wrong turn early is worth your time.
+
+Planning ends when you say `implement`. Each increment then waits for you, and the summary of the finished branch waits for your `accept`.
+
+```mermaid
+stateDiagram-v2
+  direction LR
+  [*] --> PLANNING
+  PLANNING --> INCREMENTS: implement
+  INCREMENTS --> SUMMARY
+  SUMMARY --> HANDOVER: accept
+  HANDOVER --> [*]
+  classDef blackbox stroke-width:3px,stroke-dasharray:5 3
+  class PLANNING,INCREMENTS blackbox
+```
+
+PLANNING is three steps: you close the request list with `intake`, then the design and the split into increments follow.
 
 ```mermaid
 stateDiagram-v2
@@ -151,16 +179,23 @@ stateDiagram-v2
   [*] --> INTAKE
   INTAKE --> DESIGN: intake
   DESIGN --> SPLIT
-  SPLIT --> DOCS: implement
-  DOCS --> BUILD
-  BUILD --> VERIFY
-  VERIFY --> DOCS: you verify, next increment
-  VERIFY --> SUMMARY: last increment verified
-  SUMMARY --> HANDOVER: accept
-  HANDOVER --> [*]: branch ready to integrate
+  SPLIT --> [*]
 ```
 
-Spec-driven and Supervised end at HANDOVER: commits regrouped, workflow state stripped from the branch history, the pull or merge request ready. Nothing is merged by the flow. When you ask, `an-dr-dev-integrate` lands any branch through its request with the repository's own merge method, or locally when there is no supported platform.
+In INCREMENTS, nothing is committed until you verify it; a rejected increment goes back to BUILD.
+
+```mermaid
+stateDiagram-v2
+  direction LR
+  [*] --> DOCS
+  DOCS --> BUILD
+  BUILD --> VERIFY
+  VERIFY --> COMMIT: you verify
+  COMMIT --> DOCS: next
+  COMMIT --> [*]: last
+```
+
+Both flows end at HANDOVER: commits regrouped, workflow state stripped from the branch history, the pull or merge request ready. Nothing is merged by the flow. When you ask, `an-dr-dev-integrate` lands any branch through its request with the repository's own merge method, or locally when there is no supported platform.
 
 ## ✨ Features
 
@@ -210,6 +245,7 @@ The [dependency builder](skills/_repository/an-dr-agents-repo-build-dependencies
 
 ```mermaid
 flowchart LR
+    %% diagram-budget: exempt generated reference graph of every skill
     subgraph g_repository["Repository"]
         an-dr-agents-analyze-session
         an-dr-agents-repo-build-dependencies
@@ -266,6 +302,7 @@ flowchart LR
         an-dr-convention-artifact-layout
         an-dr-convention-code
         an-dr-convention-commit-message
+        an-dr-convention-diagram
         an-dr-convention-html-repo-style
         an-dr-convention-html-report
         an-dr-convention-layout
@@ -287,7 +324,7 @@ flowchart LR
     an-dr-ai-use-user-interface --> an-dr-concept-dark-cockpit & an-dr-convention-html-repo-style & an-dr-files-build-report
     an-dr-ai-write-instruction --> an-dr-ai-review-instruction & an-dr-concept-ai-slop & an-dr-convention-markdown & an-dr-dev-write-documentation
     an-dr-architecture-fix-dependencies --> an-dr-ai-use-user-interface & an-dr-concept-clean-dependencies & an-dr-files-build-report & an-dr-convention-html-report
-    an-dr-dev-analyze-changes --> an-dr-ai-use-user-interface & an-dr-concept-ai-slop & an-dr-convention-adr & an-dr-files-build-report & an-dr-convention-html-report & an-dr-dev-review & an-dr-dev-write-documentation
+    an-dr-dev-analyze-changes --> an-dr-ai-use-user-interface & an-dr-concept-ai-slop & an-dr-convention-adr & an-dr-convention-diagram & an-dr-files-build-report & an-dr-convention-html-report & an-dr-dev-review & an-dr-dev-write-documentation
     an-dr-dev-analyze-slop --> an-dr-ai-review-instruction & an-dr-ai-use-user-interface & an-dr-concept-ai-slop & an-dr-files-build-report & an-dr-convention-html-report
     an-dr-dev-assign-ai-level --> an-dr-ai-use-user-interface & an-dr-convention-ai-level
     an-dr-dev-design --> an-dr-ai-use-user-interface & an-dr-convention-adr & an-dr-convention-use-case & an-dr-dev-write-documentation
@@ -297,7 +334,7 @@ flowchart LR
     an-dr-dev-integrate --> an-dr-ai-use-user-interface & an-dr-convention-commit-message & an-dr-git-modify-history
     an-dr-dev-review --> an-dr-ai-use-user-interface & an-dr-concept-ai-slop & an-dr-concept-clean-dependencies & an-dr-concept-evidence-grounding & an-dr-convention-artifact-layout & an-dr-convention-code & an-dr-convention-html-repo-style & an-dr-convention-html-report & an-dr-convention-layout
     an-dr-dev-test --> an-dr-ai-use-user-interface & an-dr-dev-implement-adversarial-ut
-    an-dr-dev-write-documentation --> an-dr-ai-use-user-interface & an-dr-concept-ai-slop & an-dr-convention-adr & an-dr-convention-markdown & an-dr-convention-use-case
+    an-dr-dev-write-documentation --> an-dr-ai-use-user-interface & an-dr-concept-ai-slop & an-dr-convention-adr & an-dr-convention-diagram & an-dr-convention-markdown & an-dr-convention-use-case
     an-dr-dev-write-readme --> an-dr-ai-use-user-interface & an-dr-dev-assign-ai-level & an-dr-convention-markdown & an-dr-convention-readme & an-dr-dev-write-documentation & an-dr-files-make-screengif & an-dr-files-make-screenshot
     an-dr-dev-write-specification --> an-dr-ai-use-user-interface & an-dr-concept-clean-dependencies & an-dr-convention-adr & an-dr-convention-use-case & an-dr-dev-write-documentation
     an-dr-env-install-powershell --> an-dr-ai-use-user-interface
@@ -311,7 +348,7 @@ flowchart LR
     an-dr-text-write-curated --> an-dr-ai-use-user-interface & an-dr-text-verify-claims & an-dr-text-analyze-slop & an-dr-convention-artifact-layout
     an-dr-convention-agent-skill --> an-dr-concept-clean-dependencies & an-dr-convention-script & an-dr-convention-agent-skill-testing & an-dr-convention-markdown
     an-dr-convention-code --> an-dr-concept-ai-slop & an-dr-concept-clean-dependencies & an-dr-convention-layout
-    an-dr-convention-html-report --> an-dr-concept-dark-cockpit & an-dr-convention-artifact-layout & an-dr-convention-html-repo-style
+    an-dr-convention-html-report --> an-dr-concept-dark-cockpit & an-dr-convention-artifact-layout & an-dr-convention-diagram & an-dr-convention-html-repo-style
     an-dr-convention-layout --> an-dr-convention-artifact-layout
     an-dr-convention-readme --> an-dr-concept-ai-slop & an-dr-concept-evidence-grounding & an-dr-convention-markdown
     an-dr-convention-script --> an-dr-ai-use-user-interface & an-dr-convention-agent-skill-testing
