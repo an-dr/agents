@@ -15,7 +15,7 @@ param(
     [ValidateSet('goal', 'constraints', 'done', 'outOfScope')]
     [string]$Field,
     [string]$Value,
-    [ValidateSet('intake', 'implement', 'verify', 'integrate')]
+    [ValidateSet('intake', 'implement', 'verify', 'accept')]
     [string]$Gate,
     [string]$Note,
     [string]$Text,
@@ -90,8 +90,10 @@ function Get-WorkflowState {
     if ($state.phase -in @('MR', 'MERGE_READY', 'INTEGRATE_READY')) {
         $state.phase = 'SUMMARY'
     }
-    if ($state.phase -eq 'MERGE') {
-        $state.phase = 'INTEGRATE'
+    # INTEGRATE landed the branch from inside the flow; the flow now ends at
+    # HANDOVER, and landing is the separate an-dr-dev-integrate skill.
+    if ($state.phase -in @('MERGE', 'INTEGRATE')) {
+        $state.phase = 'HANDOVER'
     }
     # START collected nothing; INTAKE collects the request list. A workflow
     # written before the rename resumes at the phase that replaced it, and its
@@ -120,7 +122,11 @@ function Get-WorkflowState {
     # Approvals under retired gate names are dropped rather than remapped: the
     # gates they authorized no longer exist, so the user re-authorizes under the
     # current ones. The history entries keep the record of what was approved.
-    $state.approvals = @(@($state.approvals).Where({ $_.gate -in @('intake', 'implement', 'verify', 'integrate') }))
+    # `integrate` was given at the same review `accept` is given at now.
+    foreach ($approval in @($state.approvals)) {
+        if ($approval.gate -eq 'integrate') { $approval.gate = 'accept' }
+    }
+    $state.approvals = @(@($state.approvals).Where({ $_.gate -in @('intake', 'implement', 'verify', 'accept') }))
     Assert-WorkflowState -State $state
     return $state
 }
@@ -202,12 +208,12 @@ function Get-WorkflowPhases {
     if ($Flow -eq 'Supervised') {
         return @(
             'INTAKE', 'DESIGN', 'SPLIT', 'BRANCH', 'DOCS', 'BUILD', 'VERIFY', 'COMMIT',
-            'SUMMARY', 'INTEGRATE'
+            'SUMMARY', 'HANDOVER'
         )
     }
     return @(
         'INTAKE', 'DESIGN', 'SPLIT', 'BRANCH', 'DOCS', 'BUILD', 'VERIFY', 'COMMIT',
-        'SUMMARY', 'FINAL_REVIEW', 'INTEGRATE'
+        'SUMMARY', 'FINAL_REVIEW', 'HANDOVER'
     )
 }
 
@@ -301,7 +307,7 @@ function Assert-WorkflowState {
     if ($State.phase -ne 'COMMIT' -and $State.commitBaseline) {
         throw "commitBaseline is only valid during COMMIT, not '$($State.phase)'."
     }
-    if ($State.phase -in @('SUMMARY', 'FINAL_REVIEW', 'INTEGRATE') -and
+    if ($State.phase -in @('SUMMARY', 'FINAL_REVIEW', 'HANDOVER') -and
         @($increments | Where-Object { $_.status -ne 'completed' }).Count -gt 0) {
         throw "Phase '$($State.phase)' requires every increment to be completed."
     }
@@ -349,7 +355,7 @@ function Assert-WorkflowState {
     }
 
     foreach ($approval in @($State.approvals)) {
-        if ($approval.gate -notin @('intake', 'implement', 'verify', 'integrate') -or
+        if ($approval.gate -notin @('intake', 'implement', 'verify', 'accept') -or
             [string]::IsNullOrWhiteSpace([string]$approval.note)) {
             throw 'Workflow contains a malformed approval record.'
         }
@@ -759,16 +765,18 @@ switch ($Command) {
             throw '-Note is required to record the approval evidence.'
         }
         # The user says intake once, when the request list is complete; implement
-        # once, at the last phase before code is written; and integrate once, at
+        # once, at the last phase before code is written; and accept once, at
         # the review of the finished branch. Spec-driven folds intake into the
         # design discussion and records its own per-increment verification, so
-        # its user gates are implement and integrate only.
+        # its user gates are implement and accept only. Landing the branch is not
+        # a gate here: it is the separate an-dr-dev-integrate skill, run when the
+        # user asks for it.
         $expected = switch ($state.phase) {
             'INTAKE' { if ($state.flow -eq 'Supervised') { 'intake' } else { $null } }
             'SPLIT' { 'implement' }
             'VERIFY' { if ($state.flow -eq 'Supervised') { 'verify' } else { $null } }
-            'SUMMARY' { if ($state.flow -eq 'Supervised') { 'integrate' } else { $null } }
-            'FINAL_REVIEW' { 'integrate' }
+            'SUMMARY' { if ($state.flow -eq 'Supervised') { 'accept' } else { $null } }
+            'FINAL_REVIEW' { 'accept' }
             default { $null }
         }
         if ($state.flow -eq 'SpecDriven' -and $state.phase -in @('INTAKE', 'VERIFY', 'SUMMARY')) {
@@ -930,8 +938,8 @@ switch ($Command) {
         if ([string]::IsNullOrWhiteSpace($Scope) -or [string]::IsNullOrWhiteSpace($Description)) {
             throw '-Scope and -Description are required for add-increment.'
         }
-        if ($state.phase -eq 'INTEGRATE') {
-            throw 'The approved workflow is ready to integrate. Start a follow-up workflow for new scope.'
+        if ($state.phase -eq 'HANDOVER') {
+            throw 'The accepted branch is being handed over. Start a follow-up workflow for new scope.'
         }
 
         $increments = [Collections.ArrayList]@(@($state.increments))
@@ -955,7 +963,7 @@ switch ($Command) {
         Set-IncrementNumbers -State $state
         if ($state.phase -in @('SUMMARY', 'FINAL_REVIEW')) {
             $state.phase = 'SPLIT'
-            $state.approvals = @($state.approvals).Where({ $_.gate -notin @('implement', 'integrate') })
+            $state.approvals = @($state.approvals).Where({ $_.gate -notin @('implement', 'accept') })
         }
         Add-HistoryEntry -State $state -Action 'add-increment' -Detail "Inserted increment ${position}: $Scope"
         Save-WorkflowState -State $state -Path $workflowPath
@@ -1178,13 +1186,13 @@ switch ($Command) {
                     $state.phase = 'FINAL_REVIEW'
                 }
                 else {
-                    Assert-Approval -State $state -GateName 'integrate'
-                    $state.phase = 'INTEGRATE'
+                    Assert-Approval -State $state -GateName 'accept'
+                    $state.phase = 'HANDOVER'
                 }
             }
             'FINAL_REVIEW' {
-                Assert-Approval -State $state -GateName 'integrate'
-                $state.phase = 'INTEGRATE'
+                Assert-Approval -State $state -GateName 'accept'
+                $state.phase = 'HANDOVER'
             }
             default {
                 throw "Phase $($state.phase) cannot advance."
@@ -1266,8 +1274,22 @@ switch ($Command) {
     'finish' {
         $state = Get-WorkflowState -Path $workflowPath
         Assert-WorkflowBranch -State $state
-        if ($state.phase -ne 'INTEGRATE') {
-            throw "Workflow state can only be removed at INTEGRATE; current state is $($state.flow)/$($state.phase)."
+        if ($state.phase -ne 'HANDOVER') {
+            throw "Workflow state can only be removed at HANDOVER; current state is $($state.flow)/$($state.phase)."
+        }
+        # The handed-over branch carries no workflow state: remove-progress.ps1
+        # has stripped .progress from every commit after the base. On the base
+        # branch there is no branch history to clean; the deletion is committed.
+        if (-not $state.onBase) {
+            $mergeBase = (git merge-base $state.baseBranch HEAD 2>$null | Out-String).Trim()
+            if (-not $mergeBase) {
+                throw "Cannot find the merge base with '$($state.baseBranch)'."
+            }
+            $inHistory = @(git log --format=%h "$mergeBase..HEAD" -- .progress)
+            $inTree = @(git ls-tree -r --name-only HEAD -- .progress)
+            if ($inHistory.Count -gt 0 -or $inTree.Count -gt 0) {
+                throw "The branch still carries .progress; run remove-progress.ps1 in HANDOVER before finish."
+            }
         }
         Remove-Item -LiteralPath $workflowPath
         $progressMarkdownPath = Get-ProgressMarkdownPath -WorkflowPath $workflowPath
@@ -1279,7 +1301,12 @@ switch ($Command) {
             Remove-Item -LiteralPath $directory
         }
         Update-ProgressPage
-        Write-Output 'Workflow state removed. Commit the deletion; integration then removes .progress from the feature branch.'
+        if ($state.onBase) {
+            Write-Output 'Workflow state removed. Commit the deletion if .progress was committed.'
+        }
+        else {
+            Write-Output 'Workflow state removed. The branch is handed over: integrate it with an-dr-dev-integrate when the user asks.'
+        }
         Show-WorkflowStatus -State $state -Status finished
     }
 }

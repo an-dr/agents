@@ -51,7 +51,7 @@ A verb is added here before use, with a meaning distinct from the others; `check
 | `follow`    | run a controller or process and keep to its rules                         |
 | `implement` | build working code or tests from a design                                 |
 | `install`   | put something on a machine                                                |
-| `integrate` | land an approved branch in the default branch                             |
+| `integrate` | land a branch in the default branch                                       |
 | `make`      | create a media file or other artifact                                     |
 | `modify`    | change something that exists, in place                                    |
 | `review`    | judge a change or a text and give a verdict                               |

@@ -64,11 +64,11 @@ Open the project you want to change in your AI tool and select a flow in the req
 Vibe: fix the parser's handling of empty input. Preserve its public API.
 ```
 
-| Flow        | Your attention goes to    | You decide                                                  | Where it lands                                                |
-| ----------- | ------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------- |
-| Vibe        | The result                | land, redo, or drop after trying it                         | `vibe/<slug>` branch, fast-forwarded into the base on land    |
-| Spec-driven | The design, then the docs | implement after the design talk, integrate after the review | `spec/<slug>` branch and pull request, or the base on request |
-| Supervised  | Every step                | intake, implement, each increment's verification, integrate | `supervised/<slug>` branch and pull request                   |
+| Flow        | Your attention goes to    | You decide                                               | Where it lands                                                |
+| ----------- | ------------------------- | -------------------------------------------------------- | ------------------------------------------------------------- |
+| Vibe        | The result                | land, redo, or drop after trying it                      | `vibe/<slug>` branch, fast-forwarded into the base on land    |
+| Spec-driven | The design, then the docs | implement after the design talk, accept after the review | `spec/<slug>` branch and pull request, or the base on request |
+| Supervised  | Every step                | intake, implement, each increment's verification, accept | `supervised/<slug>` branch and pull request                   |
 
 Work branches are pushed to the remote automatically; the base branch never is. For gated work, the [workflow controller skill](skills/actions/an-dr-dev-follow-workflow/README.md) owns the commands and transitions. The agent resumes existing state instead of reconstructing it from conversation history. [AGENTS.md](AGENTS.md) defines the policy, including the separate review rule for changes to this process repository.
 
@@ -139,8 +139,8 @@ stateDiagram-v2
   }
   AUTONOMOUS --> FINAL_REVIEW: draft PR marked ready
   FINAL_REVIEW --> AUTONOMOUS: PR comments
-  FINAL_REVIEW --> INTEGRATE: integrate
-  INTEGRATE --> [*]
+  FINAL_REVIEW --> HANDOVER: accept
+  HANDOVER --> [*]: branch ready to integrate
 ```
 
 **Supervised** — every increment waits for your verification before the next begins. Use it for architecture-heavy or risky work, where catching a wrong turn early is worth your time.
@@ -156,11 +156,11 @@ stateDiagram-v2
   BUILD --> VERIFY
   VERIFY --> DOCS: you verify, next increment
   VERIFY --> SUMMARY: last increment verified
-  SUMMARY --> INTEGRATE: integrate
-  INTEGRATE --> [*]
+  SUMMARY --> HANDOVER: accept
+  HANDOVER --> [*]: branch ready to integrate
 ```
 
-Spec-driven and Supervised integrate through their pull or merge request, using the repository's own merge method; without a supported platform the agent says what is missing and integrates locally.
+Spec-driven and Supervised end at HANDOVER: commits regrouped, workflow state stripped from the branch history, the pull or merge request ready. Nothing is merged by the flow. When you ask, `an-dr-dev-integrate` lands any branch through its request with the repository's own merge method, or locally when there is no supported platform.
 
 ## ✨ Features
 
@@ -169,7 +169,7 @@ Spec-driven and Supervised integrate through their pull or merge request, using 
 - Self-contained skills for specification, implementation, debugging, testing, review, documentation, and Git operations.
 - HTML reports for code reviews, project overviews, and completed changes.
 - Deterministic script checks and separate, explicitly requested agent evaluations.
-- Integration through pull or merge requests with the repository's merge method, a local fallback that rebases before landing, and no workflow state in delivered history.
+- Flows that hand over a clean branch, and integration as a separate step you ask for: through pull or merge requests with the repository's merge method, or a local fallback that rebases before landing.
 
 ## 🔧 Configuration
 

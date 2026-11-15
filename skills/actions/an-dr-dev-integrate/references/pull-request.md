@@ -1,6 +1,6 @@
 # Pull request path
 
-The default integration for Spec-driven and Supervised work branches. "Request" means a GitHub pull request, a GitLab merge request, or whatever the remote's platform calls it.
+The default integration for a branch on a supported platform. "Request" means a GitHub pull request, a GitLab merge request, or whatever the remote's platform calls it.
 
 ## Detect the platform
 
@@ -10,9 +10,9 @@ The default integration for Spec-driven and Supervised work branches. "Request" 
 
 ## Open it early
 
-- At the work branch's first push: `gh pr create --draft --fill --base <base>` or `glab mr create --draft --fill --target-branch <base>`.
-- One request per workflow, never one per increment. Each increment's commit is pushed to it, so platform CI runs per increment.
-- At SUMMARY or FINAL_REVIEW: put the change summary in the description, attach or link the change report, and mark it ready (`gh pr ready`, `glab mr update --ready`).
+- At the branch's first push: `gh pr create --draft --fill --base <base>` or `glab mr create --draft --fill --target-branch <base>`.
+- One request per branch. Every later commit is pushed to it, so platform CI runs on each.
+- When the work is ready for review: put the change summary in the description, attach or link any change report, and mark it ready (`gh pr ready`, `glab mr update --ready`).
 
 ## Address review comments
 
@@ -25,9 +25,9 @@ When the user says to address the comments:
 
 ## Merge
 
-Only after the `integrate` approval:
+Only on the user's explicit request to integrate:
 
-1. Run step 0 to remove `.progress/`, then regroup once as in [regroup.md](regroup.md) if the branch history is a work log, and rebase onto the base. Push with `--force-with-lease`.
+1. Rebase onto the base; if the history is still a work log, regroup once as in [regroup.md](regroup.md). Push with `--force-with-lease`.
 2. Wait for checks to pass on the pushed commit; a failing check goes back to the user, never merged around.
 3. Merge with the repository's own merge method:
    - GitLab: `glab mr merge --remove-source-branch` applies the project's configured method.

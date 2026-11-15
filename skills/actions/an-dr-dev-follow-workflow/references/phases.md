@@ -8,4 +8,10 @@
 - COMMIT → `an-dr-git-modify-history`, including current progress state; push the work branch.
 - SUMMARY → `an-dr-dev-analyze-changes` for the full branch: review, reconcile with intake requests, mark the request ready, hand over the summary with its link.
 - SUMMARY and FINAL_REVIEW → when the user says to address the request's comments, follow `an-dr-dev-integrate`'s comment handling, then report what changed.
-- INTEGRATE → after approval: `finish`, commit the deletion, then `an-dr-dev-integrate` (removes `.progress/` from the branch and merges the request, or asks for a local mode when there is none).
+- HANDOVER → after `accept`, leave a branch anyone can integrate, then stop:
+  1. Commit the current progress state, then regroup the branch once with `an-dr-git-modify-history`: fixups folded, superseded commits dropped, one commit per logical change.
+  2. `pwsh <skill>/scripts/remove-progress.ps1 [-BaseBranch <base>]` strips `.progress/` from every branch commit and prunes progress-only commits; rerun the branch tests if a rewritten commit was never tested at its final content.
+  3. Remove other leftovers the flow created in the branch: scratch files, generated artifacts that are not repository content.
+  4. Push with `--force-with-lease`; the request stays ready, with the change report linked.
+  5. `finish`; it refuses while the branch still carries `.progress/`, then deletes the local state and the progress page.
+  6. Tell the user the branch is ready and that `an-dr-dev-integrate` lands it when they ask. Never integrate from here.

@@ -59,9 +59,9 @@ if ($hasWorkflow) {
     $state = Get-Content -Raw -LiteralPath $workflowPath | ConvertFrom-Json
     $flowLabel = switch ($state.flow) { 'SpecDriven' { 'Spec-driven' } 'DetailedAuto' { 'Spec-driven' } 'Detailed' { 'Supervised' } default { $state.flow } }
     $phases = if ($flowLabel -eq 'Supervised') {
-        @('INTAKE', 'DESIGN', 'SPLIT', 'BRANCH', 'DOCS', 'BUILD', 'VERIFY', 'COMMIT', 'SUMMARY', 'INTEGRATE')
+        @('INTAKE', 'DESIGN', 'SPLIT', 'BRANCH', 'DOCS', 'BUILD', 'VERIFY', 'COMMIT', 'SUMMARY', 'HANDOVER')
     } else {
-        @('INTAKE', 'DESIGN', 'SPLIT', 'BRANCH', 'DOCS', 'BUILD', 'VERIFY', 'COMMIT', 'SUMMARY', 'FINAL_REVIEW', 'INTEGRATE')
+        @('INTAKE', 'DESIGN', 'SPLIT', 'BRANCH', 'DOCS', 'BUILD', 'VERIFY', 'COMMIT', 'SUMMARY', 'FINAL_REVIEW', 'HANDOVER')
     }
     $index = [array]::IndexOf($phases, [string]$state.phase)
     $steps = for ($i = 0; $i -lt $phases.Count; $i++) {
@@ -77,7 +77,7 @@ if ($hasWorkflow) {
         elseif ($state.phase -eq 'INTAKE' -and $flowLabel -eq 'Supervised') { 'Waiting for you to close the request list: intake.' }
         elseif ($state.phase -eq 'SPLIT') { 'Waiting for you to approve the plan: implement.' }
         elseif ($state.phase -eq 'VERIFY' -and $flowLabel -eq 'Supervised') { 'Waiting for you to verify this increment.' }
-        elseif ($state.phase -in @('SUMMARY', 'FINAL_REVIEW')) { 'Waiting for your review: integrate, or comments.' }
+        elseif ($state.phase -in @('SUMMARY', 'FINAL_REVIEW')) { 'Waiting for your review: accept, or comments.' }
         else { $null }
     if ($waiting) { $body.Add("<p class=`"you`">▶ $(ConvertTo-Html $waiting)</p>") }
 

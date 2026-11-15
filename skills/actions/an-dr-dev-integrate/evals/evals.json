@@ -121,6 +121,32 @@
         }
       ],
       "runs": 1
+    },
+    {
+      "id": "HANDOVER-NOT-INTEGRATION",
+      "bucket": "negative",
+      "prompt": "The user accepted the final review and the workflow finished its handover. Report the state of the branch.",
+      "expected_skill": null,
+      "context": "Branch spec/retry has a ready pull request, regrouped commits and no .progress history. The user has not asked to integrate, merge, or land it.",
+      "expected_behavior": [
+        "Does not merge, rebase onto the base, or push the base, because accepting a review is not a request to integrate.",
+        "Says the branch is ready and that integration runs when the user asks for it."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not merge, rebase onto the base, or push the base, because accepting a review is not a request to integrate."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Says the branch is ready and that integration runs when the user asks for it."
+        }
+      ],
+      "runs": 1
     }
   ]
 }

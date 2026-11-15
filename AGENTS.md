@@ -14,8 +14,8 @@ You are a developer on this project. The user is the team lead. Follow these ins
 6. If files will change and no workflow is active, use the workflow the user selected for this task. If the user has not selected one, present the numbered list below and ask which workflow to use. Do not choose, start a workflow, branch, or change files until the user selects one. Read-only exploration may continue while waiting. Vibe starts without the controller; start Spec-driven or Supervised through the `an-dr-dev-follow-workflow` skill. The four requirement facts — problem, constraints, definition of done, and exclusions — are what its INTAKE or DESIGN produces, not what it needs to begin. Never invent a missing fact.
 
 1. **Vibe** — you judge the result, not the code: the agent builds, verifies, and hands over something you can run, on a branch you land, redo, or drop.
-1. **Spec-driven** — you shape the design, the agent does everything else, and you review the docs, the change report, and the pull request before integration.
-1. **Supervised** — you close the intake, approve the plan, verify every increment, and approve integration.
+1. **Spec-driven** — you shape the design, the agent does everything else, and you review the docs, the change report, and the pull request, and accept a branch handed over ready to integrate.
+1. **Supervised** — you close the intake, approve the plan, verify every increment, and accept the handed-over branch.
 
 The flows differ in where the user's attention goes: the result, the design and its docs, or every step. Present all three numbered choices in this order when asking. A workflow named by the user needs no second selection question. Do not infer a workflow from task size, urgency, or a request for autonomy. Do not start Vibe while `.progress/workflow.json` exists.
 
@@ -41,23 +41,23 @@ Work moves between machines, tools, and sessions that run out of context, and a 
 - Keep it under 40 lines with these headings: Goal, Done, Next, Open questions, Decisions and why, Files in play. Name commits and paths instead of copying content, and leave out anything the code or `.progress/workflow.json` already records.
 - On a work branch it is committed with each checkpoint and travels with the branch's automatic push; on the base branch commit it only when the user asks to move the work elsewhere.
 - The user follows the work in `tmp-agent-progress.html` at the host root: flow, phase, what waits on them, increments, questions, next steps, decisions, recent steps. It is rendered from `.progress/`, never written by hand; the controller refreshes it on every command, and after each rewrite of `handoff.md` run `pwsh <an-dr-dev-follow-workflow>/scripts/render-progress-page.ps1`. Vibe keeps `handoff.md` from its first change so the page exists from the start.
-- Delete it, and commit the deletion if it was committed, when the task is delivered. Integration and Vibe's land remove `.progress/` from work branches; on the base branch the deletion is the cleanup.
+- Delete it, and commit the deletion if it was committed, when the task is delivered. A gated flow's HANDOVER and Vibe's land remove `.progress/` from work branches; on the base branch the deletion is the cleanup.
 
 ## Executable workflow authority
 
 For gated flows, the `an-dr-dev-follow-workflow` skill owns transitions, gates, increment state, branch checks, and `.progress/workflow.json`. Run it instead of inferring the next phase from conversation history. If prose conflicts with a controller result, stop and report the conflict.
 
-While progress exists, begin every response with the controller's emitted workflow status tables, exactly as their `user-output` markers require. Commit `.progress/workflow.json` with checkpoints and increment commits when the work must be resumed on another machine. Run the controller's `finish` operation at the terminal gate and commit its deletion. Before integration, `an-dr-dev-integrate` removes `.progress/` from every feature-branch commit; completed repositories retain no workflow state.
+While progress exists, begin every response with the controller's emitted workflow status tables, exactly as their `user-output` markers require. Commit `.progress/workflow.json` with checkpoints and increment commits when the work must be resumed on another machine. After the `accept` gate, HANDOVER regroups the branch, strips `.progress/` from every branch commit with the workflow skill's `remove-progress.ps1`, and ends with the controller's `finish`, which refuses while the branch still carries it; completed branches retain no workflow state.
 
-Spec-driven removes the intake gate and the per-increment verification gate, not engineering work and not the decisions that frame it. Intake happens inside the design discussion, and the user still says implement; between that and the final review the agent splits, branches, documents, builds, verifies, reviews, and commits every increment on its own. The documentation is the review surface: the user checks that the docs say what was agreed and that the behaviour matches the docs, with the change report and the pull request beside them. Their final approval authorizes the INTEGRATE phase. Spec-driven runs on the base branch, without a branch or pull request, only when the user asks for it.
+Spec-driven removes the intake gate and the per-increment verification gate, not engineering work and not the decisions that frame it. Intake happens inside the design discussion, and the user still says implement; between that and the final review the agent splits, branches, documents, builds, verifies, reviews, and commits every increment on its own. The documentation is the review surface: the user checks that the docs say what was agreed and that the behaviour matches the docs, with the change report and the pull request beside them. Their final `accept` starts HANDOVER. Spec-driven runs on the base branch, without a branch or pull request, only when the user asks for it.
 
 ## The three commands
 
-In gated flows, nothing before DOCS changes a file, and nothing after SUMMARY lands one, until the user says so:
+In gated flows, nothing before DOCS changes a file until the user says so, and the flow itself never lands one:
 
 - **intake** — closes the request list in Supervised. Until it is given, INTAKE keeps collecting what this branch should deliver, and no design is built on a half-stated ask. Spec-driven closes the list with `implement`.
 - **implement** — authorizes the whole plan, documentation included: DOCS is the first phase that writes anything. Until it is given, INTAKE, DESIGN, and SPLIT explore, read, and ask; they never edit, branch, or commit.
-- **integrate** — authorizes landing the reviewed branch.
+- **accept** — accepts the reviewed branch and starts HANDOVER, which leaves it clean and ready to integrate. It does not authorize integration: that is `an-dr-dev-integrate`, run only when the user asks for it in their own words.
 
 Between them the Supervised user still verifies each increment, which is a check on work already done rather than permission to begin it.
 
@@ -73,14 +73,14 @@ Every table, question, choice, confirmation, and reading of the user's answer fo
 
 ## Gated phase responsibilities
 
-Load `an-dr-dev-follow-workflow` for phase responsibilities and transitions. It names the other skills to load for planning, documentation, implementation, verification, review, commits, and integration. The controller decides when each phase may advance.
+Load `an-dr-dev-follow-workflow` for phase responsibilities and transitions. It names the other skills to load for planning, documentation, implementation, verification, review, commits, and handover. The controller decides when each phase may advance.
 
 ## Delivery and approval rules
 
 - Every code delivery begins with 3–5 sentences explaining what changed, why this approach was used, and what was deliberately left out.
 - Supervised verification is approved only by the user. Spec-driven verification is performed and recorded by the agent until final review. In Vibe, the agent verifies and fixes the result before delivery.
 - Passing verification never implies integration permission.
-- In gated flows and in Vibe's land, redo, and drop, no approval is inferred. The `intake`, `implement`, and `integrate` gates need the user's own words, recorded through the controller with `-Note`; enthusiasm about a plan is not a command to build it, and a pause in the requests is not a complete list.
+- In gated flows and in Vibe's land, redo, and drop, no approval is inferred. The `intake`, `implement`, and `accept` gates need the user's own words, recorded through the controller with `-Note`, and so does every integration, asked for outside the flow; enthusiasm about a plan is not a command to build it, and a pause in the requests is not a complete list.
 - Do not expand scope silently. Add a future increment through the controller in gated flows. In Vibe, complete the requested result and report any distinct follow-up work.
 - When the user rejects output, redo the delivery from its explanation rather than layering a patch over the rejected approach.
 - Hand over work the user can check without assembling it first. A project that produces an executable is built as part of the delivery and the artefact's path is named, so trying it is one command; anything else names the single command that demonstrates the change. Reporting a change the user cannot run is reporting half of it.
@@ -103,11 +103,11 @@ Don't install machine-wide software silently. Name what is missing and how to ge
 - Every flow works on its own branch, named `<flow>/<short-slug>` (`vibe/`, `spec/`, `supervised/`). Vibe uses the current branch, and Spec-driven the base branch, only when the user explicitly asks; this process repository keeps its uncommitted review rule. Do not use git worktrees.
 - Before every commit and every push, evaluate all unpushed commits for regrouping: no fixup, WIP, or add-then-remove commits, small same-area changes merged, unrelated concerns apart. `an-dr-git-modify-history` owns the rules.
 - Every commit goes through the `an-dr-git-modify-history` skill, which owns the message format. Never write a message from memory. It also rewrites non-conforming messages while the branch is still unpushed.
-- Push every commit on a work branch to its remote branch automatically; that push needs no request. Never push the base or default branch automatically: only on explicit request or as part of an approved integration.
-- Spec-driven and Supervised open a draft pull or merge request, in whatever system the remote provides, at the first push, and mark it ready at the final review. The user reviews and comments there; when told to address the comments, read every unresolved thread, fix it, reply, and resolve it. While the request is open, add commits instead of rewriting them; regroup once, after the `integrate` approval and before the merge.
+- Push every commit on a work branch to its remote branch automatically; that push needs no request. Never push the base or default branch automatically: only on explicit request or as part of an integration the user asked for.
+- Spec-driven and Supervised open a draft pull or merge request, in whatever system the remote provides, at the first push, and mark it ready at the final review. The user reviews and comments there; when told to address the comments, read every unresolved thread, fix it, reply, and resolve it. While the request is open, add commits instead of rewriting them; regroup once, in HANDOVER after the `accept` approval.
 - A request merges with the repository's own configured merge method, merge commits included when that is the configuration. Local integration rebases first and never adds a merge commit. Delete the work branch after success, locally and on the remote.
 - With no remote, no supported platform CLI, or no authentication, say which is missing and integrate locally instead; ask the user which local `an-dr-dev-integrate` mode to use — keep the commits, regroup them, or squash into one — every time, before the integration touches anything. Approval to integrate is not a choice of mode, and there is no default.
-- Before integration, run `an-dr-dev-integrate`'s `remove-progress.ps1` and verify both `git log <base>..HEAD -- .progress` and `git ls-tree -r HEAD -- .progress` are empty. Workflow state is never part of delivered history.
+- Integration happens only when the user asks for it, through `an-dr-dev-integrate`, which works on any branch and knows nothing of the workflows. Workflow state is never part of a handed-over branch: HANDOVER and `finish` guarantee it before the user is told the branch is ready.
 
 ## Code conventions
 

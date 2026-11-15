@@ -32,7 +32,7 @@ $mergeCommits = @(Invoke-GitCommand -Arguments @(
         'rev-list', '--min-parents=2', "$mergeBase..HEAD"
     ))
 if ($mergeCommits.Count -gt 0) {
-    throw 'remove-progress requires linear feature-branch history; integrate merge commits before continuing.'
+    throw 'remove-progress requires linear feature-branch history; rebase away merge commits before continuing.'
 }
 
 $progressPaths = @(Invoke-GitCommand -Arguments @(
@@ -146,7 +146,12 @@ $remainingHistoryPaths = @(Invoke-GitCommand -Arguments @(
 if ($remainingTreePaths.Count -gt 0 -or $remainingHistoryPaths.Count -gt 0) {
     throw '.progress still exists after history rewriting.'
 }
-Assert-GitCleanWorkingTree
+# The workflow files stay on disk, now untracked, until the controller's
+# finish removes them; anything else left over is a real change.
+$leftover = @(Invoke-GitCommand -Arguments @('status', '--porcelain', '--', '.', ':(exclude).progress'))
+if ($leftover.Count -gt 0) {
+    throw 'Working tree is not clean after history rewriting.'
+}
 
 Write-Output "Removed .progress from '$branch' history: $rewritten commit(s) rewritten, $pruned progress-only commit(s) pruned."
 Write-Output "New branch tip: $newParent"

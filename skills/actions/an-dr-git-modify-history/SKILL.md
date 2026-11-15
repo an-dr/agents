@@ -25,7 +25,7 @@ Defers: the message format and its checker to `an-dr-convention-commit-message`.
 
 ## Regroup unpushed commits
 
-Unpushed commits are `git log --oneline @{u}..HEAD`; without an upstream, the merge base with the default branch to `HEAD`. On the agent's own work branch (`vibe/`, `spec/`, `supervised/`), which is pushed automatically, every commit after the merge base with the base branch counts as unpushed, and a regroup is pushed with `--force-with-lease`; while its pull or merge request is under review, add commits instead and regroup only after the `integrate` approval. Evaluate them every time before committing and before pushing, and regroup with `git reset --soft`, `git commit --fixup` plus `git rebase --autosquash`, or a non-interactive rebase:
+Unpushed commits are `git log --oneline @{u}..HEAD`; without an upstream, the merge base with the default branch to `HEAD`. On the agent's own work branch (`vibe/`, `spec/`, `supervised/`), which is pushed automatically, every commit after the merge base with the base branch counts as unpushed, and a regroup is pushed with `--force-with-lease`; while its pull or merge request is under review, add commits instead and regroup only after the `accept` approval, in the flow's HANDOVER. Evaluate them every time before committing and before pushing, and regroup with `git reset --soft`, `git commit --fixup` plus `git rebase --autosquash`, or a non-interactive rebase:
 
 - Fold a fix, a follow-up, or a "WIP" into the commit it corrects.
 - Drop add-then-remove pairs: a change and its revert, or a line added and later deleted, leave no trace in history.

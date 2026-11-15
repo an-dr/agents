@@ -9,13 +9,6 @@ $base = Get-IntegrateBaseBranch -RequestedBranch $BaseBranch
 $branch = Assert-IntegrateFeatureBranch -BaseBranch $base
 Assert-GitCleanWorkingTree
 
-$progressPaths = @(Invoke-GitCommand -Arguments @(
-        'log', '--format=', '--name-only', "$base..HEAD", '--', '.progress'
-    ) | Where-Object { -not [string]::IsNullOrWhiteSpace([string]$_) })
-if ($progressPaths.Count -gt 0) {
-    throw 'Feature-branch history contains .progress. Run remove-progress.ps1 before integration.'
-}
-
 Write-Output "Feature branch: $branch"
 Write-Output "Base branch: $base"
 Write-Output ''

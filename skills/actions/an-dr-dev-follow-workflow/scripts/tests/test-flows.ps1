@@ -59,7 +59,7 @@ function Complete-Increment {
 }
 
 # Spec-driven: no intake gate, implement at SPLIT, agent-verified increments,
-# integrate at FINAL_REVIEW.
+# accept at FINAL_REVIEW, then HANDOVER strips .progress before finish.
 $repo = New-Repository
 try {
     Assert-Pass 'spec start' @('start', '-Flow', 'SpecDriven')
@@ -84,10 +84,26 @@ try {
     git commit -q -m 'feat: x'
     Assert-Pass 'spec commit->summary' @('advance')
     Assert-Pass 'spec summary->final review' @('advance')
-    Assert-Fail 'spec final review needs integrate' @('advance') 'integrate'
-    Assert-Pass 'spec integrate' @('approve', '-Gate', 'integrate', '-Note', 'integrate')
-    Assert-Pass 'spec final review->integrate' @('advance')
+    Assert-Fail 'spec final review needs accept' @('advance') 'accept'
+    Assert-Fail 'spec has no integrate gate' @('approve', '-Gate', 'integrate', '-Note', 'x') 'integrate'
+    Assert-Pass 'spec accept' @('approve', '-Gate', 'accept', '-Note', 'accept')
+    Assert-Pass 'spec final review->handover' @('advance')
+    # A state written at the retired INTEGRATE phase resumes at HANDOVER.
+    $legacy = Get-Content -Raw '.progress/workflow.json' | ConvertFrom-Json
+    $legacy.phase = 'INTEGRATE'
+    $legacy | ConvertTo-Json -Depth 10 | Set-Content '.progress/workflow.json'
+    $result = Invoke-Workflow 'status'
+    if ($result.Code -ne 0 -or $result.Output -notmatch 'HANDOVER \| current') { $failures.Add("INTEGRATE did not resume as HANDOVER: $($result.Output)") }
+    Assert-Fail 'spec handover refuses new scope' @('add-increment', '-Scope', 'more', '-Description', 'y') 'handed over'
+    git add -f .progress
+    git commit -q -m 'chore: record workflow progress'
+    Assert-Fail 'spec finish refuses committed progress' @('finish') 'remove-progress'
+    $strip = & pwsh -NoProfile -File (Join-Path $PSScriptRoot '..' 'remove-progress.ps1') -BaseBranch main 2>&1
+    if ($LASTEXITCODE -ne 0) { $failures.Add("remove-progress failed: $($strip -join ' ')") }
+    if (@(git log --format=%h main..HEAD -- .progress).Count -gt 0) { $failures.Add('.progress survived remove-progress.') }
+    if (-not (Test-Path '.progress/workflow.json')) { $failures.Add('remove-progress deleted the local workflow state.') }
     Assert-Pass 'spec finish' @('finish')
+    if (Test-Path '.progress') { $failures.Add('.progress survived finish.') }
     if (Test-Path 'tmp-agent-progress.html') { $failures.Add('Progress page survived finish.') }
 }
 finally { Close-Repository $repo }
@@ -146,4 +162,4 @@ if ($failures.Count -gt 0) {
     $failures | ForEach-Object { Write-Output "FAIL: $_" }
     exit 1
 }
-Write-Output 'Flow checks passed: Spec-driven, Spec-driven on base, Supervised, retired-flow mapping.'
+Write-Output 'Flow checks passed: Spec-driven with handover, Spec-driven on base, Supervised, retired-flow and retired-phase mapping.'

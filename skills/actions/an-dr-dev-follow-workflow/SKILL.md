@@ -26,8 +26,9 @@ pwsh <skill>/scripts/workflow.ps1 start -Flow Supervised [-Goal '<problem>']
 pwsh <skill>/scripts/workflow.ps1 start -Flow SpecDriven [-OnBase] [-Goal '<problem>']
 ```
 
-- `SpecDriven`: design discussion closed by `implement`, then the agent runs every increment unattended to `FINAL_REVIEW`, where the user reviews docs, change report, and pull request and gives `integrate`. `-OnBase` only when the user asks for it on the base branch: no work branch, no pull request.
-- `Supervised`: closed intake, approved plan, work branch, docs before each increment's code, per-increment user verification, integration summary, explicit integration approval.
+- `SpecDriven`: design discussion closed by `implement`, then the agent runs every increment unattended to `FINAL_REVIEW`, where the user reviews docs, change report, and pull request and gives `accept`; `HANDOVER` then cleans the branch for integration. `-OnBase` only when the user asks for it on the base branch: no work branch, no pull request.
+- `Supervised`: closed intake, approved plan, work branch, docs before each increment's code, per-increment user verification, a summary the user accepts, then `HANDOVER`.
+- Neither flow integrates: it ends with a handed-over branch. Landing it is `an-dr-dev-integrate`, run only when the user asks.
 - Each flow only when the user selects it; never inferred from a request for autonomy or end-only involvement.
 - State written by retired flows resumes as their successor (`Detailed` → `Supervised`, `DetailedAuto` → `SpecDriven`); a `Quick` state is refused with instructions.
 
@@ -66,7 +67,7 @@ pwsh <script> finish
 | `intake`    | Supervised `INTAKE`                              | the user says the request list is complete     |
 | `implement` | `SPLIT` in both flows                            | the user has seen the plan and says build it   |
 | `verify`    | Supervised `VERIFY`, once per increment          | the user accepts that increment's verification |
-| `integrate` | Supervised `SUMMARY`, Spec-driven `FINAL_REVIEW` | the user says land the branch                  |
+| `accept`    | Supervised `SUMMARY`, Spec-driven `FINAL_REVIEW` | the user accepts the delivered branch          |
 
 - The controller names the gate it expects. Spec-driven refuses `intake` and `verify`; it settles intake in the design discussion and records verification itself. `DESIGN` has no gate.
 - Ask each user gate as an `an-dr-ai-use-user-interface` confirmation, never a closing line like "reply implement": show the plan, increment, or summary first, then, in the same message, one approving option and one asking for a change.

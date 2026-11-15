@@ -10,4 +10,4 @@
   - A completed increment is delivered history and cannot be removed.
   - The active one can be, under the same BUILD-and-clean-tree rule; the next planned increment starts, or the flow moves to `SUMMARY` when none remains.
   - Record why in the response; it is a scope change the plan no longer explains.
-- `add-increment` in `SUMMARY` or `FINAL_REVIEW` for newly found work drops the `implement` and `integrate` approvals and returns to `SPLIT`, so the enlarged plan is authorised again before the new work passes the branch cycle.
+- `add-increment` in `SUMMARY` or `FINAL_REVIEW` for newly found work drops the `implement` and `accept` approvals and returns to `SPLIT`, so the enlarged plan is authorised again before the new work passes the branch cycle.

@@ -1,8 +1,9 @@
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-# Vendored from an-dr-dev-integrate's Integrate.Common.psm1: skills share no modules, so
-# this skill owns its copy and changes it on its own terms.
+# Git helpers for remove-progress.ps1, first copied from an-dr-dev-integrate's
+# Integrate.Common.psm1: skills share no modules, so this skill owns its copy
+# and changes it on its own terms.
 
 function Invoke-GitCommand {
     <# Runs Git and throws with captured output on any nonzero exit. #>
@@ -28,7 +29,7 @@ function Get-GitCurrentBranch {
     <# Returns the checked-out branch and rejects detached HEAD. #>
     $branch = (@(Invoke-GitCommand -Arguments @('branch', '--show-current')) -join '').Trim()
     if ([string]::IsNullOrWhiteSpace($branch)) {
-        throw 'Integration operations require a checked-out branch, not detached HEAD.'
+        throw 'Handover requires a checked-out branch, not detached HEAD.'
     }
     return $branch
 }
