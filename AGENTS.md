@@ -21,7 +21,7 @@ The flows differ in where the user's attention goes: the result, the design and 
 
 ## Vibe
 
-Work without workflow state, phase transitions, or approval gates, on a new branch `vibe/<short-slug>` made from the current branch; commit to the current branch only when the user explicitly asks for it. Read the request and repository context, make the smallest sound design choice, use `an-dr-dev-write-specification` first when it applies, use `an-dr-dev-write-documentation` for needed documentation, `an-dr-dev-implement-code` for code, `an-dr-dev-test` for changed code, and `an-dr-dev-review` for the diff. Fix findings and deliver the usable result in the same request. Ask only when essential information is missing, it is unclear whether a specification applies, or an action requires permission for a reason outside this workflow; continue independent work while waiting.
+Work without workflow state, phase transitions, or approval gates, on a new branch `vibe/<short-slug>` made from the current branch; commit to the current branch only when the user explicitly asks for it. Before the first file change, write `.progress/handoff.md` and run `pwsh <an-dr-dev-follow-workflow>/scripts/render-progress-page.ps1` so `tmp-agent-progress.html` shows the work from the start; rewrite and re-render at each pass, and remove both on land or drop (see Handoff). Read the request and repository context, make the smallest sound design choice, use `an-dr-dev-write-specification` first when it applies, use `an-dr-dev-write-documentation` for needed documentation, `an-dr-dev-implement-code` for code, `an-dr-dev-test` for changed code, and `an-dr-dev-review` for the diff. Fix findings and deliver the usable result in the same request. Ask only when essential information is missing, it is unclear whether a specification applies, or an action requires permission for a reason outside this workflow; continue independent work while waiting.
 
 The user does not read the code, so the delivery proves the change by its behaviour: one command or artefact path that shows it, or a screenshot or GIF of visible output; what was tested and what could not be; known limitations in plain words. The user answers with one of three words:
 
@@ -35,12 +35,12 @@ Within a gated flow, exploration can prove the chosen flow wrong. Propose the ch
 
 ## Handoff
 
-Work moves between machines, tools, and sessions that run out of context, and a new session that rebuilds the state from the code pays far more than one that reads a page. Any task that changes files and spans more than one reply keeps `.progress/handoff.md`, in every flow:
+Work moves between machines, tools, and sessions that run out of context, and a new session that rebuilds the state from the code pays far more than one that reads a page. Every Vibe task that changes files, and any other task that changes files and spans more than one reply, keeps `.progress/handoff.md`:
 
 - Rewrite it whole at each checkpoint — a decision made, an increment or pass done, a commit, before a long-running step, and when the user stops — never after every reply. Do not append; it holds only the current state.
 - Keep it under 40 lines with these headings: Goal, Done, Next, Open questions, Decisions and why, Files in play. Name commits and paths instead of copying content, and leave out anything the code or `.progress/workflow.json` already records.
 - On a work branch it is committed with each checkpoint and travels with the branch's automatic push; on the base branch commit it only when the user asks to move the work elsewhere.
-- The user follows the work in `tmp-agent-progress.html` at the host root: flow, phase, what waits on them, increments, questions, next steps, decisions, recent steps. It is rendered from `.progress/`, never written by hand; the controller refreshes it on every command, and after each rewrite of `handoff.md` run `pwsh <an-dr-dev-follow-workflow>/scripts/render-progress-page.ps1`. Vibe keeps `handoff.md` from its first change so the page exists from the start.
+- The user follows the work in `tmp-agent-progress.html` at the host root: flow, phase, what waits on them, increments, questions, next steps, decisions, recent steps. It is rendered from `.progress/`, never written by hand; the controller refreshes it on every command, and after each rewrite of `handoff.md` run `pwsh <an-dr-dev-follow-workflow>/scripts/render-progress-page.ps1`.
 - Delete it, and commit the deletion if it was committed, when the task is delivered. A gated flow's HANDOVER and Vibe's land remove `.progress/` from work branches; on the base branch the deletion is the cleanup.
 
 ## Executable workflow authority
