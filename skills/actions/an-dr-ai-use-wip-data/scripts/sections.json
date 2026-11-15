@@ -1,0 +1,14 @@
+{
+  "workflow": {
+    "owner": "an-dr-dev-follow-workflow",
+    "fields": [
+      "schemaVersion", "flow", "phase", "baseBranch", "baseCommit", "featureBranch", "onBase",
+      "requirements", "requests", "questions", "increments", "currentIncrementId", "commitBaseline",
+      "approvals", "history", "handoff", "finishedAt", "createdAt", "updatedAt"
+    ],
+    "readers": {
+      "an-dr-dev-integrate": ["baseBranch"],
+      "an-dr-agents-repo-verify-installation": ["flow", "phase"]
+    }
+  }
+}

@@ -15,7 +15,9 @@ param(
     [string]$RepositoryPath = (Get-Location).Path,
     [string]$AgentsRoot,
     [string[]]$Tools,
-    [switch]$SkipInstallCheck
+    [switch]$SkipInstallCheck,
+    # an-dr-ai-use-wip-data's folder: the live workflow state is read through it.
+    [Parameter(Mandatory)][string]$WipDataSkill
 )
 
 Set-StrictMode -Version Latest
@@ -157,20 +159,14 @@ if ($rootInstructions) {
 }
 
 # --- Live workflow state ---
-$workflowState = Join-Path $repo '.progress\workflow.json'
-$hasWorkflowState = Test-Path -LiteralPath $workflowState
-if ($hasWorkflowState) {
-    $phase = try {
-        $json = Get-Content -LiteralPath $workflowState -Raw | ConvertFrom-Json
-        $flow = if ($json.PSObject.Properties.Name -contains 'flow') { $json.flow } else { '?' }
-        $ph = if ($json.PSObject.Properties.Name -contains 'phase') { $json.phase } else { '?' }
-        "$flow at $ph"
-    }
-    catch { 'unreadable JSON' }
-    Add-Result -Scope 'repo' -Check 'workflow-state' -Status 'pass' -Detail ".progress/workflow.json present ($phase); this repository opts in on its own"
+$wip = Join-Path $WipDataSkill 'scripts/wip.ps1'
+$read = { param($field) (@(& $wip get -Section workflow -Field $field -Reader an-dr-agents-repo-verify-installation -Root $repo) -join '') | ConvertFrom-Json }
+$flow = try { & $read 'flow' } catch { $null }
+if ($flow) {
+    Add-Result -Scope 'repo' -Check 'workflow-state' -Status 'pass' -Detail "tmp-agent-wip.json holds a workflow ($flow at $(& $read 'phase')); this repository opts in on its own"
 }
 else {
-    Add-Result -Scope 'repo' -Check 'workflow-state' -Status 'info' -Detail 'no .progress/workflow.json; no flow in progress'
+    Add-Result -Scope 'repo' -Check 'workflow-state' -Status 'info' -Detail 'no workflow in tmp-agent-wip.json; no flow in progress'
 }
 
 # --- Machine-side install, delegated ---

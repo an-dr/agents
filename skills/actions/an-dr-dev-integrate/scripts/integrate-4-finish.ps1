@@ -6,6 +6,8 @@
     integrate-5-rebase-merge.ps1 lands a RebaseMerge request once CI passes.
 #>
 param(
+    # an-dr-ai-use-wip-data's folder: the base the work started from is read through it.
+    [Parameter(Mandatory)][string]$WipDataSkill,
     [Parameter(Mandatory)][ValidateSet('Commits', 'Squash', 'Request', 'RebaseMerge')][string]$Mode,
     [string]$Message,
     [string]$BaseBranch,
@@ -17,9 +19,10 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 Import-Module (Join-Path $PSScriptRoot 'Integrate.Common.psm1') -Force
 
-$base = Get-IntegrateBaseBranch -RequestedBranch $BaseBranch
+$base = Get-IntegrateBaseBranch -RequestedBranch $BaseBranch -WipDataSkill $WipDataSkill
 $branch = Assert-IntegrateFeatureBranch -BaseBranch $base
 Assert-GitCleanWorkingTree
+Assert-IntegrateNoTmp -BaseBranch $base
 $collapses = $Mode -in @('Squash', 'Request')
 if ($collapses -and [string]::IsNullOrWhiteSpace($Message)) {
     throw "-Mode $Mode collapses the branch into one commit, so -Message is required."
@@ -35,7 +38,7 @@ Assert-GitAncestor -Ancestor "origin/$base" -Descendant 'HEAD'
 if ($collapses) {
     $squashPoint = Get-IntegrateSquashPoint -BaseBranch $base
     & (Join-Path $PSScriptRoot 'integrate-2-squash.ps1') `
-        -Hash $squashPoint -Message $Message -BaseBranch $base -CommitMessageSkill $CommitMessageSkill
+        -Hash $squashPoint -Message $Message -BaseBranch $base -CommitMessageSkill $CommitMessageSkill -WipDataSkill $WipDataSkill
 }
 
 if ($Mode -in @('Request', 'RebaseMerge')) {

@@ -7,7 +7,7 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.2.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-agents-repo-install an-dr-ai-skill-implement-test an-dr-ai-skill-test an-dr-convention-commit-message
+  an-dr.dependencies: an-dr-agents-repo-install an-dr-ai-skill-implement-test an-dr-ai-skill-test an-dr-ai-use-wip-data an-dr-convention-commit-message
 ---
 
 # Agents health check
@@ -25,7 +25,7 @@ Diagnose layers in order; the first broken layer explains the symptom, and fixin
 ## Run
 
 ```powershell
-pwsh <skill>/scripts/check-agents-health.ps1
+pwsh <skill>/scripts/check-agents-health.ps1 -WipDataSkill <an-dr-ai-use-wip-data>
 ```
 
 | Parameter                | Effect                                                                                     |

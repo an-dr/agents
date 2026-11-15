@@ -1,5 +1,5 @@
 # Share and finish
 
-- `.progress/workflow.json` is committable: include it in checkpoint and increment commits, which the work branch's automatic push carries to the remote; never add `.progress/` to an ignore file.
-- State-changing commands regenerate `.progress/PROGRESS.md`, a human snapshot without IDs (flow, phase, goal, requests, iterations with statuses, questions with answers); read it for quick status instead of parsing JSON.
-- `finish` runs last in `HANDOVER`, after `remove-progress.ps1` has stripped `.progress/` from the branch history, and refuses while any branch commit still holds it. It deletes the local files and the progress page; on the base branch (`-OnBase`) commit the deletion if `.progress/` was committed.
+- `tmp-agent-wip.json` is committable: include it in checkpoint and increment commits, which the work branch's automatic push carries to the remote; never add it to an ignore file. A state from before the move, `.progress/workflow.json`, is moved to the root by the next command.
+- Every path whose name starts with `tmp-` or `.tmp-` is a work file. It may travel on the work branch; `an-dr-dev-integrate` strips it from every commit and refuses to land while one remains, so nothing else needs to remove it.
+- `finish` runs last in `HANDOVER`. On a work branch it marks the state handed over and keeps it, since `an-dr-dev-integrate` reads the base from it; commit that change. On the base branch (`-OnBase`) it deletes the state; commit the deletion. Vibe has no `finish`: landing performs it.

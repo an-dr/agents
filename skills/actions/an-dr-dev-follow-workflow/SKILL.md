@@ -1,34 +1,37 @@
 ---
 name: an-dr-dev-follow-workflow
-description: Run, resume, and enforce the repository's gated Spec-driven or Supervised workflow; Vibe work does not use it. Use when the user selects one of these flows, .progress/workflow.json exists, workflow state must move to another machine, or increments must be inserted or reordered.
+description: Run, resume, and enforce the repository's workflow state for Vibe, Spec-driven, or Supervised, with the gates of the latter two. Use when the user selects a flow, tmp-agent-wip.json exists, the handoff needs rewriting, state must move to another machine, or increments must be inserted or reordered.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "2.0.0"
+  version: "3.0.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-convention-adr an-dr-dev-analyze-changes an-dr-dev-debug an-dr-dev-design an-dr-dev-implement-code an-dr-dev-implement-pipeline an-dr-dev-integrate an-dr-dev-review an-dr-dev-test an-dr-dev-write-documentation an-dr-dev-write-readme an-dr-dev-write-specification an-dr-git-modify-history
+  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-ai-use-wip-data an-dr-convention-adr an-dr-dev-analyze-changes an-dr-dev-debug an-dr-dev-design an-dr-dev-implement-code an-dr-dev-implement-pipeline an-dr-dev-integrate an-dr-dev-review an-dr-dev-test an-dr-dev-write-documentation an-dr-dev-write-readme an-dr-dev-write-specification an-dr-git-modify-history
 ---
 
 # Workflow controller
 
-Owns: phase transitions and approval gates of Spec-driven and Supervised, through `scripts/workflow.ps1`. Vibe has no controller state.
+Owns: the `workflow` section of `tmp-agent-wip.json`, every flow's state, kept through `an-dr-ai-use-wip-data`, and the phase transitions and approval gates of Spec-driven and Supervised, through `scripts/workflow.ps1`.
 
 ## Start or resume
 
-1. From the host root, locate this skill relative to the active `AGENTS.md`; `<script>` below is `<skill>/scripts/workflow.ps1`.
-2. While `.progress/workflow.json` exists, run `status` first in every response and present its Markdown table verbatim, as its `user-output: verbatim` markers require. That table, not the JSON file or the conversation, decides phase, gates, and open questions.
+1. From the host root, locate this skill relative to the active `AGENTS.md`; `<script>` below is `<skill>/scripts/workflow.ps1`. Every command also takes `-WipDataSkill <an-dr-ai-use-wip-data>`, left out of the examples below.
+2. While `tmp-agent-wip.json` holds a `workflow` section, run `status` first in every response and present its Markdown table verbatim, as its `user-output: verbatim` markers require. That table, not the JSON file or the conversation, decides phase, gates, and open questions.
 3. Command fails → quote the command and its error and stop; never reconstruct state from the file.
 4. No active state → start as soon as the flow is chosen; only `-Flow` is required; pass whichever of the four facts the request makes plain, and `INTAKE` collects the rest.
 
 ```powershell
 pwsh <skill>/scripts/workflow.ps1 status
+pwsh <skill>/scripts/workflow.ps1 start -Flow Vibe
 pwsh <skill>/scripts/workflow.ps1 start -Flow Supervised [-Goal '<problem>']
 pwsh <skill>/scripts/workflow.ps1 start -Flow SpecDriven [-OnBase] [-Goal '<problem>']
 ```
 
+- Start on the branch the work returns to: it is recorded as `baseBranch`, which `an-dr-dev-integrate` lands onto.
+- `Vibe`: stages `BUILD`, `VERIFY`, `DELIVER`, `LAND`, with no gates, requests, or increments; `advance` moves on, `return-to-build` is redo, and `an-dr-dev-integrate` performs `LAND` and removes the state.
 - `SpecDriven`: design discussion closed by `implement`, then the agent runs every increment unattended to `FINAL_REVIEW`, where the user reviews docs, change report, and pull request and gives `accept`; `HANDOVER` then cleans the branch for integration. `-OnBase` only when the user asks for it on the base branch: no work branch, no pull request.
 - `Supervised`: closed intake, approved plan, work branch, docs before each increment's code, per-increment user verification, a summary the user accepts, then `HANDOVER`.
-- Neither flow integrates: it ends with a handed-over branch. Landing it is `an-dr-dev-integrate`, run only when the user asks.
+- No flow integrates by itself: it ends with a handed-over branch. Landing it is `an-dr-dev-integrate`, run only when the user asks.
 - Each flow only when the user selects it; never inferred from a request for autonomy or end-only involvement.
 - State written by retired flows resumes as their successor (`Detailed` → `Supervised`, `DetailedAuto` → `SpecDriven`); a `Quick` state is refused with instructions.
 
@@ -51,12 +54,14 @@ pwsh <script> add-increment -At 2 -Scope '<scope>' -Description '<result>'
 pwsh <script> move-increment -Number 4 -To 2
 pwsh <script> defer-increment -To 6
 pwsh <script> remove-increment -Number 7
+pwsh <script> set-handoff -HandoffField next -Items '<entry> | <entry>'
 pwsh <script> finish
 ```
 
-- Every state-changing command also renders `tmp-agent-progress.html` at the host root through `scripts/render-progress-page.ps1`, which reads `.progress/workflow.json` and `.progress/handoff.md`, adds the page to `.git/info/exclude`, and removes it when neither file exists. Run that script directly after rewriting `handoff.md`.
+- Every state-changing command also renders `tmp-agent-progress.html` at the host root through `scripts/render-progress-page.ps1`: the stage table with the current stage marked, then what waits on the user, increments, questions, the handoff, and recent steps. It adds the page to `.git/info/exclude` and removes it when no state exists.
+- `set-handoff` replaces one handoff field whole: `goal` takes one text, `done`, `next`, `openQuestions`, `decisions`, and `files` take entries separated by ` | ` or newlines.
 - `advance` rejects missing approvals or increments, wrong branches, uncommitted increments, and illegal transitions.
-- `return-to-build` records a failed verification, invalidates the increment's verification approval, and resumes BUILD with the same increment identity.
+- `return-to-build` records a failed verification, invalidates the increment's verification approval, and resumes BUILD with the same increment identity; in Vibe it is redo, from `VERIFY`, `DELIVER`, or `LAND`.
 - Before `add-increment`, `move-increment`, `defer-increment`, or `remove-increment`, read [references/increments.md](references/increments.md).
 - Before proposing or running `switch-flow`, read [references/switch-flow.md](references/switch-flow.md).
 

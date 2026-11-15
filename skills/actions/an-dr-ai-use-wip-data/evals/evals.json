@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-ai-use-wip-data",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-ai-use-wip-data. Record that the current task is waiting on a design answer, so the next session can pick it up.",
+      "expected_skill": "an-dr-ai-use-wip-data",
+      "context": "The repository has tmp-agent-wip.json with a workflow section owned by the workflow controller.",
+      "expected_behavior": [
+        "Writes the section only through scripts/wip.ps1 with the owning skill as -Owner, never by editing tmp-agent-wip.json directly.",
+        "Registers any new field in scripts/sections.json before writing it."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Writes the section only through scripts/wip.ps1 with the owning skill as -Owner, never by editing tmp-agent-wip.json directly."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Registers any new field in scripts/sections.json before writing it."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Record that the current task is waiting on a design answer, so the next session can pick it up.",
+      "expected_skill": "an-dr-ai-use-wip-data",
+      "context": "The repository has tmp-agent-wip.json with a workflow section owned by the workflow controller.",
+      "expected_behavior": [
+        "Writes the section only through scripts/wip.ps1 with the owning skill as -Owner, never by editing tmp-agent-wip.json directly.",
+        "Registers any new field in scripts/sections.json before writing it."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Writes the section only through scripts/wip.ps1 with the owning skill as -Owner, never by editing tmp-agent-wip.json directly."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Registers any new field in scripts/sections.json before writing it."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "Before you stop, save where we are in the work-in-progress file so another machine can continue.",
+      "expected_skill": "an-dr-ai-use-wip-data",
+      "context": "A Vibe task is half done; tmp-agent-wip.json exists at the root.",
+      "expected_behavior": [
+        "Writes the section only through scripts/wip.ps1 with the owning skill as -Owner, never by editing tmp-agent-wip.json directly.",
+        "Registers any new field in scripts/sections.json before writing it."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Writes the section only through scripts/wip.ps1 with the owning skill as -Owner, never by editing tmp-agent-wip.json directly."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Registers any new field in scripts/sections.json before writing it."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Explain what a JSON schema is. Do not change any file.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 1
+    }
+  ]
+}

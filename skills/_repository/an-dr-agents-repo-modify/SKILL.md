@@ -57,7 +57,7 @@ Present before asking for anything; the summary is the deliverable even if no co
 
 Only after the user approves the summary in their own words; approval covers this change only.
 
-1. Commit through `an-dr-git-modify-history` in the clone, on its current branch: no flow, no feature branch, no `.progress/`.
+1. Commit through `an-dr-git-modify-history` in the clone, on its current branch: no flow, no feature branch, no `tmp-agent-wip.json`.
 2. Push that branch.
 3. Clone nested in the host → its gitlink moved. Follow the host's instructions for submodule pointers, committing through `an-dr-git-modify-history` when they say so; if they say nothing, leave it uncommitted and tell the user it waits in the host repository.
 

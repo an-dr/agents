@@ -1,5 +1,7 @@
 #Requires -Version 7
 param(
+    # an-dr-ai-use-wip-data's folder: the base the work started from is read through it.
+    [Parameter(Mandatory)][string]$WipDataSkill,
     [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$Hash,
     [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$Message,
     [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$CommitMessageSkill,
@@ -16,7 +18,7 @@ if (-not (Test-Path -LiteralPath $checkMessage)) {
     throw "-CommitMessageSkill must be the commit-message folder; '$checkMessage' is missing."
 }
 
-$base = Get-IntegrateBaseBranch -RequestedBranch $BaseBranch
+$base = Get-IntegrateBaseBranch -RequestedBranch $BaseBranch -WipDataSkill $WipDataSkill
 Assert-IntegrateFeatureBranch -BaseBranch $base | Out-Null
 Assert-GitCleanWorkingTree
 Invoke-GitCommand -Arguments @('rev-parse', '--verify', "$Hash^{commit}") | Out-Null

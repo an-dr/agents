@@ -27,7 +27,7 @@ When the user says to address the comments:
 
 Only on the user's explicit request to integrate:
 
-1. Rebase onto the base; if the history is still a work log, regroup once as in [regroup.md](regroup.md). Push with `--force-with-lease`.
+1. Run steps 1 and 3 of the skill (check, then strip tmp files and rebase); if the history is still a work log, regroup once as in [regroup.md](regroup.md). Push with `--force-with-lease`.
 2. Wait for checks to pass on the pushed commit; a failing check goes back to the user, never merged around.
 3. Merge with the repository's own merge method:
    - GitLab: `glab mr merge --remove-source-branch` applies the project's configured method.

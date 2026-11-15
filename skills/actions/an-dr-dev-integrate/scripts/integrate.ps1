@@ -4,6 +4,8 @@
     plan, so it is run through the step scripts instead.
 #>
 param(
+    # an-dr-ai-use-wip-data's folder: the base the work started from is read through it.
+    [Parameter(Mandatory)][string]$WipDataSkill,
     # The agent passes the convention's folder, because skills need not be installed side by side.
     [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$CommitMessageSkill,
     [string]$BaseBranch
@@ -13,16 +15,16 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 Import-Module (Join-Path $PSScriptRoot 'Integrate.Common.psm1') -Force
 
-$base = Get-IntegrateBaseBranch -RequestedBranch $BaseBranch
-& (Join-Path $PSScriptRoot 'integrate-1-check.ps1') -BaseBranch $base
+$base = Get-IntegrateBaseBranch -RequestedBranch $BaseBranch -WipDataSkill $WipDataSkill
+& (Join-Path $PSScriptRoot 'integrate-1-check.ps1') -BaseBranch $base -WipDataSkill $WipDataSkill
 Write-Output ''
 $confirm = Read-Host 'WIP commits at the tip are already squashed (or none exist)? [y/N]'
 if ($confirm -notin @('y', 'Y')) {
     throw 'Integration cancelled before rebase.'
 }
 
-& (Join-Path $PSScriptRoot 'integrate-3-rebase.ps1') -BaseBranch $base
-& (Join-Path $PSScriptRoot 'integrate-1-check.ps1') -BaseBranch $base
+& (Join-Path $PSScriptRoot 'integrate-3-rebase.ps1') -BaseBranch $base -WipDataSkill $WipDataSkill
+& (Join-Path $PSScriptRoot 'integrate-1-check.ps1') -BaseBranch $base -WipDataSkill $WipDataSkill
 
 Write-Output ''
 Write-Output 'Integration mode:'
@@ -51,4 +53,4 @@ if ($mode -in @('Squash', 'Request')) {
     }
 }
 
-& (Join-Path $PSScriptRoot 'integrate-4-finish.ps1') -Mode $mode -Message $message -BaseBranch $base -CommitMessageSkill $CommitMessageSkill
+& (Join-Path $PSScriptRoot 'integrate-4-finish.ps1') -Mode $mode -Message $message -BaseBranch $base -CommitMessageSkill $CommitMessageSkill -WipDataSkill $WipDataSkill

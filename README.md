@@ -22,7 +22,7 @@ Supported platforms:
 
 ## 🎯 Why
 
-Unseen decisions are the risk in AI development. This repository lets you choose, per task, where your attention goes: the result, the design and its documentation, or every step. Whatever you choose, the agent records requests, questions, and design choices, and it stops at gates where only your explicit approval moves the work forward. Those decisions and approvals need to survive beyond a chat session, so this repository supplies shared engineering policy and skills, with an executable controller for gated work, saved state in `.progress/workflow.json`, and a live progress page, `tmp-agent-progress.html`, at the host root.
+Unseen decisions are the risk in AI development. This repository lets you choose, per task, where your attention goes: the result, the design and its documentation, or every step. Whatever you choose, the agent records requests, questions, and design choices, and it stops at gates where only your explicit approval moves the work forward. Those decisions and approvals need to survive beyond a chat session, so this repository supplies shared engineering policy and skills, with an executable controller, every flow's saved state in `tmp-agent-wip.json`, and a live progress page, `tmp-agent-progress.html`, at the host root.
 
 ## 📑 Contents
 
@@ -195,7 +195,7 @@ stateDiagram-v2
   COMMIT --> [*]: last
 ```
 
-Both flows end at HANDOVER: commits regrouped, workflow state stripped from the branch history, the pull or merge request ready. Nothing is merged by the flow. When you ask, `an-dr-dev-integrate` lands any branch through its request with the repository's own merge method, or locally when there is no supported platform.
+Both flows end at HANDOVER: commits regrouped, the state marked handed over, the pull or merge request ready. Nothing is merged by the flow. When you ask, `an-dr-dev-integrate` lands the branch onto the base it started from — `dev` if the work began there — through its request with the repository's own merge method, or locally when there is no supported platform. Every file whose name starts with `tmp-` or `.tmp-`, the workflow state included, is stripped from the branch history on the way and never reaches the base.
 
 ## ✨ Features
 
@@ -208,7 +208,7 @@ Both flows end at HANDOVER: commits regrouped, workflow state stripped from the 
 
 ## 🔧 Configuration
 
-A global installation engages the workflow policy when the host project's root `AGENTS.md` or `CLAUDE.md` references this clone, an active `.progress/workflow.json` exists, or the user names a flow or one of its skills. Otherwise the skills remain available on request. Add a reference to the clone's [AGENTS.md](AGENTS.md) in the host's instruction file when the project should opt in permanently.
+A global installation engages the workflow policy when the host project's root `AGENTS.md` or `CLAUDE.md` references this clone, an active `tmp-agent-wip.json` exists, or the user names a flow or one of its skills. Otherwise the skills remain available on request. Add a reference to the clone's [AGENTS.md](AGENTS.md) in the host's instruction file when the project should opt in permanently.
 
 The installer's `-Tools` parameter limits which tools are configured. Re-run the installer after adding skills or moving the clone. [Installation verification](skills/_repository/an-dr-agents-repo-verify-installation/SKILL.md) distinguishes broken links, missing project opt-in, and a running tool failing to load the policy.
 
@@ -260,6 +260,7 @@ flowchart LR
         an-dr-ai-skill-implement-test
         an-dr-ai-skill-test
         an-dr-ai-use-user-interface
+        an-dr-ai-use-wip-data
         an-dr-ai-write-instruction
         an-dr-architecture-fix-dependencies
         an-dr-dev-analyze-changes
@@ -316,7 +317,7 @@ flowchart LR
     an-dr-agents-repo-convention-skills --> an-dr-ai-skill-implement-test & an-dr-ai-skill-test & an-dr-convention-agent-skill & an-dr-dev-test & an-dr-dev-write-documentation & an-dr-convention-agent-skill-testing
     an-dr-agents-repo-install --> an-dr-ai-skill-test
     an-dr-agents-repo-modify --> an-dr-agents-repo-convention-skills & an-dr-agents-repo-install & an-dr-agents-repo-verify-installation & an-dr-ai-review-instruction & an-dr-ai-use-user-interface & an-dr-ai-skill-implement-test & an-dr-ai-skill-test & an-dr-ai-write-instruction & an-dr-convention-agent-skill & an-dr-convention-markdown & an-dr-convention-script & an-dr-git-modify-history
-    an-dr-agents-repo-verify-installation --> an-dr-agents-repo-install & an-dr-ai-skill-implement-test & an-dr-ai-skill-test & an-dr-convention-commit-message
+    an-dr-agents-repo-verify-installation --> an-dr-agents-repo-install & an-dr-ai-skill-implement-test & an-dr-ai-skill-test & an-dr-ai-use-wip-data & an-dr-convention-commit-message
     an-dr-ai-collect-input --> an-dr-ai-use-user-interface & an-dr-concept-ai-slop & an-dr-concept-evidence-grounding
     an-dr-ai-review-instruction --> an-dr-ai-use-user-interface
     an-dr-ai-skill-implement-test --> an-dr-ai-write-instruction & an-dr-convention-agent-skill & an-dr-convention-script & an-dr-convention-agent-skill-testing
@@ -328,10 +329,10 @@ flowchart LR
     an-dr-dev-analyze-slop --> an-dr-ai-review-instruction & an-dr-ai-use-user-interface & an-dr-concept-ai-slop & an-dr-files-build-report & an-dr-convention-html-report
     an-dr-dev-assign-ai-level --> an-dr-ai-use-user-interface & an-dr-convention-ai-level
     an-dr-dev-design --> an-dr-ai-use-user-interface & an-dr-convention-adr & an-dr-convention-use-case & an-dr-dev-write-documentation
-    an-dr-dev-follow-workflow --> an-dr-ai-use-user-interface & an-dr-convention-adr & an-dr-dev-analyze-changes & an-dr-dev-debug & an-dr-dev-design & an-dr-dev-implement-code & an-dr-dev-implement-pipeline & an-dr-dev-integrate & an-dr-dev-review & an-dr-dev-test & an-dr-dev-write-documentation & an-dr-dev-write-readme & an-dr-dev-write-specification & an-dr-git-modify-history
+    an-dr-dev-follow-workflow --> an-dr-ai-use-user-interface & an-dr-ai-use-wip-data & an-dr-convention-adr & an-dr-dev-analyze-changes & an-dr-dev-debug & an-dr-dev-design & an-dr-dev-implement-code & an-dr-dev-implement-pipeline & an-dr-dev-integrate & an-dr-dev-review & an-dr-dev-test & an-dr-dev-write-documentation & an-dr-dev-write-readme & an-dr-dev-write-specification & an-dr-git-modify-history
     an-dr-dev-implement-code --> an-dr-convention-adr & an-dr-convention-code & an-dr-convention-layout & an-dr-dev-write-documentation
     an-dr-dev-implement-pipeline --> an-dr-ai-use-user-interface & an-dr-convention-code
-    an-dr-dev-integrate --> an-dr-ai-use-user-interface & an-dr-convention-commit-message & an-dr-git-modify-history
+    an-dr-dev-integrate --> an-dr-ai-use-user-interface & an-dr-ai-use-wip-data & an-dr-convention-commit-message & an-dr-git-modify-history
     an-dr-dev-review --> an-dr-ai-use-user-interface & an-dr-concept-ai-slop & an-dr-concept-clean-dependencies & an-dr-concept-evidence-grounding & an-dr-convention-artifact-layout & an-dr-convention-code & an-dr-convention-html-repo-style & an-dr-convention-html-report & an-dr-convention-layout
     an-dr-dev-test --> an-dr-ai-use-user-interface & an-dr-dev-implement-adversarial-ut
     an-dr-dev-write-documentation --> an-dr-ai-use-user-interface & an-dr-concept-ai-slop & an-dr-convention-adr & an-dr-convention-diagram & an-dr-convention-markdown & an-dr-convention-use-case

@@ -10,6 +10,8 @@ remote, it force-pushes it and cancels the CI runs that push starts, because
 that tree has already passed.
 #>
 param(
+    # an-dr-ai-use-wip-data's folder: the base the work started from is read through it.
+    [Parameter(Mandatory)][string]$WipDataSkill,
     [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$TestedCommit,
     [string]$BaseBranch
 )
@@ -21,9 +23,10 @@ Import-Module (Join-Path $PSScriptRoot 'Integrate.Common.psm1') -Force
 if (-not (Test-IntegrateGhCli)) {
     throw 'RebaseMerge needs the GitHub CLI (gh) to merge the request.'
 }
-$base = Get-IntegrateBaseBranch -RequestedBranch $BaseBranch
+$base = Get-IntegrateBaseBranch -RequestedBranch $BaseBranch -WipDataSkill $WipDataSkill
 $branch = Assert-IntegrateFeatureBranch -BaseBranch $base
 Assert-GitCleanWorkingTree
+Assert-IntegrateNoTmp -BaseBranch $base
 
 function Get-Tree([string]$Commit) {
     return (@(Invoke-GitCommand -Arguments @('rev-parse', "$Commit^{tree}")) -join '').Trim()

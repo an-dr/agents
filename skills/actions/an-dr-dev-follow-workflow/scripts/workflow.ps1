@@ -2,10 +2,10 @@
 [CmdletBinding()]
 param(
     [Parameter(Position = 0, Mandatory)]
-    [ValidateSet('start', 'status', 'advance', 'return-to-build', 'switch-flow', 'approve', 'add-increment', 'move-increment', 'defer-increment', 'remove-increment', 'add-request', 'remove-request', 'set-requirement', 'add-question', 'answer-question', 'dismiss-question', 'finish')]
+    [ValidateSet('start', 'status', 'advance', 'return-to-build', 'switch-flow', 'approve', 'add-increment', 'move-increment', 'defer-increment', 'remove-increment', 'add-request', 'remove-request', 'set-requirement', 'add-question', 'answer-question', 'dismiss-question', 'set-handoff', 'finish')]
     [string]$Command,
 
-    [ValidateSet('SpecDriven', 'Supervised')]
+    [ValidateSet('Vibe', 'SpecDriven', 'Supervised')]
     [string]$Flow,
     [switch]$OnBase,
     [string]$Goal,
@@ -24,7 +24,12 @@ param(
     [string]$Description,
     [int]$At,
     [int]$Number,
-    [int]$To
+    [int]$To,
+    [ValidateSet('goal', 'done', 'next', 'openQuestions', 'decisions', 'files')]
+    [string]$HandoffField,
+    [string[]]$Items,
+    # an-dr-ai-use-wip-data's folder: the state is its `workflow` section.
+    [Parameter(Mandatory)][string]$WipDataSkill
 )
 
 Set-StrictMode -Version Latest
@@ -38,10 +43,55 @@ function Get-RepositoryRoot {
     return $root.Trim()
 }
 
-function Get-WorkflowPath {
+# The state is the `workflow` section of tmp-agent-wip.json, which only
+# an-dr-ai-use-wip-data's script reads and writes.
+$script:Wip = Join-Path $WipDataSkill 'scripts/wip.ps1'
+$script:Owner = 'an-dr-dev-follow-workflow'
+if (-not (Test-Path -LiteralPath $script:Wip)) {
+    throw "-WipDataSkill must be an-dr-ai-use-wip-data's folder; '$script:Wip' does not exist."
+}
+
+function Read-WorkflowJson {
+    param([Parameter(Mandatory)][string]$RepositoryRoot)
+    $json = (@(& $script:Wip get -Section workflow -Reader $script:Owner -Root $RepositoryRoot) -join '')
+    if ($json -eq 'null') { return $null }
+    return $json
+}
+
+function Test-WorkflowState {
+    param([Parameter(Mandatory)][string]$RepositoryRoot)
+    return $null -ne (Read-WorkflowJson -RepositoryRoot $RepositoryRoot)
+}
+
+function Write-WorkflowJson {
+    param([Parameter(Mandatory)][string]$RepositoryRoot, [Parameter(Mandatory)][string]$Json)
+    $temporary = Join-Path ([IO.Path]::GetTempPath()) ('agents-workflow-{0}.json' -f [guid]::NewGuid())
+    try {
+        [IO.File]::WriteAllText($temporary, $Json, [Text.UTF8Encoding]::new($false))
+        & $script:Wip set -Section workflow -Owner $script:Owner -JsonPath $temporary -Root $RepositoryRoot
+    }
+    finally { Remove-Item -Force -LiteralPath $temporary -ErrorAction SilentlyContinue }
+}
+
+# Files the controller rewrites on every command, which a clean-tree check
+# ignores: every tmp- or .tmp- path, the state file and the page among them.
+$script:TmpExclude = @(':(exclude,glob)**/tmp-*', ':(exclude,glob)**/tmp-*/**', ':(exclude,glob)**/.tmp-*', ':(exclude,glob)**/.tmp-*/**')
+
+# Before the state moved to the repository root it lived in .progress/; a
+# workflow started then resumes from the new place.
+function Move-LegacyWorkflowState {
     param([Parameter(Mandatory)][string]$RepositoryRoot)
 
-    return Join-Path $RepositoryRoot '.progress/workflow.json'
+    $legacyDir = Join-Path $RepositoryRoot '.progress'
+    $legacy = Join-Path $legacyDir 'workflow.json'
+    if ((Test-Path -LiteralPath $legacy) -and -not (Test-WorkflowState -RepositoryRoot $RepositoryRoot)) {
+        Write-WorkflowJson -RepositoryRoot $RepositoryRoot -Json (Get-Content -Raw -LiteralPath $legacy)
+        Remove-Item -LiteralPath $legacy -Force
+        Remove-Item -LiteralPath (Join-Path $legacyDir 'PROGRESS.md') -Force -ErrorAction SilentlyContinue
+        if ((Get-ChildItem -Force -LiteralPath $legacyDir | Measure-Object).Count -eq 0) {
+            Remove-Item -LiteralPath $legacyDir -Force
+        }
+    }
 }
 
 function Enter-WorkflowLock {
@@ -69,10 +119,11 @@ function Exit-WorkflowLock {
 function Get-WorkflowState {
     param([Parameter(Mandatory)][string]$Path)
 
-    if (-not (Test-Path -LiteralPath $Path)) {
-        throw "No active workflow exists at '$Path'."
+    $json = Read-WorkflowJson -RepositoryRoot (Get-RepositoryRoot)
+    if ($null -eq $json) {
+        throw "No active workflow exists in '$Path'."
     }
-    $state = Get-Content -Raw -LiteralPath $Path | ConvertFrom-Json
+    $state = $json | ConvertFrom-Json
     # Retired flows resume under the flow that replaced them: Detailed became
     # Supervised unchanged, and Detailed Auto became Spec-driven, whose phases
     # it already had. Quick has no successor with the same phases, so a Quick
@@ -80,7 +131,7 @@ function Get-WorkflowState {
     if ($state.flow -eq 'Detailed') { $state.flow = 'Supervised' }
     if ($state.flow -eq 'DetailedAuto') { $state.flow = 'SpecDriven' }
     if ($state.flow -eq 'Quick') {
-        throw ('This workflow uses the retired Quick flow. Commit its work and delete .progress, ' +
+        throw ('This workflow uses the retired Quick flow. Commit its work and delete tmp-agent-wip.json, ' +
             'then start Spec-driven or Supervised, or finish it with an older controller.')
     }
     if (-not $state.PSObject.Properties['onBase']) {
@@ -107,6 +158,12 @@ function Get-WorkflowState {
     }
     if (-not $state.PSObject.Properties['requests']) {
         $state | Add-Member -NotePropertyName requests -NotePropertyValue @()
+    }
+    if (-not $state.PSObject.Properties['handoff']) {
+        $state | Add-Member -NotePropertyName handoff -NotePropertyValue ([pscustomobject]@{})
+    }
+    if (-not $state.PSObject.Properties['finishedAt']) {
+        $state | Add-Member -NotePropertyName finishedAt -NotePropertyValue $null
     }
     # A workflow that stopped in START has no request list and INTAKE will not
     # release an empty one, so its goal becomes the first request. Later phases
@@ -205,6 +262,10 @@ function Test-RequirementsComplete {
 function Get-WorkflowPhases {
     param([Parameter(Mandatory)][string]$Flow)
 
+    # Vibe has no gates; its stages only show where the work is.
+    if ($Flow -eq 'Vibe') {
+        return @('BUILD', 'VERIFY', 'DELIVER', 'LAND')
+    }
     if ($Flow -eq 'Supervised') {
         return @(
             'INTAKE', 'DESIGN', 'SPLIT', 'BRANCH', 'DOCS', 'BUILD', 'VERIFY', 'COMMIT',
@@ -223,7 +284,7 @@ function Assert-WorkflowState {
     if ($State.schemaVersion -ne 1) {
         throw "Unsupported workflow schema version '$($State.schemaVersion)'."
     }
-    if ($State.flow -notin @('SpecDriven', 'Supervised')) {
+    if ($State.flow -notin @('Vibe', 'SpecDriven', 'Supervised')) {
         throw "Unsupported workflow flow '$($State.flow)'."
     }
     $validPhases = @(Get-WorkflowPhases -Flow $State.flow)
@@ -237,7 +298,7 @@ function Assert-WorkflowState {
     }
     # INTAKE is where the four facts are written, so it is the one phase allowed
     # to hold an incomplete set; every later phase reads them as settled.
-    if ($State.phase -ne 'INTAKE') {
+    if ($State.phase -ne 'INTAKE' -and $State.flow -ne 'Vibe') {
         foreach ($property in @('goal', 'constraints', 'done', 'outOfScope')) {
             if ([string]::IsNullOrWhiteSpace([string]$State.requirements.$property)) {
                 throw "Workflow requirements are missing '$property'."
@@ -249,6 +310,11 @@ function Assert-WorkflowState {
     & git cat-file -e "$($State.baseCommit)^{commit}" 2>$null
     if ($LASTEXITCODE -ne 0) {
         throw "Workflow base commit '$($State.baseCommit)' does not exist in this repository."
+    }
+    # Vibe records stages and a handoff only; the increment, branch and gate
+    # rules below belong to the gated flows.
+    if ($State.flow -eq 'Vibe') {
+        return
     }
 
     $increments = @($State.increments)
@@ -370,6 +436,14 @@ function Assert-WorkflowState {
     }
 }
 
+function Assert-GatedFlow {
+    param([Parameter(Mandatory)]$State)
+
+    if ($State.flow -eq 'Vibe') {
+        throw 'Vibe has no gates, requests, or increments; it records its stages and its handoff only.'
+    }
+}
+
 function Assert-WorkflowBranch {
     param([Parameter(Mandatory)]$State)
 
@@ -397,114 +471,19 @@ function Add-HistoryEntry {
     $State.history = @($State.history) + $entry
 }
 
-function Get-ProgressMarkdownPath {
-    param([Parameter(Mandatory)][string]$WorkflowPath)
-
-    return Join-Path (Split-Path -Parent $WorkflowPath) 'PROGRESS.md'
-}
-
-function Write-ProgressMarkdown {
-    param(
-        [Parameter(Mandatory)]$State,
-        [Parameter(Mandatory)][string]$Path
-    )
-
-    $flowLabel = if ($State.flow -eq 'SpecDriven') { 'Spec-driven' } else { $State.flow }
-    $lines = [Collections.Generic.List[string]]::new()
-    $lines.Add('# Progress')
-    $lines.Add('')
-    $lines.Add("**Flow:** $flowLabel")
-    $lines.Add("**Phase:** $($State.phase)")
-    # During INTAKE any of the four can still be unwritten, so each says so
-    # rather than rendering a blank the reader has to interpret.
-    $lines.Add("**Goal:** $(if ($State.requirements.goal) { $State.requirements.goal } else { '_not yet defined_' })")
-    $lines.Add("**Done when:** $(if ($State.requirements.done) { $State.requirements.done } else { '_not yet defined_' })")
-    if ($State.requirements.constraints) {
-        $lines.Add("**Constraints:** $($State.requirements.constraints)")
-    }
-    if ($State.requirements.outOfScope) {
-        $lines.Add("**Out of scope:** $($State.requirements.outOfScope)")
-    }
-    $lines.Add('')
-
-    $requests = @(Get-WorkflowRequest -State $State)
-    if ($requests.Count -gt 0) {
-        $lines.Add('## Requests')
-        $lines.Add('')
-        foreach ($request in $requests) {
-            $lines.Add("- $($request.text)")
-        }
-        $lines.Add('')
-    }
-
-    $increments = @($State.increments)
-    if ($increments.Count -gt 0) {
-        $lines.Add('## Iterations')
-        $lines.Add('')
-        foreach ($increment in $increments) {
-            $marker = switch ($increment.status) {
-                'completed' { 'x' }
-                default { ' ' }
-            }
-            $statusLabel = switch ($increment.status) {
-                'in_progress' { 'in progress' }
-                default { $increment.status }
-            }
-            $lines.Add("- [$marker] **$($increment.scope)** ($statusLabel) — $($increment.description)")
-        }
-        $lines.Add('')
-    }
-
-    $questions = @(Get-WorkflowQuestion -State $State)
-    if ($questions.Count -gt 0) {
-        $lines.Add('## Questions')
-        $lines.Add('')
-        foreach ($question in $questions) {
-            $marker = if ($question.status -eq 'open') { ' ' } else { 'x' }
-            $suffix = switch ($question.status) {
-                'answered' { " — $($question.answer)" }
-                'dismissed' { " — dismissed: $($question.answer)" }
-                default { '' }
-            }
-            $lines.Add("- [$marker] $($question.text)$suffix")
-        }
-        $lines.Add('')
-    }
-
-    $lines.Add("_Last updated: $($State.updatedAt)_")
-
-    $directory = Split-Path -Parent $Path
-    New-Item -ItemType Directory -Force -Path $directory | Out-Null
-    $temporaryPath = Join-Path $directory ('.progress-md-{0}.tmp' -f [guid]::NewGuid())
-    try {
-        [IO.File]::WriteAllText($temporaryPath, ($lines -join "`n"), [Text.UTF8Encoding]::new($false))
-        [IO.File]::Move($temporaryPath, $Path, $true)
-    }
-    finally {
-        Remove-Item -Force -LiteralPath $temporaryPath -ErrorAction SilentlyContinue
-    }
-}
-
 function Save-WorkflowState {
     param(
         [Parameter(Mandatory)]$State,
         [Parameter(Mandatory)][string]$Path
     )
 
-    $directory = Split-Path -Parent $Path
-    New-Item -ItemType Directory -Force -Path $directory | Out-Null
     $State.updatedAt = (Get-Date).ToUniversalTime().ToString('o')
     Assert-WorkflowState -State $State
-    $temporaryPath = Join-Path $directory ('.workflow-{0}.tmp' -f [guid]::NewGuid())
-    $json = $State | ConvertTo-Json -Depth 12
-    try {
-        [IO.File]::WriteAllText($temporaryPath, $json, [Text.UTF8Encoding]::new($false))
-        [IO.File]::Move($temporaryPath, $Path, $true)
+    Write-WorkflowJson -RepositoryRoot (Get-RepositoryRoot) -Json ($State | ConvertTo-Json -Depth 12)
+    # Git-side tools find the base in the work branch's config, without the file.
+    if ($State.featureBranch) {
+        & git config "branch.$($State.featureBranch).an-dr-base" $State.baseBranch
     }
-    finally {
-        Remove-Item -Force -LiteralPath $temporaryPath -ErrorAction SilentlyContinue
-    }
-    Write-ProgressMarkdown -State $State -Path (Get-ProgressMarkdownPath -WorkflowPath $Path)
     Update-ProgressPage
 }
 
@@ -512,7 +491,7 @@ function Save-WorkflowState {
 # refreshes it at no cost to the agent.
 function Update-ProgressPage {
     # A display failure must never block a state change.
-    try { $null = & (Join-Path $PSScriptRoot 'render-progress-page.ps1') -RepositoryRoot (Get-RepositoryRoot) }
+    try { $null = & (Join-Path $PSScriptRoot 'render-progress-page.ps1') -RepositoryRoot (Get-RepositoryRoot) -WipDataSkill $WipDataSkill }
     catch { Write-Warning "Progress page not rendered: $_" }
 }
 
@@ -590,7 +569,7 @@ function Assert-IncrementCommitted {
 
     $head = Get-GitHead
     if ($head -eq $State.commitBaseline) {
-        throw 'Commit the current increment, including .progress/workflow.json, before advancing.'
+        throw 'Commit the current increment, including tmp-agent-wip.json, before advancing.'
     }
     $changes = git status --porcelain
     if ($changes) {
@@ -606,6 +585,7 @@ function Show-WorkflowStatus {
     )
 
     $flowLabel = if ($State.flow -eq 'SpecDriven') { 'Spec-driven' } else { $State.flow }
+    if ($State.finishedAt) { $Status = 'finished' }
     $increment = Get-CurrentIncrement -State $State
     $incrementLabel = '—'
     if ($increment) {
@@ -684,14 +664,22 @@ function Show-WorkflowStatus {
             Write-Output 'Intake is open — keep recording requests until the user says the list is complete.'
         }
     }
-    Write-Output "Goal: $(if ($State.requirements.goal) { $State.requirements.goal } else { '(not yet defined)' })"
+    if ($State.finishedAt) {
+        Write-Output "Handed over: integrate onto '$($State.baseBranch)' with an-dr-dev-integrate when the user asks; it strips every tmp file."
+    }
+    $goal = if ($State.requirements.goal) { $State.requirements.goal } elseif ($State.handoff.PSObject.Properties['goal']) { $State.handoff.goal } else { '(not yet defined)' }
+    Write-Output "Base: $($State.baseBranch)"
+    Write-Output "Goal: $goal"
     Write-Output "Updated: $($State.updatedAt)"
     Write-Output '<!-- /user-output -->'
 }
 
 $repositoryRoot = Get-RepositoryRoot
-$workflowPath = Get-WorkflowPath -RepositoryRoot $repositoryRoot
+$workflowPath = (@(& $script:Wip path -Root $repositoryRoot) -join '').Trim()
 $workflowLock = $null
+if ($Command -ne 'status') {
+    Move-LegacyWorkflowState -RepositoryRoot $repositoryRoot
+}
 if ($Command -ne 'status') {
     $workflowLock = Enter-WorkflowLock -RepositoryRoot $repositoryRoot
 }
@@ -699,7 +687,7 @@ if ($Command -ne 'status') {
 try {
 switch ($Command) {
     'start' {
-        if (Test-Path -LiteralPath $workflowPath) {
+        if (Test-WorkflowState -RepositoryRoot $repositoryRoot) {
             throw 'An active workflow already exists. Resume it or finish it first.'
         }
         # Only the flow is required: the four facts are what INTAKE produces, so
@@ -714,6 +702,9 @@ switch ($Command) {
         if ($OnBase -and $Flow -ne 'SpecDriven') {
             throw '-OnBase is only available for SpecDriven.'
         }
+        if ($Flow -eq 'Vibe' -and (git status --porcelain -- . @script:TmpExclude)) {
+            throw 'Vibe starts from a clean working tree; commit or stash first.'
+        }
 
         $baseBranch = (git branch --show-current).Trim()
         if ([string]::IsNullOrWhiteSpace($baseBranch)) {
@@ -724,7 +715,7 @@ switch ($Command) {
         $state = [pscustomobject]@{
             schemaVersion      = 1
             flow               = $Flow
-            phase              = 'INTAKE'
+            phase              = if ($Flow -eq 'Vibe') { 'BUILD' } else { 'INTAKE' }
             baseBranch         = $baseBranch
             baseCommit         = $baseCommit
             featureBranch      = $null
@@ -742,6 +733,8 @@ switch ($Command) {
             questions          = @()
             approvals          = @()
             history            = @()
+            handoff            = [pscustomobject]@{}
+            finishedAt         = $null
             createdAt          = $now
             updatedAt          = $now
         }
@@ -757,6 +750,7 @@ switch ($Command) {
 
     'approve' {
         $state = Get-WorkflowState -Path $workflowPath
+        Assert-GatedFlow -State $state
         Assert-WorkflowBranch -State $state
         if (-not $Gate) {
             throw '-Gate is required for approve.'
@@ -813,6 +807,7 @@ switch ($Command) {
     # whole workflow so SUMMARY can check the branch against what was asked for.
     'add-request' {
         $state = Get-WorkflowState -Path $workflowPath
+        Assert-GatedFlow -State $state
         Assert-WorkflowBranch -State $state
         if ($state.phase -ne 'INTAKE') {
             throw ("Requests are collected during INTAKE, not '$($state.phase)'. " +
@@ -839,6 +834,7 @@ switch ($Command) {
 
     'remove-request' {
         $state = Get-WorkflowState -Path $workflowPath
+        Assert-GatedFlow -State $state
         Assert-WorkflowBranch -State $state
         if ($state.phase -ne 'INTAKE') {
             throw "Requests can only be removed during INTAKE, not '$($state.phase)'."
@@ -868,6 +864,7 @@ switch ($Command) {
     # reads. INTAKE cannot be left until all four are written.
     'set-requirement' {
         $state = Get-WorkflowState -Path $workflowPath
+        Assert-GatedFlow -State $state
         Assert-WorkflowBranch -State $state
         if ([string]::IsNullOrWhiteSpace($Field)) {
             throw '-Field is required for set-requirement.'
@@ -934,6 +931,7 @@ switch ($Command) {
 
     'add-increment' {
         $state = Get-WorkflowState -Path $workflowPath
+        Assert-GatedFlow -State $state
         Assert-WorkflowBranch -State $state
         if ([string]::IsNullOrWhiteSpace($Scope) -or [string]::IsNullOrWhiteSpace($Description)) {
             throw '-Scope and -Description are required for add-increment.'
@@ -972,6 +970,7 @@ switch ($Command) {
 
     'move-increment' {
         $state = Get-WorkflowState -Path $workflowPath
+        Assert-GatedFlow -State $state
         Assert-WorkflowBranch -State $state
         if (-not $PSBoundParameters.ContainsKey('Number') -or -not $PSBoundParameters.ContainsKey('To')) {
             throw '-Number and -To are required for move-increment.'
@@ -1003,6 +1002,7 @@ switch ($Command) {
     # that replaces it becomes active in the same operation.
     'defer-increment' {
         $state = Get-WorkflowState -Path $workflowPath
+        Assert-GatedFlow -State $state
         Assert-WorkflowBranch -State $state
         if (-not $PSBoundParameters.ContainsKey('To')) {
             throw '-To is required for defer-increment.'
@@ -1017,11 +1017,11 @@ switch ($Command) {
         # A clean tree is the evidence that nothing was built for this increment
         # yet. Work already committed under it cannot be detected here, so the
         # caller must not defer an increment whose commits are on the branch.
-        # `.progress/` is excluded because the controller rewrites it on every
+        # tmp files are excluded because the controller rewrites them on every
         # command, which would otherwise make this guard block itself.
-        $changes = @(git status --porcelain -- . ':(exclude).progress')
+        $changes = @(git status --porcelain -- . @script:TmpExclude)
         if ($changes.Count -gt 0) {
-            throw 'The working tree must be clean, apart from .progress, to defer the active increment.'
+            throw 'The working tree must be clean, apart from tmp files, to defer the active increment.'
         }
 
         $increments = [Collections.ArrayList]@(@($state.increments))
@@ -1056,6 +1056,7 @@ switch ($Command) {
     # can leave the plan.
     'remove-increment' {
         $state = Get-WorkflowState -Path $workflowPath
+        Assert-GatedFlow -State $state
         Assert-WorkflowBranch -State $state
         if (-not $PSBoundParameters.ContainsKey('Number')) {
             throw '-Number is required for remove-increment.'
@@ -1078,9 +1079,9 @@ switch ($Command) {
             }
             # Same evidence rule as defer-increment: a clean tree shows nothing
             # was built. Work already committed under it is invisible here.
-            $changes = @(git status --porcelain -- . ':(exclude).progress')
+            $changes = @(git status --porcelain -- . @script:TmpExclude)
             if ($changes.Count -gt 0) {
-                throw 'The working tree must be clean, apart from .progress, to remove the active increment.'
+                throw 'The working tree must be clean, apart from tmp files, to remove the active increment.'
             }
         }
 
@@ -1107,6 +1108,23 @@ switch ($Command) {
         $state = Get-WorkflowState -Path $workflowPath
         Assert-WorkflowBranch -State $state
         $previousPhase = $state.phase
+        if ($state.flow -eq 'Vibe') {
+            $phases = @(Get-WorkflowPhases -Flow 'Vibe')
+            $at = [array]::IndexOf($phases, [string]$state.phase)
+            if ($at -ge $phases.Count - 1) {
+                throw 'LAND is the last stage: an-dr-dev-integrate lands the branch and removes this state.'
+            }
+            # The work branch is the one the first stage was built on.
+            $branch = (git branch --show-current).Trim()
+            if (-not $state.featureBranch -and $branch -and $branch -ne $state.baseBranch) {
+                $state.featureBranch = $branch
+            }
+            $state.phase = $phases[$at + 1]
+            Add-HistoryEntry -State $state -Action 'advance' -Detail "Advanced from $previousPhase to $($state.phase)."
+            Save-WorkflowState -State $state -Path $workflowPath
+            Show-WorkflowStatus -State $state
+            return
+        }
         switch ($state.phase) {
             'INTAKE' {
                 if (@(Get-WorkflowRequest -State $state).Count -eq 0) {
@@ -1206,8 +1224,9 @@ switch ($Command) {
     'return-to-build' {
         $state = Get-WorkflowState -Path $workflowPath
         Assert-WorkflowBranch -State $state
-        if ($state.phase -ne 'VERIFY') {
-            throw "Workflow can only return to BUILD from VERIFY; current phase is $($state.phase)."
+        $from = if ($state.flow -eq 'Vibe') { @('VERIFY', 'DELIVER', 'LAND') } else { @('VERIFY') }
+        if ($state.phase -notin $from) {
+            throw "Workflow can only return to BUILD from $($from -join ', '); current phase is $($state.phase)."
         }
         $state.phase = 'BUILD'
         $state.approvals = @($state.approvals).Where({
@@ -1234,6 +1253,9 @@ switch ($Command) {
         if ($Flow -eq $state.flow) {
             throw "The workflow is already running as $Flow."
         }
+        if ('Vibe' -in @($Flow, $state.flow)) {
+            throw 'Vibe does not switch: land or drop its branch, then start a gated flow.'
+        }
         if ($state.featureBranch) {
             throw "Cannot switch flow once BRANCH created '$($state.featureBranch)'; finish or abandon that branch first."
         }
@@ -1243,11 +1265,11 @@ switch ($Command) {
         }
         # The same evidence defer-increment relies on, for the same reason: a
         # clean tree is all the controller has to prove nothing was built under
-        # the flow being left behind. `.progress/` is excluded because the
-        # controller rewrites it on every command.
-        $changes = @(git status --porcelain -- . ':(exclude).progress')
+        # the flow being left behind. tmp files are excluded because the
+        # controller rewrites them on every command.
+        $changes = @(git status --porcelain -- . @script:TmpExclude)
         if ($changes.Count -gt 0) {
-            throw 'The working tree must be clean, apart from .progress, to switch flow.'
+            throw 'The working tree must be clean, apart from tmp files, to switch flow.'
         }
 
         $previousFlow = $state.flow
@@ -1271,41 +1293,47 @@ switch ($Command) {
         Show-WorkflowStatus -State $state
     }
 
+    # The handoff a new session reads first: each field is rewritten whole at
+    # a checkpoint, never appended to, so it only ever holds the current state.
+    'set-handoff' {
+        $state = Get-WorkflowState -Path $workflowPath
+        if (-not $HandoffField) {
+            throw '-HandoffField is required for set-handoff.'
+        }
+        # pwsh -File passes one string per parameter, so a list arrives as one
+        # argument: entries separated by ' | ' or by newlines, which some shells
+        # flatten on the way.
+        $entries = @($Items | ForEach-Object { $_ -split "\s\|\s|`r?`n" } | ForEach-Object { $_.Trim() } | Where-Object { $_ })
+        $handoffValue = if ($HandoffField -eq 'goal') { $entries -join ' ' } else { $entries }
+        $state.handoff | Add-Member -NotePropertyName $HandoffField -NotePropertyValue $handoffValue -Force
+        Add-HistoryEntry -State $state -Action 'set-handoff' -Detail "Updated the handoff's $HandoffField."
+        Save-WorkflowState -State $state -Path $workflowPath
+        Show-WorkflowStatus -State $state
+    }
+
     'finish' {
         $state = Get-WorkflowState -Path $workflowPath
         Assert-WorkflowBranch -State $state
+        if ($state.flow -eq 'Vibe') {
+            throw 'Vibe has no HANDOVER; an-dr-dev-integrate lands the branch and removes the state.'
+        }
         if ($state.phase -ne 'HANDOVER') {
             throw "Workflow state can only be removed at HANDOVER; current state is $($state.flow)/$($state.phase)."
         }
-        # The handed-over branch carries no workflow state: remove-progress.ps1
-        # has stripped .progress from every commit after the base. On the base
-        # branch there is no branch history to clean; the deletion is committed.
-        if (-not $state.onBase) {
-            $mergeBase = (git merge-base $state.baseBranch HEAD 2>$null | Out-String).Trim()
-            if (-not $mergeBase) {
-                throw "Cannot find the merge base with '$($state.baseBranch)'."
-            }
-            $inHistory = @(git log --format=%h "$mergeBase..HEAD" -- .progress)
-            $inTree = @(git ls-tree -r --name-only HEAD -- .progress)
-            if ($inHistory.Count -gt 0 -or $inTree.Count -gt 0) {
-                throw "The branch still carries .progress; run remove-progress.ps1 in HANDOVER before finish."
-            }
-        }
-        Remove-Item -LiteralPath $workflowPath -Force
-        $progressMarkdownPath = Get-ProgressMarkdownPath -WorkflowPath $workflowPath
-        if (Test-Path -LiteralPath $progressMarkdownPath) {
-            Remove-Item -LiteralPath $progressMarkdownPath -Force
-        }
-        $directory = Split-Path -Parent $workflowPath
-        if ((Get-ChildItem -Force -LiteralPath $directory | Measure-Object).Count -eq 0) {
-            Remove-Item -LiteralPath $directory -Force
-        }
-        Update-ProgressPage
+        # On the base branch nothing integrates later, so the state goes now and
+        # its deletion is committed. A work branch keeps it, marked handed over:
+        # an-dr-dev-integrate reads the base from it, then strips every tmp file
+        # from every commit before the branch lands.
         if ($state.onBase) {
-            Write-Output 'Workflow state removed. Commit the deletion if .progress was committed.'
+            & $script:Wip remove -Section workflow -Owner $script:Owner -Root $repositoryRoot
+            Update-ProgressPage
+            Write-Output 'Workflow state removed. Commit the deletion of tmp-agent-wip.json.'
         }
         else {
-            Write-Output 'Workflow state removed. The branch is handed over: integrate it with an-dr-dev-integrate when the user asks.'
+            $state.finishedAt = (Get-Date).ToUniversalTime().ToString('o')
+            Add-HistoryEntry -State $state -Action 'finish' -Detail 'Handed over; waiting for integration.'
+            Save-WorkflowState -State $state -Path $workflowPath
+            Write-Output "Handed over. Commit tmp-agent-wip.json; an-dr-dev-integrate lands the branch onto '$($state.baseBranch)' when the user asks."
         }
         Show-WorkflowStatus -State $state -Status finished
     }

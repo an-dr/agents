@@ -1,13 +1,13 @@
 ---
 name: an-dr-dev-integrate
-description: Integrate a branch into the default branch through its pull or merge request with the repository's merge method, or locally by rebasing and keeping, regrouping, or squashing its commits when no platform is available. Use only when the user explicitly asks to integrate, merge, or land a branch; also opens draft requests and addresses review comments.
+description: Integrate a branch into its base — the branch it started from, else the default branch — through its pull or merge request with the repository's merge method, or locally by rebasing and keeping, regrouping, or squashing its commits when no platform is available. Use only when the user explicitly asks to integrate, merge, or land a branch; also opens draft requests and addresses review comments.
 license: MIT
 allowed-tools: PowerShell
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "3.0.0"
+  version: "4.0.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-convention-commit-message an-dr-git-modify-history
+  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-ai-use-wip-data an-dr-convention-commit-message an-dr-git-modify-history
 ---
 
 # Integrate
@@ -17,7 +17,8 @@ Defers: questions to `an-dr-ai-use-user-interface`; messages to `an-dr-git-modif
 ## When it runs
 
 - Integration itself only on the user's explicit request in their own words; a finished review, an accepted delivery, or green checks are not that request. Confirm the branch and its base with one `an-dr-ai-use-user-interface` confirmation before anything changes.
-- It integrates whatever branch it is given and knows nothing of the process that produced it; whatever produced the branch cleans it first.
+- It integrates whatever branch it is given. The base is `-BaseBranch` when given, else the branch it started from — the branch config `branch.<name>.an-dr-base`, or `workflow.baseBranch` in `tmp-agent-wip.json` read through `an-dr-ai-use-wip-data` — else the default branch. The workflow controller writes that branch config when the work branch is created, and step 3 writes it again before stripping the file.
+- Files and folders whose names start with `tmp-` or `.tmp-` never land: step 3 strips them from every commit after the base, drops commits that held nothing else, and deletes them from disk; steps 4 and 5 refuse while any remains.
 - Opening a draft request and addressing review comments need no such request: they change nothing on the base.
 
 ## Through the request
@@ -44,6 +45,8 @@ Scripts are in `<skill>/scripts/`; each exits non-zero on failure. `<an-dr-conve
 | 3 — rebase                            | `pwsh integrate-3-rebase.ps1 [-BaseBranch <name>]`                                                                                                                        |
 | 4 — finish                            | `pwsh integrate-4-finish.ps1 -Mode <Commits\|Squash\|Request\|RebaseMerge> [-Message '<msg>' -CommitMessageSkill <an-dr-convention-commit-message>] [-BaseBranch <name>]` |
 | 5 — rebase-merge (`RebaseMerge` only) | `pwsh integrate-5-rebase-merge.ps1 -TestedCommit <sha> [-BaseBranch <name>]`                                                                                              |
+
+Every script also takes `-WipDataSkill <an-dr-ai-use-wip-data>`, through which it reads the base the work started from.
 
 1. Run step 1. Check the recent log for WIP commits and the base-to-HEAD log for topic commits.
 2. WIP commits at the tip → step 2 squash, `<hash>` = the commit before the first WIP, with a clean message.

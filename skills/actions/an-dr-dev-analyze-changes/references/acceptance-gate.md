@@ -5,7 +5,7 @@ In a Spec-driven or Supervised flow, `SUMMARY` runs this skill for the full bran
 ## Before writing
 
 1. Run `an-dr-dev-review` with `summary` scope against the workflow's base branch.
-2. Reconcile the branch against the intake request list in `.progress/workflow.json`; name every undelivered request in the handoff as a deliberate exclusion or as missed work. A request never withdrawn and never satisfied is a delivery defect.
+2. Reconcile the branch against the intake request list in `tmp-agent-wip.json`; name every undelivered request in the handoff as a deliberate exclusion or as missed work. A request never withdrawn and never satisfied is a delivery defect.
 3. Confirm the full test matrix, documentation consistency, exclusions, and remaining risk. Branch-added ADRs are not integrated, so one correcting another from the same branch is a draft: collapse them before the handoff (`an-dr-convention-adr`).
 
 ## Handoff

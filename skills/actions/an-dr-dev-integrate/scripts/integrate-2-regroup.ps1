@@ -11,6 +11,8 @@ the branch is kept under a backup ref, and any failure restores it. The
 result must hold exactly the original tree.
 #>
 param(
+    # an-dr-ai-use-wip-data's folder: the base the work started from is read through it.
+    [Parameter(Mandatory)][string]$WipDataSkill,
     [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$Plan,
     [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$CommitMessageSkill,
     [string]$BaseBranch
@@ -26,7 +28,7 @@ if (-not (Test-Path -LiteralPath $checkMessage)) {
     throw "-CommitMessageSkill must be the commit-message folder; '$checkMessage' is missing."
 }
 
-$base = Get-IntegrateBaseBranch -RequestedBranch $BaseBranch
+$base = Get-IntegrateBaseBranch -RequestedBranch $BaseBranch -WipDataSkill $WipDataSkill
 $branch = Assert-IntegrateFeatureBranch -BaseBranch $base
 Assert-GitCleanWorkingTree
 
