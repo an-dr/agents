@@ -1291,14 +1291,14 @@ switch ($Command) {
                 throw "The branch still carries .progress; run remove-progress.ps1 in HANDOVER before finish."
             }
         }
-        Remove-Item -LiteralPath $workflowPath
+        Remove-Item -LiteralPath $workflowPath -Force
         $progressMarkdownPath = Get-ProgressMarkdownPath -WorkflowPath $workflowPath
         if (Test-Path -LiteralPath $progressMarkdownPath) {
-            Remove-Item -LiteralPath $progressMarkdownPath
+            Remove-Item -LiteralPath $progressMarkdownPath -Force
         }
         $directory = Split-Path -Parent $workflowPath
         if ((Get-ChildItem -Force -LiteralPath $directory | Measure-Object).Count -eq 0) {
-            Remove-Item -LiteralPath $directory
+            Remove-Item -LiteralPath $directory -Force
         }
         Update-ProgressPage
         if ($state.onBase) {
