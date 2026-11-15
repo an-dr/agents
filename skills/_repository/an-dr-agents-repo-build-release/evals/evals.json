@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-agents-repo-build-release",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "pwsh"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-agents-repo-build-release. Make a new release of this repository; it gained a new skill since the last one.",
+      "expected_skill": "an-dr-agents-repo-build-release",
+      "context": "The agents repository is at VERSION 1.0.0 with tag v1.0.0; one skill was added since.",
+      "expected_behavior": [
+        "Writes VERSION and docs/releases/<version>.md, and checks the package with package.ps1 -Tag before committing.",
+        "Pushes the tag only after the release commit's checks pass, and reports the release URL."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Writes VERSION and docs/releases/<version>.md, and checks the package with package.ps1 -Tag before committing."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Pushes the tag only after the release commit's checks pass, and reports the release URL."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Make a new release of this repository; it gained a new skill since the last one.",
+      "expected_skill": "an-dr-agents-repo-build-release",
+      "context": "The agents repository is at VERSION 1.0.0 with tag v1.0.0; one skill was added since.",
+      "expected_behavior": [
+        "Writes VERSION and docs/releases/<version>.md, and checks the package with package.ps1 -Tag before committing.",
+        "Pushes the tag only after the release commit's checks pass, and reports the release URL."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Writes VERSION and docs/releases/<version>.md, and checks the package with package.ps1 -Tag before committing."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Pushes the tag only after the release commit's checks pass, and reports the release URL."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "We should publish what we have as a version people can download.",
+      "expected_skill": "an-dr-agents-repo-build-release",
+      "context": "The agents repository is at VERSION 1.0.0 with tag v1.0.0; one skill was added since.",
+      "expected_behavior": [
+        "Writes VERSION and docs/releases/<version>.md, and checks the package with package.ps1 -Tag before committing.",
+        "Pushes the tag only after the release commit's checks pass, and reports the release URL."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Writes VERSION and docs/releases/<version>.md, and checks the package with package.ps1 -Tag before committing."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Pushes the tag only after the release commit's checks pass, and reports the release URL."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Explain semantic versioning. Do not change any file.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 1
+    }
+  ]
+}

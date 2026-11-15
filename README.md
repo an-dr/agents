@@ -214,6 +214,10 @@ The installer's `-Tools` parameter limits which tools are configured. Re-run the
 
 Generated skill outputs live under `.tmp-ai-gen/` according to the [artifact layout convention](skills/conventions/an-dr-convention-artifact-layout/SKILL.md). HTML diagram rendering requires a local Chromium-based browser; the [HTML report convention](skills/conventions/an-dr-convention-html-report/SKILL.md) describes rendering and visual verification.
 
+## 📦 Releases
+
+Each release is a version in [VERSION](VERSION), with notes in [docs/releases/](docs/releases/), published on GitHub as `agents-<version>.zip`: the policy, this README, the license, and every skill except those under `skills/_repository`, which only maintain this repository. The [release skill](skills/_repository/an-dr-agents-repo-build-release/SKILL.md) builds and publishes it.
+
 ## 📚 Documentation
 
 - [Engineering policy](AGENTS.md): workflow selection, approvals, delivery, and Git rules.
@@ -226,6 +230,8 @@ Generated skill outputs live under `.tmp-ai-gen/` according to the [artifact lay
 | Path                  | Purpose                                                              |
 | --------------------- | -------------------------------------------------------------------- |
 | `AGENTS.md`           | Policy entry point                                                   |
+| `VERSION`             | The repository's version, released as `agents-<version>.zip`         |
+| `docs/releases/`      | Notes for each release                                               |
 | `skills/actions/`     | Procedures the agent performs                                        |
 | `skills/concepts/`    | Principles applied when their subject is in play                     |
 | `skills/conventions/` | Artifact formats and their mechanical checks                         |
@@ -249,6 +255,7 @@ flowchart LR
     subgraph g_repository["Repository"]
         an-dr-agents-analyze-session
         an-dr-agents-repo-build-dependencies
+        an-dr-agents-repo-build-release
         an-dr-agents-repo-convention-skills
         an-dr-agents-repo-install
         an-dr-agents-repo-modify
@@ -314,6 +321,7 @@ flowchart LR
     end
     an-dr-agents-analyze-session --> an-dr-agents-repo-modify
     an-dr-agents-repo-build-dependencies --> an-dr-ai-use-user-interface & an-dr-convention-agent-skill
+    an-dr-agents-repo-build-release --> an-dr-ai-use-user-interface & an-dr-git-modify-history
     an-dr-agents-repo-convention-skills --> an-dr-ai-skill-implement-test & an-dr-ai-skill-test & an-dr-convention-agent-skill & an-dr-dev-test & an-dr-dev-write-documentation & an-dr-convention-agent-skill-testing
     an-dr-agents-repo-install --> an-dr-ai-skill-test
     an-dr-agents-repo-modify --> an-dr-agents-repo-convention-skills & an-dr-agents-repo-install & an-dr-agents-repo-verify-installation & an-dr-ai-review-instruction & an-dr-ai-use-user-interface & an-dr-ai-skill-implement-test & an-dr-ai-skill-test & an-dr-ai-write-instruction & an-dr-convention-agent-skill & an-dr-convention-markdown & an-dr-convention-script & an-dr-git-modify-history

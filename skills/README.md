@@ -83,6 +83,7 @@ Skills that exist for maintaining and installing this repository itself. No skil
 | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
 | [`an-dr-agents-analyze-session`](_repository/an-dr-agents-analyze-session/SKILL.md)                   | Propose process improvements after a handover or on request.                                |
 | [`an-dr-agents-repo-build-dependencies`](_repository/an-dr-agents-repo-build-dependencies/SKILL.md)   | Build the skill dependency diagram from the declarations and mark skills that declare none. |
+| [`an-dr-agents-repo-build-release`](_repository/an-dr-agents-repo-build-release/SKILL.md)             | Version this repository and publish it as the agents-<version>.zip release.                 |
 | [`an-dr-agents-repo-convention-skills`](_repository/an-dr-agents-repo-convention-skills/SKILL.md)     | Name this repository's skills <group>-<verb>[-<noun>] with a verb from its own list.        |
 | [`an-dr-agents-repo-install`](_repository/an-dr-agents-repo-install/SKILL.md)                         | Install this clone globally for local AI tools instead of per repository.                   |
 | [`an-dr-agents-repo-modify`](_repository/an-dr-agents-repo-modify/SKILL.md)                           | Change this repository's own instructions and land them after approval.                     |
