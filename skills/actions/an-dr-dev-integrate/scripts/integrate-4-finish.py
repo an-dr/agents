@@ -148,10 +148,14 @@ def tmp_paths(base: str) -> list[str]:
 
 
 def assert_no_tmp(base: str) -> None:
-    """Refuse to land a branch whose history still carries tmp files."""
+    """Refuse to land a branch whose history still carries tmp files or DO-NOT-MERGE commits."""
     paths = tmp_paths(base)
     if paths:
         raise Failure(f"The branch still carries tmp files ({', '.join(paths)}); run integrate-3-rebase.py first.")
+    merge_base = git("merge-base", base, "HEAD").strip()
+    marked = [s for s in git("log", "--format=%s", f"{merge_base}..HEAD").splitlines() if s.startswith("DO-NOT-MERGE:")]
+    if marked:
+        raise Failure(f"The branch still carries DO-NOT-MERGE commits ({'; '.join(marked)}); remove them first.")
 
 
 def squash_point(base: str) -> str:

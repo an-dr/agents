@@ -19,6 +19,7 @@ Defers: questions to `an-dr-ai-use-user-interface`; messages to `an-dr-git-modif
 - Integration itself only on the user's explicit request in their own words; a finished review, an accepted delivery, or green checks are not that request. Confirm the branch and its base with one `an-dr-ai-use-user-interface` confirmation before anything changes.
 - It integrates whatever branch it is given. The base is `-BaseBranch` when given, else the branch it started from — the branch config `branch.<name>.an-dr-base`, or `workflow.baseBranch` in `tmp-agent-wip.json` read through `an-dr-ai-use-wip-data` — else the default branch. The workflow controller writes that branch config when the work branch is created, and step 3 writes it again before stripping the file.
 - Files and folders whose names start with `tmp-` or `.tmp-` never land: step 3 strips them from every commit after the base, drops commits that held nothing else, and deletes them from disk; steps 4 and 5 refuse while any remains.
+- A `DO-NOT-MERGE:` commit never lands: one that held only tmp files is dropped by the strip, step 3 refuses one that changes anything else, and steps 4 and 5 refuse while any remains.
 - Opening a draft request and addressing review comments need no such request: they change nothing on the base.
 
 ## Through the request

@@ -20,6 +20,8 @@ class Failure(Exception):
 # Work files every flow keeps beside the code: tmp-agent-wip.json, the progress
 # page, generated reports. Any file or folder whose name starts with tmp- or
 # .tmp-, at any depth. They travel on a work branch and never land.
+# Subject prefix of temporary commits that never land.
+DO_NOT_MERGE = "DO-NOT-MERGE:"
 TMP_PATHSPEC = (":(glob)**/tmp-*", ":(glob)**/tmp-*/**", ":(glob)**/.tmp-*", ":(glob)**/.tmp-*/**")
 
 
@@ -191,6 +193,11 @@ def strip_tmp_history(base: str) -> None:
             if tree == git("rev-parse", f"{new_parent}^{{tree}}").strip():
                 pruned += 1
                 continue
+            if git("show", "-s", "--format=%s", commit).startswith(DO_NOT_MERGE):
+                raise Failure(
+                    f"Commit {commit[:9]} is marked {DO_NOT_MERGE} but changes files beyond tmp ones; "
+                    "drop or rewrite it before landing."
+                )
             message = "\n".join(git("show", "-s", "--format=%B", commit).splitlines())
             Path(message_path).write_text(f"{message}\n", encoding="utf-8", newline="")
             meta = "".join(git("show", "-s", "--format=%an%x00%ae%x00%aI%x00%cn%x00%ce%x00%cI", commit).splitlines())

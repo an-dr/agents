@@ -46,7 +46,9 @@ ENTRY_TARGET_LENGTH = 72
 ENTRY_MAX_COUNT = 5
 FOOTER_PATTERN = re.compile(r"^(BREAKING CHANGE|[A-Za-z][A-Za-z-]*): \S|^[A-Za-z][A-Za-z-]* #\S")
 MARKDOWN_PATTERN = re.compile(r"`|\*\*|\]\(|^#{1,6} ")
-SUBJECT_PATTERN = re.compile(r"^(?P<type>[A-Za-z]+)(?:\((?P<scope>[^)]*)\))?(?P<break>!)?: (?P<summary>.*)$")
+SUBJECT_PATTERN = re.compile(r"^(?P<type>[A-Za-z-]+)(?:\((?P<scope>[^)]*)\))?(?P<break>!)?: (?P<summary>.*)$")
+# The subject type of a temporary commit that must not reach the base branch.
+DO_NOT_MERGE = "DO-NOT-MERGE"
 SCOPE_PATTERN = re.compile(r"[a-z0-9][a-z0-9-]*")
 # Trailer keys that credit a second party, and prose that names a tool as the
 # author. A tool named as the subject of the work is not attribution and passes.
@@ -102,11 +104,17 @@ def subject_violations(subject: str, allowed_scope: tuple[str, ...] | list[str] 
         )
     else:
         commit_type = match.group("type")
-        if commit_type not in COMMIT_TYPES:
+        if commit_type == DO_NOT_MERGE:
+            # A temporary commit integration removes; it names no area and breaks nothing.
+            if match.group("scope") is not None or match.group("break"):
+                found.append(
+                    Violation("error", "subject.do-not-merge", f"'{DO_NOT_MERGE}:' takes no scope and no '!'.")
+                )
+        elif commit_type not in COMMIT_TYPES:
             found.append(
                 Violation("error", "subject.type", f"Type '{commit_type}' is not one of: {', '.join(COMMIT_TYPES)}.")
             )
-        if match.group("scope") is not None:
+        if match.group("scope") is not None and commit_type != DO_NOT_MERGE:
             scope = match.group("scope")
             if not SCOPE_PATTERN.fullmatch(scope):
                 found.append(Violation("error", "subject.scope", f"Scope '{scope}' must be lowercase."))

@@ -47,6 +47,11 @@ class CommitMessageTests(unittest.TestCase):
         violations = RULES["commit_message_violations"]("feature: add the export")
         self.assertIn("Type 'feature' is not one of:", violations[0].detail)
 
+    def test_do_not_merge_subject(self) -> None:
+        self.assertEqual(rules_of("DO-NOT-MERGE: record the handover state"), [])
+        self.assertIn("subject.do-not-merge", rules_of("DO-NOT-MERGE(workflow): record the state"))
+        self.assertIn("subject.type", rules_of("DONT-MERGE: record the state"))
+
     def test_body_must_be_entry_lines(self) -> None:
         prose = "feat: add the export\n\nThis paragraph explains the change at length."
         self.assertEqual(rules_of(prose), ["body.prose"])

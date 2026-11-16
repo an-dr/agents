@@ -28,6 +28,7 @@ BREAKING CHANGE: what breaks
 
 - `type(scope)!: summary`; `!` marks a breaking change.
 - Type: `feat`, `fix`, `docs`, `refactor`, `test`, `style`, `chore`, `build`, `ci`, `perf`, `revert`, nothing else. Two types means two commits.
+- `DO-NOT-MERGE: summary`, without scope or `!`, marks a temporary commit that must be removed before integration, such as the workflow's handover state.
 - Scope required when the change is confined to one component, omitted when genuinely cross-cutting.
 - Only scopes listed under `## Commit scopes` in the host's root `AGENTS.md`; a new scope is added to that list first, never per commit.
 - Imperative mood, lowercase first word, no trailing period, at most 72 characters including type and scope.

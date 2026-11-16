@@ -52,7 +52,7 @@ class TmpFilesTests(unittest.TestCase):
             save_commit("dev.txt", "dev", "chore: dev work")
             git("push", "-q", "-u", "origin", "dev")
             git("switch", "-q", "-c", "vibe/x")
-            save_commit("tmp-agent-wip.json", STATE, "chore: record workflow state")
+            save_commit("tmp-agent-wip.json", STATE, "DO-NOT-MERGE: record workflow state")
             save_commit("feature.txt", "feature", "feat: add the feature")
             save_commit("docs/.tmp-ai-gen/report.html", "r", "chore: keep a report")
             save_commit("src/tmp_buffer.txt", "kept", "feat: add a buffer that is not a tmp file")
@@ -77,7 +77,7 @@ class TmpFilesTests(unittest.TestCase):
             self.assertFalse((work / "tmp-agent-wip.json").exists(), "The state file stayed on disk.")
             self.assertTrue((work / "src/tmp_buffer.txt").exists(), "A file that only contains tmp was stripped.")
             subjects = git("log", "--format=%s", "dev..HEAD").stdout.splitlines()
-            self.assertNotIn("chore: record workflow state", subjects, "A tmp-only commit was kept.")
+            self.assertNotIn("DO-NOT-MERGE: record workflow state", subjects, "A tmp-only commit was kept.")
             self.assertIn("feat: add the feature", subjects, "A real commit was lost.")
             recorded = git("config", "--get", "branch.vibe/x.an-dr-base").stdout.strip()
             self.assertEqual(recorded, "dev", "The base was not recorded in the branch config.")
@@ -90,6 +90,34 @@ class TmpFilesTests(unittest.TestCase):
             self.assertNotEqual(git("rev-parse", "main").stdout, git("rev-parse", "dev").stdout, "main moved.")
 
         print("Tmp-file checks passed: base from state, strip, refusal, landing on dev.")
+
+    def test_do_not_merge_with_real_changes_is_refused(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="integrate-dnm-") as temporary:
+            origin = Path(temporary) / "origin.git"
+            work = Path(temporary) / "work"
+
+            def git(*arguments: str) -> subprocess.CompletedProcess:
+                return subprocess.run(["git", *arguments], cwd=work, capture_output=True, text=True, check=False)
+
+            def save_commit(path: str, content: str, message: str) -> None:
+                (work / path).write_text(content, encoding="utf-8")
+                git("add", "-f", "--", path)
+                git("commit", "-q", "-m", message)
+
+            subprocess.run(["git", "init", "-q", "--bare", "-b", "main", str(origin)], capture_output=True, text=True, check=True)
+            subprocess.run(["git", "clone", "-q", str(origin), str(work)], capture_output=True, text=True, check=True)
+            git("config", "user.email", "test@example.invalid")
+            git("config", "user.name", "Test")
+            save_commit("README.md", "base", "chore: initial")
+            git("push", "-q", "origin", "main")
+            git("switch", "-q", "-c", "vibe/y")
+            save_commit("tmp-agent-wip.json", STATE.replace('"dev"', '"main"'), "DO-NOT-MERGE: record workflow state")
+            save_commit("debug.txt", "local only", "DO-NOT-MERGE: keep a debug switch")
+            rebase = subprocess.run([sys.executable, str(SCRIPTS / "integrate-3-rebase.py"), "--wip-data-skill", str(WIP_DATA_SKILL)],
+                                    cwd=work, capture_output=True, text=True, check=False)
+            output = rebase.stdout + rebase.stderr
+            self.assertNotEqual(rebase.returncode, 0, f"A DO-NOT-MERGE commit with real changes was landed: {output}")
+            self.assertIn("DO-NOT-MERGE", output)
 
 
 if __name__ == "__main__":
