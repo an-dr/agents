@@ -222,6 +222,9 @@ def get_state(context: Context) -> dict:
     # HANDOVER, and landing is the separate an-dr-dev-integrate skill.
     if state.get("phase") in ("MERGE", "INTEGRATE"):
         state["phase"] = "HANDOVER"
+    # Vibe's DELIVER and LAND became HANDOVER: integration left the flow.
+    if state.get("flow") == "Vibe" and state.get("phase") in ("DELIVER", "LAND"):
+        state["phase"] = "HANDOVER"
     # START collected nothing; INTAKE collects the request list. A workflow
     # written before the rename resumes at the phase that replaced it, and its
     # requirements -- mandatory back then -- already satisfy the INTAKE exit.
@@ -255,7 +258,7 @@ def get_state(context: Context) -> dict:
 def workflow_phases(flow: str) -> list[str]:
     # Vibe has no gates; its stages only show where the work is.
     if flow == "Vibe":
-        return ["BUILD", "VERIFY", "DELIVER", "LAND"]
+        return ["BUILD", "VERIFY", "COMMIT", "HANDOVER"]
     if flow == "Supervised":
         return ["INTAKE", "DESIGN", "SPLIT", "BRANCH", "DOCS", "BUILD", "VERIFY", "COMMIT", "SUMMARY", "HANDOVER"]
     return [
@@ -969,7 +972,7 @@ def command_advance(args: argparse.Namespace, context: Context) -> None:
         phases = workflow_phases("Vibe")
         at = phases.index(previous_phase)
         if at >= len(phases) - 1:
-            raise WorkflowError("LAND is the last stage: an-dr-dev-integrate lands the branch and removes this state.")
+            raise WorkflowError("HANDOVER is the last stage: run finish; an-dr-dev-integrate lands the branch only when the user asks.")
         # The work branch is the one the first stage was built on.
         branch = current_branch()
         if not state.get("featureBranch") and branch and branch != state.get("baseBranch"):
@@ -1058,12 +1061,14 @@ def command_advance(args: argparse.Namespace, context: Context) -> None:
 def command_return_to_build(args: argparse.Namespace, context: Context) -> None:
     state = get_state(context)
     assert_workflow_branch(state)
-    from_phases = ("VERIFY", "DELIVER", "LAND") if state.get("flow") == "Vibe" else ("VERIFY",)
+    from_phases = ("VERIFY", "COMMIT", "HANDOVER") if state.get("flow") == "Vibe" else ("VERIFY",)
     if state.get("phase") not in from_phases:
         raise WorkflowError(
             f"Workflow can only return to BUILD from {', '.join(from_phases)}; current phase is {state.get('phase')}."
         )
     state["phase"] = "BUILD"
+    # A redo after handover reopens the work.
+    state.pop("finishedAt", None)
     state["approvals"] = [
         approval
         for approval in state.get("approvals") or []
@@ -1159,8 +1164,6 @@ def command_set_handoff(args: argparse.Namespace, context: Context) -> None:
 def command_finish(args: argparse.Namespace, context: Context) -> None:
     state = get_state(context)
     assert_workflow_branch(state)
-    if state.get("flow") == "Vibe":
-        raise WorkflowError("Vibe has no HANDOVER; an-dr-dev-integrate lands the branch and removes the state.")
     if state.get("phase") != "HANDOVER":
         raise WorkflowError(
             f"Workflow state can only be removed at HANDOVER; current state is {state.get('flow')}/{state.get('phase')}."

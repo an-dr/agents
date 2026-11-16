@@ -190,19 +190,22 @@ class FlowTests(unittest.TestCase):
         self.assert_fail("vibe has no gates", ("approve", "--gate", "implement", "--note", "x"), "no gates")
         self.assert_fail("vibe has no increments", ("add-increment", "--scope", "a", "--description", "b"), "no gates")
         self.assert_pass("vibe build->verify", "advance")
-        self.assert_pass("vibe verify->deliver", "advance")
+        self.assert_pass("vibe verify->commit", "advance")
         self.assert_pass("vibe redo", "return-to-build")
         for number in range(1, 4):
             self.assert_pass(f"vibe advance {number}", "advance")
-        self.assert_fail("vibe land is last", ("advance",), "LAND is the last stage")
-        self.assert_fail("vibe has no finish", ("finish",), "Vibe has no HANDOVER")
+        self.assert_fail("vibe handover is last", ("advance",), "HANDOVER is the last stage")
+        self.assert_pass("vibe finish", "finish")
+        self.assertIn("finishedAt", self.state(), "Vibe finish did not mark the state handed over.")
+        self.assert_pass("vibe redo after handover", "return-to-build")
+        self.assertNotIn("finishedAt", self.state(), "A redo did not reopen the handed-over work.")
         self.assert_fail("vibe does not switch", ("switch-flow", "--flow", "Supervised"), "Vibe does not switch")
         state = self.state()
         self.assertEqual(state["featureBranch"], "vibe/x", f"Vibe did not record its branch: {state['featureBranch']}")
         self.assertEqual(self.git("config", "--get", "branch.vibe/x.an-dr-base"), "dev", "The base was not written to the branch config.")
         self.assertEqual(len(state["handoff"]["next"]), 2, "The handoff list was not stored.")
         page = (self.repo / "tmp-agent-progress.html").read_text(encoding="utf-8")
-        if "LAND" not in page or "integrates onto <b>dev</b>" not in page:
+        if "HANDOVER" not in page or "integrates onto <b>dev</b>" not in page:
             self.fail("Vibe page lacks its stages or base.")
 
     # A state from before the move resumes from .progress/workflow.json.

@@ -101,19 +101,20 @@ flowchart TD
   C -- yes --> SU[Supervised]
 ```
 
-**Vibe** — you judge the behaviour, not the code. The agent builds, tests, and reviews on a `vibe/<slug>` branch, then hands over one command, artefact, or screenshot that shows the change, what was tested, and its limits. You answer with one word.
+**Vibe** — you judge the behaviour, not the code. The agent builds, tests, and reviews on a `vibe/<slug>` branch, then hands over one command, artefact, or screenshot that shows the change, what was tested, and its limits.
 
 ```mermaid
-flowchart TD
-  S([Vibe request]) --> B[Build and verify]
-  B --> H[Hand over result]
-  H --> C{Your choice}
-  C -- land --> L[Integrate and delete branch]
-  C -- redo --> B
-  C -- drop --> D[Delete branch]
-  L --> E([Done])
-  D --> E
+stateDiagram-v2
+  direction LR
+  [*] --> BUILD
+  BUILD --> VERIFY
+  VERIFY --> COMMIT
+  COMMIT --> HANDOVER
+  HANDOVER --> BUILD: redo
+  HANDOVER --> [*]
 ```
+
+At HANDOVER you try the result and answer with one word: `redo` sends it back to BUILD, `drop` deletes the branch, and `land` is your request to integrate it, which `an-dr-dev-integrate` carries out outside the flow.
 
 **Spec-driven** — you shape the design; the agent does the rest. The documentation is the review surface: you check that the docs say what you agreed and that the behaviour matches the docs, with the change report and the pull request beside them.
 

@@ -32,8 +32,8 @@ STAGES = {
     "Vibe": {
         "BUILD": "The agent builds the change",
         "VERIFY": "The agent tests and reviews it",
-        "DELIVER": "You try it: land, redo, or drop",
-        "LAND": "Integrated onto the base; tmp files stripped",
+        "COMMIT": "The agent commits and pushes the branch",
+        "HANDOVER": "You try it: land, redo, or drop",
     },
     "Supervised": {
         "INTAKE": "You close the request list: intake",
@@ -179,7 +179,7 @@ def render(root: Path, skill_folder: Path) -> None:
         waiting = "Waiting for you to verify this increment."
     elif (phase in ("SUMMARY", "FINAL_REVIEW") and flow_label != "Spec-driven") or phase == "FINAL_REVIEW":
         waiting = "Waiting for your review: accept, or comments."
-    elif phase == "DELIVER":
+    elif phase == "HANDOVER" and flow_label == "Vibe":
         waiting = "Waiting for you to try it: land, redo, or drop."
     else:
         waiting = None

@@ -28,7 +28,7 @@ python <skill>/scripts/workflow.py start --flow SpecDriven [--on-base] [--goal '
 ```
 
 - Start on the branch the work returns to: it is recorded as `baseBranch`, which `an-dr-dev-integrate` lands onto.
-- `Vibe`: stages `BUILD`, `VERIFY`, `DELIVER`, `LAND`, with no gates, requests, or increments; `advance` moves on, `return-to-build` is redo, and `an-dr-dev-integrate` performs `LAND` and removes the state.
+- `Vibe`: stages `BUILD`, `VERIFY`, `COMMIT`, `HANDOVER`, with no gates, requests, or increments; `advance` moves on, `finish` ends `HANDOVER` with the result handed over, and `return-to-build` is redo, also after `finish`.
 - `SpecDriven`: design discussion closed by `implement`, then the agent runs every increment unattended to `FINAL_REVIEW`, where the user reviews docs, change report, and pull request and gives `accept`; `HANDOVER` then cleans the branch for integration. `--on-base` only when the user asks for it on the base branch: no work branch, no pull request.
 - `Supervised`: closed intake, approved plan, work branch, docs before each increment's code, per-increment user verification, a summary the user accepts, then `HANDOVER`.
 - No flow integrates by itself: it ends with a handed-over branch. Landing it is `an-dr-dev-integrate`, run only when the user asks.
@@ -61,7 +61,7 @@ python <script> finish
 - Every state-changing command also renders `tmp-agent-progress.html` at the host root through `scripts/render-progress-page.py`: the stage table with the current stage marked, then what waits on the user, increments, questions, the handoff, and recent steps. It adds the page to `.git/info/exclude` and removes it when no state exists.
 - `set-handoff` replaces one handoff field whole: `goal` takes one text, `done`, `next`, `openQuestions`, `decisions`, and `files` take entries separated by ` | ` or newlines.
 - `advance` rejects missing approvals or increments, wrong branches, uncommitted increments, and illegal transitions.
-- `return-to-build` records a failed verification, invalidates the increment's verification approval, and resumes BUILD with the same increment identity; in Vibe it is redo, from `VERIFY`, `DELIVER`, or `LAND`.
+- `return-to-build` records a failed verification, invalidates the increment's verification approval, and resumes BUILD with the same increment identity; in Vibe it is redo, from `VERIFY`, `COMMIT`, or `HANDOVER`.
 - Before `add-increment`, `move-increment`, `defer-increment`, or `remove-increment`, read [references/increments.md](references/increments.md).
 - Before proposing or running `switch-flow`, read [references/switch-flow.md](references/switch-flow.md).
 
