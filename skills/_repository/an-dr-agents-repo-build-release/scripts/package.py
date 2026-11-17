@@ -19,11 +19,15 @@ def package(root: Path, out: Path, tag: str | None) -> Path:
     version = version_file.read_text(encoding="utf-8-sig").strip()
     if not re.fullmatch(r"\d+\.\d+\.\d+", version):
         raise ValueError(f"VERSION '{version}' is not MAJOR.MINOR.PATCH.")
-    if tag and tag != f"v{version}":
-        raise ValueError(f"Tag '{tag}' does not match VERSION {version}; expected v{version}.")
-    if tag and not (root / "docs" / "releases" / f"{version}.md").is_file():
-        raise ValueError(f"No release notes at docs/releases/{version}.md.")
-    name = f"agents-{version}"
+    label = version
+    if tag:
+        match = re.fullmatch(rf"v{re.escape(version)}(-pre\.[1-9]\d*)?", tag)
+        if not match:
+            raise ValueError(f"Tag '{tag}' does not match VERSION {version}; expected v{version} or v{version}-pre.<n>.")
+        label = tag[1:]
+        if not (root / "docs" / "releases" / f"{version}.md").is_file():
+            raise ValueError(f"No release notes at docs/releases/{version}.md.")
+    name = f"agents-{label}"
     required = [root / path for path in ("AGENTS.md", "README.md", "VERSION", "LICENSE", "skills/README.md")]
     for path in required:
         if not path.is_file():

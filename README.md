@@ -41,10 +41,10 @@ Unseen decisions are the risk in AI development. This repository lets you choose
 
 ## 📦 Installation
 
-Install Git and Python 3 first. The [PowerShell setup skill](skills/actions/an-dr-env-install-powershell/SKILL.md) remains for repositories whose tools still need `pwsh`.
+Install Git and Python 3 first. `main` holds the latest release; `dev` carries unreleased work. The [PowerShell setup skill](skills/actions/an-dr-env-install-powershell/SKILL.md) remains for repositories whose tools still need `pwsh`.
 
 ```sh
-git clone https://github.com/an-dr/agents.git
+git clone -b main https://github.com/an-dr/agents.git
 cd agents
 python skills/_repository/an-dr-agents-repo-install/scripts/install-agents.py
 python skills/_repository/an-dr-agents-repo-install/scripts/verify-agents.py
@@ -185,7 +185,7 @@ Generated skill outputs live under `.tmp-ai-gen/` according to the [artifact lay
 
 ## 📦 Releases
 
-Each release is a version in [VERSION](VERSION), with notes in [docs/releases/](docs/releases/), published on GitHub as `agents-<version>.zip`: the policy, this README, the license, and every skill except those under `skills/_repository`, which only maintain this repository. Day-to-day amendments land on `dev`; `main` only receives tested commits through the release skill's promotion. The [release skill](skills/_repository/an-dr-agents-repo-build-release/SKILL.md) builds and publishes it.
+Each release is a version in [VERSION](VERSION), with notes in [docs/releases/](docs/releases/), published on GitHub as `agents-<version>.zip`: the policy, this README, the license, and every skill except those under `skills/_repository`, which only maintain this repository. Releases are tagged `v<version>` on `main`, and pre-releases `v<version>-pre.<n>` on `dev`, published as GitHub pre-releases. Day-to-day amendments land on `dev`; `main` only receives promoted releases and hotfixes. The [release skill](skills/_repository/an-dr-agents-repo-build-release/SKILL.md) owns these branch and tag rules and builds and publishes each release.
 
 ## 📚 Documentation
 
@@ -357,7 +357,7 @@ This repository values transparency about how software is made, and it encourage
 
 ## 🤝 Contributing
 
-Follow [AGENTS.md](AGENTS.md) for changes to this repository, use the [skill convention](skills/conventions/an-dr-convention-agent-skill/SKILL.md) when changing skills, and run the repository checks before proposing a change. Keep generated artifacts out of commits. This repository keeps no ADRs: state every decision in the skill or policy that owns it, so the skills and [AGENTS.md](AGENTS.md) are the record.
+See [CONTRIBUTING.md](CONTRIBUTING.md): pull requests target `dev`, and the repository checks must pass.
 
 ## 📄 License
 

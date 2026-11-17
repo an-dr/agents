@@ -38,6 +38,11 @@ class PackageTests(unittest.TestCase):
                 self.assertIn(f"agents-1.2.3/{required}", names)
             self.assertFalse(any("_repository" in name for name in names))
             self.assertRegex((out / "SHA256SUMS").read_text(encoding="utf-8"), r"^[0-9a-f]{64}  agents-1\.2\.3\.zip$")
+            pre = invoke("v1.2.3-pre.2")
+            self.assertEqual(pre.returncode, 0, pre.stderr)
+            self.assertEqual(Path(pre.stdout.strip()).name, "agents-1.2.3-pre.2.zip")
+            for bad in ("v1.2.3-pre.0", "v1.2.3-pre2", "v1.2.3-rc.1"):
+                self.assertNotEqual(invoke(bad).returncode, 0, bad)
             wrong = invoke("v9.9.9")
             self.assertNotEqual(wrong.returncode, 0)
             self.assertIn("does not match VERSION", wrong.stderr)

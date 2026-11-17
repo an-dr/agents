@@ -22,6 +22,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          version="${GITHUB_REF_NAME#v}"
-          gh release create "$GITHUB_REF_NAME" out/agents-"$version".zip out/SHA256SUMS \
-            --title "agents $version" --notes-file "docs/releases/$version.md"
+          label="${GITHUB_REF_NAME#v}"
+          version="${label%%-pre.*}"
+          prerelease=()
+          if [ "$label" != "$version" ]; then prerelease=(--prerelease); fi
+          gh release create "$GITHUB_REF_NAME" out/agents-"$label".zip out/SHA256SUMS "${prerelease[@]}" \
+            --title "agents $label" --notes-file "docs/releases/$version.md"
