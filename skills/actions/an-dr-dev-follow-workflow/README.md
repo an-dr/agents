@@ -1,90 +1,37 @@
 # an-dr-dev-follow-workflow
 
-The workflow controller: it keeps every flow's state in one file, `tmp-agent-wip.json`, and runs the two gated flows, Spec-driven and Supervised, so that phases, approvals, questions, increments, and the handoff live in a file rather than in the agent's memory of the chat.
+The workflow controller: it keeps every flow's state in one file, `tmp-agent-wip.json`, and enforces the common path and each flow's approvals, so the stage, approvals, questions, build iterations, and the handoff live in a file rather than in the agent's memory of the chat.
 
 ## When it runs
 
-- You choose a flow for a task: **Vibe**, **Spec-driven**, or **Supervised**.
+- You choose a flow for a task: **Vibe**, **Spec**, or **Supervised**.
 - A repository already holds `tmp-agent-wip.json`; every response then starts from the controller's status table.
-- Work moves to another machine, or the plan's increments need reordering.
-
-**Vibe** uses it for its stages (build, verify, deliver, land), its handoff, and the branch it returns to; it has no gates, only your land, redo, or drop.
+- Work moves to another machine, or the plan's build iterations need reordering.
 
 ## How it works
 
-The controller is one script, `scripts/workflow.py`. Each command reads the state, checks that the transition is legal (approval present, right branch, increment committed, no open question before `implement`), writes the new state, and refuses anything else. The agent can therefore not skip a gate by forgetting it.
+Every flow walks the common path described in the [root README](../../../README.md#-how-the-flows-work): Request → Design → Plan → build iterations (Implement → Verify → Commit) → Approval → Handover. The controller is one script, `scripts/workflow.py`. Each command reads the state, checks that the transition is legal — approval present, right branch, iteration committed, no open question before the design is approved — writes the new state, and refuses anything else, so the agent cannot skip an approval by forgetting it.
 
-### Spec-driven
+Whatever the agent cannot settle alone becomes a recorded question. It keeps exploring and brings the questions to you together.
 
-You shape the design; the agent does everything else and comes back with documentation, a change report, and a pull request.
+## What you decide
 
-```mermaid
-stateDiagram-v2
-  direction LR
-  [*] --> INTAKE
-  INTAKE --> DESIGN
-  DESIGN --> SPLIT
-  SPLIT --> BRANCH: you say implement
-  BRANCH --> DOCS
-  DOCS --> BUILD
-  BUILD --> VERIFY: agent verifies
-  VERIFY --> COMMIT
-  COMMIT --> DOCS: next increment
-  COMMIT --> SUMMARY: last increment
-  SUMMARY --> FINAL_REVIEW
-  FINAL_REVIEW --> HANDOVER: you say accept
-  HANDOVER --> [*]: branch ready to integrate
-```
+| Flow       | You approve                                                       |
+| ---------- | ----------------------------------------------------------------- |
+| Vibe       | the result, by running it                                         |
+| Spec       | the design, then the result                                       |
+| Supervised | the scope, the design, the plan, each build iteration, the result |
 
-- INTAKE and DESIGN are one conversation: requests, options, questions. It ends with a short design summary.
-- After `implement`, the agent works unattended on `spec/<slug>`. A draft pull request opens at the first push and its CI runs on every increment.
-- At FINAL_REVIEW you read the docs, the report, and the diff if you want, comment on the request, and give `accept` when satisfied. HANDOVER then regroups the commits, strips the workflow state, and pushes a clean branch; nothing is merged until you ask for it with `an-dr-dev-integrate`.
-- On request it runs on the base branch instead: no branch, no pull request.
-
-### Supervised
-
-Every gate is yours, including each increment's verification.
-
-```mermaid
-stateDiagram-v2
-  direction LR
-  [*] --> INTAKE
-  INTAKE --> DESIGN: you say intake
-  DESIGN --> SPLIT
-  SPLIT --> BRANCH: you say implement
-  BRANCH --> DOCS
-  DOCS --> BUILD
-  BUILD --> VERIFY
-  VERIFY --> COMMIT: you verify
-  VERIFY --> BUILD: you reject
-  COMMIT --> DOCS: next increment
-  COMMIT --> SUMMARY: last increment
-  SUMMARY --> HANDOVER: you say accept
-  HANDOVER --> [*]: branch ready to integrate
-```
-
-### Questions instead of interruptions
-
-Whatever the agent cannot settle alone becomes a recorded question. It keeps exploring and brings the questions to you together. `implement` is refused while any question is open, so nothing is built on an unanswered choice.
+You approve in your own words; the agent records them with the controller.
 
 ## What you get
 
 - `tmp-agent-wip.json` at the repository root — the state, including the base branch the work returns to and the handoff; committed with the work branch so another machine can resume it.
-- `tmp-agent-progress.html` at the repository root — a live page that reloads every five seconds: the stage table with the current stage marked, what waits on you, increments, questions, the handoff, and recent steps. It is regenerated by every controller command, so keeping it current costs the agent nothing, and it never enters git.
-- At the end, a handed-over branch: commits regrouped, the request ready, the state marked handed over. Integrating it is a separate step you ask for; it lands on the recorded base and strips every `tmp-` file from the history on the way.
-
-## What you decide
-
-| Gate        | Spec-driven               | Supervised                 |
-| ----------- | ------------------------- | -------------------------- |
-| `intake`    | —                         | the request list is closed |
-| `implement` | the design and plan stand | the plan stands            |
-| `verify`    | — (agent records it)      | each increment             |
-| `accept`    | after the final review    | after the summary          |
-
-You can also switch between the two flows before anything is built; requests, questions, and answers carry over.
+- `tmp-agent-progress.html` at the repository root — a live page, grouped by the common path, with the current stage marked, what waits on you, build iterations, questions, the handoff, and recent steps. It never enters git, and `finish` removes it.
+- At the end, a handed-over branch: commits regrouped, `tmp-` files stripped, and the state in one `DO-NOT-MERGE:` commit at the tip, ready to integrate when you ask.
 
 ## Related skills
 
-- [an-dr-dev-integrate](../an-dr-dev-integrate/README.md) — the pull request, and the merge when you ask for it.
+- [an-dr-dev-integrate](../an-dr-dev-integrate/README.md) — integrates the handed-over branch when you ask.
 - [an-dr-git-modify-history](../an-dr-git-modify-history/README.md) — every commit and its automatic push.
+- [an-dr-convention-branch-name](../../conventions/an-dr-convention-branch-name/README.md) — how the work branch is named.

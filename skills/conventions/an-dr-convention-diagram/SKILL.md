@@ -28,7 +28,7 @@ A diagram costs what the reader holds in mind at once, not its node count. The l
 | Measure                       | Limit                                                                                               |
 | ----------------------------- | --------------------------------------------------------------------------------------------------- |
 | Items: nodes + labelled edges | 7; start and end markers do not count, nor a one-word outcome (`yes`, `no`) leaving a decision node |
-| Levels                        | 1: no `subgraph` or composite state                                                                 |
+| Levels                        | 1: no `subgraph` or composite state, except boundaries marked as below                              |
 | Loops                         | 1 edge back to an earlier step                                                                      |
 | Edge label                    | 2 words, and only for a trigger or a decision outcome                                               |
 | Left-to-right run             | 4 nodes; longer runs go top to bottom                                                               |
@@ -54,7 +54,7 @@ A diagram within every limit is left as it is. A generated reference graph that 
 
 - A diagram appears when structure or flow is the point; never for what one sentence says.
 - `flowchart`, not the experimental `C4*` types, which lay out unreliably.
-- A layer diagram may keep `subgraph` boundaries when the boundaries are the point and the inside of each holds no more than the budget.
+- A layer or phase diagram may keep `subgraph` or composite-state boundaries when the boundaries are the point, each frames leaf nodes only, and the whole stays within the item budget; it carries a `%% diagram-budget: boundaries <reason>` line.
 - Meaning is marked with shape, line style, and `classDef` stroke, not fixed fills, so light and dark themes stay readable; styling is explained in a legend or caption.
 - No Mermaid keyword as a node id (`graph`, `flowchart`, `subgraph`, `end`, `class`, `classDef`, `style`, `click`, `default`, `direction`); such a diagram fails to parse.
 

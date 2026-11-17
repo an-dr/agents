@@ -1,6 +1,6 @@
 ---
 name: an-dr-dev-integrate
-description: Integrate a branch into its base — the branch it started from, else the default branch — through its pull or merge request with the repository's merge method, or locally by rebasing and keeping, regrouping, or squashing its commits when no platform is available. Use only when the user explicitly asks to integrate, merge, or land a branch; also opens draft requests and addresses review comments.
+description: Integrate a branch into its base — the branch it started from, else the default branch — through its pull or merge request with the repository's merge method, or locally by rebasing and keeping, regrouping, or squashing its commits when no platform is available. Use only when the user explicitly asks to integrate, merge, or land a branch, or to open a request or address its review comments.
 license: MIT
 allowed-tools: Read Grep Glob Bash Python
 metadata:
@@ -12,15 +12,15 @@ metadata:
 
 # Integrate
 
-Defers: questions to `an-dr-ai-use-user-interface`; messages to `an-dr-git-modify-history`, checked by `an-dr-convention-commit-message`.
+Defers: questions to `an-dr-ai-use-user-interface`; the state to `an-dr-ai-use-wip-data`; messages to `an-dr-git-modify-history`, checked by `an-dr-convention-commit-message`.
 
 ## When it runs
 
 - Integration itself only on the user's explicit request in their own words; a finished review, an accepted delivery, or green checks are not that request. Confirm the branch and its base with one `an-dr-ai-use-user-interface` confirmation before anything changes.
-- It integrates whatever branch it is given. The base is `-BaseBranch` when given, else the branch it started from — the branch config `branch.<name>.an-dr-base`, or `workflow.baseBranch` in `tmp-agent-wip.json` read through `an-dr-ai-use-wip-data` — else the default branch. The workflow controller writes that branch config when the work branch is created, and step 3 writes it again before stripping the file.
-- Files and folders whose names start with `tmp-` or `.tmp-` never land: step 3 strips them from every commit after the base, drops commits that held nothing else, and deletes them from disk; steps 4 and 5 refuse while any remains.
-- A `DO-NOT-MERGE:` commit never lands: one that held only tmp files is dropped by the strip, step 3 refuses one that changes anything else, and steps 4 and 5 refuse while any remains.
-- Opening a draft request and addressing review comments need no such request: they change nothing on the base.
+- It integrates whatever branch it is given. The base is `-BaseBranch` when given, else `workflow.baseBranch` of the handed-over state read through `an-dr-ai-use-wip-data`, else the branch config `branch.<name>.an-dr-base` that step 3 writes before dropping the state, else the default branch.
+- It changes no commit to make a branch landable. Step 3 drops the `DO-NOT-MERGE:` commits at the tip by moving the branch back past them; steps 2, 4, and 5 refuse while any remains.
+- Steps 1 and 3 refuse a branch the handover did not leave clean: a revert (`Revert "…"`, a `revert:` type, or a `This reverts commit` line), a `DO-NOT-MERGE:` commit below work that lands or changing files beyond `tmp-` ones, or a `tmp-`/`.tmp-` file in a commit that lands. Report the refusal; the fix belongs to the branch's owner.
+- Opening a request and addressing review comments need only the user's ask for them: they change nothing on the base.
 
 ## Through the request
 
@@ -36,7 +36,7 @@ Only when the request path is unavailable, and after saying what is missing. Bef
 
 ## Run the steps
 
-Scripts are in `<skill>/scripts/`; each exits non-zero on failure. `<an-dr-convention-commit-message>` is that convention's folder, wherever it was loaded from; scripts take it as a parameter instead of guessing.
+Scripts are in `<skill>/scripts/`; each exits non-zero on failure. `<an-dr-convention-commit-message>` and `<an-dr-ai-use-wip-data>` are those skills' folders, wherever they were loaded from; scripts take them as parameters instead of guessing. Every step also takes `--wip-data-skill <an-dr-ai-use-wip-data>`, left out of the table.
 
 | Step                                  | Command                                                                                                                                                                           |
 | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -47,11 +47,9 @@ Scripts are in `<skill>/scripts/`; each exits non-zero on failure. `<an-dr-conve
 | 4 — finish                            | `python integrate-4-finish.py --mode <Commits\|Squash\|Request\|RebaseMerge> [--message '<msg>' --commit-message-skill <an-dr-convention-commit-message>] [--base-branch <name>]` |
 | 5 — rebase-merge (`RebaseMerge` only) | `python integrate-5-rebase-merge.py --tested-commit <sha> [--base-branch <name>]`                                                                                                 |
 
-Every script also takes `--wip-data-skill <an-dr-ai-use-wip-data>`, through which it reads the base the work started from.
-
 1. Run step 1. Check the recent log for WIP commits and the base-to-HEAD log for topic commits.
-2. WIP commits at the tip → step 2 squash, `<hash>` = the commit before the first WIP, with a clean message.
-3. Run step 3 (fetch + rebase); fix conflicts where it pauses.
+2. Run step 3 (drop the `DO-NOT-MERGE:` tip, fetch, rebase); fix conflicts where it pauses.
+3. WIP commits at the tip → step 2 squash, `<hash>` = the commit before the first WIP, with a clean message.
 4. Run step 1 again, then:
    - `Commits` → step 4 `--mode Commits`.
    - `Squash`, `Request` → step 4 with `--message`; it collapses itself, step 2 is not rerun. Compose the message with `an-dr-git-modify-history`; it is validated before anything is rewritten.
@@ -60,7 +58,7 @@ Every script also takes `--wip-data-skill <an-dr-ai-use-wip-data>`, through whic
 
 ## Interactive script
 
-For a human: `python <skill>/scripts/integrate.py --commit-message-skill <an-dr-convention-commit-message>`; it asks the mode and refuses to proceed without an answer.
+For a human: `python <skill>/scripts/integrate.py --commit-message-skill <an-dr-convention-commit-message> --wip-data-skill <an-dr-ai-use-wip-data>`; it asks the mode and refuses to proceed without an answer.
 
 ## Rules
 

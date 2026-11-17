@@ -57,6 +57,9 @@ def blocks(text: str, extension: str) -> list[tuple[int, str]]:
 def measure(source: str, max_label_words: int) -> Measure | str | None:
     all_lines = [line.strip() for line in source.splitlines() if line.strip()]
     exempt = any(re.match(r"^%%\s*diagram-budget:\s*exempt(?:\s|$)", line) for line in all_lines)
+    # Boundaries that are the point of the diagram -- layers, phases -- frame
+    # leaf nodes only, so they may draw one level of groups and no deeper.
+    boundaries = any(re.match(r"^%%\s*diagram-budget:\s*boundaries(?:\s|$)", line) for line in all_lines)
     lines = [line for line in all_lines if not line.startswith("%%")]
     if not lines:
         return None
@@ -120,7 +123,8 @@ def measure(source: str, max_label_words: int) -> Measure | str | None:
             add_node(match.group(1))
     loops = sum(source_id != "[*]" and target_id != "[*]" and order.index(target_id) <= order.index(source_id) for source_id, target_id, _ in edges)
     labelled = sum(bool(label) and source_id != "[*]" and target_id != "[*]" and not (source_id in decisions and len(label.split()) == 1) for source_id, target_id, label in edges)
-    return Measure(len(order), labelled, 1 + max_depth, loops, direction, long_labels)
+    levels = 1 + max(0, max_depth - 1) if boundaries else 1 + max_depth
+    return Measure(len(order), labelled, levels, loops, direction, long_labels)
 
 
 def main() -> int:

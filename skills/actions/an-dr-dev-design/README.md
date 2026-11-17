@@ -4,7 +4,7 @@ Structures a design decision that is deeper than a quick pick — an options tab
 
 ## When it runs
 
-During a Spec-driven or Supervised DESIGN phase, or when a Vibe design question turns out deeper than expected.
+When a design question turns out deeper than a quick pick.
 
 ## How it works
 
@@ -28,7 +28,7 @@ A decision you can see the reasoning for, an ADR when it is architectural, and a
 
 ## What you decide
 
-The option. The agent never presents a single "correct" solution; in Spec-driven it does the work after DESIGN, but the design is yours.
+The option. The agent never presents a single "correct" solution; the design is yours.
 
 ## Related skills
 

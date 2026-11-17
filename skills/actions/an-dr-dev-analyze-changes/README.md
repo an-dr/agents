@@ -4,7 +4,7 @@ Produces one HTML report of a finished change — what changed and why, new and 
 
 ## When it runs
 
-- At the acceptance gate of every Spec-driven or Supervised flow.
+- When you ask for a report of a finished change.
 - After a delivery that adds a component, adds an ADR, or changes the architecture.
 - After any other code delivery, only if you accept the one-line offer.
 
@@ -28,7 +28,7 @@ Problems are marked with the dark-cockpit levels, so a clean change reads quietl
 
 ## What you get
 
-A `change-report` HTML page, linked from the pull request in gated flows, with the path or link in the reply.
+A `change-report` HTML page, with the path or link in the reply.
 
 ## Related skills
 

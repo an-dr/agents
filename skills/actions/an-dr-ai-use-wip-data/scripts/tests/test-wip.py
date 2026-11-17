@@ -27,7 +27,7 @@ class WipTests(unittest.TestCase):
             self.assertEqual(run("get", "--section", "workflow", "--reader", "an-dr-dev-follow-workflow").stdout.strip(), "null")
             self.assertEqual(run("set", *owner, "--json-path", str(state)).returncode, 0)
             self.assertTrue((root / "tmp-agent-wip.json").is_file())
-            self.assertEqual(run("get", "--section", "workflow", "--field", "baseBranch", "--reader", "an-dr-dev-integrate").stdout.strip(), '"dev"')
+            self.assertEqual(run("get", "--section", "workflow", "--field", "phase", "--reader", "an-dr-agents-repo-verify-installation").stdout.strip(), '"BUILD"')
             whole = json.loads(run("get", "--section", "workflow", "--reader", "an-dr-dev-follow-workflow").stdout)
             self.assertEqual(whole["phase"], "BUILD")
 
@@ -35,8 +35,8 @@ class WipTests(unittest.TestCase):
                 ("unknown section", "Unknown section", ("get", "--section", "nope", "--reader", "x")),
                 ("foreign writer", "belongs to", ("set", "--section", "workflow", "--owner", "an-dr-dev-integrate", "--json-path", str(state))),
                 ("unlisted reader", "may not read section", ("get", "--section", "workflow", "--field", "phase", "--reader", "an-dr-dev-review")),
-                ("unlisted field", "may not read 'workflow.phase'", ("get", "--section", "workflow", "--field", "phase", "--reader", "an-dr-dev-integrate")),
-                ("whole-section read", "named fields", ("get", "--section", "workflow", "--reader", "an-dr-dev-integrate")),
+                ("unlisted field", "may not read 'workflow.baseBranch'", ("get", "--section", "workflow", "--field", "baseBranch", "--reader", "an-dr-agents-repo-verify-installation")),
+                ("whole-section read", "named fields", ("get", "--section", "workflow", "--reader", "an-dr-agents-repo-verify-installation")),
             ):
                 with self.subTest(label=label):
                     result = run(*arguments)

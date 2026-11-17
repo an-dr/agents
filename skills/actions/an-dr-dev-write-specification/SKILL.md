@@ -23,7 +23,7 @@ flowchart LR
   W -->|none of these| Q[Ask the user]
 ```
 
-- Ask naming the work and why it is unclear; in a gated flow, record it as a controller question first.
+- Ask naming the work and why it is unclear.
 - Never guess in either direction.
 
 ## Establish the context
@@ -66,8 +66,7 @@ Derive it from the use cases: each use case traces through it, each part serves 
 | Architecture      | `docs/architecture.md`, or the host's existing architecture document, extended rather than duplicated |
 | Lasting decisions | ADRs                                                                                                  |
 
-- Gated flow → draft in `tmp-specification.md` at the host root during read-only phases, shown before the `implement` gate; final documents written in the first DOCS phase, then the draft deleted.
-- Vibe → final documents written before the code and named in the delivery.
+- Final documents written before the code, or a draft where the caller asks for one.
 
 ## Rules
 

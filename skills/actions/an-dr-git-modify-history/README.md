@@ -4,7 +4,7 @@ Every commit the agent makes goes through this skill, so history reads as a list
 
 ## When it runs
 
-- Whenever work is ready to commit, in every flow.
+- Whenever work is ready to commit.
 - Before any push or integration, to regroup commits not yet delivered.
 - When existing messages on an unpushed branch break the commit format.
 
@@ -23,8 +23,9 @@ flowchart LR
 ```
 
 - **Regroup first.** Fixes fold into the commit they fix, add-then-remove pairs disappear, small changes in one area merge, and unrelated concerns stay apart.
-- **Checked messages.** A script assembles the Conventional Commits message and commits only when the format checker passes.
-- **Work branches are pushed automatically.** `vibe/`, `spec/`, and `supervised/` branches are pushed after every commit, which backs up the work and lets another machine continue it. They stay rewritable, pushed with `--force-with-lease`, except while their request is under review. The base branch is never pushed from here.
+- **Checked messages.** A repository with its own message style keeps it; otherwise a script assembles the Conventional Commits message and commits only when the format checker passes.
+- **Work branches are pushed automatically.** A flow's work branch is pushed after every commit, which backs up the work and lets another machine continue it. They stay rewritable, pushed with `--force-with-lease`, except while their request is under review. The base branch is never pushed from here.
+- **No work files in handed-over commits.** A handover strips every `tmp-` file from the work commits and keeps the files on disk.
 - **Safe rewrites.** Rewriting messages validates every replacement first, keeps a backup ref, preserves authors and dates, and aborts if the resulting tree differs.
 
 ## What you get

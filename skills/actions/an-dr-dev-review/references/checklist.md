@@ -33,7 +33,7 @@ Judged against `an-dr-concept-clean-dependencies` and the Architecture, Names an
 - stale references to removed code;
 - a missing ADR for a new public contract or ADR exception;
 - formatting-only or mechanical changes mixed into behaviour changes;
-- a SUMMARY branch whose commits cannot each be reviewed and bisected as one concern → `high`.
+- a whole branch whose commits cannot each be reviewed and bisected as one concern → `high`.
 
 ## Diagrams
 

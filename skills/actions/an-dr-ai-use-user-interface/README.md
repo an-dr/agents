@@ -4,7 +4,7 @@ How the agent talks to you in any tool: questions through the host's own questio
 
 ## When it runs
 
-Whenever a reply shows a table, relays script output, asks you to choose or confirm, or reads your answer — in every flow and every skill.
+Whenever a reply shows a table, relays script output, asks you to choose or confirm, or reads your answer — in every skill.
 
 ## How it works
 

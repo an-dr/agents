@@ -55,9 +55,7 @@ def workflow_base_branch(wip_data_skill: str) -> str:
         [sys.executable, str(script), "get", "--section", "workflow", "--field", "baseBranch", "--reader", "an-dr-dev-integrate"],
         capture_output=True, text=True, encoding="utf-8", errors="replace", check=False)
     text = (result.stdout if result.returncode == 0 else "").strip()
-    if not text or text == "null":
-        return ""
-    value = json.loads(text)
+    value = json.loads(text) if text else None
     return "" if value is None else str(value)
 
 
@@ -68,16 +66,16 @@ def resolve_base(requested: str, wip_data_skill: str) -> str:
             raise Failure(f"Local base branch '{requested}' does not exist.")
         return requested
 
-    # The branch the work started from: recorded in the branch's config once
-    # its tmp files are stripped, and in tmp-agent-wip.json until then.
+    # The branch the work started from: the handed-over state names it, and
+    # step 3 copies it to the branch config before it drops that state.
+    from_state = workflow_base_branch(wip_data_skill)
+    if from_state and local_branch_exists(from_state):
+        return from_state
     current = git_tolerant("branch", "--show-current")[1].strip()
     if current:
         recorded = git_tolerant("config", "--get", f"branch.{current}.an-dr-base")[1].strip()
         if recorded and local_branch_exists(recorded):
             return recorded
-        from_state = workflow_base_branch(wip_data_skill)
-        if from_state and local_branch_exists(from_state):
-            return from_state
 
     code, remote_head = git_tolerant("symbolic-ref", "--quiet", "--short", "refs/remotes/origin/HEAD")
     if code == 0 and remote_head.strip():
@@ -98,23 +96,22 @@ def run_step(name: str, arguments: list[str]) -> int:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--wip-data-skill", "-WipDataSkill", required=True, help="folder of the an-dr-ai-use-wip-data skill")
     parser.add_argument("--commit-message-skill", "-CommitMessageSkill", required=True, help="folder of the an-dr-convention-commit-message skill")
     parser.add_argument("--base-branch", "-BaseBranch", default="", help="base branch (default: the branch the work started from)")
+    parser.add_argument("--wip-data-skill", "-WipDataSkill", required=True, help="folder of the an-dr-ai-use-wip-data skill")
     args = parser.parse_args()
     try:
         base = resolve_base(args.base_branch, args.wip_data_skill)
         code = run_step("integrate-1-check.py", ["--base-branch", base, "--wip-data-skill", args.wip_data_skill])
         if code:
             return code
-        print()
-        confirm = input("WIP commits at the tip are already squashed (or none exist)? [y/N]: ")
-        if confirm not in ("y", "Y"):
-            raise Failure("Integration cancelled before rebase.")
-
         code = run_step("integrate-3-rebase.py", ["--base-branch", base, "--wip-data-skill", args.wip_data_skill])
         if code:
             return code
+        print()
+        confirm = input("WIP commits at the tip are already squashed (or none exist)? [y/N]: ")
+        if confirm not in ("y", "Y"):
+            raise Failure("Integration cancelled after the rebase; the base is untouched.")
         code = run_step("integrate-1-check.py", ["--base-branch", base, "--wip-data-skill", args.wip_data_skill])
         if code:
             return code

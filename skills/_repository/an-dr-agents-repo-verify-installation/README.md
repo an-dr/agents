@@ -20,7 +20,7 @@ flowchart TD
 
 - A script checks the machine and repository layers and prints one table.
 - Pickup can only be checked inside the session: can the tool state the flows and commands without reading a file, does it list the skills, did it ask the three-way flow question only when nothing was selected?
-- The real task is then compared with its flow — a `vibe/` branch with no controller state for Vibe; controller state and a work branch for Spec-driven and Supervised.
+- The real task is then compared with its flow — controller state and a work branch while any flow is active.
 
 The first broken layer explains the symptom; fixing a later one changes nothing. Diagnosis never starts paid agent sessions.
 

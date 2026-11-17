@@ -4,7 +4,7 @@ Writes or updates human-facing project documentation — guides, design and arch
 
 ## When it runs
 
-In Vibe work and in the DOCS phase of a gated flow. In Spec-driven, the docs it writes are the spec you review at the end.
+Whenever a change needs its documentation written or updated, before the code.
 
 ## How it works
 
@@ -18,7 +18,7 @@ flowchart TD
   R["README — orientation and links"] -.-> U
 ```
 
-- **Timing.** In a gated flow the increment is documented before its code exists; in Vibe the docs are updated before the behaviour changes and delivered together.
+- **Timing.** The docs are updated before the behaviour changes and delivered together.
 - **When.** Any change to a public interface, architecture, or observable behaviour is documented in the same delivery. An ordinary refactoring or an already-correct document is left alone.
 - **How.** It describes what the system does now, in present tense and the file's established style. Every sentence passes the slop cut test. A lasting architectural decision becomes an ADR.
 - **Checked.** Markdown is formatted and checked, every internal link resolves, and each layer is checked against the one above it.

@@ -4,7 +4,7 @@ A retrospective on the process itself: it finds where the workflow caused fricti
 
 ## When it runs
 
-After a Spec-driven or Supervised flow hands over its branch, or when you ask for a retrospective.
+After a Spec or Supervised flow hands over its branch, or when you ask for a retrospective.
 
 ## How it works
 

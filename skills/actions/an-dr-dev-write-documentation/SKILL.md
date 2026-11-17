@@ -1,6 +1,6 @@
 ---
 name: an-dr-dev-write-documentation
-description: Write or update human-facing project documentation, including design and architecture prose, during Vibe work or gated DOCS. Use for documentation content and structure; Markdown mechanics and README rewrites have their own skills.
+description: Write or update human-facing project documentation, including design and architecture prose, before the code changes. Use for documentation content and structure; Markdown mechanics and README rewrites have their own skills.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
@@ -16,8 +16,7 @@ Defers: Markdown format to `an-dr-convention-markdown`, diagrams to `an-dr-conve
 ## Scope
 
 - In scope: `docs/`, README files, project guides. Out: agent-loaded instructions.
-- Gated DOCS → document the increment before code exists; leave the change for the increment's commit.
-- Vibe → update documentation before the behaviour change; deliver both together.
+- Update documentation before the behaviour change; deliver both together.
 - Public interface, architecture, or observable behaviour changed → document in the same delivery; with `docs/use-cases/`, update the capability's use case.
 - Ordinary refactoring → no documentation update.
 - Already-correct document → leave it alone.

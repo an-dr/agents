@@ -1,44 +1,67 @@
 ---
 name: an-dr-dev-follow-workflow
-description: Run, resume, and enforce the repository's workflow state for Vibe, Spec-driven, or Supervised, with the gates of the latter two. Use when the user selects a flow, tmp-agent-wip.json exists, the handoff needs rewriting, state must move to another machine, or increments must be inserted or reordered.
+description: Run, resume, and enforce Vibe, Spec, or Supervised along the common path and each flow's approvals. Use when the user selects a flow, tmp-agent-wip.json exists, the handoff needs rewriting, work moves to another machine, or build iterations change.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "3.0.0"
+  version: "4.0.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-ai-use-wip-data an-dr-convention-adr an-dr-dev-analyze-changes an-dr-dev-debug an-dr-dev-design an-dr-dev-implement-code an-dr-dev-implement-pipeline an-dr-dev-integrate an-dr-dev-review an-dr-dev-test an-dr-dev-write-documentation an-dr-dev-write-readme an-dr-dev-write-specification an-dr-git-modify-history
+  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-ai-use-wip-data an-dr-convention-adr an-dr-convention-branch-name an-dr-dev-analyze-changes an-dr-dev-debug an-dr-dev-design an-dr-dev-implement-code an-dr-dev-implement-pipeline an-dr-dev-integrate an-dr-dev-review an-dr-dev-test an-dr-dev-write-documentation an-dr-dev-write-readme an-dr-dev-write-specification an-dr-git-modify-history
 ---
 
 # Workflow controller
 
-Owns: the `workflow` section of `tmp-agent-wip.json`, every flow's state, kept through `an-dr-ai-use-wip-data`, and the phase transitions and approval gates of Spec-driven and Supervised, through `scripts/workflow.py`.
+Owns: the `workflow` section of `tmp-agent-wip.json`, every flow's state, kept through `an-dr-ai-use-wip-data`, and the transitions and approvals of every flow, through `scripts/workflow.py`.
 
 ## Start or resume
 
 1. From the host root, locate this skill relative to the active `AGENTS.md`; `<script>` below is `<skill>/scripts/workflow.py`. Every command also takes `--wip-data-skill <an-dr-ai-use-wip-data>`, left out of the examples below.
-2. While `tmp-agent-wip.json` holds a `workflow` section, run `status` first in every response and present its Markdown table verbatim, as its `user-output: verbatim` markers require. That table, not the JSON file or the conversation, decides phase, gates, and open questions.
+2. While `tmp-agent-wip.json` holds a `workflow` section, run `status` first in every response and present its Markdown table verbatim, as its `user-output: verbatim` markers require. That table, not the JSON file or the conversation, decides the stage, the approvals, and open questions.
 3. Command fails → quote the command and its error and stop; never reconstruct state from the file.
-4. No active state → start as soon as the flow is chosen; only `--flow` is required; pass whichever of the four facts the request makes plain, and `INTAKE` collects the rest.
+4. No active state → start as soon as the flow is chosen, on the branch the work returns to; it is recorded as the base. Only `--flow` is required; pass whichever of the four facts the request makes plain.
 
 ```sh
-python <skill>/scripts/workflow.py status
-python <skill>/scripts/workflow.py start --flow Vibe
-python <skill>/scripts/workflow.py start --flow Supervised [--goal '<problem>']
-python <skill>/scripts/workflow.py start --flow SpecDriven [--on-base] [--goal '<problem>']
+python <script> status
+python <script> start --flow Vibe|Spec|Supervised [--goal '<problem>']
 ```
 
-- Start on the branch the work returns to: it is recorded as `baseBranch`, which `an-dr-dev-integrate` lands onto.
-- `Vibe`: stages `BUILD`, `VERIFY`, `COMMIT`, `HANDOVER`, with no gates, requests, or increments; `advance` moves on, `finish` ends `HANDOVER` with the result handed over, and `return-to-build` is redo, also after `finish`.
-- `SpecDriven`: design discussion closed by `implement`, then the agent runs every increment unattended to `FINAL_REVIEW`, where the user reviews docs, change report, and pull request and gives `accept`; `HANDOVER` then cleans the branch for integration. `--on-base` only when the user asks for it on the base branch: no work branch, no pull request.
-- `Supervised`: closed intake, approved plan, work branch, docs before each increment's code, per-increment user verification, a summary the user accepts, then `HANDOVER`.
-- No flow integrates by itself: it ends with a handed-over branch. Landing it is `an-dr-dev-integrate`, run only when the user asks.
-- Each flow only when the user selects it; never inferred from a request for autonomy or end-only involvement.
-- State written by retired flows resumes as their successor (`Detailed` → `Supervised`, `DetailedAuto` → `SpecDriven`); a `Quick` state is refused with instructions.
+The controller's stages map onto the common path:
 
-## Plan and work by phase
+| Common path      | Spec and Supervised stages                                       | Vibe stages                 |
+| ---------------- | ---------------------------------------------------------------- | --------------------------- |
+| Request          | `INTAKE`                                                         | —                           |
+| Design           | `DESIGN`                                                         | —                           |
+| Plan             | `SPLIT`                                                          | —                           |
+| Build iterations | `BRANCH`, then per iteration `DOCS`, `BUILD`, `VERIFY`, `COMMIT` | `BUILD`, `VERIFY`, `COMMIT` |
+| Approval         | `SUMMARY`                                                        | `HANDOVER`, before `finish` |
+| Handover         | `HANDOVER`                                                       | `HANDOVER`                  |
 
-- `INTAKE`, `DESIGN`, and `SPLIT` are read-only: no edit, branch, or commit. In them, read [references/planning.md](references/planning.md) before recording requests or presenting the plan.
-- From `DOCS` on, read [references/phases.md](references/phases.md) for the skills and checks of the current phase.
+- Vibe keeps no requests or build iterations; `return-to-build` is its redo and drops the result approval.
+- State from a retired flow resumes as its successor (`Detailed` → `Supervised`, `DetailedAuto` and `SpecDriven` → `Spec`); a `Quick` state is refused with instructions.
+
+## Work by stage
+
+- `INTAKE`, `DESIGN`, and `SPLIT` are read-only: no edit, branch, or commit. In them, read [references/planning.md](references/planning.md).
+- From `BRANCH` on, read [references/phases.md](references/phases.md) for the skills and checks of the current stage, and at `SUMMARY` [references/summary.md](references/summary.md).
+
+## Approvals
+
+| Gate              | Stage      | Flows            | The user approves               |
+| ----------------- | ---------- | ---------------- | ------------------------------- |
+| `scope-approved`  | `INTAKE`   | Supervised       | the request list as complete    |
+| `design-approved` | `DESIGN`   | Spec, Supervised | the design                      |
+| `plan-approved`   | `SPLIT`    | Supervised       | the plan of build iterations    |
+| `step-approved`   | `VERIFY`   | Supervised       | one build iteration             |
+| `result-approved` | `SUMMARY`  | Spec, Supervised | the result                      |
+| `result-approved` | `HANDOVER` | Vibe             | the built result, by running it |
+
+```sh
+python <script> approve --gate design-approved --note '<the user's words>'
+```
+
+- Show what is being approved, then read the user's reply: one that plainly approves passes the gate, one that asks for changes does not; when unsure, ask one `an-dr-ai-use-user-interface` confirmation.
+- `--note` holds the user's words that approved it. The controller records approvals and never supplies them.
+- A request recorded after the scope approval drops it. `design-approved` is refused while a question is open.
 
 ## Operate the workflow
 
@@ -46,7 +69,6 @@ python <skill>/scripts/workflow.py start --flow SpecDriven [--on-base] [--goal '
 python <script> add-question --text '<what the user must decide>'
 python <script> answer-question --number 2 --answer '<the user's answer>'
 python <script> dismiss-question --number 3 --answer '<why it stopped mattering>'
-python <script> approve --gate intake --note '<the user's own words>'
 python <script> advance
 python <script> return-to-build
 python <script> switch-flow --flow Supervised
@@ -58,34 +80,12 @@ python <script> set-handoff --handoff-field next --items '<entry> | <entry>'
 python <script> finish
 ```
 
-- Every state-changing command also renders `tmp-agent-progress.html` at the host root through `scripts/render-progress-page.py`: the stage table with the current stage marked, then what waits on the user, increments, questions, the handoff, and recent steps. It adds the page to `.git/info/exclude` and removes it when no state exists.
-- `set-handoff` replaces one handoff field whole: `goal` takes one text, `done`, `next`, `openQuestions`, `decisions`, and `files` take entries separated by ` | ` or newlines.
-- `advance` rejects missing approvals or increments, wrong branches, uncommitted increments, and illegal transitions.
-- `return-to-build` records a failed verification, invalidates the increment's verification approval, and resumes BUILD with the same increment identity; in Vibe it is redo, from `VERIFY`, `COMMIT`, or `HANDOVER`.
-- Before `add-increment`, `move-increment`, `defer-increment`, or `remove-increment`, read [references/increments.md](references/increments.md).
-- Before proposing or running `switch-flow`, read [references/switch-flow.md](references/switch-flow.md).
-
-## Gates
-
-| Gate        | Where                                            | Meaning                                        |
-| ----------- | ------------------------------------------------ | ---------------------------------------------- |
-| `intake`    | Supervised `INTAKE`                              | the user says the request list is complete     |
-| `implement` | `SPLIT` in both flows                            | the user has seen the plan and says build it   |
-| `verify`    | Supervised `VERIFY`, once per increment          | the user accepts that increment's verification |
-| `accept`    | Supervised `SUMMARY`, Spec-driven `FINAL_REVIEW` | the user accepts the delivered branch          |
-
-- The controller names the gate it expects. Spec-driven refuses `intake` and `verify`; it settles intake in the design discussion and records verification itself. `DESIGN` has no gate.
-- Ask each user gate as an `an-dr-ai-use-user-interface` confirmation, never a closing line like "reply implement": show the plan, increment, or summary first, then, in the same message, one approving option and one asking for a change.
-- `--note` is the chosen label plus any notes the user added; a widget choice counts as their own words; any other answer leaves the gate closed.
-- A request recorded after `intake` approval drops it; the user closes the longer list again.
-- The controller records approval evidence and never supplies it, in Spec-driven too, where review, tests, doc checks, and clean commits still run between `implement` and final review.
-
-## Questions
-
-- `add-question` records, at any phase, what the agent cannot settle alone, instead of interrupting.
-- `answer-question` and `dismiss-question` both require `--answer`; a dismissal records why it stopped mattering.
-- Ask accumulated questions as one `an-dr-ai-use-user-interface` round; pass each echoed decision as `--answer`.
-- `approve --gate implement` is refused while any question is open, listing the offenders.
+- An increment is a build iteration.
+- Every state-changing command renders `tmp-agent-progress.html` at the host root, grouped by the common path; it is excluded from git and removed at `finish` and when no state exists.
+- `set-handoff` replaces one handoff field whole: `goal` takes one text; `done`, `next`, `openQuestions`, `decisions`, and `files` take entries separated by ` | ` or newlines.
+- `advance` rejects missing approvals or iterations, wrong branches, uncommitted iterations, and illegal transitions.
+- `return-to-build` resumes `BUILD` for the same iteration and drops its step approval.
+- Before changing iterations, read [references/increments.md](references/increments.md); before `switch-flow`, read [references/switch-flow.md](references/switch-flow.md).
 
 ## Share and finish
 

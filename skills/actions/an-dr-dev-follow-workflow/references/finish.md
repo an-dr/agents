@@ -1,5 +1,5 @@
 # Share and finish
 
 - `tmp-agent-wip.json` is committable: commit it at each checkpoint in its own `DO-NOT-MERGE: <summary>` commit, never mixed with work, which the work branch's automatic push carries to the remote; never add it to an ignore file. A state from before the move, `.progress/workflow.json`, is moved to the root by the next command.
-- Every path whose name starts with `tmp-` or `.tmp-` is a work file. It may travel on the work branch; `an-dr-dev-integrate` strips it from every commit and refuses to land while one remains, so nothing else needs to remove it.
-- `finish` runs last in `HANDOVER`. On a work branch it marks the state handed over and keeps it, since `an-dr-dev-integrate` reads the base from it; commit that change the same way. On the base branch (`--on-base`) it deletes the state; commit the deletion. Vibe runs it too, once the result is handed over.
+- Every path whose name starts with `tmp-` or `.tmp-` is a work file. It travels on the work branch until the handover strips it from the work commits.
+- `finish` runs in `HANDOVER` after the result is approved, in every flow. It marks the state handed over and keeps it; committed as the branch's one `DO-NOT-MERGE:` commit, it names the base for `an-dr-dev-integrate` on any machine.

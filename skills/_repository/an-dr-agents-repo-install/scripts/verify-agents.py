@@ -97,7 +97,7 @@ def build_block(agents_root: Path, supports_import: bool) -> str:
             "",
             "- a root `AGENTS.md` or `CLAUDE.md` that references it;",
             "- an existing `tmp-agent-wip.json`;",
-            "- the user naming a flow (Vibe, Spec-driven, Supervised) or one of its skills.",
+            "- the user naming a flow (Vibe, Spec, Supervised) or one of its skills.",
             "",
             "Otherwise its skills stay available on request, but do not propose a flow,",
             "create a branch, or write `tmp-agent-wip.json`.",

@@ -1,11 +1,11 @@
 # an-dr-ai-use-wip-data
 
-Keeps the data of the work in progress — which flow runs, its stage, the branch it returns to, the handoff for the next session — in one file, `tmp-agent-wip.json`, at the repository root.
+Keeps the data of the work in progress — what each skill needs between commands, sessions, or machines — in one file, `tmp-agent-wip.json`, at the repository root.
 
 ## When it runs
 
-- A skill keeps state between commands, sessions, or machines, such as the workflow controller.
-- A skill reads another skill's state, such as integration reading the base branch the work started from.
+- A skill keeps state between commands, sessions, or machines.
+- A skill reads another skill's state, within the fields the register allows.
 
 ## How it works
 
@@ -13,9 +13,5 @@ One script, `scripts/wip.py`, is the only way in. Its register, `scripts/section
 
 ## What you get
 
-- `tmp-agent-wip.json` — committed on a work branch so another machine can resume the work, and stripped from history when the branch lands, like every `tmp-` file.
-
-## Related
-
-- [an-dr-dev-follow-workflow](../an-dr-dev-follow-workflow/README.md) — owns the `workflow` section.
-- [an-dr-dev-integrate](../an-dr-dev-integrate/README.md) — reads the base branch from it and strips the file before landing.
+- `tmp-agent-wip.json` — committed on a work branch so another machine can resume the work, and kept at handover in the branch's one `DO-NOT-MERGE:` commit, which integration drops.
+- [an-dr-dev-integrate](../an-dr-dev-integrate/README.md) — reads the base branch from it and drops the commit that holds it before landing.

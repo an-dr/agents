@@ -8,11 +8,10 @@ The default integration for a branch on a supported platform. "Request" means a 
 - `glab auth status` succeeds and `origin` is on GitLab → GitLab through `glab`.
 - Anything else (no remote, no CLI, no authentication, another platform) → name what is missing and use the local modes instead.
 
-## Open it early
+## Open it
 
-- At the branch's first push: `gh pr create --draft --fill --base <base>` or `glab mr create --draft --fill --target-branch <base>`.
-- One request per branch. Every later commit is pushed to it, so platform CI runs on each.
-- When the work is ready for review: put the change summary in the description, attach or link any change report, and mark it ready (`gh pr ready`, `glab mr update --ready`).
+- When the user asks to integrate the branch, or to open a request for it: `gh pr create --fill --base <base>` or `glab mr create --fill --target-branch <base>`, with the change summary in the description and any change report attached or linked.
+- One request per branch; later commits are pushed to it, so platform CI runs on each.
 
 ## Address review comments
 
@@ -27,7 +26,7 @@ When the user says to address the comments:
 
 Only on the user's explicit request to integrate:
 
-1. Run steps 1 and 3 of the skill (check, then strip tmp files and rebase); if the history is still a work log, regroup once as in [regroup.md](regroup.md). Push with `--force-with-lease`.
+1. Run steps 1 and 3 of the skill (check, then drop the `DO-NOT-MERGE:` tip and rebase); if the history is still a work log, regroup once as in [regroup.md](regroup.md). Push with `--force-with-lease`.
 2. Wait for checks to pass on the pushed commit; a failing check goes back to the user, never merged around.
 3. Merge with the repository's own merge method:
    - GitLab: `glab mr merge --remove-source-branch` applies the project's configured method.

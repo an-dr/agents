@@ -6,9 +6,8 @@ Reviews a diff for defects, security issues, structure, convention violations, s
 
 | Situation       | Diff reviewed                               |
 | --------------- | ------------------------------------------- |
-| Vibe            | the uncommitted changes for the request     |
-| VERIFY          | the increment's changes, or its last commit |
-| SUMMARY         | the whole work branch against its base      |
+| A change        | the uncommitted changes, or the last commit |
+| A whole branch  | the branch against its base                 |
 | On your request | the range or codebase you name              |
 
 ## How it works
@@ -29,7 +28,7 @@ flowchart LR
 
 ## What you get
 
-A `code-review` JSON record (the authority) and an HTML report built from it, ranked by the dark-cockpit levels. In gated flows, findings send the work back to BUILD.
+A `code-review` JSON record (the authority) and an HTML report built from it, ranked by the dark-cockpit levels. Findings send the work back to implementation.
 
 ## Related skills
 

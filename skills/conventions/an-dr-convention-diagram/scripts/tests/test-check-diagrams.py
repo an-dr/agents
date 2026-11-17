@@ -11,6 +11,8 @@ CASES = [
     ("decision-outcomes-free", ["flowchart TD", "S([Task]) --> A{Design first?}", "A -- no --> V[Vibe]", "A -- yes --> C{Each increment?}", "C -- no --> D[Spec]", "C -- yes --> E[Supervised]"], 0, ""),
     ("too-many-items", ["flowchart TD", "A --> B", "B --> C", "C --> D", "D --> E", "E --> F", "F --> G", "G --> H"], 1, "items 8 > 7"),
     ("nested-group", ["stateDiagram-v2", "[*] --> A", "state A {", "B --> C", "}"], 1, "levels 2 > 1"),
+    ("boundaries", ["stateDiagram-v2", "%% diagram-budget: boundaries phases", "state P {", "A", "}", "state Q {", "B", "}", "A --> B"], 0, ""),
+    ("boundaries-nested", ["stateDiagram-v2", "%% diagram-budget: boundaries phases", "state P {", "state Q {", "B --> C", "}", "}"], 1, "levels 2 > 1"),
     ("two-loops", ["stateDiagram-v2", "A --> B", "B --> A", "B --> C", "C --> A"], 1, "loops 2 > 1"),
     ("long-label", ["flowchart TD", "A -->|draft PR marked ready| B"], 1, "label 'draft PR marked ready'"),
     ("long-row", ["flowchart LR", "A --> B", "B --> C", "C --> D", "D --> E"], 1, "left-to-right with 5 nodes"),

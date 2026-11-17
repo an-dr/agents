@@ -27,7 +27,7 @@
       "bucket": "explicit",
       "prompt": "Use an-dr-ai-use-wip-data. Record that the current task is waiting on a design answer, so the next session can pick it up.",
       "expected_skill": "an-dr-ai-use-wip-data",
-      "context": "The repository has tmp-agent-wip.json with a workflow section owned by the workflow controller.",
+      "context": "The repository has tmp-agent-wip.json with a section owned by another skill.",
       "expected_behavior": [
         "Writes the section only through scripts/wip.py with the owning skill as --owner, never by editing tmp-agent-wip.json directly.",
         "Registers any new field in scripts/sections.json before writing it."
@@ -53,7 +53,7 @@
       "bucket": "implicit",
       "prompt": "Record that the current task is waiting on a design answer, so the next session can pick it up.",
       "expected_skill": "an-dr-ai-use-wip-data",
-      "context": "The repository has tmp-agent-wip.json with a workflow section owned by the workflow controller.",
+      "context": "The repository has tmp-agent-wip.json with a section owned by another skill.",
       "expected_behavior": [
         "Writes the section only through scripts/wip.py with the owning skill as --owner, never by editing tmp-agent-wip.json directly.",
         "Registers any new field in scripts/sections.json before writing it."
@@ -79,7 +79,7 @@
       "bucket": "contextual",
       "prompt": "Before you stop, save where we are in the work-in-progress file so another machine can continue.",
       "expected_skill": "an-dr-ai-use-wip-data",
-      "context": "A Vibe task is half done; tmp-agent-wip.json exists at the root.",
+      "context": "A task is half done; tmp-agent-wip.json exists at the root.",
       "expected_behavior": [
         "Writes the section only through scripts/wip.py with the owning skill as --owner, never by editing tmp-agent-wip.json directly.",
         "Registers any new field in scripts/sections.json before writing it."

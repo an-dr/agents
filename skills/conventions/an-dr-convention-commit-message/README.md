@@ -1,6 +1,6 @@
 # an-dr-convention-commit-message
 
-The commit message format: Conventional Commits narrowed to a typed subject, a short bullet body, footers, no Markdown, and no AI attribution.
+The commit message format when the repository has no clear style of its own: Conventional Commits narrowed to a typed subject, a short bullet body, footers, no Markdown, and no AI attribution.
 
 ## When it runs
 

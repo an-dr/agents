@@ -37,8 +37,8 @@ COMMANDS = (
     "set-handoff",
     "finish",
 )
-FLOWS = ("Vibe", "SpecDriven", "Supervised")
-GATES = ("intake", "implement", "verify", "accept")
+FLOWS = ("Vibe", "Spec", "Supervised")
+GATES = ("scope-approved", "design-approved", "plan-approved", "step-approved", "result-approved")
 REQUIREMENT_FIELDS = ("goal", "constraints", "done", "outOfScope")
 HANDOFF_FIELDS = ("goal", "done", "next", "openQuestions", "decisions", "files")
 INCREMENT_STATUSES = ("planned", "in_progress", "verified", "completed")
@@ -202,21 +202,21 @@ def get_state(context: Context) -> dict:
     if state is None:
         raise WorkflowError(f"No active workflow exists in '{context.workflow_path}'.")
     # Retired flows resume under the flow that replaced them: Detailed became
-    # Supervised unchanged, and Detailed Auto became Spec-driven, whose phases
-    # it already had. Quick has no successor with the same phases, so a Quick
+    # Supervised unchanged, and Detailed Auto and Spec-driven became Spec.
+    # Quick has no successor with the same phases, so a Quick
     # state is refused rather than reshaped into something nobody approved.
     if state.get("flow") == "Detailed":
         state["flow"] = "Supervised"
-    if state.get("flow") == "DetailedAuto":
-        state["flow"] = "SpecDriven"
+    if state.get("flow") in ("DetailedAuto", "SpecDriven"):
+        state["flow"] = "Spec"
     if state.get("flow") == "Quick":
         raise WorkflowError(
             "This workflow uses the retired Quick flow. Commit its work and delete tmp-agent-wip.json, "
-            "then start Spec-driven or Supervised, or finish it with an older controller."
+            "then start Spec or Supervised, or finish it with an older controller."
         )
-    state.setdefault("onBase", False)
+    state.pop("onBase", None)
     # Phases that no longer exist collapse into the one that replaced them.
-    if state.get("phase") in ("MR", "MERGE_READY", "INTEGRATE_READY"):
+    if state.get("phase") in ("MR", "MERGE_READY", "INTEGRATE_READY", "FINAL_REVIEW"):
         state["phase"] = "SUMMARY"
     # INTEGRATE landed the branch from inside the flow; the flow now ends at
     # HANDOVER, and landing is the separate an-dr-dev-integrate skill.
@@ -242,21 +242,33 @@ def get_state(context: Context) -> dict:
     goal = (state.get("requirements") or {}).get("goal")
     if was_start and not state.get("requests") and goal:
         state["requests"] = [{"id": uuid.uuid4().hex, "number": 1, "text": str(goal)}]
-    # Approvals under retired gate names are dropped rather than remapped: the
-    # gates they authorized no longer exist, so the user re-authorizes under the
-    # current ones. The history entries keep the record of what was approved.
-    # `integrate` was given at the same review `accept` is given at now.
+    # Gates are named for what the user did. The older keyword names map to
+    # the same moments, so their approvals carry over; `integrate` was given
+    # at the review where the result is approved now. Anything else is dropped
+    # and re-authorized; the history keeps the record of what was approved.
+    # A gate names its phase, so the phase older records carry is dropped.
+    renamed = {
+        "intake": "scope-approved",
+        "implement": "design-approved",
+        "verify": "step-approved",
+        "accept": "result-approved",
+        "integrate": "result-approved",
+    }
     approvals = state.get("approvals") or []
-    for approval in approvals:
-        if approval.get("gate") == "integrate":
-            approval["gate"] = "accept"
+    for approval in list(approvals):
+        old = approval.get("gate")
+        approval["gate"] = renamed.get(old, old)
+        approval.pop("phase", None)
+        # implement approved the design and the plan at once.
+        if old == "implement" and state.get("flow") == "Supervised":
+            approvals.append({**approval, "gate": "plan-approved"})
     state["approvals"] = [approval for approval in approvals if approval.get("gate") in GATES]
     assert_state(state)
     return state
 
 
 def workflow_phases(flow: str) -> list[str]:
-    # Vibe has no gates; its stages only show where the work is.
+    # Vibe's one gate is result-approved at HANDOVER, given on the built result.
     if flow == "Vibe":
         return ["BUILD", "VERIFY", "COMMIT", "HANDOVER"]
     if flow == "Supervised":
@@ -271,7 +283,6 @@ def workflow_phases(flow: str) -> list[str]:
         "VERIFY",
         "COMMIT",
         "SUMMARY",
-        "FINAL_REVIEW",
         "HANDOVER",
     ]
 
@@ -299,8 +310,8 @@ def assert_state(state: dict) -> None:
     assert_timestamp(state.get("updatedAt"), "updatedAt")
     if run_git("cat-file", "-e", f"{state.get('baseCommit')}^{{commit}}").returncode != 0:
         raise WorkflowError(f"Workflow base commit '{state.get('baseCommit')}' does not exist in this repository.")
-    # Vibe records stages and a handoff only; the increment, branch and gate
-    # rules below belong to the gated flows.
+    # Vibe records stages, a handoff, and its result approval only; the increment,
+    # branch and gate rules below belong to the gated flows.
     if flow == "Vibe":
         return
 
@@ -344,7 +355,7 @@ def assert_state(state: dict) -> None:
         raise WorkflowError("COMMIT phase requires commitBaseline.")
     if phase != "COMMIT" and state.get("commitBaseline"):
         raise WorkflowError(f"commitBaseline is only valid during COMMIT, not '{phase}'.")
-    if phase in ("SUMMARY", "FINAL_REVIEW", "HANDOVER") and any(
+    if phase in ("SUMMARY", "HANDOVER") and any(
         increment.get("status") != "completed" for increment in increments
     ):
         raise WorkflowError(f"Phase '{phase}' requires every increment to be completed.")
@@ -394,7 +405,7 @@ def assert_state(state: dict) -> None:
 
 def assert_gated_flow(state: dict) -> None:
     if state.get("flow") == "Vibe":
-        raise WorkflowError("Vibe has no gates, requests, or increments; it records its stages and its handoff only.")
+        raise WorkflowError("Vibe has no requests or increments, and its only gate is result-approved at HANDOVER.")
 
 
 def assert_workflow_branch(state: dict) -> None:
@@ -429,18 +440,18 @@ def save_state(context: Context, state: dict) -> None:
     state["updatedAt"] = utc_now()
     assert_state(state)
     context.wip.set(repository_root(), state)
-    # Git-side tools find the base in the work branch's config, without the file.
-    if state.get("featureBranch"):
-        run_git("config", f"branch.{state['featureBranch']}.an-dr-base", str(state.get("baseBranch")))
     update_progress_page(context.wip)
 
 
+# Each gate is given in one phase only, which approve enforces, so a gate
+# names its moment and an approval needs no phase of its own. What a later
+# change makes untrue -- a new request, a new increment, a redo -- the command
+# making that change withdraws.
 def has_approval(state: dict, gate: str) -> bool:
-    increment_id = state.get("currentIncrementId") if gate == "verify" else None
+    increment_id = state.get("currentIncrementId") if gate == "step-approved" else None
     return any(
         approval.get("gate") == gate
-        and approval.get("phase") == state.get("phase")
-        and (gate != "verify" or approval.get("incrementId") == increment_id)
+        and (gate != "step-approved" or approval.get("incrementId") == increment_id)
         for approval in state.get("approvals") or []
     )
 
@@ -505,7 +516,7 @@ def assert_increment_committed(state: dict) -> None:
 
 
 def show_status(state: dict, status: str = "active") -> None:
-    flow_label = "Spec-driven" if state.get("flow") == "SpecDriven" else state.get("flow")
+    flow_label = state.get("flow")
     if state.get("finishedAt"):
         status = "finished"
     increments = state.get("increments") or []
@@ -561,7 +572,7 @@ def show_status(state: dict, status: str = "active") -> None:
     lines.append("")
     open_count = len(open_questions(state))
     if open_count > 0:
-        lines.append(f"Open questions: {open_count} — the implement gate stays closed until each is answered or dismissed.")
+        lines.append(f"Open questions: {open_count} — the design-approved gate stays closed until each is answered or dismissed.")
     if status == "active" and phase == "INTAKE":
         requirements = state.get("requirements") or {}
         missing = [prop for prop in REQUIREMENT_FIELDS if is_blank(requirements.get(prop))]
@@ -572,7 +583,7 @@ def show_status(state: dict, status: str = "active") -> None:
     if state.get("finishedAt"):
         lines.append(
             f"Handed over: integrate onto '{state.get('baseBranch')}' with an-dr-dev-integrate when the user asks; "
-            "it strips every tmp file."
+            "it drops the DO-NOT-MERGE commit that holds this state."
         )
     requirements = state.get("requirements") or {}
     handoff = state.get("handoff") or {}
@@ -597,11 +608,6 @@ def command_start(args: argparse.Namespace, context: Context) -> None:
     # that gathers it. Any that are known up front seed the state.
     if not args.flow:
         raise WorkflowError("-Flow is required when starting a workflow.")
-    # Spec-driven may run on the base branch when the user asks for it;
-    # Supervised always gets its own branch, since its per-increment review
-    # happens in that branch's pull request.
-    if args.on_base and args.flow != "SpecDriven":
-        raise WorkflowError("-OnBase is only available for SpecDriven.")
     if args.flow == "Vibe" and work_tree_changes():
         raise WorkflowError("Vibe starts from a clean working tree; commit or stash first.")
 
@@ -616,7 +622,6 @@ def command_start(args: argparse.Namespace, context: Context) -> None:
         "baseBranch": base_branch,
         "baseCommit": git_head(),
         "featureBranch": None,
-        "onBase": bool(args.on_base),
         "requirements": {
             "goal": args.goal,
             "constraints": args.constraints,
@@ -646,41 +651,32 @@ def command_status(args: argparse.Namespace, context: Context) -> None:
 
 def command_approve(args: argparse.Namespace, context: Context) -> None:
     state = get_state(context)
-    assert_gated_flow(state)
+    if state.get("flow") == "Vibe" and not (state.get("phase") == "HANDOVER" and args.gate == "result-approved"):
+        assert_gated_flow(state)
     assert_workflow_branch(state)
     if not args.gate:
         raise WorkflowError("-Gate is required for approve.")
     if is_blank(args.note):
         raise WorkflowError("-Note is required to record the approval evidence.")
-    # The user says intake once, when the request list is complete; implement
-    # once, at the last phase before code is written; and accept once, at
-    # the review of the finished branch. Spec-driven folds intake into the
-    # design discussion and records its own per-increment verification, so
-    # its user gates are implement and accept only. Landing the branch is not
-    # a gate here: it is the separate an-dr-dev-integrate skill, run when the
-    # user asks for it.
+    # Every flow ends with the result approved. Spec adds the design;
+    # Supervised adds the scope, the design, the plan, and each build
+    # iteration. Integration is never a gate: flows do not integrate.
     phase = state.get("phase")
-    if phase == "INTAKE":
-        expected = "intake" if state.get("flow") == "Supervised" else None
-    elif phase == "SPLIT":
-        expected = "implement"
-    elif phase == "VERIFY":
-        expected = "verify" if state.get("flow") == "Supervised" else None
-    elif phase == "SUMMARY":
-        expected = "accept" if state.get("flow") == "Supervised" else None
-    elif phase == "FINAL_REVIEW":
-        expected = "accept"
-    else:
-        expected = None
-    if state.get("flow") == "SpecDriven" and phase in ("INTAKE", "VERIFY", "SUMMARY"):
-        raise WorkflowError(
-            "Spec-driven records its own intake and verification; the user approves at SPLIT and FINAL_REVIEW."
-        )
+    supervised = state.get("flow") == "Supervised"
+    expected = {
+        "INTAKE": "scope-approved" if supervised else None,
+        "DESIGN": "design-approved",
+        "SPLIT": "plan-approved" if supervised else None,
+        "VERIFY": "step-approved" if supervised else None,
+        "SUMMARY": "result-approved",
+    }.get(phase)
+    if phase == "HANDOVER" and state.get("flow") == "Vibe":
+        expected = "result-approved"
     if not expected:
         raise WorkflowError(f"{phase} has no approval gate. Advance instead.")
     if args.gate != expected:
         raise WorkflowError(f"Gate '{args.gate}' is not valid during {phase}. Expected '{expected}'.")
-    if args.gate == "implement":
+    if args.gate == "design-approved":
         waiting = open_questions(state)
         if waiting:
             detail = os.linesep.join(f"  {question.get('number')}  {question.get('text')}" for question in waiting)
@@ -692,8 +688,7 @@ def command_approve(args: argparse.Namespace, context: Context) -> None:
         *(state.get("approvals") or []),
         {
             "gate": args.gate,
-            "phase": phase,
-            "incrementId": state.get("currentIncrementId") if args.gate == "verify" else None,
+            "incrementId": state.get("currentIncrementId") if args.gate == "step-approved" else None,
             "note": args.note,
             "approvedAt": utc_now(),
         },
@@ -721,9 +716,9 @@ def command_add_request(args: argparse.Namespace, context: Context) -> None:
     request = {"id": uuid.uuid4().hex, "number": len(requests) + 1, "text": args.text}
     requests.append(request)
     state["requests"] = requests
-    # The intake approval means "this list is complete"; a later request
+    # The scope approval means "this list is complete"; a later request
     # makes it untrue, so the user closes the longer list again.
-    state["approvals"] = [approval for approval in state.get("approvals") or [] if approval.get("gate") != "intake"]
+    state["approvals"] = [approval for approval in state.get("approvals") or [] if approval.get("gate") != "scope-approved"]
     add_history_entry(state, "add-request", f"Recorded request {request['number']}: {args.text}")
     save_state(context, state)
     show_status(state)
@@ -744,7 +739,7 @@ def command_remove_request(args: argparse.Namespace, context: Context) -> None:
     for number, item in enumerate(requests, start=1):
         item["number"] = number
     state["requests"] = requests
-    state["approvals"] = [approval for approval in state.get("approvals") or [] if approval.get("gate") != "intake"]
+    state["approvals"] = [approval for approval in state.get("approvals") or [] if approval.get("gate") != "scope-approved"]
     add_history_entry(state, "remove-request", f"Removed request {args.number}: {request.get('text')}")
     save_state(context, state)
     show_status(state)
@@ -769,7 +764,7 @@ def command_set_requirement(args: argparse.Namespace, context: Context) -> None:
 
 
 # INTAKE and DESIGN collect what the agent cannot decide alone instead of
-# interrupting for each one; the implement gate is closed until none is open.
+# interrupting for each one; the design gate is closed until none is open.
 def command_add_question(args: argparse.Namespace, context: Context) -> None:
     state = get_state(context)
     assert_workflow_branch(state)
@@ -836,10 +831,10 @@ def command_add_increment(args: argparse.Namespace, context: Context) -> None:
     increments.insert(position - 1, increment)
     state["increments"] = increments
     set_increment_numbers(state)
-    if state.get("phase") in ("SUMMARY", "FINAL_REVIEW"):
+    if state.get("phase") == "SUMMARY":
         state["phase"] = "SPLIT"
         state["approvals"] = [
-            approval for approval in state.get("approvals") or [] if approval.get("gate") not in ("implement", "accept")
+            approval for approval in state.get("approvals") or [] if approval.get("gate") not in ("plan-approved", "result-approved")
         ]
     add_history_entry(state, "add-increment", f"Inserted increment {position}: {args.scope}")
     save_state(context, state)
@@ -991,31 +986,24 @@ def command_advance(args: argparse.Namespace, context: Context) -> None:
                 "Distil the requests into goal, constraints, done, and outOfScope "
                 "with set-requirement before leaving INTAKE."
             )
-        # Spec-driven settles the request list inside its design
-        # discussion, which the implement gate closes; Supervised asks
-        # for the list to be closed on its own first.
         if state.get("flow") == "Supervised":
-            assert_approval(state, "intake")
+            assert_approval(state, "scope-approved")
         state["phase"] = "DESIGN"
     elif phase == "DESIGN":
+        assert_approval(state, "design-approved")
         state["phase"] = "SPLIT"
     elif phase == "SPLIT":
         if not state.get("increments"):
             raise WorkflowError("Add at least one increment before leaving SPLIT.")
-        # Every flow buys its first written line with this approval,
-        # Spec-driven included: the plan it will execute unattended is
-        # exactly the plan the user should have seen.
-        assert_approval(state, "implement")
+        # Spec's plan is the agent's; Supervised approves it.
+        if state.get("flow") == "Supervised":
+            assert_approval(state, "plan-approved")
         state["phase"] = "BRANCH"
     elif phase == "BRANCH":
         branch = current_branch()
         if is_blank(branch):
             raise WorkflowError("Switch from detached HEAD to a feature branch before leaving BRANCH.")
-        if state.get("onBase") and branch != state.get("baseBranch"):
-            raise WorkflowError(
-                f"This Spec-driven workflow runs on '{state.get('baseBranch')}'; switch back to it before leaving BRANCH."
-            )
-        if not state.get("onBase") and branch == state.get("baseBranch"):
+        if branch == state.get("baseBranch"):
             raise WorkflowError("Create and switch to a feature branch before leaving BRANCH.")
         state["featureBranch"] = branch
         start_next_increment(state, "DOCS")
@@ -1025,7 +1013,7 @@ def command_advance(args: argparse.Namespace, context: Context) -> None:
         state["phase"] = "VERIFY"
     elif phase == "VERIFY":
         if state.get("flow") == "Supervised":
-            assert_approval(state, "verify")
+            assert_approval(state, "step-approved")
         current = current_increment(state)
         if current is not None:
             current["status"] = "verified"
@@ -1043,13 +1031,7 @@ def command_advance(args: argparse.Namespace, context: Context) -> None:
             state["currentIncrementId"] = None
             state["phase"] = "SUMMARY"
     elif phase == "SUMMARY":
-        if state.get("flow") == "SpecDriven":
-            state["phase"] = "FINAL_REVIEW"
-        else:
-            assert_approval(state, "accept")
-            state["phase"] = "HANDOVER"
-    elif phase == "FINAL_REVIEW":
-        assert_approval(state, "accept")
+        assert_approval(state, "result-approved")
         state["phase"] = "HANDOVER"
     else:
         raise WorkflowError(f"Phase {phase} cannot advance.")
@@ -1066,18 +1048,21 @@ def command_return_to_build(args: argparse.Namespace, context: Context) -> None:
         raise WorkflowError(
             f"Workflow can only return to BUILD from {', '.join(from_phases)}; current phase is {state.get('phase')}."
         )
+    previous_phase = state.get("phase")
     state["phase"] = "BUILD"
     # A redo after handover reopens the work.
-    state.pop("finishedAt", None)
+    state["finishedAt"] = None
     state["approvals"] = [
         approval
         for approval in state.get("approvals") or []
         if not (
-            approval.get("gate") == "verify"
+            approval.get("gate") == "step-approved"
             and approval.get("incrementId") == state.get("currentIncrementId")
         )
+        # A Vibe redo replaces the accepted result, so it needs a new approval.
+        and not (state.get("flow") == "Vibe" and approval.get("gate") == "result-approved")
     ]
-    add_history_entry(state, "return-to-build", "Returned from VERIFY to BUILD.")
+    add_history_entry(state, "return-to-build", f"Returned from {previous_phase} to BUILD.")
     save_state(context, state)
     show_status(state)
 
@@ -1119,8 +1104,8 @@ def command_switch_flow(args: argparse.Namespace, context: Context) -> None:
     dropped_increments = len(state.get("increments") or [])
     state["flow"] = args.flow
     # Back to INTAKE rather than to whichever phase the two flows share.
-    # The flows do not collect the same gates -- Spec-driven never asks for
-    # `intake`, Supervised cannot leave INTAKE without it -- so carrying a
+    # The flows do not collect the same gates -- Spec never approves the
+    # scope, Supervised cannot leave INTAKE without it -- so carrying a
     # phase across would credit the new flow with an approval nobody gave.
     # Reopening the request list is usually the point: the flow changed
     # because the user asked for something the old one was not sized for.
@@ -1166,25 +1151,22 @@ def command_finish(args: argparse.Namespace, context: Context) -> None:
     assert_workflow_branch(state)
     if state.get("phase") != "HANDOVER":
         raise WorkflowError(
-            f"Workflow state can only be removed at HANDOVER; current state is {state.get('flow')}/{state.get('phase')}."
+            f"Workflow can only finish at HANDOVER; current state is {state.get('flow')}/{state.get('phase')}."
         )
-    # On the base branch nothing integrates later, so the state goes now and
-    # its deletion is committed. A work branch keeps it, marked handed over:
-    # an-dr-dev-integrate reads the base from it, then strips every tmp file
-    # from every commit before the branch lands.
-    if state.get("onBase"):
-        context.wip.remove(context.root)
-        update_progress_page(context.wip)
-        print("Workflow state removed. Commit the deletion of tmp-agent-wip.json.")
-    else:
-        state["finishedAt"] = utc_now()
-        add_history_entry(state, "finish", "Handed over; waiting for integration.")
-        save_state(context, state)
-        print(
-            f"Handed over. Commit tmp-agent-wip.json; an-dr-dev-integrate lands the branch onto "
-            f"'{state.get('baseBranch')}' when the user asks."
-        )
+    # Every flow finishes the same way: the user approves the result, then the handover.
+    if state.get("flow") == "Vibe" and not has_approval(state, "result-approved"):
+        raise WorkflowError("The user must approve the built result (result-approved) before finish.")
+    # The state stays, marked handed over, and travels in the branch's one
+    # DO-NOT-MERGE commit: it names the base for an-dr-dev-integrate on any
+    # machine, which drops that commit before the branch lands.
+    state["finishedAt"] = utc_now()
+    add_history_entry(state, "finish", "Handed over; waiting for integration.")
+    save_state(context, state)
     show_status(state, "finished")
+    print(
+        "Handed over. Commit tmp-agent-wip.json as the branch's one DO-NOT-MERGE commit and push; "
+        f"an-dr-dev-integrate lands it onto '{state.get('baseBranch')}' when the user asks."
+    )
 
 
 HANDLERS = {
@@ -1234,7 +1216,6 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("command", choices=COMMANDS)
     parser.add_argument("--flow", "-Flow", choices=FLOWS)
-    parser.add_argument("--on-base", "-OnBase", action="store_true")
     parser.add_argument("--goal", "-Goal")
     parser.add_argument("--constraints", "-Constraints")
     parser.add_argument("--done", "-Done")

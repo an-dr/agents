@@ -12,7 +12,7 @@ flowchart LR
   W -->|unclear| Q[Ask you]
 ```
 
-It never guesses in either direction; in a gated flow an unclear case becomes a recorded question.
+It never guesses in either direction; an unclear case is asked.
 
 ## How it works
 

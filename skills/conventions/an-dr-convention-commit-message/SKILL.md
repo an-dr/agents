@@ -1,6 +1,6 @@
 ---
 name: an-dr-convention-commit-message
-description: The repository's commit message format — Conventional Commits narrowed to a typed subject, a one-line-per-entry bullet body, footers, no Markdown, and no AI attribution. Use when composing, reviewing, or rewriting any commit message; check-message.py in this skill enforces it.
+description: The commit message format when the host repository has no clear style of its own — Conventional Commits narrowed to a typed subject, a one-line-per-entry bullet body, footers, no Markdown, and no AI attribution. Use when composing, reviewing, or rewriting any commit message; check-message.py in this skill enforces it.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
@@ -12,6 +12,12 @@ metadata:
 # Convention: commit message
 
 Base: [Conventional Commits](https://www.conventionalcommits.org/en/about/); anything not narrowed here stays as the spec defines it.
+
+## Precedence
+
+- The host repository's own message style wins when its history shows a clear one that differs from this format.
+- Otherwise this format applies, and `check-message.py` enforces it.
+- Attribution holds in both cases.
 
 ## Format
 
@@ -28,7 +34,7 @@ BREAKING CHANGE: what breaks
 
 - `type(scope)!: summary`; `!` marks a breaking change.
 - Type: `feat`, `fix`, `docs`, `refactor`, `test`, `style`, `chore`, `build`, `ci`, `perf`, `revert`, nothing else. Two types means two commits.
-- `DO-NOT-MERGE: summary`, without scope or `!`, marks a temporary commit that must be removed before integration, such as the workflow's handover state.
+- `DO-NOT-MERGE: summary`, without scope or `!`, marks a commit that never lands, such as the workflow state; integration drops these commits at the branch tip.
 - Scope required when the change is confined to one component, omitted when genuinely cross-cutting.
 - Only scopes listed under `## Commit scopes` in the host's root `AGENTS.md`; a new scope is added to that list first, never per commit.
 - Imperative mood, lowercase first word, no trailing period, at most 72 characters including type and scope.

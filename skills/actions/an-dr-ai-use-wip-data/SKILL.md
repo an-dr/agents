@@ -35,4 +35,4 @@ python <skill>/scripts/wip.py path
 ## The file
 
 - `{ "schemaVersion": 1, "sections": { "<section>": { … } } }`, written atomically.
-- Its name starts with `tmp-`, so it travels with a work branch for another machine to resume and never lands: every `tmp-` file is stripped from a branch's history before it is integrated.
+- Its name starts with `tmp-`, so it travels with a work branch for another machine to resume and never lands: a handed-over branch keeps it only in its `DO-NOT-MERGE:` tip commit, which integration drops.

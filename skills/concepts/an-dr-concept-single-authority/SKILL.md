@@ -22,12 +22,11 @@ metadata:
 
 ## Examples
 
-| Fact                     | Authority                            | Derived                                                             |
-| ------------------------ | ------------------------------------ | ------------------------------------------------------------------- |
-| Workflow phase and gates | the workflow controller's state file | status tables, conversation recap                                   |
-| Review findings          | the review JSON                      | the rendered HTML report                                            |
-| Skill inventory          | the skill folders                    | the tables in `AGENTS.md` and `skills/README.md`, checked by script |
-| Severity meaning         | the severity ladder                  | each renderer's styling                                             |
+| Fact             | Authority           | Derived                                                             |
+| ---------------- | ------------------- | ------------------------------------------------------------------- |
+| Review findings  | the review JSON     | the rendered HTML report                                            |
+| Skill inventory  | the skill folders   | the tables in `AGENTS.md` and `skills/README.md`, checked by script |
+| Severity meaning | the severity ladder | each renderer's styling                                             |
 
 ## Violations
 

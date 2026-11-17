@@ -1,0 +1,152 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-convention-branch-name",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "python"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-convention-branch-name. Name the branch for the fix of the parser's empty-input crash.",
+      "expected_skill": "an-dr-convention-branch-name",
+      "context": "The repository's branches are task/101-login-form, task/117-cache-reset, and task/123-docs-links.",
+      "expected_behavior": [
+        "Uses the repository's own prefix style, such as task/<id>-<words>, because its branches share one.",
+        "Does not switch to Conventional Branch when the repository has a clear style."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Uses the repository's own prefix style, such as task/<id>-<words>, because its branches share one."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Does not switch to Conventional Branch when the repository has a clear style."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "BASE-002",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-convention-branch-name. Name the branch for the fix of the parser's empty-input crash.",
+      "expected_skill": "an-dr-convention-branch-name",
+      "context": "The repository has only main and no naming rule in its documents.",
+      "expected_behavior": [
+        "Proposes a Conventional Branch name such as fix/empty-input-parsing: a listed type, lowercase, hyphen-separated.",
+        "Uses no uppercase, underscore, space, or flow name as the prefix."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Proposes a Conventional Branch name such as fix/empty-input-parsing: a listed type, lowercase, hyphen-separated."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Uses no uppercase, underscore, space, or flow name as the prefix."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "What should the branch for the parser's empty-input crash fix be called?",
+      "expected_skill": "an-dr-convention-branch-name",
+      "context": "The repository has only main and no naming rule in its documents.",
+      "expected_behavior": [
+        "Proposes a Conventional Branch name such as fix/empty-input-parsing: a listed type, lowercase, hyphen-separated.",
+        "Uses no uppercase, underscore, space, or flow name as the prefix."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Proposes a Conventional Branch name such as fix/empty-input-parsing: a listed type, lowercase, hyphen-separated."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Uses no uppercase, underscore, space, or flow name as the prefix."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I'm about to start on the parser's empty-input crash. Create the work branch name first.",
+      "expected_skill": "an-dr-convention-branch-name",
+      "context": "The repository has only main and no naming rule in its documents.",
+      "expected_behavior": [
+        "Proposes a Conventional Branch name such as fix/empty-input-parsing: a listed type, lowercase, hyphen-separated.",
+        "Uses no uppercase, underscore, space, or flow name as the prefix."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Proposes a Conventional Branch name such as fix/empty-input-parsing: a listed type, lowercase, hyphen-separated."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Uses no uppercase, underscore, space, or flow name as the prefix."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Explain what a git branch is without naming one.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 1
+    }
+  ]
+}

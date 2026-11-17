@@ -10,79 +10,66 @@ You are a developer on this project. The user is the team lead. Follow these ins
 2. Resolve this file's directory; skill paths are relative to it.
 3. If `tmp-agent-wip.json` exists at the host root, run the `an-dr-dev-follow-workflow` skill's `status` command and resume exactly that state, its handoff included; see Handoff.
 4. If no files will change, use no workflow or branch. Say so and answer.
-5. If files will change and no workflow is active, use the workflow the user selected for this task. If the user has not selected one, present the numbered list below and ask which workflow to use. Do not choose, start a workflow, branch, or change files until the user selects one. Read-only exploration may continue while waiting. Start every flow, Vibe included, through the `an-dr-dev-follow-workflow` skill's `start`, on the branch the work returns to. The four requirement facts — problem, constraints, definition of done, and exclusions — are what its INTAKE or DESIGN produces, not what it needs to begin. Never invent a missing fact.
+5. If files will change and no workflow is active, use the workflow the user selected for this task. If the user has not selected one, present the numbered list below and ask which workflow to use. Do not choose, start a workflow, branch, or change files until the user selects one. Read-only exploration may continue while waiting. Start every flow, Vibe included, through the `an-dr-dev-follow-workflow` skill's `start`, on the branch the work returns to.
 
-1. **Vibe** — you judge the result, not the code: the agent builds, verifies, and hands over something you can run, on a branch you land, redo, or drop.
-1. **Spec-driven** — you shape the design, the agent does everything else, and you review the docs, the change report, and the pull request, and accept a branch handed over ready to integrate.
-1. **Supervised** — you close the intake, approve the plan, verify every increment, and accept the handed-over branch.
+1. **Vibe** — the quickest loop to delivery: you make the request, the agent does the rest, and you approve the result by running it.
+1. **Spec** — control of the system design: you make the request and approve the design, the agent plans and builds, and you approve the result.
+1. **Supervised** — full understanding of the work: you approve the scope, the design you explain, the plan, and each build iteration, then the result.
 
-The flows differ in where the user's attention goes: the result, the design and its docs, or every step. Present all three numbered choices in this order when asking. A workflow named by the user needs no second selection question. Do not infer a workflow from task size, urgency, or a request for autonomy. Start no flow while `tmp-agent-wip.json` exists.
+Present all three numbered choices in this order when asking. A workflow named by the user needs no second selection question. Do not infer a workflow from task size, urgency, or a request for autonomy. Start no flow while `tmp-agent-wip.json` exists.
 
-## Vibe
+## The common path
 
-Work without approval gates, on a new branch `vibe/<short-slug>` made from the current branch; commit to the current branch only when the user explicitly asks for it. Before the first file change, run the controller's `start -Flow Vibe` on the current branch, which records it as the base, and its `set-handoff` (see Handoff); advance through its stages BUILD, VERIFY, COMMIT and HANDOVER, end HANDOVER with `finish`, and `return-to-build` on redo. Read the request and repository context, make the smallest sound design choice, use `an-dr-dev-write-specification` first when it applies, use `an-dr-dev-write-documentation` for needed documentation, `an-dr-dev-implement-code` for code, `an-dr-dev-test` for changed code, and `an-dr-dev-review` for the diff. Fix findings and deliver the usable result in the same request. Ask only when essential information is missing, it is unclear whether a specification applies, or an action requires permission for a reason outside this workflow; continue independent work while waiting.
+Every flow walks Request → Design → Plan → build iterations → Approval → Handover, where each build iteration is Implement → Verify → Commit:
 
-The user does not read the code, so the delivery proves the change by its behaviour: one command or artefact path that shows it, or a screenshot or GIF of visible output; what was tested and what could not be; known limitations in plain words. The user answers with one of three words:
+- **Request** — distil the user's ask into four facts: problem, constraints, definition of done, and exclusions. Never invent a missing one.
+- **Design** — the approach; `an-dr-dev-write-specification` first when the work is new, `an-dr-dev-design` for a decision deeper than a quick pick.
+- **Plan** — cut the design into build iterations, each a part that can be documented, verified, and committed on its own.
+- **Implement** — the part's documentation with `an-dr-dev-write-documentation`, then its code with `an-dr-dev-implement-code`, on a work branch made from the base and named by `an-dr-convention-branch-name`.
+- **Verify** — `an-dr-dev-test` for the changed code and `an-dr-dev-review` for the diff; fix the findings.
+- **Commit** — through `an-dr-git-modify-history`; push the work branch automatically.
+- **Approval** — deliver the outcome built and ready to run: one command, artefact path, or screenshot, what was tested and what could not be, and known limits. The user approves it, asks for more, which goes back to Plan, or drops the branch.
+- **Handover** — regroup the commits, remove leftovers, strip every `tmp-` file from the work commits, run the controller's `finish`, commit the state as the one `DO-NOT-MERGE:` commit at the tip, and push: a branch ready to integrate.
 
-- **land** — an explicit integration request, outside the flow: integrate the branch onto the base recorded in `tmp-agent-wip.json` through `an-dr-dev-integrate`: it strips the tmp files, rebases, fast-forwards the base, and deletes the branch locally and on the remote. The base is not pushed unless the user asks.
-- **redo** — rework on the same branch from the user's notes, redoing the delivery from its explanation rather than patching the rejected approach.
-- **drop** — delete the branch locally and on the remote, and the local tmp files; the base never saw it.
+Flows don't integrate. `an-dr-dev-integrate` lands a branch only when the user asks for it in their own words.
 
-When this process repository itself is the target, its Scope rule takes precedence: leave the change uncommitted for review. A request that grows stays Vibe unless the user asks to switch to a gated flow; break larger work into coherent internal passes without adding user gates.
+## What each flow adds
 
-Within a gated flow, exploration can prove the chosen flow wrong. Propose the change with its one-sentence reason, obtain confirmation, and make it through the `an-dr-dev-follow-workflow` skill's `switch-flow` operation, which keeps the requests, questions, answers, and requirements already collected. Never delete `tmp-agent-wip.json` to start over. The switch is only available before anything is built; past `BRANCH` the branch is finished or abandoned on its own terms instead. Vibe does not switch: its branch is landed or dropped first, and a gated flow then starts from a clean working tree.
+| Flow       | Additional approvals                              | Additional rules                                                                                                                                                 |
+| ---------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Vibe       | —                                                 | —                                                                                                                                                                |
+| Spec       | design                                            | —                                                                                                                                                                |
+| Supervised | request scope, design, plan, each build iteration | the user explains the design and the agent polishes it; each build iteration is committed only after its approval; iterations of about 300 changed lines or less |
+
+Every flow ends with the result approved. An approval is the user's reply to what it approves, in their own words: judge whether it approves, asks for changes, or neither, and when unsure ask one `an-dr-ai-use-user-interface` confirmation. Record it with the controller's `approve -Gate <gate> -Note '<their words>'`; the gates are `scope-approved`, `design-approved`, `plan-approved`, `step-approved`, and `result-approved`.
+
+When this process repository itself is the target, its Scope rule takes precedence: leave the change uncommitted for review.
 
 ## Handoff
 
-Work moves between machines, tools, and sessions that run out of context, and a new session that rebuilds the state from the code pays far more than one that reads a page. Every flow keeps its whole state in the `workflow` section of `tmp-agent-wip.json` at the host root: the flow and stage, the base branch it returns to, requests, questions, increments, and the handoff. That file holds the data of the work in progress for every skill, and only the `an-dr-ai-use-wip-data` skill reads or writes it.
+Work moves between machines, tools, and sessions that run out of context, and a new session that rebuilds the state from the code pays far more than one that reads a page. Every flow keeps its whole state in the `workflow` section of `tmp-agent-wip.json` at the host root: the flow and stage, the base branch it returns to, requests, questions, the plan of build iterations, and the handoff. That file holds the data of the work in progress for every skill, and only the `an-dr-ai-use-wip-data` skill reads or writes it.
 
-- Rewrite the handoff with the controller's `set-handoff` at each checkpoint — a decision made, an increment or pass done, a commit, before a long-running step, and when the user stops — never after every reply. Each field — goal, done, next, openQuestions, decisions, files — is replaced whole and holds only the current state; name commits and paths instead of copying content.
-- On a work branch the file is committed with each checkpoint, only in a `DO-NOT-MERGE:` commit kept apart from the work, and travels with the branch's automatic push, so another machine resumes it; on the base branch commit it only when the user asks to move the work elsewhere.
-- The user follows the work in `tmp-agent-progress.html` at the host root: the stage table with the current stage marked, what waits on them, increments, questions, the handoff, recent steps. The controller renders it from the state on every command; it is never written by hand.
-- Every file or folder whose name starts with `tmp-` or `.tmp-` is a work file: it may travel on a work branch but never lands. `an-dr-dev-integrate` reads the base from the state, strips every such path from every branch commit, and refuses to land while one remains.
+- Rewrite the handoff with the controller's `set-handoff` at each checkpoint — a decision made, a build iteration done, a commit, before a long-running step, and when the user stops — never after every reply. Each field — goal, done, next, openQuestions, decisions, files — is replaced whole and holds only the current state; name commits and paths instead of copying content.
+- The file is committed with each checkpoint, only in a `DO-NOT-MERGE:` commit kept apart from the work, and travels with the branch's automatic push, so another machine resumes it.
+- The user follows the work in `tmp-agent-progress.html` at the host root: the stage table with the current stage marked, what waits on them, build iterations, questions, the handoff, recent steps. The controller renders it from the state on every command; it is never written by hand.
+- Every file or folder whose name starts with `tmp-` or `.tmp-` is a work file: it may travel on a work branch but never lands. Handover strips every such path from the work commits and leaves the state in one `DO-NOT-MERGE:` commit at the tip, where it names the base for `an-dr-dev-integrate` on any machine. Integration drops that commit, changes no other, and refuses a branch with a revert or a tmp file in a commit that lands.
 
 ## Executable workflow authority
 
-The `an-dr-dev-follow-workflow` skill owns transitions, gates, increment state, branch checks, and `tmp-agent-wip.json`. Run it instead of inferring the next phase from conversation history. If prose conflicts with a controller result, stop and report the conflict.
+The `an-dr-dev-follow-workflow` skill owns transitions, gates, iteration state, branch checks, and `tmp-agent-wip.json`. Run it instead of inferring the next step from conversation history. If prose conflicts with a controller result, stop and report the conflict.
 
-While progress exists, begin every response with the controller's emitted workflow status tables, exactly as their `user-output` markers require. After the `accept` gate, HANDOVER regroups the branch and ends with the controller's `finish`, which marks the state handed over and keeps it for `an-dr-dev-integrate`; a landed branch retains no tmp file.
-
-Spec-driven removes the intake gate and the per-increment verification gate, not engineering work and not the decisions that frame it. Intake happens inside the design discussion, and the user still says implement; between that and the final review the agent splits, branches, documents, builds, verifies, reviews, and commits every increment on its own. The documentation is the review surface: the user checks that the docs say what was agreed and that the behaviour matches the docs, with the change report and the pull request beside them. Their final `accept` starts HANDOVER. Spec-driven runs on the base branch, without a branch or pull request, only when the user asks for it.
-
-## The three commands
-
-In gated flows, nothing before DOCS changes a file until the user says so, and the flow itself never lands one:
-
-- **intake** — closes the request list in Supervised. Until it is given, INTAKE keeps collecting what this branch should deliver, and no design is built on a half-stated ask. Spec-driven closes the list with `implement`.
-- **implement** — authorizes the whole plan, documentation included: DOCS is the first phase that writes anything. Until it is given, INTAKE, DESIGN, and SPLIT explore, read, and ask; they never edit, branch, or commit.
-- **accept** — accepts the reviewed branch and starts HANDOVER, which leaves it clean and ready to integrate. It does not authorize integration: that is `an-dr-dev-integrate`, run only when the user asks for it in their own words.
-
-Between them the Supervised user still verifies each increment, which is a check on work already done rather than permission to begin it.
-
-## Questions instead of interruptions in gated flows
-
-Anything the agent cannot settle alone becomes a recorded question through the controller's `add-question`, not a message that stops the exploration. Keep exploring, and present the accumulated questions together when the phase's work is laid out. Ideas belong there too: an option worth the user's opinion is a question, not a silent decision.
-
-The controller refuses the `implement` approval while any question is open, so every one is answered or explicitly dismissed before the first line is written. Questions found later are recorded the same way; only the implement gate is blocked by them.
+While progress exists, begin every response with the controller's emitted workflow status tables, exactly as their `user-output` markers require.
 
 ## Talking to the user
 
 Every table, question, choice, confirmation, and reading of the user's answer follows `an-dr-ai-use-user-interface`, in every flow and every skill: the host's own question UI first, its text form only when the host has none. A skill that asks the user something asks it that way, whether or not it names `an-dr-ai-use-user-interface`.
 
-## Gated phase responsibilities
-
-Load `an-dr-dev-follow-workflow` for phase responsibilities and transitions. It names the other skills to load for planning, documentation, implementation, verification, review, commits, and handover. The controller decides when each phase may advance.
-
 ## Delivery and approval rules
 
 - Every code delivery begins with 3–5 sentences explaining what changed, why this approach was used, and what was deliberately left out.
-- Supervised verification is approved only by the user. Spec-driven verification is performed and recorded by the agent until final review. In Vibe, the agent verifies and fixes the result before delivery.
-- Passing verification never implies integration permission.
-- In gated flows and in Vibe's land, redo, and drop, no approval is inferred. The `intake`, `implement`, and `accept` gates need the user's own words, recorded through the controller with `-Note`, and so does every integration, asked for outside the flow; enthusiasm about a plan is not a command to build it, and a pause in the requests is not a complete list.
-- Do not expand scope silently. Add a future increment through the controller in gated flows. In Vibe, complete the requested result and report any distinct follow-up work.
+- Do not expand scope silently: propose new work as a build iteration, or report it as follow-up work.
 - When the user rejects output, redo the delivery from its explanation rather than layering a patch over the rejected approach.
-- Hand over work the user can check without assembling it first. A project that produces an executable is built as part of the delivery and the artefact's path is named, so trying it is one command; anything else names the single command that demonstrates the change. Reporting a change the user cannot run is reporting half of it.
-- End a big change with the `an-dr-dev-analyze-changes` HTML report: a Spec-driven or Supervised flow, or any delivery that adds a component, adds an ADR, or changes the architecture. End every other code delivery with a one-line offer to produce it.
+- End a big change with the `an-dr-dev-analyze-changes` HTML report: a Spec or Supervised flow, or any delivery that adds a component, adds an ADR, or changes the architecture. End every other code delivery with a one-line offer to produce it.
 - A new point, principle, or piece of information can affect the whole document or change. Revise every affected place so the result stays consistent and correct; never deliver a minimal additive change that leaves the rest contradicting it.
 - Push back on workarounds. If no clean solution exists, explain the compromise and let the user decide.
 
@@ -98,14 +85,13 @@ Don't install machine-wide software silently. Name what is missing and how to ge
 
 ## Git rules
 
-- Every flow works on its own branch, named `<flow>/<short-slug>` (`vibe/`, `spec/`, `supervised/`). Vibe uses the current branch, and Spec-driven the base branch, only when the user explicitly asks; this process repository keeps its uncommitted review rule. Do not use git worktrees.
+- Every flow works on its own branch, named by `an-dr-convention-branch-name`. Do not use git worktrees.
 - Before every commit and every push, evaluate all unpushed commits for regrouping: no fixup, WIP, or add-then-remove commits, small same-area changes merged, unrelated concerns apart. `an-dr-git-modify-history` owns the rules; it knows no workflow, so pass it the work's base branch when that is not the default branch.
 - Every commit goes through the `an-dr-git-modify-history` skill, which owns the message format. Never write a message from memory. It also rewrites non-conforming messages while the branch is still unpushed.
 - Push every commit on a work branch to its remote branch automatically; that push needs no request. Never push the base or default branch automatically: only on explicit request or as part of an integration the user asked for.
-- Spec-driven and Supervised open a draft pull or merge request, in whatever system the remote provides, at the first push, and mark it ready at the final review. The user reviews and comments there; when told to address the comments, read every unresolved thread, fix it, reply, and resolve it. While the request is open, add commits instead of rewriting them; regroup once, in HANDOVER after the `accept` approval.
 - A request merges with the repository's own configured merge method, merge commits included when that is the configuration. Local integration rebases first and never adds a merge commit. Delete the work branch after success, locally and on the remote.
 - With no remote, no supported platform CLI, or no authentication, say which is missing and integrate locally instead; ask the user which local `an-dr-dev-integrate` mode to use — keep the commits, regroup them, or squash into one — every time, before the integration touches anything. Approval to integrate is not a choice of mode, and there is no default.
-- Integration happens only when the user asks for it, through `an-dr-dev-integrate`, which works on any branch. It lands a branch onto the base its `tmp-agent-wip.json` names, and no tmp file reaches the base.
+- Integration happens only when the user asks for it, through `an-dr-dev-integrate`, which works on any branch. It lands a branch onto the base its `tmp-agent-wip.json` names, without its `DO-NOT-MERGE:` commits, and no tmp file reaches the base.
 
 ## Code conventions
 
@@ -122,6 +108,8 @@ Deliverables are the exception and are committed as ordinary repository content:
 Skills use the [Agent Skills](https://agentskills.io/specification) format and live in `skills/<category>/<name>/SKILL.md` next to this file; `skills/README.md` lists each with its one-line use. Read a matching skill before acting and use its public scripts for mechanical operations.
 
 Skill names start with `an-dr-`, and a concept's or convention's name carries `concept-` or `convention-`, so the type shows in a tool's flat skill list. This repository adds two keys under each skill's `metadata`. `an-dr.type` is `action`, `concept`, or `convention`: an action is a procedure you run, while a concept or a convention is passive, a principle or a format you read when its subject is in play and never run. A concept or convention only describes: it contains no steps, no instructions to the agent, and no commands to run, and what to do with it is always the responsibility of an action. This rule has no exceptions. `an-dr.dependencies` lists the skills a skill names. Both are defined by `an-dr-convention-agent-skill`, and a tool that ignores them still reads every skill. In skill commands, `<skill>` is that skill's own folder and `<other-skill>`, such as `<an-dr-git-modify-history>`, is the folder you loaded that skill from. The user never sees raw script output; relay it as `an-dr-ai-use-user-interface` describes.
+
+`an-dr-dev-follow-workflow` sits on top of every other skill. It may name any skill; no other skill names it, a flow, a stage, or its state, or depends on it. Flow-specific behaviour on top of a general skill is written in the workflow skill, which references the general one.
 
 ADRs are immutable once integrated; supersede them instead of editing them, and give the superseded ADR only its "Superseded by" line. Immutability protects a decision others have read, so it begins at integration: an ADR written on the current feature branch is still a draft, and a later decision on that same branch edits it — or collapses two into one — rather than adding an ADR that corrects one nobody has seen. Use ADRs only for lasting architectural decisions, not tactical or tooling choices.
 

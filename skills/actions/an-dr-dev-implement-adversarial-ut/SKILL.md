@@ -37,5 +37,5 @@ Goal: find bugs, not confirm the code works.
 
 ## Rules
 
-- Do not fix production code; fixes are follow-up increments.
+- Do not fix production code; fixes are follow-up work.
 - Do not commit.

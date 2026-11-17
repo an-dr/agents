@@ -1,6 +1,6 @@
 ---
 name: an-dr-dev-review
-description: Review a diff for defects, security issues, structure, convention violations, and outdated patterns, recording findings in a JSON record rendered to HTML. Use during Vibe review, VERIFY on an increment diff, SUMMARY on the full branch diff, or when the user requests a code review.
+description: Review a diff for defects, security issues, structure, convention violations, and outdated patterns, recording findings in a JSON record rendered to HTML. Use on a change, on a whole branch against its base, or when the user requests a code review.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
@@ -15,12 +15,11 @@ Defers: structure and dependencies to `an-dr-concept-clean-dependencies`, eviden
 
 ## Select the diff
 
-| Situation | Diff                                                         |
-| --------- | ------------------------------------------------------------ |
-| Vibe      | Uncommitted changes for the request                          |
-| VERIFY    | Uncommitted increment changes, or the last commit when clean |
-| SUMMARY   | Full feature branch against its base                         |
-| Requested | Range or codebase named by the user                          |
+| Situation      | Diff                                               |
+| -------------- | -------------------------------------------------- |
+| A change       | Uncommitted changes, or the last commit when clean |
+| A whole branch | The branch against its base                        |
+| Requested      | Range or codebase named by the user                |
 
 ## Judge
 
@@ -95,5 +94,5 @@ Writes one self-contained `.html` beside the JSON, copies both to `code-review-l
 
 - JSON is the canonical record; never hand-edit it or the HTML, so sections, IDs, and numbering stay valid.
 - Judge by reading the diff; build or run tests only on user request; report missing coverage as a finding.
-- Return fixes to BUILD in gated flows or to Vibe implementation.
+- Return fixes to implementation.
 - Never weaken tests or expand scope to make the review pass.

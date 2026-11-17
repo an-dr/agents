@@ -22,7 +22,7 @@ flowchart LR
 - Conversation history does not outrank a state file, a controller result, or the code.
 - A rule restated elsewhere is justified only by a point-specific detail; otherwise its owner is named.
 
-Examples in this repository: the workflow state file owns phase and gates, and the progress page and status tables derive from it; the review JSON owns findings, and the HTML report derives from it.
+Example in this repository: the review JSON owns findings, and the HTML report derives from it.
 
 ## What you get
 

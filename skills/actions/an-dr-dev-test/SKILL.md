@@ -1,6 +1,6 @@
 ---
 name: an-dr-dev-test
-description: Verify a code change in Vibe or gated VERIFY. Use for relevant tests, boundary and failure cases, regression coverage, and reporting what testing can and cannot establish.
+description: Verify a code change. Use for relevant tests, boundary and failure cases, regression coverage, and reporting what testing can and cannot establish.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
@@ -22,7 +22,7 @@ Defers: systematic bug hunts to `an-dr-dev-implement-adversarial-ut`, finding le
 
 ## Choose the scope
 
-- Default, in every flow including each VERIFY and the check after a gated branch's last increment → only affected tests: changed units, their callers, dependent components; the last check covers everything the branch touched.
+- Default → only affected tests: changed units, their callers, dependent components; a check of a whole branch covers everything it touched.
 - Before a release, a change to something everything depends on (build configuration, dependency versions, shared test setup), or user request → full suite.
 - CI runs the full suite on every push → that is the periodic full run; say which tests ran locally and leave the rest to CI.
 
@@ -31,7 +31,7 @@ Defers: systematic bug hunts to `an-dr-dev-implement-adversarial-ut`, finding le
 - Report failure cases, untested edges, documentation gaps, scope, and documentation consistency.
 - Failures and gaps first, each with its `an-dr-ai-use-user-interface` finding level; passing suites as one count line.
 - End with the next check or fix: what would resolve the first failure and what it needs.
-- Supervised → the user owns the verdict. Spec-driven and Vibe → record the verdict before moving on; Vibe also names what the user can run to see it.
+- Name what the user can run to see the change.
 
 ## Rules
 

@@ -1,16 +1,15 @@
-# Work by phase
+# Work by stage
 
-- DOCS → `an-dr-dev-write-documentation`, starting with any DESIGN specification; new project → README via `an-dr-dev-write-readme`; leave it uncommitted for the increment's COMMIT.
-- BRANCH → create `spec/<slug>` or `supervised/<slug>` from the base (Spec-driven `--on-base` stays on the base); the first push opens a draft pull or merge request, see `an-dr-dev-integrate`.
-- BUILD → `an-dr-dev-implement-code`, only the active increment.
-- VERIFY → `an-dr-dev-test` for changed code, `an-dr-dev-review` for the diff; per increment only fast checks (build, lint, tests of what it touched); docs-only → sources, links, consistency via `an-dr-dev-write-documentation`; report failure cases, untested edges, doc gaps, scope, consistency; issues → BUILD, after `an-dr-dev-debug` when a cause is not evident.
-- Branch tests → after the last known increment's commit, before `SUMMARY`: tests of everything the branch touched, scoped by `an-dr-dev-test`, full suite only when that skill calls for it; fix each failure with a fixup into the increment that introduced it, so each increment stays one reviewable commit; a later increment reopens this step once committed.
-- COMMIT → `an-dr-git-modify-history`, including current progress state; push the work branch. That skill knows no workflow, so pass the base it works against as `-Range <base>..HEAD`, `<base>` being the `Base:` line of `status`.
-- SUMMARY → `an-dr-dev-analyze-changes` for the full branch: review, reconcile with intake requests, mark the request ready, hand over the summary with its link.
-- SUMMARY and FINAL_REVIEW → when the user says to address the request's comments, follow `an-dr-dev-integrate`'s comment handling, then report what changed.
-- HANDOVER → after `accept`, leave a branch anyone can integrate, then stop:
-  1. Commit the current progress state, then regroup the branch once with `an-dr-git-modify-history`: fixups folded, superseded commits dropped, one commit per logical change.
-  2. Remove other leftovers the flow created in the branch: scratch files, generated artifacts that are not repository content and do not start with `tmp-`.
-  3. `finish`, and commit the handed-over state.
-  4. Push with `--force-with-lease`; the request stays ready, with the change report linked.
-  5. Tell the user the branch is ready and that `an-dr-dev-integrate` lands it when they ask. Never integrate from here.
+- BRANCH → create the work branch from the base, named by `an-dr-convention-branch-name`.
+- DOCS → `an-dr-dev-write-documentation`, starting with any DESIGN specification draft, written as the final documents and then deleted; new project → README via `an-dr-dev-write-readme`; leave it uncommitted for the iteration's COMMIT.
+- BUILD → `an-dr-dev-implement-code` for the active iteration only, with its DOCS output as the specification; a documentation gap is reported, not filled in code; a conflict between docs and code becomes a question; no commit until COMMIT.
+- VERIFY → `an-dr-dev-test` for changed code, `an-dr-dev-review` for the iteration's changes; Supervised: the user approves the iteration, otherwise record the verdict; per iteration only fast checks (build, lint, tests of what it touched); docs-only → sources, links, consistency via `an-dr-dev-write-documentation`; issues → BUILD, after `an-dr-dev-debug` when a cause is not evident.
+- Branch tests → after the last iteration's commit, before `SUMMARY`: tests of everything the branch touched, scoped by `an-dr-dev-test`; fix each failure with a fixup into the iteration that introduced it.
+- COMMIT → `an-dr-git-modify-history`, with the current progress state in its own `DO-NOT-MERGE:` commit; push the work branch. Pass the base as `-Range <base>..HEAD`, `<base>` being the `Base:` line of `status`.
+- HANDOVER → after the result is approved, leave a branch ready to integrate, then stop:
+  1. Regroup the branch once with `an-dr-git-modify-history`: fixups folded, superseded commits dropped, one commit per logical change.
+  2. Remove leftovers the flow created that are not repository content.
+  3. Strip every `tmp-` file from the work commits: `python <an-dr-git-modify-history>/scripts/strip-tmp-files.py --base <base>`; the files stay on disk, untracked.
+  4. `finish`: it marks the state handed over.
+  5. Commit `tmp-agent-wip.json` alone through `an-dr-git-modify-history` as `DO-NOT-MERGE: hand over <branch>`.
+  6. Push with `--force-with-lease`, and tell the user the branch is ready to integrate when they ask.

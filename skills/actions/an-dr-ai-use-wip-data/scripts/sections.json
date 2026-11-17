@@ -2,7 +2,7 @@
   "workflow": {
     "owner": "an-dr-dev-follow-workflow",
     "fields": [
-      "schemaVersion", "flow", "phase", "baseBranch", "baseCommit", "featureBranch", "onBase",
+      "schemaVersion", "flow", "phase", "baseBranch", "baseCommit", "featureBranch",
       "requirements", "requests", "questions", "increments", "currentIncrementId", "commitBaseline",
       "approvals", "history", "handoff", "finishedAt", "createdAt", "updatedAt"
     ],

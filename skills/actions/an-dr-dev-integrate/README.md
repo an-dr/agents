@@ -1,10 +1,9 @@
 # an-dr-dev-integrate
 
-Lands a branch on its base when you ask for it, normally through its pull or merge request, and locally only when no platform is available. The base is the branch the work started from, read from its `tmp-agent-wip.json`, so work started on `dev` lands on `dev`; without that file it is the default branch.
+Lands a branch on its base when you ask for it, normally through its pull or merge request, and locally only when no platform is available. The base is the branch the handed-over state names, so work started on `dev` lands on `dev` from any machine; without it, the default branch.
 
 ## When it runs
 
-- At a branch's first push, to open a draft request.
 - When you say to address the request's review comments.
 - When you ask to integrate, merge, or land a branch, and only then.
 
@@ -12,28 +11,23 @@ Lands a branch on its base when you ask for it, normally through its pull or mer
 
 ```mermaid
 flowchart TD
-  P[First push of the work branch] --> D{gh or glab, remote, and auth available?}
-  D -- yes --> R[Draft pull or merge request]
-  R --> I[Each increment pushed, CI runs]
-  I --> F[Marked ready with summary and change report]
-  F --> C{Your review}
-  C -- comments --> X[Agent fixes, replies, resolves]
-  X --> F
-  C -- you ask to integrate --> M[Rebase, regroup if needed, wait for checks]
-  M --> G[Merge with the repository's merge method]
-  D -- no --> L[Say what is missing]
-  L --> Q[Ask: Commits, Regroup, or Squash]
+  P[You ask to integrate] --> D{gh or glab, remote, and auth available?}
+  D -- yes --> R[Pull or merge request with summary and change report]
+  R --> C{Your review}
+  C -- comments --> R
+  C -- approve --> M[Rebase, wait for checks, merge with the repository's method]
+  D -- no --> Q[Say what is missing; ask Commits, Regroup, or Squash]
   Q --> LL[Rebase and fast-forward locally]
 ```
 
 - **Review in the request.** Your comments sit on the lines they discuss. The agent answers each thread and resolves the ones it fixed. While the request is open it only adds commits, so your threads never go stale.
 - **Merge method.** The request merges the way the repository is configured. GitLab applies its project setting. GitHub has no single default, so if several methods are allowed, the agent asks which one.
 - **Local fallback.** Without a platform, the agent rebases and asks you each time whether to keep every commit, regroup them into a few, or squash into one. It never adds a merge commit locally.
-- **Any branch, no work files.** Every file or folder whose name starts with `tmp-` or `.tmp-` — the workflow state, the progress page, generated reports — is stripped from every commit before the branch lands, and the landing is refused while one remains.
+- **Any branch, no work files.** The `DO-NOT-MERGE:` commits at the tip are dropped and no other commit changes. A branch with a revert, a `DO-NOT-MERGE:` commit below work, or a `tmp-` file in a commit that lands is refused.
 
 ## What you get
 
-- One pull or merge request per branch, with CI on every push and a description that links the change report.
+- One pull or merge request per branch, with CI on every push and a description that links the change report, opened when you ask to integrate.
 - After the merge: the base fast-forwarded locally, the work branch deleted locally and on the remote.
 
 ## What you decide
@@ -44,5 +38,4 @@ flowchart TD
 
 ## Related skills
 
-- [an-dr-dev-follow-workflow](../an-dr-dev-follow-workflow/README.md) — hands over a branch with its state, which names the base this skill lands on.
 - [an-dr-git-modify-history](../an-dr-git-modify-history/README.md) — regrouping and commit messages.

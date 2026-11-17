@@ -1,6 +1,6 @@
 ---
 name: an-dr-dev-design
-description: Structure a DESIGN decision deeper than a quick pick with an options table, steelman, and pre-mortem before the user decides. Use in a Spec-driven or Supervised DESIGN, or when a Vibe design question turns out deeper than expected.
+description: Structure a DESIGN decision deeper than a quick pick with an options table, steelman, and pre-mortem before the user decides. Use when a design question turns out deeper than a quick pick.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
@@ -40,4 +40,4 @@ Reversibility and blast radius weigh most: a cheap reversible choice needs littl
 
 - Score axes honestly; no option exists to flatter the favourite.
 - An expensive one-way door with a weak pre-mortem is not ready to present.
-- The user owns the decision in every flow; Spec-driven delegates the work after DESIGN, not the design.
+- The user owns the decision.

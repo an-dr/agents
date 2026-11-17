@@ -18,47 +18,60 @@ main { max-width: 56rem; margin: 0 auto; padding: 1rem 1.25rem 3rem; }
 h1 { margin: .2rem 0 .6rem; } h2 { font-size: 1rem; margin: 1.4rem 0 .3rem; text-transform: uppercase; letter-spacing: .05em; opacity: .8; }
 .muted { opacity: .6; } .scroll { overflow-x: auto; }
 .stages th { text-align: left; font-size: .8rem; opacity: .7; padding: .3rem .5rem; } .stages td:first-child { width: 1.5rem; }
-.stages .done { opacity: .5; } .stages .now td { color: var(--accent); font-weight: 700; }
+.stages .done { opacity: .5; } .stages .phase th { opacity: 1; font-size: .9rem; padding-top: .7rem; border-bottom: 2px solid var(--line); } .stages .now td { color: var(--accent); font-weight: 700; }
 .you { border-left: 4px solid var(--accent); padding: .4rem .8rem; font-weight: 600; }
 table { border-collapse: collapse; width: 100%; } td { border-bottom: 1px solid var(--line); padding: .3rem .5rem; vertical-align: top; }
 tr.completed { opacity: .6; } tr.in_progress td, tr.verified td { font-weight: 600; }
 li.open { color: var(--accent); } li.closed { opacity: .7; } .log { list-style: none; padding: 0; }
 </style>"""
 
-FLOW_LABELS = {"SpecDriven": "Spec-driven", "DetailedAuto": "Spec-driven", "Detailed": "Supervised"}
+FLOW_LABELS = {"SpecDriven": "Spec", "DetailedAuto": "Spec", "Detailed": "Supervised"}
+
+# The common path every flow walks; each stage belongs to one step of it.
+PHASES = {
+    "INTAKE": "Request",
+    "DESIGN": "Design",
+    "SPLIT": "Plan",
+    "BRANCH": "Build iterations",
+    "DOCS": "Build iterations",
+    "BUILD": "Build iterations",
+    "VERIFY": "Build iterations",
+    "COMMIT": "Build iterations",
+    "SUMMARY": "Approval",
+    "HANDOVER": "Handover",
+}
 
 # What each stage is for, so the table reads without the policy at hand.
 STAGES = {
     "Vibe": {
-        "BUILD": "The agent builds the change",
-        "VERIFY": "The agent tests and reviews it",
-        "COMMIT": "The agent commits and pushes the branch",
-        "HANDOVER": "You try it: land, redo, or drop",
+        "BUILD": "Implement",
+        "VERIFY": "Verify",
+        "COMMIT": "Commit",
+        "HANDOVER": "You approve the result by running it, then the branch is handed over",
+    },
+    "Spec": {
+        "INTAKE": "Your request",
+        "DESIGN": "Design; you approve it",
+        "SPLIT": "Plan of build iterations",
+        "BRANCH": "Work branch created",
+        "DOCS": "Implement: documentation",
+        "BUILD": "Implement: code",
+        "VERIFY": "Verify",
+        "COMMIT": "Commit",
+        "SUMMARY": "You approve the result",
+        "HANDOVER": "Branch ready to integrate",
     },
     "Supervised": {
-        "INTAKE": "You close the request list: intake",
-        "DESIGN": "Options and decisions",
-        "SPLIT": "You approve the plan: implement",
+        "INTAKE": "Your request; you approve the scope",
+        "DESIGN": "You explain the design; you approve it",
+        "SPLIT": "Plan of build iterations; you approve it",
         "BRANCH": "Work branch created",
-        "DOCS": "Documentation first",
-        "BUILD": "Code for this increment",
-        "VERIFY": "You verify the increment",
-        "COMMIT": "Increment committed",
-        "SUMMARY": "You review the branch: accept",
-        "HANDOVER": "Branch handed over, ready to integrate",
-    },
-    "Spec-driven": {
-        "INTAKE": "Requests gathered in the design talk",
-        "DESIGN": "Options and decisions",
-        "SPLIT": "You approve the plan: implement",
-        "BRANCH": "Work branch created",
-        "DOCS": "Documentation first",
-        "BUILD": "Code for each increment",
-        "VERIFY": "The agent verifies each increment",
-        "COMMIT": "Increment committed",
-        "SUMMARY": "Branch summarised",
-        "FINAL_REVIEW": "You review the branch: accept",
-        "HANDOVER": "Branch handed over, ready to integrate",
+        "DOCS": "Implement: documentation",
+        "BUILD": "Implement: code",
+        "VERIFY": "Verify; you approve the iteration",
+        "COMMIT": "Commit",
+        "SUMMARY": "You approve the result",
+        "HANDOVER": "Branch ready to integrate",
     },
 }
 
@@ -135,20 +148,29 @@ def render(root: Path, skill_folder: Path) -> None:
         return
     if not isinstance(state, dict):
         raise RenderError("The workflow section of tmp-agent-wip.json must be a JSON object.")
+    # A handed-over flow is closed: nothing waits on the user, and the state
+    # travels only to name the base for integration.
+    if state.get("finishedAt"):
+        page.unlink(missing_ok=True)
+        print("Workflow handed over; tmp-agent-progress.html removed.")
+        return
 
     branch = run_git("-C", str(root), "branch", "--show-current").stdout.strip()
     flow = state.get("flow")
     flow_label = FLOW_LABELS.get(flow, flow)
-    stages = STAGES.get(flow_label, STAGES["Spec-driven"])
+    stages = STAGES.get(flow_label, STAGES["Spec"])
     names = list(stages)
     phase = state.get("phase")
     index = names.index(phase) if phase in names else -1
-    finished = bool(state.get("finishedAt"))
 
     body: list[str] = []
     rows = []
+    group = None
     for position, name in enumerate(names):
-        if finished or position < index:
+        if PHASES.get(name) != group:
+            group = PHASES.get(name)
+            rows.append(f'<tr class="phase"><th colspan="3">{html_encode(group)}</th></tr>')
+        if position < index:
             css, mark = "done", "✔"
         elif position == index:
             css, mark = "now", "▶"
@@ -167,20 +189,18 @@ def render(root: Path, skill_folder: Path) -> None:
     )
 
     open_questions = [question for question in state.get("questions") or [] if question.get("status") == "open"]
-    if finished:
-        waiting = f"Handed over: say integrate to land it onto {state.get('baseBranch')}."
-    elif open_questions:
+    if open_questions:
         waiting = f"{len(open_questions)} open question(s) need your answer."
     elif phase == "INTAKE" and flow_label == "Supervised":
-        waiting = "Waiting for you to close the request list: intake."
-    elif phase == "SPLIT":
-        waiting = "Waiting for you to approve the plan: implement."
+        waiting = "Waiting for you to approve the scope."
+    elif phase == "DESIGN":
+        waiting = "Waiting for you to approve the design."
+    elif phase == "SPLIT" and flow_label == "Supervised":
+        waiting = "Waiting for you to approve the plan."
     elif phase == "VERIFY" and flow_label == "Supervised":
-        waiting = "Waiting for you to verify this increment."
-    elif (phase in ("SUMMARY", "FINAL_REVIEW") and flow_label != "Spec-driven") or phase == "FINAL_REVIEW":
-        waiting = "Waiting for your review: accept, or comments."
-    elif phase == "HANDOVER" and flow_label == "Vibe":
-        waiting = "Waiting for you to try it: land, redo, or drop."
+        waiting = "Waiting for you to approve this build iteration."
+    elif phase == "SUMMARY" or (phase == "HANDOVER" and flow_label == "Vibe"):
+        waiting = "Waiting for you to approve the result."
     else:
         waiting = None
     if waiting:
