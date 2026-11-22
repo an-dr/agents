@@ -131,7 +131,10 @@ class SkillChecksTests(unittest.TestCase):
         self.assert_problem("has no license")
 
     def test_bad_version(self) -> None:
-        self.edit("skills/actions/an-dr-dev-debug/SKILL.md", '  version: "1.1.0"', "  version: latest")
+        # Read the current version so a release that raises it keeps the test valid.
+        path = "skills/actions/an-dr-dev-debug/SKILL.md"
+        current = next(line for line in (self.root / path).read_text(encoding="utf-8").splitlines() if line.startswith("  version:"))
+        self.edit(path, current, "  version: latest")
         self.assert_problem("must be a semantic version")
 
     def test_missing_author(self) -> None:
