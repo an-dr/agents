@@ -4,7 +4,7 @@ description: Talk to the user in a form that works in every host, using the host
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "2.2.0"
+  version: "3.0.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-concept-dark-cockpit an-dr-convention-html-repo-style an-dr-files-find-destination
   an-dr.artifact.kind: ui-session

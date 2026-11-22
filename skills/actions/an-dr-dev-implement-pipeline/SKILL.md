@@ -4,7 +4,7 @@ description: Set up or update a project's continuous integration and release pip
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "1.1.1"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-use-user-interface an-dr-convention-code
 ---

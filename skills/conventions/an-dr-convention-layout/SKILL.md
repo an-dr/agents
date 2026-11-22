@@ -4,7 +4,7 @@ description: Repository folder layout - shared root files, docs, tests, no empty
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "2.0.0"
   an-dr.type: convention
   an-dr.dependencies: an-dr-convention-artifact-layout
 ---

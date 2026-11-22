@@ -4,7 +4,7 @@ description: The naming, metadata, and test rules of this repository's skills - 
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.6.0"
+  version: "2.0.0"
   an-dr.type: convention
   an-dr.dependencies: an-dr-agents-repo-build-release an-dr-ai-skill-implement-test an-dr-ai-skill-test an-dr-convention-agent-skill an-dr-dev-test an-dr-dev-write-documentation an-dr-convention-agent-skill-testing
 ---

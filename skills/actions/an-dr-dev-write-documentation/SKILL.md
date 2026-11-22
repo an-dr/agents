@@ -4,7 +4,7 @@ description: Write or update human-facing project documentation, including desig
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.2.0"
+  version: "1.3.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-use-user-interface an-dr-concept-ai-slop an-dr-convention-adr an-dr-convention-diagram an-dr-convention-markdown an-dr-convention-use-case
 ---

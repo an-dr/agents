@@ -4,7 +4,7 @@ description: Untangle the dependencies of a skill, module, or package by writing
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "1.2.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-use-user-interface an-dr-concept-clean-dependencies an-dr-files-build-report an-dr-convention-html-report
   an-dr.artifact.kind: dependency-fix-report

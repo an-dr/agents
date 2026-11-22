@@ -4,7 +4,7 @@ description: Prepare a document in the document file itself through gated stages
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "2.1.0"
+  version: "2.1.1"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-use-user-interface an-dr-text-verify-claims an-dr-text-analyze-slop an-dr-convention-artifact-layout
   an-dr.artifact.kind: curated-document

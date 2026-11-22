@@ -4,7 +4,7 @@ description: What a README contains and in what order — the baseline sections,
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "2.0.0"
   an-dr.type: convention
   an-dr.dependencies: an-dr-concept-ai-slop an-dr-concept-evidence-grounding an-dr-convention-markdown
 ---

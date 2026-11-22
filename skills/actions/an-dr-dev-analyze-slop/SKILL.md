@@ -4,7 +4,7 @@ description: Analyse code and documentation in a defined scope for illogical des
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.2.0"
+  version: "1.3.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-review-instruction an-dr-ai-use-user-interface an-dr-concept-ai-slop an-dr-files-build-report an-dr-convention-html-report
   an-dr.artifact.kind: code-slop-report

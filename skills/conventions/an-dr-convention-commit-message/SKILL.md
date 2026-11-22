@@ -4,7 +4,7 @@ description: The commit message format when the host repository has no clear sty
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "2.0.0"
   an-dr.type: convention
   an-dr.dependencies: PROHIBITED
 ---

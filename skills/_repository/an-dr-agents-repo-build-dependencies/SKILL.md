@@ -4,7 +4,7 @@ description: Build a Mermaid dependency graph of a repository's skills from thei
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "2.0.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-use-user-interface an-dr-convention-agent-skill
 ---

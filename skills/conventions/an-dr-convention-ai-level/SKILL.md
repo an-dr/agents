@@ -4,7 +4,7 @@ description: The ai-level.dev standard for disclosing AI usage in a repository â
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "1.1.1"
   an-dr.type: convention
   an-dr.dependencies: PROHIBITED
 ---

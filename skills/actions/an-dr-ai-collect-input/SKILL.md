@@ -4,7 +4,7 @@ description: Interview the user about any task after drafting from known informa
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "1.0.1"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-use-user-interface an-dr-concept-ai-slop an-dr-concept-evidence-grounding
 ---

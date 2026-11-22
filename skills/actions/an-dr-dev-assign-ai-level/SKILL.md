@@ -5,7 +5,7 @@ license: MIT
 allowed-tools: Read Grep Glob Edit Python
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "2.0.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-use-user-interface an-dr-convention-ai-level
 ---

@@ -4,7 +4,7 @@ description: Writing defaults for source code — small changes, readable names 
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "1.1.1"
   an-dr.type: convention
   an-dr.dependencies: an-dr-concept-ai-slop an-dr-concept-clean-dependencies an-dr-convention-layout
 ---

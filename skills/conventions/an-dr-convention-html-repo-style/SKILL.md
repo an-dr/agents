@@ -4,7 +4,7 @@ description: The visual style of every HTML page in this repository - the brand 
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "2.0.0"
   an-dr.type: convention
   an-dr.dependencies: none
 ---

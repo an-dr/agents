@@ -4,7 +4,7 @@ description: Root-cause a concrete failure through experiments — reproduce, in
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "1.1.1"
   an-dr.type: action
   an-dr.dependencies: none
 ---

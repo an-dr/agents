@@ -4,7 +4,7 @@ description: Structure a DESIGN decision deeper than a quick pick with an option
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.2.0"
+  version: "1.3.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-use-user-interface an-dr-convention-adr an-dr-convention-use-case an-dr-dev-write-documentation
 ---

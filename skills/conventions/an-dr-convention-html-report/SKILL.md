@@ -4,7 +4,7 @@ description: The format of an HTML report for people and the scripts that apply 
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.3.0"
+  version: "2.0.0"
   an-dr.type: convention
   an-dr.dependencies: an-dr-concept-dark-cockpit an-dr-convention-artifact-layout an-dr-convention-diagram an-dr-convention-html-repo-style
 ---

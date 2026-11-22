@@ -4,7 +4,7 @@ description: How much a diagram may show — one level of abstraction, a reading
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "2.0.0"
   an-dr.type: convention
   an-dr.dependencies: none
 ---

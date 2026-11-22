@@ -4,7 +4,7 @@ description: Run an agent skill's cheap script tests and, only on explicit user 
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.3.0"
+  version: "1.4.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-skill-implement-test an-dr-ai-use-user-interface an-dr-files-build-report an-dr-convention-script an-dr-convention-agent-skill-testing
 ---

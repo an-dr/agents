@@ -4,7 +4,7 @@ description: Format rules for Markdown files — one line per paragraph, heading
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.3.0"
+  version: "2.0.0"
   an-dr.type: convention
   an-dr.dependencies: PROHIBITED
 ---

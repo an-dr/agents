@@ -4,7 +4,7 @@ description: Implement script tests and reusable behavioral cases for an agent s
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.3.0"
+  version: "2.0.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-write-instruction an-dr-convention-agent-skill an-dr-convention-script an-dr-convention-agent-skill-testing
 ---

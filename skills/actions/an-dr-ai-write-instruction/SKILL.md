@@ -4,7 +4,7 @@ description: Create or change instructions an agent loads — AGENTS.md, CLAUDE.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "1.1.1"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-review-instruction an-dr-concept-ai-slop an-dr-convention-markdown an-dr-dev-write-documentation
 ---

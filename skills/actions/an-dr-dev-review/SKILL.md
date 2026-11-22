@@ -4,7 +4,7 @@ description: Review a diff for defects, security issues, weakened checks, struct
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "2.0.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-use-user-interface an-dr-concept-ai-slop an-dr-concept-clean-dependencies an-dr-concept-evidence-grounding an-dr-convention-code an-dr-convention-html-repo-style an-dr-convention-html-report an-dr-convention-layout an-dr-files-find-destination
   an-dr.artifact.kind: code-review

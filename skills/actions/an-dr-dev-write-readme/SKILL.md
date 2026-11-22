@@ -5,7 +5,7 @@ license: MIT
 allowed-tools: Read Grep Glob Write Edit PowerShell
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.2.0"
+  version: "1.3.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-use-user-interface an-dr-dev-assign-ai-level an-dr-convention-markdown an-dr-convention-readme an-dr-dev-write-documentation an-dr-files-make-screengif an-dr-files-make-screenshot
 ---

@@ -4,7 +4,7 @@ description: Find where the process itself caused friction in a finished flow an
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "1.2.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-agents-repo-modify
 ---

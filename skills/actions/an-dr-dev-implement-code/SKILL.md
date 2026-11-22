@@ -4,7 +4,7 @@ description: Implement code following repository patterns, documentation, and th
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "1.2.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-concept-evidence-grounding an-dr-convention-adr an-dr-convention-code an-dr-convention-layout an-dr-dev-write-documentation an-dr-git-modify-history
 ---

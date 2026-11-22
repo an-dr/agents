@@ -4,7 +4,7 @@ description: Change a repository's local history — record commits in the repos
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "2.1.0"
+  version: "3.0.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-convention-commit-message
 ---

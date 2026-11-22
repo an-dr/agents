@@ -4,7 +4,7 @@ description: Where generated artifacts live — one folder per kind under .tmp-a
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "2.1.0"
+  version: "3.0.0"
   an-dr.type: convention
   an-dr.dependencies: PROHIBITED
 ---

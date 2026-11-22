@@ -4,7 +4,7 @@ description: Store and read the data of the current operation in tmp-agent-wip.j
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.0.0"
+  version: "2.0.0"
   an-dr.type: action
   an-dr.dependencies: none
 ---

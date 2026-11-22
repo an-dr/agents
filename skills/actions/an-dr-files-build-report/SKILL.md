@@ -4,7 +4,7 @@ description: Build a written HTML page into a finished report - artifact path, e
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "1.2.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-convention-html-repo-style an-dr-convention-html-report an-dr-files-find-destination
 ---

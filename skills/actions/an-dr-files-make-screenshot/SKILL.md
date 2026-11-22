@@ -4,7 +4,7 @@ description: Capture a screenshot of a website or a running GUI application or g
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "2.0.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-files-build-report
   an-dr.artifact.kind: check-screenshot

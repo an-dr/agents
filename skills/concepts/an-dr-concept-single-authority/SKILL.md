@@ -4,7 +4,7 @@ description: Every fact, decision, and piece of mutable state has one authoritat
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "1.2.0"
   an-dr.type: concept
   an-dr.dependencies: PROHIBITED
 ---

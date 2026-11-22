@@ -4,7 +4,7 @@ description: Verify a code change. Use for relevant tests, boundary and failure 
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "1.2.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-use-user-interface an-dr-dev-implement-adversarial-ut
 ---

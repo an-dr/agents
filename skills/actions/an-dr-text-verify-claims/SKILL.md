@@ -4,7 +4,7 @@ description: Audit a text against its sources by splitting it into claims, label
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "1.1.1"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-use-user-interface an-dr-files-build-report an-dr-convention-html-report
   an-dr.artifact.kind: claim-audit-report

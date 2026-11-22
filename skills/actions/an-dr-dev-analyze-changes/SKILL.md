@@ -4,7 +4,7 @@ description: Produce one human-facing HTML report of a finished change — what 
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.2.0"
+  version: "1.3.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-concept-ai-slop an-dr-convention-diagram an-dr-files-build-report an-dr-convention-html-report an-dr-dev-write-documentation
   an-dr.artifact.kind: change-report

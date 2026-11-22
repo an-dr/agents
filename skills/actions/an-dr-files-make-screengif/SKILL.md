@@ -4,7 +4,7 @@ description: Record a short animated GIF of a website, GUI application, or game 
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "2.0.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-files-make-screenshot
 ---

@@ -4,7 +4,7 @@ description: What AI slop is — output that looks finished but carries less, or
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "1.1.1"
   an-dr.type: concept
   an-dr.dependencies: PROHIBITED
 ---

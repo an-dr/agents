@@ -4,7 +4,7 @@ description: Write the high-level specification of a new project or completely n
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "1.1.1"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-use-user-interface an-dr-concept-clean-dependencies an-dr-convention-adr an-dr-convention-use-case an-dr-dev-write-documentation
 ---

@@ -4,7 +4,7 @@ description: The attention model for output that exists to find problems — nor
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "1.1.1"
   an-dr.type: concept
   an-dr.dependencies: PROHIBITED
 ---
