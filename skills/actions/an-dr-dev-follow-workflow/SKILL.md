@@ -6,7 +6,7 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "4.0.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-ai-use-wip-data an-dr-convention-adr an-dr-convention-branch-name an-dr-dev-analyze-changes an-dr-dev-debug an-dr-dev-design an-dr-dev-implement-code an-dr-dev-implement-pipeline an-dr-dev-integrate an-dr-dev-review an-dr-dev-test an-dr-dev-write-documentation an-dr-dev-write-readme an-dr-dev-write-specification an-dr-git-modify-history
+  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-ai-use-wip-data an-dr-concept-lab-notebook an-dr-convention-adr an-dr-convention-branch-name an-dr-dev-analyze-changes an-dr-dev-debug an-dr-dev-design an-dr-dev-implement-code an-dr-dev-implement-pipeline an-dr-dev-integrate an-dr-dev-review an-dr-dev-test an-dr-dev-write-documentation an-dr-dev-write-readme an-dr-dev-write-specification an-dr-git-modify-history
 ---
 
 # Workflow controller
@@ -77,12 +77,15 @@ python <script> move-increment --number 4 --to 2
 python <script> defer-increment --to 6
 python <script> remove-increment --number 7
 python <script> set-handoff --handoff-field next --items '<entry> | <entry>'
+python <script> add-note --kind hypothesis --text '<expected outcome>'
+python <script> add-note --kind result --number 4 --text '<measured>' --items '<commit>' '<command>'
 python <script> finish
 ```
 
 - An increment is a build iteration.
 - Every state-changing command renders `tmp-agent-progress.html` at the host root, grouped by the common path; it is excluded from git and removed at `finish` and when no state exists.
 - `set-handoff` replaces one handoff field whole: `goal` takes one text; `done`, `next`, `openQuestions`, `decisions`, and `files` take entries separated by ` | ` or newlines.
+- `add-note` appends to the branch notebook, kept by `an-dr-concept-lab-notebook`: kinds `hypothesis`, `result`, `dead-end`, `decision`, `correction`; `--number` names the hypothesis a result tests and is required for the entry a correction corrects; `--items` names evidence. Write entries at the handoff's checkpoints, a hypothesis before each verification run and its result after it, and a dead end whenever an approach is dropped. Nothing edits an entry; the notebook closes at `finish` and ends with the branch. Status shows the last three entries; a resuming session reads them with the handoff.
 - `advance` rejects missing approvals or iterations, wrong branches, uncommitted iterations, and illegal transitions.
 - `return-to-build` resumes `BUILD` for the same iteration and drops its step approval.
 - Before changing iterations, read [references/increments.md](references/increments.md); before `switch-flow`, read [references/switch-flow.md](references/switch-flow.md).

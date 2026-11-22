@@ -247,6 +247,19 @@ def render(root: Path, skill_folder: Path) -> None:
         if items:
             body.append(f"<section><h2>{heading}</h2>{list_html(items)}</section>")
 
+    notebook = list(state.get("notebook") or [])[-8:]
+    if notebook:
+        notebook.reverse()
+        notes = []
+        for entry in notebook:
+            link = f" (corrects #{entry['corrects']})" if entry.get("corrects") else ""
+            link += f" (tests #{entry['tests']})" if entry.get("tests") else ""
+            notes.append(
+                f'<li><span class="muted">#{entry.get("number")} {html_encode(entry.get("kind"))}</span> '
+                f'{html_encode(entry.get("text"))}{html_encode(link)}</li>'
+            )
+        body.append(f'<section><h2>Notebook</h2><ul class="log">{"".join(notes)}</ul></section>')
+
     recent = list(state.get("history") or [])[-8:]
     recent.reverse()
     log = [

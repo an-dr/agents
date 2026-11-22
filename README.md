@@ -286,6 +286,7 @@ flowchart LR
         an-dr-concept-clean-dependencies
         an-dr-concept-dark-cockpit
         an-dr-concept-evidence-grounding
+        an-dr-concept-lab-notebook
         an-dr-concept-single-authority
     end
     subgraph g_conventions["Conventions"]
@@ -324,7 +325,7 @@ flowchart LR
     an-dr-dev-analyze-slop --> an-dr-ai-review-instruction & an-dr-ai-use-user-interface & an-dr-concept-ai-slop & an-dr-files-build-report & an-dr-convention-html-report
     an-dr-dev-assign-ai-level --> an-dr-ai-use-user-interface & an-dr-convention-ai-level
     an-dr-dev-design --> an-dr-ai-use-user-interface & an-dr-convention-adr & an-dr-convention-use-case & an-dr-dev-write-documentation
-    an-dr-dev-follow-workflow --> an-dr-ai-use-user-interface & an-dr-ai-use-wip-data & an-dr-convention-adr & an-dr-convention-branch-name & an-dr-dev-analyze-changes & an-dr-dev-debug & an-dr-dev-design & an-dr-dev-implement-code & an-dr-dev-implement-pipeline & an-dr-dev-integrate & an-dr-dev-review & an-dr-dev-test & an-dr-dev-write-documentation & an-dr-dev-write-readme & an-dr-dev-write-specification & an-dr-git-modify-history
+    an-dr-dev-follow-workflow --> an-dr-ai-use-user-interface & an-dr-ai-use-wip-data & an-dr-concept-lab-notebook & an-dr-convention-adr & an-dr-convention-branch-name & an-dr-dev-analyze-changes & an-dr-dev-debug & an-dr-dev-design & an-dr-dev-implement-code & an-dr-dev-implement-pipeline & an-dr-dev-integrate & an-dr-dev-review & an-dr-dev-test & an-dr-dev-write-documentation & an-dr-dev-write-readme & an-dr-dev-write-specification & an-dr-git-modify-history
     an-dr-dev-implement-code --> an-dr-concept-evidence-grounding & an-dr-convention-adr & an-dr-convention-code & an-dr-convention-layout & an-dr-dev-write-documentation & an-dr-git-modify-history
     an-dr-dev-implement-pipeline --> an-dr-ai-use-user-interface & an-dr-convention-code
     an-dr-dev-integrate --> an-dr-ai-use-user-interface & an-dr-ai-use-wip-data & an-dr-convention-commit-message & an-dr-git-modify-history
@@ -377,11 +378,12 @@ This repository values transparency about how software is made, and it encourage
 
 Ideas adapted from other projects:
 
-| Idea here                                                                                          | Source                                                                                                   |
-| -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| Doubt pass in [an-dr-dev-review](skills/actions/an-dr-dev-review/SKILL.md)                         | `doubt-driven-development` in [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills)      |
-| Weakening check in [an-dr-dev-review](skills/actions/an-dr-dev-review/SKILL.md)                    | `constraint-driven-development` in [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) |
-| Official-docs rule in [an-dr-dev-implement-code](skills/actions/an-dr-dev-implement-code/SKILL.md) | `source-driven-development` in [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills)     |
+| Idea here                                                                                                                                                                               | Source                                                                                                                                                       |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Doubt pass in [an-dr-dev-review](skills/actions/an-dr-dev-review/SKILL.md)                                                                                                              | `doubt-driven-development` in [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills)                                                          |
+| Weakening check in [an-dr-dev-review](skills/actions/an-dr-dev-review/SKILL.md)                                                                                                         | `constraint-driven-development` in [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills)                                                     |
+| Branch notebook in [an-dr-dev-follow-workflow](skills/actions/an-dr-dev-follow-workflow/SKILL.md) and [an-dr-concept-lab-notebook](skills/concepts/an-dr-concept-lab-notebook/SKILL.md) | Howard M. Kanare, *Writing the Laboratory Notebook* (1985), via [Lab journal](https://lispmeister.github.io/deeprecursion/posts/2026-04-15-lab-journal.html) |
+| Official-docs rule in [an-dr-dev-implement-code](skills/actions/an-dr-dev-implement-code/SKILL.md)                                                                                      | `source-driven-development` in [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills)                                                         |
 
 ## 🤝 Contributing
 

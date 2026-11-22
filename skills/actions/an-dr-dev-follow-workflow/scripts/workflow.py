@@ -35,12 +35,18 @@ COMMANDS = (
     "answer-question",
     "dismiss-question",
     "set-handoff",
+    "add-note",
     "finish",
 )
 FLOWS = ("Vibe", "Spec", "Supervised")
 GATES = ("scope-approved", "design-approved", "plan-approved", "step-approved", "result-approved")
 REQUIREMENT_FIELDS = ("goal", "constraints", "done", "outOfScope")
 HANDOFF_FIELDS = ("goal", "done", "next", "openQuestions", "decisions", "files")
+# Lab-notebook entry kinds (an-dr-concept-lab-notebook). The notebook only
+# grows: no command edits or removes an entry, and a correction names the
+# entry it corrects instead of rewriting it.
+NOTE_KINDS = ("hypothesis", "result", "dead-end", "decision", "correction")
+NOTEBOOK_TAIL = 3
 INCREMENT_STATUSES = ("planned", "in_progress", "verified", "completed")
 ACTIVE_PHASES = ("DOCS", "BUILD", "VERIFY", "COMMIT")
 # Files the controller rewrites on every command, which a clean-tree check
@@ -234,6 +240,7 @@ def get_state(context: Context) -> dict:
     state.setdefault("questions", [])
     state.setdefault("requests", [])
     state.setdefault("handoff", {})
+    state.setdefault("notebook", [])
     state.setdefault("finishedAt", None)
     # A workflow that stopped in START has no request list and INTAKE will not
     # release an empty one, so its goal becomes the first request. Later phases
@@ -593,6 +600,15 @@ def show_status(state: dict, status: str = "active") -> None:
         goal = handoff["goal"]
     else:
         goal = "(not yet defined)"
+    notebook = state.get("notebook") or []
+    if notebook:
+        lines += ["", "| # | Notebook (latest) | Kind |", "| ---: | --- | --- |"]
+        for entry in notebook[-NOTEBOOK_TAIL:]:
+            note_text = str(entry.get("text")).replace("|", "\\|")
+            if entry.get("corrects"):
+                note_text = f"corrects #{entry['corrects']}: {note_text}"
+            lines.append(f"| {entry.get('number')} | {note_text} | {entry.get('kind')} |")
+        lines.append("")
     lines.append(f"Base: {state.get('baseBranch')}")
     lines.append(f"Goal: {goal}")
     lines.append(f"Updated: {state.get('updatedAt')}")
@@ -636,6 +652,7 @@ def command_start(args: argparse.Namespace, context: Context) -> None:
         "approvals": [],
         "history": [],
         "handoff": {},
+        "notebook": [],
         "finishedAt": None,
         "createdAt": now,
         "updatedAt": now,
@@ -1146,6 +1163,39 @@ def command_set_handoff(args: argparse.Namespace, context: Context) -> None:
     show_status(state)
 
 
+# The lab notebook: why the work went the way it did -- what was expected,
+# what was measured, what failed. Entries are appended, never edited; the
+# notebook lives in the branch's state and ends with it at handover.
+def command_add_note(args: argparse.Namespace, context: Context) -> None:
+    state = get_state(context)
+    if state.get("finishedAt"):
+        raise WorkflowError("The workflow is handed over; its notebook is closed.")
+    if not args.kind:
+        raise WorkflowError("-Kind is required for add-note.")
+    if is_blank(args.text):
+        raise WorkflowError("-Text is required for add-note.")
+    notebook = list(state.get("notebook") or [])
+    numbers = {entry.get("number") for entry in notebook}
+    entry = {"number": len(notebook) + 1, "at": utc_now(), "kind": args.kind, "text": args.text.strip()}
+    if args.kind in ("correction", "result"):
+        # A correction must name what it corrects; a result may name its hypothesis.
+        if args.number is None and args.kind == "correction":
+            raise WorkflowError("-Number must name the entry a correction corrects.")
+        if args.number is not None:
+            if args.number not in numbers:
+                raise WorkflowError(f"No notebook entry #{args.number}.")
+            entry["corrects" if args.kind == "correction" else "tests"] = args.number
+    elif args.number is not None:
+        raise WorkflowError("-Number applies only to a correction or a result.")
+    evidence = [item.strip() for item in args.items or [] if item.strip()]
+    if evidence:
+        entry["evidence"] = evidence
+    state["notebook"] = [*notebook, entry]
+    add_history_entry(state, "add-note", f"Notebook #{entry['number']} ({args.kind}).")
+    save_state(context, state)
+    show_status(state)
+
+
 def command_finish(args: argparse.Namespace, context: Context) -> None:
     state = get_state(context)
     assert_workflow_branch(state)
@@ -1187,6 +1237,7 @@ HANDLERS = {
     "answer-question": command_answer_question,
     "dismiss-question": command_dismiss_question,
     "set-handoff": command_set_handoff,
+    "add-note": command_add_note,
     "finish": command_finish,
 }
 
@@ -1233,6 +1284,7 @@ def main() -> int:
     parser.add_argument("--to", "-To", type=int)
     parser.add_argument("--handoff-field", "-HandoffField", choices=HANDOFF_FIELDS)
     parser.add_argument("--items", "-Items", nargs="+")
+    parser.add_argument("--kind", "-Kind", choices=NOTE_KINDS)
     parser.add_argument("--wip-data-skill", "-WipDataSkill", type=Path, required=True)
     args = parser.parse_args()
     try:

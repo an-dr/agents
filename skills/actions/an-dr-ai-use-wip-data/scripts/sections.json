@@ -4,7 +4,7 @@
     "fields": [
       "schemaVersion", "flow", "phase", "baseBranch", "baseCommit", "featureBranch",
       "requirements", "requests", "questions", "increments", "currentIncrementId", "commitBaseline",
-      "approvals", "history", "handoff", "finishedAt", "createdAt", "updatedAt"
+      "approvals", "history", "handoff", "notebook", "finishedAt", "createdAt", "updatedAt"
     ],
     "readers": {
       "an-dr-dev-integrate": ["baseBranch"],

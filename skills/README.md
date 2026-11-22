@@ -52,6 +52,7 @@ Passive. Principles the agent reads when their subject is in play and never runs
 | [`an-dr-concept-clean-dependencies`](concepts/an-dr-concept-clean-dependencies/SKILL.md) | Apply clean-architecture rules to components: no cycles, no layer skipping, coherent components, public contracts only. |
 | [`an-dr-concept-dark-cockpit`](concepts/an-dr-concept-dark-cockpit/SKILL.md)             | Decide severity levels for problem-finding output: normal stays quiet, red is for critical alone.                       |
 | [`an-dr-concept-evidence-grounding`](concepts/an-dr-concept-evidence-grounding/SKILL.md) | Keep conclusions traceable to evidence and separate observed, inferred, assumed, and intended statements.               |
+| [`an-dr-concept-lab-notebook`](concepts/an-dr-concept-lab-notebook/SKILL.md)             | Record hypotheses, results, dead ends, and decisions append-only, corrected never rewritten.                            |
 | [`an-dr-concept-single-authority`](concepts/an-dr-concept-single-authority/SKILL.md)     | Give every fact and state one owner; mark every other copy as derived.                                                  |
 
 ## Conventions

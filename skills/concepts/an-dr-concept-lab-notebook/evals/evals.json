@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "skill_name": "an-dr-concept-lab-notebook",
+  "environment": {
+    "host": "current",
+    "model": "current",
+    "os": [
+      "windows",
+      "linux",
+      "macos"
+    ],
+    "tools": [
+      "git",
+      "python"
+    ],
+    "network": "disabled",
+    "permissions": "workspace-only",
+    "discovery": "host-native",
+    "instructions": [
+      "target-and-dependencies"
+    ],
+    "workspace": "fresh-git"
+  },
+  "evals": [
+    {
+      "id": "BASE-001",
+      "bucket": "explicit",
+      "prompt": "Use an-dr-concept-lab-notebook. Judge whether this agent progress record can be trusted by a new session.",
+      "expected_skill": "an-dr-concept-lab-notebook",
+      "context": "The record has entry 4 'Fix works, tests pass' with no hypothesis before it, no command or commit named, and entry 2 was silently rewritten (git shows its text changed). No failed attempts are recorded although the commit history shows two reverted approaches.",
+      "expected_behavior": [
+        "Flags the result written without a prior hypothesis and without named evidence as untrustworthy.",
+        "Flags the rewritten entry as a permanence violation and the missing dead ends as incomplete, proposing corrections and dead-end entries rather than edits."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": [
+            ".tmp-ai-gen"
+          ]
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Flags the result written without a prior hypothesis and without named evidence as untrustworthy."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Flags the rewritten entry as a permanence violation and the missing dead ends as incomplete, proposing corrections and dead-end entries rather than edits."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-IMPLICIT",
+      "bucket": "implicit",
+      "prompt": "Judge whether this agent progress record can be trusted by a new session.",
+      "expected_skill": "an-dr-concept-lab-notebook",
+      "context": "The record has entry 4 'Fix works, tests pass' with no hypothesis before it, no command or commit named, and entry 2 was silently rewritten (git shows its text changed). No failed attempts are recorded although the commit history shows two reverted approaches.",
+      "expected_behavior": [
+        "Flags the result written without a prior hypothesis and without named evidence as untrustworthy.",
+        "Flags the rewritten entry as a permanence violation and the missing dead ends as incomplete, proposing corrections and dead-end entries rather than edits."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": [
+            ".tmp-ai-gen"
+          ]
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Flags the result written without a prior hypothesis and without named evidence as untrustworthy."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Flags the rewritten entry as a permanence violation and the missing dead ends as incomplete, proposing corrections and dead-end entries rather than edits."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-CONTEXTUAL",
+      "bucket": "contextual",
+      "prompt": "I am preparing a handoff before lunch; the meeting moved to Friday and the notes folder has old drafts. The actual task is: Judge whether this agent progress record can be trusted by a new session.",
+      "expected_skill": "an-dr-concept-lab-notebook",
+      "context": "The record has entry 4 'Fix works, tests pass' with no hypothesis before it, no command or commit named, and entry 2 was silently rewritten (git shows its text changed). No failed attempts are recorded although the commit history shows two reverted approaches.",
+      "expected_behavior": [
+        "Flags the result written without a prior hypothesis and without named evidence as untrustworthy.",
+        "Flags the rewritten entry as a permanence violation and the missing dead ends as incomplete, proposing corrections and dead-end entries rather than edits."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": true
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": [
+            ".tmp-ai-gen"
+          ]
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Flags the result written without a prior hypothesis and without named evidence as untrustworthy."
+        },
+        {
+          "type": "llm_judge",
+          "rubric": "Flags the rewritten entry as a permanence violation and the missing dead ends as incomplete, proposing corrections and dead-end entries rather than edits."
+        }
+      ],
+      "runs": 1
+    },
+    {
+      "id": "DISCOVERY-NEGATIVE",
+      "bucket": "negative",
+      "prompt": "Translate the single word hello into Czech and return only the translation. No analysis, design, report, or source assessment is requested.",
+      "expected_skill": null,
+      "context": "Only the requested response is in scope. No file changes are requested.",
+      "expected_behavior": [
+        "Does not load or invoke the target skill.",
+        "Completes the narrowly requested task without unsolicited artifacts or changes."
+      ],
+      "assertions": [
+        {
+          "type": "invocation_check",
+          "expected": false
+        },
+        {
+          "type": "diff_scope",
+          "allowed_paths": []
+        }
+      ],
+      "runs": 1
+    }
+  ]
+}
