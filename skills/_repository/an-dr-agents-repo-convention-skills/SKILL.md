@@ -6,7 +6,7 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "1.6.0"
   an-dr.type: convention
-  an-dr.dependencies: an-dr-ai-skill-implement-test an-dr-ai-skill-test an-dr-convention-agent-skill an-dr-dev-test an-dr-dev-write-documentation an-dr-convention-agent-skill-testing
+  an-dr.dependencies: an-dr-agents-repo-build-release an-dr-ai-skill-implement-test an-dr-ai-skill-test an-dr-convention-agent-skill an-dr-dev-test an-dr-dev-write-documentation an-dr-convention-agent-skill-testing
 ---
 
 # Convention: this repository's skills
@@ -47,6 +47,7 @@ A verb is added here before use, with a meaning distinct from the others; `check
 | `collect`   | gather information from a source for a task                               |
 | `debug`     | find the cause of a concrete failure                                      |
 | `design`    | explore a decision and its options before it is made                      |
+| `find`      | settle where something goes or where it is                                |
 | `fix`       | correct a defect that is known                                            |
 | `follow`    | run a controller or process and keep to its rules                         |
 | `implement` | build working code or tests from a design                                 |
@@ -63,7 +64,7 @@ A verb is added here before use, with a meaning distinct from the others; `check
 ## Metadata
 
 - Frontmatter: `license: MIT`; `author` and `version` under `metadata`, beside the `an-dr.` extensions.
-- `version` is a quoted semantic version (`"1.0.0"`), raised when the skill's behaviour changes.
+- `version` is a quoted semantic version (`"1.0.0"`), raised only by a release or pre-release through `an-dr-agents-repo-build-release`, for each skill whose behaviour changed since the last release tag; a commit on `dev` never changes it.
 
 ## Tests
 

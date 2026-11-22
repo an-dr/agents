@@ -38,15 +38,16 @@ python <skill>/scripts/check-main-staleness.py [--root <clone>] [--max-days 14] 
 Only on the user's request, and after the release is confirmed as an `an-dr-ai-use-user-interface` confirmation naming the version.
 
 1. Keep the version a pre-release already set in `VERSION`; otherwise pick it by semantic versioning against the last release tag: a removed or renamed skill, a changed script parameter, or a policy rule a user must follow differently is major; a new skill, flow, or capability is minor; anything else is patch.
-2. Write or complete `VERSION` and `docs/releases/<version>.md`, covering the whole cycle rather than the last pre-release: one opening sentence on what the release gives, then one bullet per user-visible change, in the user's terms.
-3. Run `python <skill>/scripts/package.py --tag v<version>` and the repository checks, then commit both files through `an-dr-git-modify-history` as `chore: release <version>` on `dev`, and push `dev`.
-4. Promote the release commit with `python <skill>/scripts/promote.py`: from a clean `dev` whose tip descends from `main`, it runs `tests/run-all.py --all` on that commit, fast-forwards `main`, and pushes `main` and `dev`; it never force-pushes. Then tag `main` and push the tag: `git tag v<version>` and `git push origin v<version>`. `release.yml` reruns every check, packages, and publishes the GitHub release with the notes, the zip, and `SHA256SUMS`.
-5. Report the release URL, or the failing step of the release run.
+2. Raise `version` in each skill whose behaviour changed since the last release tag, by the same semantic rule; a skill a pre-release of this cycle already raised keeps that version.
+3. Write or complete `VERSION` and `docs/releases/<version>.md`, covering the whole cycle rather than the last pre-release: one opening sentence on what the release gives, then one bullet per user-visible change, in the user's terms.
+4. Run `python <skill>/scripts/package.py --tag v<version>` and the repository checks, then commit them with the raised skill versions through `an-dr-git-modify-history` as `chore: release <version>` on `dev`, and push `dev`.
+5. Promote the release commit with `python <skill>/scripts/promote.py`: from a clean `dev` whose tip descends from `main`, it runs `tests/run-all.py --all` on that commit, fast-forwards `main`, and pushes `main` and `dev`; it never force-pushes. Then tag `main` and push the tag: `git tag v<version>` and `git push origin v<version>`. `release.yml` reruns every check, packages, and publishes the GitHub release with the notes, the zip, and `SHA256SUMS`.
+6. Report the release URL, or the failing step of the release run.
 
 ## Pre-release
 
 Only on the user's request, confirmed as an `an-dr-ai-use-user-interface` confirmation naming the tag. No promotion: `main` stays where it is.
 
-1. If `VERSION` still equals the last release, pick the next version as in Release step 1 and commit `VERSION` with `docs/releases/<version>.md` on `dev`; otherwise add the changes since the previous pre-release to those notes. A breaking change in a minor cycle moves `VERSION` to the next major.
+1. If `VERSION` still equals the last release, pick the next version as in Release step 1 and commit `VERSION` with `docs/releases/<version>.md` on `dev`; otherwise add the changes since the previous pre-release to those notes. A breaking change in a minor cycle moves `VERSION` to the next major. In both cases raise skill versions as in Release step 2.
 2. Take the next `<n>` from the existing `v<version>-pre.*` tags, run `python <skill>/scripts/package.py --tag v<version>-pre.<n>` and the repository checks, push `dev`, then `git tag v<version>-pre.<n>` on the `dev` tip and `git push origin v<version>-pre.<n>`.
 3. Report the pre-release URL, or the failing step of the release run.
