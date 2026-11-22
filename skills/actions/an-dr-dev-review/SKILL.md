@@ -1,10 +1,10 @@
 ---
 name: an-dr-dev-review
-description: Review a diff for defects, security issues, structure, convention violations, and outdated patterns, recording findings in a JSON record rendered to HTML. Use on a change, on a whole branch against its base, or when the user requests a code review.
+description: Review a diff for defects, security issues, weakened checks, structure, convention violations, and outdated patterns, recording findings in a JSON record rendered to HTML, and offer a fresh-context doubt pass on a non-trivial decision. Use on a change, on a whole branch against its base, or when the user requests a code review.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "1.2.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-use-user-interface an-dr-concept-ai-slop an-dr-concept-clean-dependencies an-dr-concept-evidence-grounding an-dr-convention-artifact-layout an-dr-convention-code an-dr-convention-html-repo-style an-dr-convention-html-report an-dr-convention-layout
 ---
@@ -49,6 +49,14 @@ python <skill>/scripts/review-start.py --reference '<branch-or-ref>' \
 
 Takes a `code-review` path from `an-dr-convention-artifact-layout` and writes a schema-versioned JSON record there from `assets/review-template.json`. Review state and reports stay local unless the user asks otherwise.
 
+## Check for weakening
+
+```sh
+python <skill>/scripts/check-weakening.py [--reference <base>] [--staged]
+```
+
+Lists added suppressions, skipped tests, stubs, deleted test files, and files that lose more assertion lines than they gain; exit `1` on any. Each row the diff does not justify in its own text or commit message → `high` finding; a justified one → summary.
+
 ## Judge for slop
 
 - Apply `an-dr-concept-ai-slop` to added lines: comments restating code, options or layers with no consumer, prose padding and decoration, unchecked names, paths, or commands, template residue.
@@ -75,6 +83,15 @@ python <skill>/scripts/review-note.py --review-path <json> \
 - Finding sections `critical`, `high`, `slop`, `improvement` get IDs `CR.N`, `HI.N`, `SL.N`, `IM.N`; positives `PO.N`.
 - Summary and verdict are singletons, updated rather than appended.
 - Before attaching a diagram with `--diagram` or `--diagram-path`, read [references/checklist.md](references/checklist.md).
+
+## Doubt a decision
+
+A decision is non-trivial when it adds branching, crosses a module or service boundary, claims a property the compiler cannot check (thread safety, idempotence, ordering), or cannot be undone (migration, public contract, deploy).
+
+- Diff holds a non-trivial decision → offer one doubt pass for it, once, as an `an-dr-ai-use-user-interface` confirmation; run it only on acceptance, since it spawns a subagent.
+- Give a fresh-context subagent the decision stated as a claim, the diff hunks, and the files they touch; never the conversation or the author's reasoning.
+- Instruct it to disprove the claim: a failing input, a broken caller, a violated invariant, each with a path.
+- Record each counter-example it backs with evidence as a finding of its severity; an unsupported doubt is dropped, and a claim it cannot disprove stands, noted in the summary.
 
 ## Render and report
 

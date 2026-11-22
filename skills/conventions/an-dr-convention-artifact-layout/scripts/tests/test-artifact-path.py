@@ -54,6 +54,30 @@ class ArtifactPathTests(unittest.TestCase):
                     self.assertNotEqual(run("new-artifact-path.py", *arguments).returncode, 0)
             self.assertNotEqual(run("publish-latest.py", str(root / "elsewhere.html")).returncode, 0)
 
+    def test_other_kind_takes_a_name_and_has_no_latest(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="artifact-layout-") as temporary:
+            root = Path(temporary)
+            command = ("other", "html", "--name", "plugin-comparison", "--repository-root", str(root))
+            first = run("new-artifact-path.py", *command, "--stamp", "2026-11-22_14-05")
+            self.assertEqual(first.returncode, 0, first.stderr)
+            path = Path(first.stdout.strip())
+            self.assertEqual(path, root / ".tmp-ai-gen/other/2026-11-22_14-05-plugin-comparison.html")
+            path.write_text("<html></html>", encoding="utf-8")
+            auto = run("new-artifact-path.py", *command)
+            self.assertEqual(auto.returncode, 0, auto.stderr)
+            self.assertRegex(Path(auto.stdout.strip()).name, r"^\d{4}-\d{2}-\d{2}_\d{2}-\d{2}(?:-\d+)?-plugin-comparison\.html$")
+            Path(auto.stdout.strip()).write_text("x", encoding="utf-8")
+            again = run("new-artifact-path.py", *command)
+            self.assertNotEqual(again.stdout.strip(), auto.stdout.strip())
+            for arguments in (
+                ("other", "html", "--repository-root", str(root)),
+                ("other", "html", "--name", "Bad Name", "--repository-root", str(root)),
+                ("code-review", "html", "--name", "x", "--repository-root", str(root)),
+            ):
+                with self.subTest(arguments=arguments):
+                    self.assertNotEqual(run("new-artifact-path.py", *arguments).returncode, 0)
+            self.assertNotEqual(run("publish-latest.py", str(path)).returncode, 0)
+
 
 if __name__ == "__main__":
     unittest.main()

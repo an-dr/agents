@@ -18,12 +18,15 @@ REPO/.tmp-ai-gen/
     code-review-2026-11-01_14-32.html
   change-report/
     change-report-2026-11-01_15-10.html
+  other/
+    2026-11-22_14-05-plugin-comparison.html
 ```
 
 - One folder per registered kind, files named by kind and minute; files of one artifact share the stamp.
 - `<kind>-latest.*` at the top is a copy of the newest finished artifact.
 - Scratch files and fixtures go to the system temp directory instead. Deliverables — ADRs, READMEs, `docs/` — are committed content and never go here.
 - A kind must be registered in `assets/kinds.txt` before a skill can write it.
+- A one-off output you ask for, such as a custom report, goes to `other/` named by minute and a short name (`--name`), with no latest copy.
 
 ## What you get
 

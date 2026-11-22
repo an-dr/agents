@@ -1,6 +1,6 @@
 # an-dr-dev-review
 
-Reviews a diff for defects, security issues, structure, convention violations, slop, and outdated patterns, records the findings in a JSON file, and renders them as an HTML report.
+Reviews a diff for defects, security issues, weakened checks, structure, convention violations, slop, and outdated patterns, records the findings in a JSON file, and renders them as an HTML report.
 
 ## When it runs
 
@@ -17,14 +17,18 @@ flowchart LR
   D[Select the diff] --> J[Judge: defects, security, structure, ergonomics, conventions, modernisation]
   J --> L[Layout check of added files]
   J --> S[Slop check of added lines]
+  J --> W[check-weakening.py]
   L --> N[review-note.py per finding]
   S --> N
+  W --> N
   N --> H[JSON record rendered to HTML]
 ```
 
 - Every finding has a tight location and a concrete recommendation. Taste and writing preferences are not findings, and host conventions override general ones.
 - Added files are placed by the layout convention; errors in paths the diff touches are findings, errors elsewhere are noted as existing debt.
 - Slop in added lines — comments restating code, options nobody uses, unchecked paths — gets its own section.
+- `check-weakening.py` lists added suppressions, skipped tests, stubs, deleted tests, and lost assertions; each one the change does not justify is a finding.
+- For a non-trivial decision it offers a doubt pass: a fresh-context subagent sees only the claim and the diff and tries to disprove it. It runs only if you accept.
 
 ## What you get
 

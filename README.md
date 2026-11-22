@@ -35,6 +35,7 @@ Unseen decisions are the risk in AI development. This repository lets you choose
         - [🔗 Skill dependencies](#-skill-dependencies)
     - [🧰 Development](#-development)
     - [🔍 AI disclosure](#-ai-disclosure)
+    - [🙏 Acknowledgements](#-acknowledgements)
     - [🤝 Contributing](#-contributing)
     - [📄 License](#-license)
     - [📈 Status](#-status)
@@ -196,17 +197,17 @@ Each release is a version in [VERSION](VERSION), with notes in [docs/releases/](
 
 ### 📁 Repository layout
 
-| Path                  | Purpose                                                              |
-| --------------------- | -------------------------------------------------------------------- |
-| `AGENTS.md`           | Policy entry point                                                   |
-| `VERSION`             | The repository's version, released as `agents-<version>.zip`         |
-| `docs/releases/`      | Notes for each release                                               |
-| `skills/actions/`     | Procedures the agent performs                                        |
-| `skills/concepts/`    | Principles applied when their subject is in play                     |
-| `skills/conventions/` | Artifact formats and their mechanical checks                         |
-| `skills/_repository/` | Maintenance and installation of this repository                      |
-| `tests/run-all.py`    | Discovery of every skill test runner                                 |
-| `.tmp-ai-gen/`        | Ignored generated skill outputs, with a `<kind>-latest` copy of each |
+| Path                  | Purpose                                                                                           |
+| --------------------- | ------------------------------------------------------------------------------------------------- |
+| `AGENTS.md`           | Policy entry point                                                                                |
+| `VERSION`             | The repository's version, released as `agents-<version>.zip`                                      |
+| `docs/releases/`      | Notes for each release                                                                            |
+| `skills/actions/`     | Procedures the agent performs                                                                     |
+| `skills/concepts/`    | Principles applied when their subject is in play                                                  |
+| `skills/conventions/` | Artifact formats and their mechanical checks                                                      |
+| `skills/_repository/` | Maintenance and installation of this repository                                                   |
+| `tests/run-all.py`    | Discovery of every skill test runner                                                              |
+| `.tmp-ai-gen/`        | Ignored generated skill outputs, with a `<kind>-latest` copy of each; one-off reports in `other/` |
 
 ### 🔗 Skill dependencies
 
@@ -308,7 +309,7 @@ flowchart LR
     an-dr-dev-assign-ai-level --> an-dr-ai-use-user-interface & an-dr-convention-ai-level
     an-dr-dev-design --> an-dr-ai-use-user-interface & an-dr-convention-adr & an-dr-convention-use-case & an-dr-dev-write-documentation
     an-dr-dev-follow-workflow --> an-dr-ai-use-user-interface & an-dr-ai-use-wip-data & an-dr-convention-adr & an-dr-convention-branch-name & an-dr-dev-analyze-changes & an-dr-dev-debug & an-dr-dev-design & an-dr-dev-implement-code & an-dr-dev-implement-pipeline & an-dr-dev-integrate & an-dr-dev-review & an-dr-dev-test & an-dr-dev-write-documentation & an-dr-dev-write-readme & an-dr-dev-write-specification & an-dr-git-modify-history
-    an-dr-dev-implement-code --> an-dr-convention-adr & an-dr-convention-code & an-dr-convention-layout & an-dr-dev-write-documentation & an-dr-git-modify-history
+    an-dr-dev-implement-code --> an-dr-concept-evidence-grounding & an-dr-convention-adr & an-dr-convention-code & an-dr-convention-layout & an-dr-dev-write-documentation & an-dr-git-modify-history
     an-dr-dev-implement-pipeline --> an-dr-ai-use-user-interface & an-dr-convention-code
     an-dr-dev-integrate --> an-dr-ai-use-user-interface & an-dr-ai-use-wip-data & an-dr-convention-commit-message & an-dr-git-modify-history
     an-dr-dev-review --> an-dr-ai-use-user-interface & an-dr-concept-ai-slop & an-dr-concept-clean-dependencies & an-dr-concept-evidence-grounding & an-dr-convention-artifact-layout & an-dr-convention-code & an-dr-convention-html-repo-style & an-dr-convention-html-report & an-dr-convention-layout
@@ -354,6 +355,16 @@ Skills with scripts keep deterministic tests in `scripts/tests/`. Every skill ha
 ## 🔍 AI disclosure
 
 This repository values transparency about how software is made, and it encourages everyone to disclose AI usage in their repositories. Its own level is 3 (`ASSISTED`) on the [ai-level.dev](https://ai-level.dev) scale: AI wrote functional modules, and a human reviews every change before it enters history. The [AI level convention](skills/conventions/an-dr-convention-ai-level/SKILL.md) defines the levels, and the [assign skill](skills/actions/an-dr-dev-assign-ai-level/SKILL.md) assigns one to any repository, offered whenever a README is written.
+
+## 🙏 Acknowledgements
+
+Ideas adapted from other projects:
+
+| Idea here                                                                                          | Source                                                                                                   |
+| -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Doubt pass in [an-dr-dev-review](skills/actions/an-dr-dev-review/SKILL.md)                         | `doubt-driven-development` in [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills)      |
+| Weakening check in [an-dr-dev-review](skills/actions/an-dr-dev-review/SKILL.md)                    | `constraint-driven-development` in [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) |
+| Official-docs rule in [an-dr-dev-implement-code](skills/actions/an-dr-dev-implement-code/SKILL.md) | `source-driven-development` in [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills)     |
 
 ## 🤝 Contributing
 

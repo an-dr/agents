@@ -4,7 +4,7 @@ description: Build a written HTML page into a finished report - artifact path, e
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "1.2.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-convention-artifact-layout an-dr-convention-html-repo-style an-dr-convention-html-report
 ---
@@ -18,12 +18,13 @@ Defers: page content to the calling skill, page style to `an-dr-convention-html-
 Before writing any report or other generated artifact:
 
 ```sh
-python <an-dr-convention-artifact-layout>/scripts/new-artifact-path.py <kind> <extension> [--stamp <YYYY-MM-DD_hh-mm>] [--repository-root <path>]
+python <an-dr-convention-artifact-layout>/scripts/new-artifact-path.py <kind> <extension> [--stamp <YYYY-MM-DD_hh-mm>] [--name <name>] [--repository-root <path>]
 ```
 
 - Creates the kind folder and its `.gitignore`, prints the file path.
 - Without `-Stamp` it uses the current minute; pass the printed stamp as `-Stamp` for every other file of the same artifact.
 - Rejects an unregistered kind, an uppercase extension, a malformed stamp.
+- A report the user asks for that no kind fits takes kind `other` and a `--name`; skip Publish for it, since `other` has no latest copy.
 - A new kind is registered in that convention's kind list in the same change.
 
 ## Build the page

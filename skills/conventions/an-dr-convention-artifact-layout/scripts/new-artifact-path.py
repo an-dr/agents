@@ -12,13 +12,20 @@ from pathlib import Path
 
 STAMP = re.compile(r"^\d{4}-\d{2}-\d{2}_\d{2}-\d{2}(?:-\d+)?$")
 EXTENSION = re.compile(r"^[a-z0-9]+(?:\.[a-z0-9]+)*$")
+NAME = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+OTHER = "other"
 
 
-def artifact_path(kind: str, extension: str, stamp: str | None, repository_root: Path | None) -> Path:
+def artifact_path(kind: str, extension: str, stamp: str | None, repository_root: Path | None, name: str | None = None) -> Path:
     kinds = (Path(__file__).resolve().parent.parent / "assets" / "kinds.txt").read_text(encoding="utf-8").splitlines()
     kinds = [entry.strip() for entry in kinds if entry.strip()]
     if kind not in kinds:
         raise ValueError(f"Artifact kind '{kind}' is not registered in assets/kinds.txt ({', '.join(kinds)}).")
+    if kind == OTHER and not (name and NAME.fullmatch(name)):
+        raise ValueError(f"Kind '{OTHER}' needs --name in lowercase hyphenated words, such as plugin-comparison, not '{name}'.")
+    if kind != OTHER and name:
+        raise ValueError(f"--name applies only to kind '{OTHER}'; a registered kind is named by its kind.")
+    stem = f"{{stamp}}-{name}" if kind == OTHER else f"{kind}-{{stamp}}"
     extension = extension.lstrip(".")
     if not EXTENSION.fullmatch(extension):
         raise ValueError(f"Artifact extension must be lowercase, such as html or questions.json, not '{extension}'.")
@@ -37,12 +44,12 @@ def artifact_path(kind: str, extension: str, stamp: str | None, repository_root:
         minute = dt.datetime.now().strftime("%Y-%m-%d_%H-%M")
         stamp = minute
         suffix = 1
-        while any(directory.glob(f"{kind}-{stamp}.*")):
+        while any(directory.glob(stem.format(stamp=stamp) + ".*")):
             suffix += 1
             stamp = f"{minute}-{suffix}"
     if not STAMP.fullmatch(stamp):
         raise ValueError(f"Artifact stamp must look like 2026-11-01_14-32, not '{stamp}'.")
-    return directory / f"{kind}-{stamp}.{extension}"
+    return directory / f"{stem.format(stamp=stamp)}.{extension}"
 
 
 def main() -> int:
@@ -51,9 +58,10 @@ def main() -> int:
     parser.add_argument("extension")
     parser.add_argument("--stamp", "-Stamp")
     parser.add_argument("--repository-root", "-RepositoryRoot", type=Path)
+    parser.add_argument("--name", "-Name", help="File name for kind 'other', in lowercase hyphenated words.")
     args = parser.parse_args()
     try:
-        print(artifact_path(args.kind, args.extension, args.stamp, args.repository_root))
+        print(artifact_path(args.kind, args.extension, args.stamp, args.repository_root, args.name))
     except ValueError as error:
         parser.error(str(error))
     return 0

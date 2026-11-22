@@ -5,7 +5,7 @@ license: MIT
 allowed-tools: Python Read Grep Glob Write Edit
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.3.0"
+  version: "1.4.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-agents-repo-build-release an-dr-agents-repo-convention-skills an-dr-agents-repo-install an-dr-agents-repo-verify-installation an-dr-ai-review-instruction an-dr-ai-use-user-interface an-dr-ai-skill-implement-test an-dr-ai-skill-test an-dr-ai-write-instruction an-dr-convention-agent-skill an-dr-convention-markdown an-dr-convention-script an-dr-git-modify-history
 ---
@@ -50,11 +50,12 @@ python <an-dr-agents-repo-build-release>/scripts/check-main-staleness.py --root 
 2. Edit with `an-dr-ai-write-instruction`; skill text follows `an-dr-convention-agent-skill`, format `an-dr-convention-markdown`.
 3. Adding, renaming, or restructuring a skill follows `an-dr-convention-agent-skill` (format, folder, registration) and `an-dr-agents-repo-convention-skills` (names, metadata); scripts follow `an-dr-convention-script`. A new commit scope goes into the `AGENTS.md` scope list.
 4. Find each rule stated more than once across the changed files and the files they touch. Keep a repeat only if it adds a point-specific detail (exact options, safe default) or sits where an agent would otherwise miss the rule; otherwise delete it or name its owner.
-5. Read root `README.md` and `skills/README.md` against the diff; update every description of changed behavior (mode, phase, skill, command, layout) in the same change.
-6. Use `an-dr-ai-skill-implement-test` for script test coverage and, for new or corrected behavior, behavior cases. After every modification run the affected skills' cheap script tests and validate changed case data with `an-dr-ai-skill-test`. Behavioral execution needs an explicit user request. Report unrun evaluations separately from script results and structural checks.
-7. Run `python <clone>/tests/run-all.py` (`<clone>` = resolved root) and fix everything it reports. For its scope, `--all`, the repository-wide checks, and a missing `skills-ref`, read [references/checks.md](references/checks.md).
-8. A skill directory added, renamed, or removed → re-run `an-dr-agents-repo-install`'s `install-agents.py` and report its table.
-9. A skill or policy file added, renamed, or moved → run `an-dr-agents-repo-verify-installation`.
+5. An idea taken from another project → add a row to the root `README.md` Acknowledgements table naming the changed skill and the source with its link.
+6. Read root `README.md` and `skills/README.md` against the diff; update every description of changed behavior (mode, phase, skill, command, layout) in the same change.
+7. Use `an-dr-ai-skill-implement-test` for script test coverage and, for new or corrected behavior, behavior cases. After every modification run the affected skills' cheap script tests and validate changed case data with `an-dr-ai-skill-test`. Behavioral execution needs an explicit user request. Report unrun evaluations separately from script results and structural checks.
+8. Run `python <clone>/tests/run-all.py` (`<clone>` = resolved root) and fix everything it reports. For its scope, `--all`, the repository-wide checks, and a missing `skills-ref`, read [references/checks.md](references/checks.md).
+9. A skill directory added, renamed, or removed → re-run `an-dr-agents-repo-install`'s `install-agents.py` and report its table.
+10. A skill or policy file added, renamed, or moved → run `an-dr-agents-repo-verify-installation`.
 
 ## Summarize
 

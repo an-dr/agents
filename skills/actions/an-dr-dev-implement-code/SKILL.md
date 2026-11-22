@@ -4,14 +4,14 @@ description: Implement code following repository patterns, documentation, and th
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.1.0"
+  version: "1.2.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-convention-adr an-dr-convention-code an-dr-convention-layout an-dr-dev-write-documentation an-dr-git-modify-history
+  an-dr.dependencies: an-dr-concept-evidence-grounding an-dr-convention-adr an-dr-convention-code an-dr-convention-layout an-dr-dev-write-documentation an-dr-git-modify-history
 ---
 
 # Build
 
-Defers: code style to `an-dr-convention-code`, file placement to `an-dr-convention-layout`, ADR format to `an-dr-convention-adr`, documentation to `an-dr-dev-write-documentation`.
+Defers: code style to `an-dr-convention-code`, sources to `an-dr-concept-evidence-grounding`, file placement to `an-dr-convention-layout`, ADR format to `an-dr-convention-adr`, documentation to `an-dr-dev-write-documentation`.
 
 ## Prepare
 
@@ -24,6 +24,7 @@ Defers: code style to `an-dr-convention-code`, file placement to `an-dr-conventi
 - Only the requested scope, following the recorded design; work outside it becomes a separate request.
 - Compile and run a relevant test subset after each touch-point.
 - Write inline documentation and doc comments with the code.
+- A framework or library API the repository does not already use the same way → read its official documentation for the version the manifest or lockfile pins before writing the call, and name that page in the delivery explanation; memory of an API is not a source.
 - Code follows `an-dr-convention-code`; host repository conventions override it.
 - Place new files by `an-dr-convention-layout`, using its reference for the project type; a new project starts in that layout.
 
