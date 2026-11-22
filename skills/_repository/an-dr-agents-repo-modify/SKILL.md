@@ -5,7 +5,7 @@ license: MIT
 allowed-tools: Python Read Grep Glob Write Edit
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.4.0"
+  version: "1.3.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-agents-repo-build-release an-dr-agents-repo-convention-skills an-dr-agents-repo-install an-dr-agents-repo-verify-installation an-dr-ai-review-instruction an-dr-ai-use-user-interface an-dr-ai-skill-implement-test an-dr-ai-skill-test an-dr-ai-write-instruction an-dr-convention-agent-skill an-dr-convention-markdown an-dr-convention-script an-dr-git-modify-history
 ---

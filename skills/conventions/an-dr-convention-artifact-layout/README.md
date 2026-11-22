@@ -4,7 +4,7 @@ Where generated outputs live — code reviews, change reports, overviews — so 
 
 ## When it runs
 
-A convention is read, never run. Every skill that writes a non-repository output takes its path from `scripts/new-artifact-path.py` and refreshes the latest copy with `scripts/publish-latest.py`.
+A convention is read, never run. Every skill that writes a non-repository output takes its path through [an-dr-files-find-destination](../../actions/an-dr-files-find-destination/README.md), which applies this layout and refreshes the latest copy.
 
 ## How it works
 
@@ -22,10 +22,10 @@ REPO/.tmp-ai-gen/
     2026-11-22_14-05-plugin-comparison.html
 ```
 
-- One folder per registered kind, files named by kind and minute; files of one artifact share the stamp.
-- `<kind>-latest.*` at the top is a copy of the newest finished artifact.
+- One folder per declared kind, files named by kind and minute; files of one artifact share the stamp.
+- `<kind>-latest.*` at the top is a copy of the newest finished artifact, for kinds whose skill asks for one.
 - Scratch files and fixtures go to the system temp directory instead. Deliverables — ADRs, READMEs, `docs/` — are committed content and never go here.
-- A kind must be registered in `assets/kinds.txt` before a skill can write it.
+- Each skill writes at most one kind, declared in its `an-dr.artifact.kind` metadata, and `an-dr.artifact.pin-latest` says whether that kind keeps a latest copy; `an-dr.artifact.internal: true` puts a skill's own working state in `.internal/<kind>/` instead.
 - A one-off output you ask for, such as a custom report, goes to `other/` named by minute and a short name (`--name`), with no latest copy.
 
 ## What you get

@@ -7,6 +7,8 @@ metadata:
   version: "1.1.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-use-user-interface an-dr-concept-clean-dependencies an-dr-files-build-report an-dr-convention-html-report
+  an-dr.artifact.kind: dependency-fix-report
+  an-dr.artifact.pin-latest: true
 ---
 
 # Untangle dependencies
@@ -46,7 +48,7 @@ Choose the cheapest move that removes the arrow:
 
 Change nothing yet.
 
-1. Write one page at an `untangle` path with extension `html`; for levels and contents, read [references/report.md](references/report.md).
+1. Write one page at a `dependency-fix-report` path with extension `html`; for levels and contents, read [references/report.md](references/report.md).
 2. Escape repository text before inserting it into HTML.
 3. Build, verify, and publish through `an-dr-files-build-report`; check that table rows and details agree.
 4. Give the user the page's path. Graph already clean → say so and stop.

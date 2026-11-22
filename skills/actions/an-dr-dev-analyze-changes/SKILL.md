@@ -7,6 +7,8 @@ metadata:
   version: "1.2.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-concept-ai-slop an-dr-convention-diagram an-dr-files-build-report an-dr-convention-html-report an-dr-dev-write-documentation
+  an-dr.artifact.kind: change-report
+  an-dr.artifact.pin-latest: true
 ---
 
 # Change report

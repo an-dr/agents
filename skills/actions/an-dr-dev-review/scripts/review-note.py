@@ -8,7 +8,6 @@ import hashlib
 import json
 import os
 import re
-import subprocess
 import sys
 import tempfile
 import time
@@ -29,13 +28,6 @@ def review_timestamp() -> str:
     return f"{stamp}.{nanoseconds // 100:07d}Z"
 
 
-def get_review_repository_root() -> Path:
-    """Returns the root of the repository being reviewed."""
-    result = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, check=False)
-    root = result.stdout.strip()
-    if result.returncode != 0 or not root:
-        raise ReviewError("Run review scripts inside the repository being reviewed.")
-    return Path(root)
 
 
 def assert_review_properties(value: object, expected: tuple[str, ...], name: str, optional: tuple[str, ...] = ()) -> None:
@@ -153,17 +145,10 @@ def read_review_json(path: Path) -> dict:
 
 
 def resolve_review_path(path: Path) -> Path:
-    """Validates that canonical JSON stays in the run directory it was created in."""
-    repository_root = get_review_repository_root()
+    """Resolves an existing review JSON; find-destination chose where it lives."""
     if not path.exists():
         raise ReviewError(f"Review JSON does not exist: {path}")
     resolved = path.resolve()
-    # The shape artifact-layout creates; that skill, not this guard, owns the layout.
-    expected_directory = repository_root.resolve() / ".tmp-ai-gen" / "code-review"
-    if os.path.normcase(str(resolved.parent)) != os.path.normcase(str(expected_directory)):
-        raise ReviewError("Review JSON must be directly inside REPO/.tmp-ai-gen/code-review/.")
-    if not re.fullmatch(r"code-review-\d{4}-\d{2}-\d{2}_\d{2}-\d{2}(-\d+)?\.json", resolved.name):
-        raise ReviewError("Canonical review files are named code-review-<YYYY-MM-DD_hh-mm>.json.")
     return resolved
 
 

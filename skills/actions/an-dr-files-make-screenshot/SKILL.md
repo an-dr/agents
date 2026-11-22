@@ -7,11 +7,13 @@ metadata:
   version: "1.1.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-files-build-report
+  an-dr.artifact.kind: check-screenshot
+  an-dr.artifact.pin-latest: false
 ---
 
 # Screenshot
 
-Defers: scratch captures (only to check something) to a `screenshots` path with extension `png` from `an-dr-files-build-report`.
+Defers: scratch captures (only to check something) to a `check-screenshot` path with extension `png` from `an-dr-files-build-report`.
 
 ## Place the image
 

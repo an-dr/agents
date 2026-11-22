@@ -25,7 +25,7 @@ flowchart LR
 
 ## What you get
 
-The finished document at the destination you named or implied, or under `.tmp-ai-gen/curated-doc/` when there is none, with a list of what was verified and what rests on your word.
+The finished document at the destination you named or implied, or as a `curated-document` artifact when there is none, with a list of what was verified and what rests on your word.
 
 ## What you decide
 

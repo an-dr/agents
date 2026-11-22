@@ -19,20 +19,13 @@ class ReviewError(Exception):
 
 # Copied helpers, owned by this skill: a skill's scripts run standalone and no module
 # is shared between skills, so each script carries the part of Review.Common it needs.
-def get_review_repository_root() -> Path:
-    """Returns the root of the repository being reviewed."""
-    result = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, check=False)
-    root = result.stdout.strip()
-    if result.returncode != 0 or not root:
-        raise ReviewError("Run review scripts inside the repository being reviewed.")
-    return Path(root)
 
 
-def get_artifact_layout_script(artifact_layout_skill: Path, name: str) -> Path:
-    """Resolves one of artifact-layout's scripts, the one implementation of the layout."""
-    path = artifact_layout_skill / "scripts" / name
+def get_find_destination_script(find_destination_skill: Path, name: str) -> Path:
+    """Resolves one of find-destination's scripts, the one implementation of the layout."""
+    path = find_destination_skill / "scripts" / name
     if not path.is_file():
-        raise ReviewError(f"--artifact-layout-skill has no scripts/{name}; pass an-dr-convention-artifact-layout's folder.")
+        raise ReviewError(f"--find-destination-skill has no scripts/{name}; pass an-dr-files-find-destination's folder.")
     return path.resolve()
 
 
@@ -151,17 +144,10 @@ def read_review_json(path: Path) -> dict:
 
 
 def resolve_review_path(path: Path) -> Path:
-    """Validates that canonical JSON stays in the run directory it was created in."""
-    repository_root = get_review_repository_root()
+    """Resolves an existing review JSON; find-destination chose where it lives."""
     if not path.exists():
         raise ReviewError(f"Review JSON does not exist: {path}")
     resolved = path.resolve()
-    # The shape artifact-layout creates; that skill, not this guard, owns the layout.
-    expected_directory = repository_root.resolve() / ".tmp-ai-gen" / "code-review"
-    if os.path.normcase(str(resolved.parent)) != os.path.normcase(str(expected_directory)):
-        raise ReviewError("Review JSON must be directly inside REPO/.tmp-ai-gen/code-review/.")
-    if not re.fullmatch(r"code-review-\d{4}-\d{2}-\d{2}_\d{2}-\d{2}(-\d+)?\.json", resolved.name):
-        raise ReviewError("Canonical review files are named code-review-<YYYY-MM-DD_hh-mm>.json.")
     return resolved
 
 
@@ -345,7 +331,7 @@ def main() -> int:
     # These skills' folders, passed by the agent because skills need not sit side by side.
     parser.add_argument("--html-report-skill", "-HtmlReportSkill", required=True, type=Path)
     parser.add_argument("--html-style-skill", "-HtmlStyleSkill", required=True, type=Path)
-    parser.add_argument("--artifact-layout-skill", "-ArtifactLayoutSkill", required=True, type=Path)
+    parser.add_argument("--find-destination-skill", "-FindDestinationSkill", required=True, type=Path)
     parser.add_argument("--output-path", "-OutputPath")
     args = parser.parse_args()
     try:
@@ -374,8 +360,8 @@ def main() -> int:
         print(error, file=sys.stderr)
         return 1
     print(output_path, flush=True)
-    # The newest review is also copied to code-review-latest.* for the reader who opens it by name.
-    publisher = get_artifact_layout_script(args.artifact_layout_skill, "publish-latest.py")
+    # The newest review is also pinned as the latest, for the reader who opens it by name.
+    publisher = get_find_destination_script(args.find_destination_skill, "pin-latest.py")
     result = subprocess.run([sys.executable, str(publisher), str(resolved_path)], check=False)
     return result.returncode
 

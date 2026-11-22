@@ -2,7 +2,7 @@
 
 Checks for only the standard frontmatter keys, a valid name and description,
 string-valued metadata, a space-separated allowed-tools, the an-dr.type and
-an-dr.dependencies extensions, a description that ends in a trigger sentence,
+an-dr.dependencies extensions, a unique an-dr.artifact.kind with its pin-latest and internal flags, a description that ends in a trigger sentence,
 one title that matches the skill's type, the section order for that type, and
 that every reference file is linked and every linked reference exists. Warns on
 a SKILL.md or reference file over the token budget, a description over the
@@ -40,6 +40,7 @@ def check(root: Path) -> tuple[int, list[tuple[str, str]], list[tuple[str, str]]
         warnings.append((where, what))
 
     checked = 0
+    artifact_owners: dict[str, str] = {}
     for file in sorted(skills_dir.glob("*/*/SKILL.md")):
         if not (file.parent / "README.md").is_file():
             problem(file.parent.name, "README.md is missing; see references/readme.md.")
@@ -84,6 +85,26 @@ def check(root: Path) -> tuple[int, list[tuple[str, str]], list[tuple[str, str]]
         for required in ("author", "version", "an-dr.type", "an-dr.dependencies"):
             if required not in metadata:
                 problem(where, f"metadata has no {required}")
+        artifact_kind = metadata.get("an-dr.artifact.kind")
+        pin_latest = metadata.get("an-dr.artifact.pin-latest")
+        internal = metadata.get("an-dr.artifact.internal")
+        if artifact_kind is not None:
+            if not re.fullmatch(r"[a-z0-9]+(-[a-z0-9]+)*", artifact_kind):
+                problem(where, f"an-dr.artifact.kind '{artifact_kind}' must be one kind in lowercase hyphenated words")
+            elif artifact_kind == "other":
+                problem(where, "an-dr.artifact.kind must not be 'other'; that kind is reserved for one-off outputs")
+            elif artifact_kind in artifact_owners:
+                problem(where, f"an-dr.artifact.kind '{artifact_kind}' is already declared by {artifact_owners[artifact_kind]}")
+            else:
+                artifact_owners[artifact_kind] = name
+            if pin_latest not in ("true", "false"):
+                problem(where, "an-dr.artifact.pin-latest must be true or false beside an-dr.artifact.kind")
+            if internal not in (None, "true", "false"):
+                problem(where, "an-dr.artifact.internal must be true or false")
+            elif internal == "true" and pin_latest == "true":
+                problem(where, "an internal artifact kind keeps no latest copy; set an-dr.artifact.pin-latest: false")
+        elif pin_latest is not None or internal is not None:
+            problem(where, "an-dr.artifact.pin-latest and an-dr.artifact.internal need an-dr.artifact.kind")
         for key, value in metadata.items():
             if re.match(r"^[\[{|>]", value):
                 problem(where, f"metadata {key} must be a plain string, not a list or map")

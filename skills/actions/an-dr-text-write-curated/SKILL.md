@@ -7,6 +7,8 @@ metadata:
   version: "2.1.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-use-user-interface an-dr-text-verify-claims an-dr-text-analyze-slop an-dr-convention-artifact-layout
+  an-dr.artifact.kind: curated-document
+  an-dr.artifact.pin-latest: false
 ---
 
 # Curated document writing
@@ -43,7 +45,7 @@ Every stage ends at a gate; never advance on silence. Before the file exists, as
 ## Destination
 
 - Write where the user said, explicitly or by implication: a named path, an existing file being replaced, the repository's `docs/`, the location the target implies.
-- Only when no destination is stated or implied, use an `an-dr-convention-artifact-layout` path of kind `curated-doc`.
+- Only when no destination is stated or implied, use an `an-dr-convention-artifact-layout` path of kind `curated-document`.
 - Replacing an existing file: work on it in place only after the user confirms; otherwise create a new file next to it.
 
 ## Delivery

@@ -13,11 +13,13 @@ def publish(path: Path) -> list[Path]:
     source = path.resolve(strict=True)
     kind = source.parent.name
     root = source.parent.parent
+    if root.name == ".internal":
+        raise ValueError("An internal artifact has no latest copy.")
     if kind == "other":
         raise ValueError("Kind 'other' has no latest copy; report the stamped path itself.")
     match = re.fullmatch(rf"{re.escape(kind)}-(\d{{4}}-\d{{2}}-\d{{2}}_\d{{2}}-\d{{2}}(?:-\d+)?)\..+", source.name)
     if root.name != ".tmp-ai-gen" or match is None:
-        raise ValueError(f"Not an artifact from new-artifact-path.py: {path}")
+        raise ValueError(f"Not an artifact from find-destination.py: {path}")
     stem = f"{kind}-{match.group(1)}"
     for previous in root.glob(f"{kind}-latest.*"):
         if previous.is_file():

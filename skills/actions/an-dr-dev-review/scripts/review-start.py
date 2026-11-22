@@ -1,4 +1,4 @@
-"""Create a canonical JSON review in REPO/.tmp-ai-gen/code-review/."""
+"""Create a canonical JSON review at a code-review artifact path from find-destination."""
 
 from __future__ import annotations
 
@@ -35,26 +35,26 @@ def get_review_repository_root() -> Path:
     return Path(root)
 
 
-def get_artifact_layout_script(artifact_layout_skill: Path, name: str) -> Path:
-    """Resolves one of artifact-layout's scripts, the one implementation of the layout."""
-    path = artifact_layout_skill / "scripts" / name
+def get_find_destination_script(find_destination_skill: Path, name: str) -> Path:
+    """Resolves one of find-destination's scripts, the one implementation of the layout."""
+    path = find_destination_skill / "scripts" / name
     if not path.is_file():
-        raise ReviewError(f"--artifact-layout-skill has no scripts/{name}; pass an-dr-convention-artifact-layout's folder.")
+        raise ReviewError(f"--find-destination-skill has no scripts/{name}; pass an-dr-files-find-destination's folder.")
     return path.resolve()
 
 
-def new_review_path(repository_root: Path, artifact_layout_skill: Path) -> Path:
-    """Takes a new code-review JSON path from artifact-layout."""
-    script = get_artifact_layout_script(artifact_layout_skill, "new-artifact-path.py")
+def new_review_path(repository_root: Path, find_destination_skill: Path) -> Path:
+    """Takes a new code-review JSON path from find-destination."""
+    script = get_find_destination_script(find_destination_skill, "find-destination.py")
     result = subprocess.run(
-        [sys.executable, str(script), "code-review", "json", "--repository-root", str(repository_root)],
+        [sys.executable, str(script), "json", "--kind", "code-review", "--repository-root", str(repository_root)],
         capture_output=True,
         text=True,
         check=False,
     )
     lines = [line for line in result.stdout.splitlines() if line.strip()]
     if not lines:
-        raise ReviewError("artifact-layout returned no path for this review.")
+        raise ReviewError("find-destination returned no path for this review.")
     return Path(lines[-1].strip())
 
 
@@ -178,12 +178,12 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--reference", "-Reference", required=True)
     parser.add_argument("--scope", "-Scope", required=True, choices=("direct", "verify", "summary", "requested"))
-    # artifact-layout's folder, passed by the agent because skills need not sit side by side.
-    parser.add_argument("--artifact-layout-skill", "-ArtifactLayoutSkill", required=True, type=Path)
+    # find-destination's folder, passed by the agent because skills need not sit side by side.
+    parser.add_argument("--find-destination-skill", "-FindDestinationSkill", required=True, type=Path)
     args = parser.parse_args()
     try:
         repository_root = get_review_repository_root()
-        review_path = new_review_path(repository_root, args.artifact_layout_skill)
+        review_path = new_review_path(repository_root, args.find_destination_skill)
         if review_path.exists():
             raise ReviewError(f"Review already exists: {review_path}")
         template_path = Path(__file__).resolve().parent.parent / "assets" / "review-template.json"
@@ -199,7 +199,7 @@ def main() -> int:
         print(error, file=sys.stderr)
         return 1
     print(review_path)
-    print("JSON and HTML artifacts remain local; .tmp-ai-gen ignores itself.")
+    print("JSON and HTML artifacts remain local and are never committed.")
     return 0
 
 

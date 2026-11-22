@@ -30,7 +30,7 @@ Fixes are chosen cheapest first: delete, return a result instead of calling back
 
 ## What you get
 
-An `untangle` HTML report with one proposed fix per problem, then a smaller, acyclic graph after the approved fixes.
+A `dependency-fix-report` HTML report with one proposed fix per problem, then a smaller, acyclic graph after the approved fixes.
 
 ## What you decide
 

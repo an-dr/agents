@@ -60,7 +60,7 @@ Each file adds one type's layout to the shared rules below. A repository of seve
 ## Generated files
 
 - Build output, caches (`__pycache__/`), and agent output (code reviews, reports) are never committed.
-- Agent reports and reviews live in the ignored `.tmp-ai-gen/` folder of `an-dr-convention-artifact-layout`.
+- Agent reports and reviews are artifacts, placed by `an-dr-convention-artifact-layout` and never committed.
 
 ## Check
 

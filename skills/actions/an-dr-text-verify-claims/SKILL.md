@@ -7,6 +7,8 @@ metadata:
   version: "1.1.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-use-user-interface an-dr-files-build-report an-dr-convention-html-report
+  an-dr.artifact.kind: claim-audit-report
+  an-dr.artifact.pin-latest: true
 ---
 
 # Text claim audit

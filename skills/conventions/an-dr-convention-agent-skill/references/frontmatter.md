@@ -10,12 +10,15 @@ Every skill is valid [Agent Skills](https://agentskills.io/specification) format
 
 The extensions live in `metadata`. `author` and `version` are plain keys, and the keys that carry meaning for this convention use the `an-dr.` prefix that keeps them clear of other tools' keys:
 
-| Key                  | Value                                                                    |
-| -------------------- | ------------------------------------------------------------------------ |
-| `author`             | who wrote the skill                                                      |
-| `version`            | the skill's version, a quoted semantic version                           |
-| `an-dr.type`         | `action`, `concept`, or `convention`                                     |
-| `an-dr.dependencies` | the skills this skill names, space-separated, or `none`, or `PROHIBITED` |
+| Key                         | Value                                                                                                                                                  |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `author`                    | who wrote the skill                                                                                                                                    |
+| `version`                   | the skill's version, a quoted semantic version                                                                                                         |
+| `an-dr.type`                | `action`, `concept`, or `convention`                                                                                                                   |
+| `an-dr.dependencies`        | the skills this skill names, space-separated, or `none`, or `PROHIBITED`                                                                               |
+| `an-dr.artifact.kind`       | optional: the one artifact kind this skill writes; one skill per kind, never `other`                                                                   |
+| `an-dr.artifact.pin-latest` | required with `an-dr.artifact.kind`: `true` when the newest artifact is pinned as the kind's latest copy, else `false`                                 |
+| `an-dr.artifact.internal`   | optional with `an-dr.artifact.kind`: `true` when the kind is state the skill keeps for itself rather than output for the user; it keeps no latest copy |
 
 The extensions are conventions of the project, not of the format. A tool that ignores them still loads every skill; the rule for passive skills is also stated in `AGENTS.md`, which every tool reads.
 

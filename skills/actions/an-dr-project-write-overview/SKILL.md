@@ -8,6 +8,8 @@ metadata:
   version: "1.1.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-concept-ai-slop an-dr-files-build-report an-dr-convention-html-report an-dr-dev-write-documentation
+  an-dr.artifact.kind: project-overview
+  an-dr.artifact.pin-latest: true
 ---
 
 # Project overview

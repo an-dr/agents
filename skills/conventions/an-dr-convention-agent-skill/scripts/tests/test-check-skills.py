@@ -52,6 +52,28 @@ class SkillChecksTests(unittest.TestCase):
         problems, _ = self.files()
         self.assertEqual(problems, [])
 
+    def test_artifact_kinds(self) -> None:
+        review = "skills/actions/an-dr-dev-review/SKILL.md"
+        for entry, expected in (
+            ("Code_Review", "must be one kind in lowercase hyphenated words"),
+            ("code-review deslop", "must be one kind in lowercase hyphenated words"),
+            ("other", "reserved for one-off outputs"),
+            ("code-slop-report", "already declared by"),
+        ):
+            with self.subTest(entry=entry):
+                self.setUp()
+                self.edit(review, "an-dr.artifact.kind: code-review", f"an-dr.artifact.kind: {entry}")
+                self.assert_problem(expected)
+        self.setUp()
+        self.edit(review, "an-dr.artifact.pin-latest: true", "an-dr.artifact.pin-latest: yes")
+        self.assert_problem("must be true or false")
+        self.setUp()
+        self.edit(review, "  an-dr.artifact.kind: code-review\n", "")
+        self.assert_problem("need an-dr.artifact.kind")
+        self.setUp()
+        self.edit("skills/actions/an-dr-ai-use-user-interface/SKILL.md", "an-dr.artifact.pin-latest: false", "an-dr.artifact.pin-latest: true")
+        self.assert_problem("internal artifact kind keeps no latest copy")
+
     def test_no_trigger_sentence(self) -> None:
         self.edit("skills/actions/an-dr-dev-debug/SKILL.md", "Use ", "Apply ")
         self.assert_problem("description has no trigger sentence beginning 'Use '")

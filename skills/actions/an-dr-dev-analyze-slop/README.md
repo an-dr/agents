@@ -22,7 +22,7 @@ flowchart LR
 
 ## What you get
 
-A `deslop` HTML report with stable finding IDs and a short summary of the most consequential findings in the reply. It recommends; it does not edit.
+A `code-slop-report` HTML report with stable finding IDs and a short summary of the most consequential findings in the reply. It recommends; it does not edit.
 
 ## Related skills
 

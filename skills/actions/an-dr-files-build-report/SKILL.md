@@ -1,31 +1,21 @@
 ---
 name: an-dr-files-build-report
-description: Build a written HTML page into a finished report - artifact path, embedded brand and status styles, offline diagrams, visual check, and latest copy. Use whenever a skill writes an HTML report, or needs a path for any generated artifact.
+description: Build a written HTML page into a finished report - artifact path, embedded brand and status styles, offline diagrams, visual check, and latest copy. Use whenever a skill writes an HTML report.
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.2.0"
+  version: "1.1.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-convention-artifact-layout an-dr-convention-html-repo-style an-dr-convention-html-report
+  an-dr.dependencies: an-dr-convention-html-repo-style an-dr-convention-html-report an-dr-files-find-destination
 ---
 
 # Build a report
 
-Defers: page content to the calling skill, page style to `an-dr-convention-html-repo-style`, report format to `an-dr-convention-html-report`, artifact locations to `an-dr-convention-artifact-layout`.
+Defers: page content to the calling skill, page style to `an-dr-convention-html-repo-style`, report format to `an-dr-convention-html-report`, artifact paths and the latest copy to `an-dr-files-find-destination`.
 
 ## Take a path
 
-Before writing any report or other generated artifact:
-
-```sh
-python <an-dr-convention-artifact-layout>/scripts/new-artifact-path.py <kind> <extension> [--stamp <YYYY-MM-DD_hh-mm>] [--name <name>] [--repository-root <path>]
-```
-
-- Creates the kind folder and its `.gitignore`, prints the file path.
-- Without `-Stamp` it uses the current minute; pass the printed stamp as `-Stamp` for every other file of the same artifact.
-- Rejects an unregistered kind, an uppercase extension, a malformed stamp.
-- A report the user asks for that no kind fits takes kind `other` and a `--name`; skip Publish for it, since `other` has no latest copy.
-- A new kind is registered in that convention's kind list in the same change.
+Before writing any report or other generated artifact, take its path through `an-dr-files-find-destination`: the kind the calling skill declares in `an-dr.artifact.kind`, or a `--name` for a report the user asked for that no kind fits. Pass the printed stamp to every other file of the same artifact.
 
 ## Build the page
 
@@ -47,13 +37,7 @@ After the final build, inspect screenshots in light and dark themes at desktop a
 
 ## Publish
 
-Once the artifact is complete:
-
-```sh
-python <an-dr-convention-artifact-layout>/scripts/publish-latest.py <artifact-file>
-```
-
-Replaces every `<kind>-latest.*` with copies of all files sharing the artifact's stamp; prints the copies.
+Once the artifact is complete, pin it as the latest through `an-dr-files-find-destination` when the calling skill sets `an-dr.artifact.pin-latest: true`; skip it otherwise and for a one-off report.
 
 ## Output
 

@@ -7,6 +7,8 @@ metadata:
   version: "1.2.0"
   an-dr.type: action
   an-dr.dependencies: an-dr-ai-review-instruction an-dr-ai-use-user-interface an-dr-concept-ai-slop an-dr-files-build-report an-dr-convention-html-report
+  an-dr.artifact.kind: code-slop-report
+  an-dr.artifact.pin-latest: true
 ---
 
 # Code and documentation coherence analysis
@@ -43,7 +45,7 @@ Defers: what slop is to `an-dr-concept-ai-slop`, agent instruction correctness t
 
 ## Write the report
 
-Write one self-contained page in the `an-dr-convention-html-report` format at a `deslop` path with extension `html`, and build and publish it through `an-dr-files-build-report`, giving findings and counts their priority level. For sections and verification, read [references/page.md](references/page.md).
+Write one self-contained page in the `an-dr-convention-html-report` format at a `code-slop-report` path with extension `html`, and build and publish it through `an-dr-files-build-report`, giving findings and counts their priority level. For sections and verification, read [references/page.md](references/page.md).
 
 ## Output
 

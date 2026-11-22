@@ -15,7 +15,7 @@ references/answers-json.md); the user answers, drafts are autosaved, and Commit 
   wait   block until the user commits the current questions; prints one echo line each.
   stop   ask a running server to stop.
 
-<state> is a path prefix such as .tmp-ai-gen/ui/ui-2026-11-12_14-05, one per chat; every
+<state> is a path prefix from find-destination (internal kind ui-session), one per chat; every
 file the commands share is <state>.<kind>.json. Nothing is cleared by stop and serve: the
 log, the answered rounds (history), and the draft persist, and the page address is stable
 for the chat (port and token are kept in <state>.session.json), so an open tab reconnects
@@ -416,6 +416,7 @@ def exclude_from_git(page):
 
 
 def save_record(state, page):
+    page = page or f"{state}.page.html"
     Path(page).write_text(render_page(snapshot(state), None), encoding="utf-8")
     exclude_from_git(page)
 
@@ -516,7 +517,7 @@ def main(argv=None):
         command.add_argument("--state", required=True, help="path prefix shared by every file of this conversation")
         if name == "serve":
             command.add_argument("--html-style-skill", required=True, help="folder of the an-dr-convention-html-repo-style skill")
-            command.add_argument("--page", default="tmp-ai-ui.html", help="read-only record of the page (default tmp-ai-ui.html)")
+            command.add_argument("--page", help="read-only record of the page (default <state>.page.html)")
             command.add_argument("--lifetime", type=int, default=3600, help="seconds before the server stops by itself (default 3600)")
             command.add_argument("--no-open", action="store_true", help="print the URL instead of opening a browser")
         if name == "log":

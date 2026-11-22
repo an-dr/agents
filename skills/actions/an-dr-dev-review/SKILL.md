@@ -4,9 +4,11 @@ description: Review a diff for defects, security issues, weakened checks, struct
 license: MIT
 metadata:
   author: Andrei Gramakov (an-dr)
-  version: "1.2.0"
+  version: "1.1.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-concept-ai-slop an-dr-concept-clean-dependencies an-dr-concept-evidence-grounding an-dr-convention-artifact-layout an-dr-convention-code an-dr-convention-html-repo-style an-dr-convention-html-report an-dr-convention-layout
+  an-dr.dependencies: an-dr-ai-use-user-interface an-dr-concept-ai-slop an-dr-concept-clean-dependencies an-dr-concept-evidence-grounding an-dr-convention-code an-dr-convention-html-repo-style an-dr-convention-html-report an-dr-convention-layout an-dr-files-find-destination
+  an-dr.artifact.kind: code-review
+  an-dr.artifact.pin-latest: true
 ---
 
 # Code review
@@ -44,10 +46,10 @@ From the reviewed repository:
 ```sh
 python <skill>/scripts/review-start.py --reference '<branch-or-ref>' \
   --scope <direct|verify|summary|requested> \
-  --artifact-layout-skill <an-dr-convention-artifact-layout>
+  --find-destination-skill <an-dr-files-find-destination>
 ```
 
-Takes a `code-review` path from `an-dr-convention-artifact-layout` and writes a schema-versioned JSON record there from `assets/review-template.json`. Review state and reports stay local unless the user asks otherwise.
+Takes a `code-review` path from `an-dr-files-find-destination` and writes a schema-versioned JSON record there from `assets/review-template.json`. Review state and reports stay local unless the user asks otherwise.
 
 ## Check for weakening
 
@@ -99,10 +101,10 @@ A decision is non-trivial when it adds branching, crosses a module or service bo
 python <skill>/scripts/review-render.py --review-path <json> \
   --html-report-skill <an-dr-convention-html-report> \
   --html-style-skill <an-dr-convention-html-repo-style> \
-  --artifact-layout-skill <an-dr-convention-artifact-layout>
+  --find-destination-skill <an-dr-files-find-destination>
 ```
 
-Writes one self-contained `.html` beside the JSON, copies both to `code-review-latest.*`, orders sections verdict, summary, critical, high, slop, improvements, positives, and renders diagrams offline through `an-dr-convention-html-report`'s embed script.
+Writes one self-contained `.html` beside the JSON, pins both as the latest review through `an-dr-files-find-destination`, orders sections verdict, summary, critical, high, slop, improvements, positives, and renders diagrams offline through `an-dr-convention-html-report`'s embed script.
 
 - HTML only; no Markdown review.
 - In chat: critical findings and verdict by `an-dr-ai-use-user-interface`'s text levels, plus paths of the HTML and its latest copy; a local inspection artifact.

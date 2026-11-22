@@ -32,6 +32,7 @@ Unseen decisions are the risk in AI development. This repository lets you choose
     - [📦 Releases](#-releases)
     - [📚 Documentation](#-documentation)
         - [📁 Repository layout](#-repository-layout)
+        - [🏷️ Skill metadata](#️-skill-metadata)
         - [🔗 Skill dependencies](#-skill-dependencies)
     - [🧰 Development](#-development)
     - [🔍 AI disclosure](#-ai-disclosure)
@@ -197,17 +198,31 @@ Each release is a version in [VERSION](VERSION), with notes in [docs/releases/](
 
 ### 📁 Repository layout
 
-| Path                  | Purpose                                                                                           |
-| --------------------- | ------------------------------------------------------------------------------------------------- |
-| `AGENTS.md`           | Policy entry point                                                                                |
-| `VERSION`             | The repository's version, released as `agents-<version>.zip`                                      |
-| `docs/releases/`      | Notes for each release                                                                            |
-| `skills/actions/`     | Procedures the agent performs                                                                     |
-| `skills/concepts/`    | Principles applied when their subject is in play                                                  |
-| `skills/conventions/` | Artifact formats and their mechanical checks                                                      |
-| `skills/_repository/` | Maintenance and installation of this repository                                                   |
-| `tests/run-all.py`    | Discovery of every skill test runner                                                              |
-| `.tmp-ai-gen/`        | Ignored generated skill outputs, with a `<kind>-latest` copy of each; one-off reports in `other/` |
+| Path                  | Purpose                                                                                                                                                   |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AGENTS.md`           | Policy entry point                                                                                                                                        |
+| `VERSION`             | The repository's version, released as `agents-<version>.zip`                                                                                              |
+| `docs/releases/`      | Notes for each release                                                                                                                                    |
+| `skills/actions/`     | Procedures the agent performs                                                                                                                             |
+| `skills/concepts/`    | Principles applied when their subject is in play                                                                                                          |
+| `skills/conventions/` | Artifact formats and their mechanical checks                                                                                                              |
+| `skills/_repository/` | Maintenance and installation of this repository                                                                                                           |
+| `tests/run-all.py`    | Discovery of every skill test runner                                                                                                                      |
+| `.tmp-ai-gen/`        | Ignored artifacts that skills generate; the [artifact layout convention](skills/conventions/an-dr-convention-artifact-layout/SKILL.md) owns its structure |
+
+### 🏷️ Skill metadata
+
+Every `SKILL.md` is plain [Agent Skills](https://agentskills.io/specification) format. This repository adds the following keys under `metadata`. Tools that don't know them still load the skill. [frontmatter.md](skills/conventions/an-dr-convention-agent-skill/references/frontmatter.md) defines them and `check-skills.py` checks them.
+
+| Key                         | Required    | Value                                                                                                                      | Example                            |
+| --------------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| `author`                    | yes         | who wrote the skill                                                                                                        | `Andrei Gramakov (an-dr)`          |
+| `version`                   | yes         | the skill's quoted semantic version                                                                                        | `"1.1.0"`                          |
+| `an-dr.type`                | yes         | `action` (a procedure to run), `concept` (a principle), or `convention` (a format); concepts and conventions only describe | `action`                           |
+| `an-dr.dependencies`        | yes         | every skill this skill names, space-separated; `none`, or `PROHIBITED` for a skill that may name none                      | `an-dr-convention-artifact-layout` |
+| `an-dr.artifact.kind`       | no          | the one artifact kind this skill writes; each kind has one owner skill, and `other` is reserved                            | `code-review`                      |
+| `an-dr.artifact.pin-latest` | with `kind` | `true` when the newest artifact is pinned as the kind's latest copy, else `false`                                          | `true`                             |
+| `an-dr.artifact.internal`   | no          | `true` when the kind is the skill's own working state rather than output for the user; it keeps no latest copy             | `true`                             |
 
 ### 🔗 Skill dependencies
 
@@ -257,6 +272,7 @@ flowchart LR
         an-dr-dev-write-specification
         an-dr-env-install-powershell
         an-dr-files-build-report
+        an-dr-files-find-destination
         an-dr-files-make-screengif
         an-dr-files-make-screenshot
         an-dr-git-modify-history
@@ -293,7 +309,7 @@ flowchart LR
     an-dr-agents-analyze-session --> an-dr-agents-repo-modify
     an-dr-agents-repo-build-dependencies --> an-dr-ai-use-user-interface & an-dr-convention-agent-skill
     an-dr-agents-repo-build-release --> an-dr-ai-use-user-interface & an-dr-git-modify-history
-    an-dr-agents-repo-convention-skills --> an-dr-ai-skill-implement-test & an-dr-ai-skill-test & an-dr-convention-agent-skill & an-dr-dev-test & an-dr-dev-write-documentation & an-dr-convention-agent-skill-testing
+    an-dr-agents-repo-convention-skills --> an-dr-agents-repo-build-release & an-dr-ai-skill-implement-test & an-dr-ai-skill-test & an-dr-convention-agent-skill & an-dr-dev-test & an-dr-dev-write-documentation & an-dr-convention-agent-skill-testing
     an-dr-agents-repo-install --> an-dr-ai-skill-test
     an-dr-agents-repo-modify --> an-dr-agents-repo-build-release & an-dr-agents-repo-convention-skills & an-dr-agents-repo-install & an-dr-agents-repo-verify-installation & an-dr-ai-review-instruction & an-dr-ai-use-user-interface & an-dr-ai-skill-implement-test & an-dr-ai-skill-test & an-dr-ai-write-instruction & an-dr-convention-agent-skill & an-dr-convention-markdown & an-dr-convention-script & an-dr-git-modify-history
     an-dr-agents-repo-verify-installation --> an-dr-agents-repo-build-release & an-dr-agents-repo-install & an-dr-ai-skill-implement-test & an-dr-ai-skill-test & an-dr-ai-use-wip-data & an-dr-convention-commit-message
@@ -301,7 +317,7 @@ flowchart LR
     an-dr-ai-review-instruction --> an-dr-ai-use-user-interface
     an-dr-ai-skill-implement-test --> an-dr-ai-write-instruction & an-dr-convention-agent-skill & an-dr-convention-script & an-dr-convention-agent-skill-testing
     an-dr-ai-skill-test --> an-dr-ai-skill-implement-test & an-dr-ai-use-user-interface & an-dr-files-build-report & an-dr-convention-script & an-dr-convention-agent-skill-testing
-    an-dr-ai-use-user-interface --> an-dr-concept-dark-cockpit & an-dr-convention-html-repo-style & an-dr-files-build-report
+    an-dr-ai-use-user-interface --> an-dr-concept-dark-cockpit & an-dr-convention-html-repo-style & an-dr-files-find-destination
     an-dr-ai-write-instruction --> an-dr-ai-review-instruction & an-dr-concept-ai-slop & an-dr-convention-markdown & an-dr-dev-write-documentation
     an-dr-architecture-fix-dependencies --> an-dr-ai-use-user-interface & an-dr-concept-clean-dependencies & an-dr-files-build-report & an-dr-convention-html-report
     an-dr-dev-analyze-changes --> an-dr-concept-ai-slop & an-dr-convention-diagram & an-dr-files-build-report & an-dr-convention-html-report & an-dr-dev-write-documentation
@@ -312,13 +328,14 @@ flowchart LR
     an-dr-dev-implement-code --> an-dr-concept-evidence-grounding & an-dr-convention-adr & an-dr-convention-code & an-dr-convention-layout & an-dr-dev-write-documentation & an-dr-git-modify-history
     an-dr-dev-implement-pipeline --> an-dr-ai-use-user-interface & an-dr-convention-code
     an-dr-dev-integrate --> an-dr-ai-use-user-interface & an-dr-ai-use-wip-data & an-dr-convention-commit-message & an-dr-git-modify-history
-    an-dr-dev-review --> an-dr-ai-use-user-interface & an-dr-concept-ai-slop & an-dr-concept-clean-dependencies & an-dr-concept-evidence-grounding & an-dr-convention-artifact-layout & an-dr-convention-code & an-dr-convention-html-repo-style & an-dr-convention-html-report & an-dr-convention-layout
+    an-dr-dev-review --> an-dr-ai-use-user-interface & an-dr-concept-ai-slop & an-dr-concept-clean-dependencies & an-dr-concept-evidence-grounding & an-dr-convention-code & an-dr-convention-html-repo-style & an-dr-convention-html-report & an-dr-convention-layout & an-dr-files-find-destination
     an-dr-dev-test --> an-dr-ai-use-user-interface & an-dr-dev-implement-adversarial-ut
     an-dr-dev-write-documentation --> an-dr-ai-use-user-interface & an-dr-concept-ai-slop & an-dr-convention-adr & an-dr-convention-diagram & an-dr-convention-markdown & an-dr-convention-use-case
     an-dr-dev-write-readme --> an-dr-ai-use-user-interface & an-dr-dev-assign-ai-level & an-dr-convention-markdown & an-dr-convention-readme & an-dr-dev-write-documentation & an-dr-files-make-screengif & an-dr-files-make-screenshot
     an-dr-dev-write-specification --> an-dr-ai-use-user-interface & an-dr-concept-clean-dependencies & an-dr-convention-adr & an-dr-convention-use-case & an-dr-dev-write-documentation
     an-dr-env-install-powershell --> an-dr-ai-use-user-interface
-    an-dr-files-build-report --> an-dr-convention-artifact-layout & an-dr-convention-html-repo-style & an-dr-convention-html-report
+    an-dr-files-build-report --> an-dr-convention-html-repo-style & an-dr-convention-html-report & an-dr-files-find-destination
+    an-dr-files-find-destination --> an-dr-convention-artifact-layout
     an-dr-files-make-screengif --> an-dr-files-make-screenshot
     an-dr-files-make-screenshot --> an-dr-files-build-report
     an-dr-git-modify-history --> an-dr-convention-commit-message

@@ -6,12 +6,15 @@ metadata:
   author: Andrei Gramakov (an-dr)
   version: "2.2.0"
   an-dr.type: action
-  an-dr.dependencies: an-dr-concept-dark-cockpit an-dr-convention-html-repo-style an-dr-files-build-report
+  an-dr.dependencies: an-dr-concept-dark-cockpit an-dr-convention-html-repo-style an-dr-files-find-destination
+  an-dr.artifact.kind: ui-session
+  an-dr.artifact.pin-latest: false
+  an-dr.artifact.internal: true
 ---
 
 # User interface
 
-Defers: severity levels to `an-dr-concept-dark-cockpit`, the look of its browser page to `an-dr-convention-html-repo-style`, artifact paths to `an-dr-files-build-report`.
+Defers: severity levels to `an-dr-concept-dark-cockpit`, the look of its browser page to `an-dr-convention-html-repo-style`, artifact paths to `an-dr-files-find-destination`.
 
 ## Choose the channel
 
@@ -65,7 +68,7 @@ The user does not see tool results; output reaches them only through the reply.
 
 ## Keep answers as JSON
 
-When a decision must outlive the conversation or a script or agent acts on it, write the round before asking to a `ui` path with extension `questions.json`, taken through `an-dr-files-build-report`. For the schema, read [references/answers-json.md](references/answers-json.md). Pass the reply through the reader: a typed reply as typed, a widget result as `N: <chosen label>` per question.
+When a decision must outlive the conversation or a script or agent acts on it, write the round before asking to an internal `ui-session` path with extension `questions.json`, taken through `an-dr-files-find-destination`. For the schema, read [references/answers-json.md](references/answers-json.md). Pass the reply through the reader: a typed reply as typed, a widget result as `N: <chosen label>` per question.
 
 ```sh
 python <skill>/scripts/read-answers.py --questions <ui-stamp>.questions.json --reply '1a 2: only on Mondays'
